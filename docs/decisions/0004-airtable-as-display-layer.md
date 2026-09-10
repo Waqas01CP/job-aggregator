@@ -1,5 +1,5 @@
 ---
-status: superseded by ADR-0014
+status: accepted
 date: 2026-09-09
 decision-makers: Waqas Sharif
 # consulted:
@@ -59,4 +59,12 @@ Check the Airtable workspace API usage counter monthly against the 1,000-call al
 
 ## More Information
 
-Superseded by ADR-0014. The no-read rule made the falsifier unmeasurable, because the operator's hand-set outcomes exist only in Airtable and were never read back.
+One clause of this record was reversed by ADR-0014: the no-read rule. The rest stands. Airtable remains the display layer, writes remain batched at ten per call, and the record ceiling is still managed as described.
+
+The reversed clause and why: the no-read rule made ADR-0015's Measure A unmeasurable, because the operator's hand-set outcomes exist only in Airtable and would have been destroyed at deletion.
+
+## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-09-10 | Status was `superseded by ADR-0014`, now `accepted` with the reversed clause named | ADR-0014 reverses one clause, not the decision. Marking the whole record superseded retired the Airtable choice, which is still in force and is depended on by ADR-0013 and the architecture document |

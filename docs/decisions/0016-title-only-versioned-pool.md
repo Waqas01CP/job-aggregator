@@ -74,4 +74,10 @@ Bad, because it produces more weak matches before any evidence exists that title
 
 ## More Information
 
-Supersedes ADR-0008, retaining its allowlist, blocklist and unmatched classification unchanged.
+Extends ADR-0008, whose allowlist, blocklist and unmatched-flagged classification is carried forward unchanged and is the mechanism this record depends on for extending the pool.
+
+## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-09-10 | Said it superseded ADR-0008, now says it extends it | It reverses nothing in ADR-0008. Claiming supersession would have retired the classification this record itself depends on |

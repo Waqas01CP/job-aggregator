@@ -82,4 +82,12 @@ Bad, because the free plan allows 100 automation runs a month and the mechanism 
 
 ## More Information
 
-Supersedes ADR-0004. The no-read rule in that record was an error: it made ADR-0015's Measure A unmeasurable and would have destroyed every operator judgement at deletion.
+Reverses one clause of ADR-0004, its no-read rule. ADR-0004 otherwise stands and remains the record of why Airtable is the display layer.
+
+That clause was an error: it made ADR-0015's Measure A unmeasurable, because the operator's hand-set outcomes exist only in Airtable and would have been destroyed at deletion without ever being read.
+
+## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-09-10 | Said it superseded ADR-0004, now says it reverses one clause of it | ADR-0004's other decisions still hold. Claiming supersession would have sent a reader away from a live record |

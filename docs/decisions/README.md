@@ -13,11 +13,11 @@ Records are written at the moment a decision concludes. An accepted record is ne
 | 0001 | Two-layer store, raw and filtered | Accepted |
 | 0002 | Raw layer on a git data branch, not a hosted database | Accepted |
 | 0003 | Append deltas, not snapshots | Accepted |
-| 0004 | Airtable as the filtered display layer | Superseded by 0014 |
+| 0004 | Airtable as the filtered display layer | Accepted, one clause reversed by 0014 |
 | 0005 | Fetch complete board output, filter locally | Accepted |
 | 0006 | Twice-daily fetch cadence | Accepted |
 | 0007 | Recency is a view, not an ingest filter | Accepted |
-| 0008 | Title matching by allowlist, blocklist, and unmatched flag | Superseded by 0016 |
+| 0008 | Title matching by allowlist, blocklist, and unmatched flag | Accepted, extended by 0016 |
 | 0009 | Vertical slice first, adapters incremental | Accepted |
 | 0010 | No relevance scoring, ranking, or model-based screening | Accepted |
 | 0011 | Public repository, metadata only on the data branch | Accepted |
@@ -28,14 +28,19 @@ Records are written at the moment a decision concludes. An accepted record is ne
 | 0016 | Title-only matching against a versioned title pool | Accepted |
 | 0017 | Sanitised cassettes as adapter test fixtures | Accepted |
 | 0018 | Scheduled contract check against live boards | Accepted |
+| 0019 | Add aggregator feeds as a second source class | Accepted |
+| 0020 | Route raw storage by source class | Accepted |
 
 ## Pending
 
 Decisions identified but not concluded.
 
-- Platform adapter order after the vertical slice. Blocked on feasibility spikes for Ashby, Workable, SmartRecruiters, JazzHR and Manatal.
+- Platform adapter order after the vertical slice. Blocked on feasibility spikes.
 - Reuse boundary against the LinkedIn pipeline in fyp-career-guidance: which components are adopted, which are deliberately not.
 - Description matching, deferred by ADR-0016 until field coverage per platform is known.
+- Deduplication across source classes, and the employer alias map ADR-0019 makes necessary.
+- Whether Rozee.pk is scraped, which is blocked on reading its robots.txt.
+- A second private repository for aggregator data, deferred by ADR-0020.
 - Which skills the project needs, and whether the session log becomes a skill with dynamic context injection.
 - Whether an AGENTS.md symlink is added for Antigravity. Claude Code reads CLAUDE.md only, with no fallback, so CLAUDE.md is the real file either way.
 
@@ -44,6 +49,16 @@ Decisions identified but not concluded.
 Several records cite files from the operator's LinkedIn collection pipeline, which lives in a private repository. Those citations record where a pattern came from and are not links a reader can follow. They are kept because the provenance is what makes the reasoning checkable.
 
 A record's factual error may be corrected in place, marked as a correction with its date, as in ADR-0005. A change of decision may not: that is a new record superseding the old one.
+
+**Supersession is the last resort, not the default.** Full criteria, with the five cases and the operational test, are in the operator's cross-project decision record standard. The short version: before stamping a record superseded, ask whether any decision in it is still in force. If yes, it is not a supersession. A record whose clause was reversed stays accepted and names the clause; a record that was merely built upon stays accepted and is marked extended.
+
+Records 0004 and 0008 were wrongly stamped superseded on 2026-09-09 and corrected on 2026-09-10. Both remained fully in force, and one held a decision the architecture still depends on.
+
+No record currently carries superseded status.
+
+**Changes that are not supersessions are logged in a `## Changes` table at the bottom of the record.** Six records carry one, all dated 2026-09-10, all recording the correction of a wrongly claimed supersession.
+
+A record stays under 200 lines, and its Changes table stays under eight rows. Reaching eight rows is itself a supersession trigger: a decision amended eight times is no longer the decision that was made.
 
 ## Review
 

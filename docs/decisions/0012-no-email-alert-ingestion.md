@@ -38,7 +38,7 @@ Most of the proposed query templates target worldwide-remote postings. Prior mea
 
 Chosen option: "alerts read by hand, outside the pipeline, if wanted at all".
 
-We will not build email ingestion, IMAP polling, or a search-alert path into the pipeline. The source registry is the source list. If reach beyond the registry is wanted later, it will be satisfied by alerts read by hand, outside the codebase.
+We will not build email ingestion, IMAP polling, or a search-alert path into the pipeline. If reach beyond the registry is wanted later, it will be satisfied by alerts read by hand, outside the codebase.
 
 ### Consequences
 
@@ -57,3 +57,11 @@ If the operator finds a suitable role through a channel outside the registry, th
 ## Pros and Cons of the Options
 
 ## More Information
+
+The decision holds unchanged: no email ingestion, no IMAP, no search-alert path. Adding aggregator APIs does not reverse it. An aggregator API is a documented endpoint returning structured data, not an inbox full of HTML whose structure is outside anyone's control. Aggregator sources are ADR-0019.
+
+## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-09-10 | Decision Outcome contained "The source registry is the source list." Removed | That sentence was never part of the decision, only a description of the situation at the time. Research pass 0003 made it false by identifying six aggregator feeds that pass every gate |

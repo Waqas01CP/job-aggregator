@@ -58,4 +58,8 @@ The run log records, per board, postings fetched and postings dropped by each ru
 
 Does not apply to search APIs or aggregators, which are out of scope as sources per ADR-0012.
 
-**Correction, 2026-09-10.** Consequences originally read "ADR-0008 and ADR-0016 govern". ADR-0008 was already superseded by ADR-0016 when this record was written, so naming both implied a superseded record still governs. Corrected to name ADR-0016 only. No decision changed.
+## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-09-10 | Consequences said "ADR-0008 and ADR-0016 govern", now names ADR-0016 only | ADR-0008 was already extended by ADR-0016 when this was written, so naming both implied a retired record still governed |

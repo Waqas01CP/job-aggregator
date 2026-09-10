@@ -1,5 +1,5 @@
 ---
-status: superseded by ADR-0016
+status: accepted
 date: 2026-09-09
 decision-makers: Waqas Sharif
 # consulted:
@@ -56,4 +56,10 @@ Review the unmatched bucket weekly for the first month. A role in it that should
 
 ## More Information
 
-Superseded by ADR-0016, which retains this classification and adds versioning of the title pool.
+Extended by ADR-0016, which keeps this three-way classification unchanged and adds versioning of the title pool, a rule to store every field a board returns, and the deferral of description matching.
+
+## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-09-10 | Status was `superseded by ADR-0016`, now `accepted, extended by 0016` | ADR-0016 reverses nothing here and builds on it. Marking this superseded retired a classification that is fully in force and is the mechanism ADR-0016 depends on |
