@@ -1,0 +1,49 @@
+# Secrets. Never commit any of these.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets.json
+credentials.json
+
+# Raw third-party payloads. ADR-0011 keeps description text out of this
+# repository entirely. Sanitised cassettes under tests/cassettes/ are
+# deliberately NOT ignored: they must be committed so tests run in a
+# clean checkout. See ADR-0017.
+*.html
+*.eml
+*.har
+payloads/
+raw_responses/
+
+# Pipeline data. Lives on the data branch, never on main. See ADR-0002.
+data/
+*.jsonl
+
+# Commit message drafts. Local scratch, never committed.
+.commitmsg/
+
+# Generated map output, before it is compared. The committed MAP.md is
+# checked in; this is the scratch file the pre-commit hook writes.
+MAP.generated.md
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Editors and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+
+# Obsidian, in case the vault convention leaks in
+.obsidian/

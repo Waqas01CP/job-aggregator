@@ -1,0 +1,33 @@
+# Line endings are LF everywhere in this repository, on every platform.
+#
+# Two things break otherwise, both silently and both only after a clone,
+# which is the worst time to find out.
+#
+# MAP.md is generated with LF and compared byte for byte by the
+# pre-commit hook. Checked out as CRLF it never matches, so the gate
+# blocks every commit while reporting a stale map that is in fact
+# current. That is a check reporting a cause it has not tested.
+#
+# .githooks/pre-commit is a bash script. Checked out as CRLF it fails on
+# the shebang, or throws "\r: command not found". The hook then does not
+# run at all, and a hook that does not run looks exactly like a hook
+# that passed.
+
+* text=auto eol=lf
+
+*.md   text eol=lf
+*.py   text eol=lf
+*.json text eol=lf
+*.yml  text eol=lf
+*.yaml text eol=lf
+*.txt  text eol=lf
+
+.gitignore     text eol=lf
+.gitattributes text eol=lf
+.githooks/*    text eol=lf
+
+# Binary, never converted.
+*.png binary
+*.jpg binary
+*.pdf binary
+*.zip binary
