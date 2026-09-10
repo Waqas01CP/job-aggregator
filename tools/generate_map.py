@@ -49,7 +49,7 @@ DECISIONS_DIR = REPO_ROOT / "docs" / "decisions"
 FRONTMATTER_RE = re.compile(r"\A---\r?\n(.*?)\r?\n---\r?\n", re.DOTALL)
 H1_RE = re.compile(r"^#\s+(.+?)\s*$", re.MULTILINE)
 
-VALID_TYPES = {"explanation", "reference", "how-to", "decision", "entry"}
+VALID_TYPES = {"instruction", "explanation", "reference", "how-to", "decision", "research", "entry"}
 
 
 class MapError(Exception):
@@ -180,16 +180,19 @@ def render(entries):
         "It cannot describe a file that does not exist and cannot omit one that",
         "does. The pre-commit hook fails the commit when it is stale.",
         "",
-        "**Types.** `entry` is where to start. `explanation` is why the system is",
+        "**Types.** `entry` is where to start. `instruction` is how an agent",
+        "should work in this repository. `explanation` is why the system is",
         "as it is. `reference` is what things are, opened while working.",
         "`how-to` is how to accomplish a task. `decision` is one recorded choice.",
+        "`research` is a dated snapshot of what was found, valid as a record",
+        "of that moment even once its findings go stale.",
         "",
         "Relations between decision records live inside those records as",
         "supersedes and superseded-by links, deliberately not duplicated here.",
         "",
     ]
 
-    order = ["entry", "explanation", "how-to", "reference", "decision"]
+    order = ["entry", "instruction", "explanation", "how-to", "reference", "research", "decision"]
     for file_type in order:
         rows = by_type.pop(file_type, [])
         if not rows:

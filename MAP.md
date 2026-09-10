@@ -10,9 +10,12 @@ This file is generated from the frontmatter of the files it lists.
 It cannot describe a file that does not exist and cannot omit one that
 does. The pre-commit hook fails the commit when it is stale.
 
-**Types.** `entry` is where to start. `explanation` is why the system is
+**Types.** `entry` is where to start. `instruction` is how an agent
+should work in this repository. `explanation` is why the system is
 as it is. `reference` is what things are, opened while working.
 `how-to` is how to accomplish a task. `decision` is one recorded choice.
+`research` is a dated snapshot of what was found, valid as a record
+of that moment even once its findings go stale.
 
 Relations between decision records live inside those records as
 supersedes and superseded-by links, deliberately not duplicated here.
@@ -22,6 +25,12 @@ supersedes and superseded-by links, deliberately not duplicated here.
 | File | Holds | Status |
 | --- | --- | --- |
 | `README.md` | A scheduled pipeline that polls employer applicant-tracking-system job boards, deduplicates and filters the results against fixed rules, and writes what survives to a table for review. | current |
+
+## instruction
+
+| File | Holds | Status |
+| --- | --- | --- |
+| `CLAUDE.md` | How to work in this repository. Scope floor, conventions, commands. Read before touching anything. | current |
 
 ## explanation
 
@@ -35,6 +44,15 @@ supersedes and superseded-by links, deliberately not duplicated here.
 | File | Holds | Status |
 | --- | --- | --- |
 | `docs/decisions/README.md` | Every architecture decision made on this project, one file per decision, with the reasoning that produced it and the conditions that would show it was wrong. | current |
+| `docs/research/README.md` | Dated snapshots of what was found and when. Numbered by the order the pass was run, so a later reader knows what was known at each point. | current |
+
+## research
+
+| File | Holds | Status |
+| --- | --- | --- |
+| `docs/research/0001-architecture-documentation.md` | Pass 0001. Architecture documentation formats. Produced the arc42 structure, C4 in Mermaid, and the MADR 4.0.0 record format with two deviations. | current |
+| `docs/research/0002-agentic-implementation.md` | Pass 0002. Agentic implementation flow. Thinnest of the three passes; read the sourcing caveat before relying on it. | current |
+| `docs/research/0003-job-source-survey.md` | Pass 0003. Survey of free, pollable job board and aggregator APIs. Six keyless feeds recommended; Rozee.pk has no API path. | current |
 
 ## decision
 
@@ -43,11 +61,11 @@ supersedes and superseded-by links, deliberately not duplicated here.
 | `docs/decisions/0001-two-layer-store.md` | ADR-0001: Two-layer store, raw and filtered | accepted |
 | `docs/decisions/0002-raw-layer-on-git-data-branch.md` | ADR-0002: Raw layer on a git data branch, not a hosted database | accepted |
 | `docs/decisions/0003-append-deltas-not-snapshots.md` | ADR-0003: Append deltas, not snapshots | accepted |
-| `docs/decisions/0004-airtable-as-display-layer.md` | ADR-0004: Airtable as the filtered display layer | superseded by ADR-0014 |
+| `docs/decisions/0004-airtable-as-display-layer.md` | ADR-0004: Airtable as the filtered display layer | accepted |
 | `docs/decisions/0005-fetch-complete-board-output.md` | ADR-0005: Fetch complete board output, filter locally | accepted |
 | `docs/decisions/0006-twice-daily-fetch-cadence.md` | ADR-0006: Twice-daily fetch cadence | accepted |
 | `docs/decisions/0007-recency-as-a-view.md` | ADR-0007: Recency is a view, not an ingest filter | accepted |
-| `docs/decisions/0008-title-matching-strategy.md` | ADR-0008: Title matching by allowlist, blocklist, and unmatched flag | superseded by ADR-0016 |
+| `docs/decisions/0008-title-matching-strategy.md` | ADR-0008: Title matching by allowlist, blocklist, and unmatched flag | accepted |
 | `docs/decisions/0009-vertical-slice-first.md` | ADR-0009: Vertical slice first, adapters incremental | accepted |
 | `docs/decisions/0010-no-relevance-scoring.md` | ADR-0010: No relevance scoring, ranking, or model-based screening | accepted |
 | `docs/decisions/0011-public-repository-metadata-only.md` | ADR-0011: Public repository, metadata only on the data branch | accepted |
@@ -58,5 +76,7 @@ supersedes and superseded-by links, deliberately not duplicated here.
 | `docs/decisions/0016-title-only-versioned-pool.md` | ADR-0016: Title-only matching against a versioned title pool | accepted |
 | `docs/decisions/0017-sanitised-cassette-fixtures.md` | ADR-0017: Sanitised cassettes as adapter test fixtures | accepted |
 | `docs/decisions/0018-scheduled-contract-check.md` | ADR-0018: Scheduled contract check against live boards | accepted |
+| `docs/decisions/0019-add-aggregator-source-class.md` | ADR-0019: Add aggregator feeds as a second source class | accepted |
+| `docs/decisions/0020-route-raw-storage-by-source-class.md` | ADR-0020: Route raw storage by source class | accepted |
 
-Files listed: 22
+Files listed: 29
