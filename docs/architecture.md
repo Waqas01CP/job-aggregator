@@ -1,3 +1,21 @@
+---
+type: explanation
+description: SUPERSEDED. A rejected design, kept as the record of what was turned down and why. Never implement from this file.
+status: superseded
+---
+
+> **SUPERSEDED 2026-09-10 by [architecture-2.0.md](architecture-2.0.md).**
+>
+> This document is kept as the record of a rejected design. It is not the architecture of this project and must not be implemented.
+>
+> It was written against a different premise: that sources must be discovered, that postings need relevance scoring, and that a Postgres canonical store with a monitoring stack was warranted. Each of those was subsequently rejected on evidence. Specifically, it specifies a weighted 0-to-100 scoring engine with a shortlist threshold, which ADR-0010 prohibits; a Postgres store plus an Airtable mirror, superseded by the three-layer design in ADR-0013; Telegram alerting and a Prometheus and Grafana monitoring stack, which exceed the notification scope floor; an optional web UI, which ADR-0010 prohibits; and a Phase 0 source-discovery exercise targeting LinkedIn, Indeed, Glassdoor and AngelList, which duplicates an already-completed and already-paid-for ATS registry and targets sources that registry retired.
+>
+> It also carries none of the four hard filters this project requires and treats publication date as optional, which would make the project's binding measure uncomputable.
+>
+> Two things in it survived into the current design and are credited there: GitHub Actions as the scheduler, and the prohibition on committing raw payloads.
+
+---
+
 # Architecture Blueprint — Job Aggregator & Triage Pipeline (Final, Implementation-Ready)
 
 > Purpose: complete, production-grade architecture & blueprint that an experienced engineer — or an automated code generator like OpenAI Codex — can use to implement the system end-to-end.
