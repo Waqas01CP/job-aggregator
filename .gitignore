@@ -17,9 +17,17 @@ credentials.json
 payloads/
 raw_responses/
 
-# Pipeline data. Lives on the data branch, never on main. See ADR-0002.
+# Pipeline data. Lives on the data branch or locally, never on main.
+# ADR-0002 and ADR-0020.
 data/
 *.jsonl
+
+# Aggregator-sourced raw files. ADR-0020 keeps these off the public
+# repository entirely, because Jobicy and Remotive prohibit
+# redistribution and a branch inherits its repository's visibility.
+# One file per source, so provenance is the filename and no routing
+# bug can misfile a row into a published branch.
+fetch-all/
 
 # Commit message drafts. Local scratch, never committed.
 .commitmsg/

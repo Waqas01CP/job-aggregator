@@ -58,7 +58,7 @@ These are not negotiable and are not time compromises. Each stands on its own re
 | No scoring, ranking, or model-based classification of any posting | ADR-0010 |
 | No user interface, dashboard, or web app | ADR-0010 |
 | No notification beyond a table the operator opens | ADR-0014 |
-| No paid data-acquisition runs | Section 11 |
+| No paid data-acquisition runs | ADR-0019, section 11 |
 | No email or search-alert ingestion | ADR-0012 |
 
 ### Cost
@@ -79,7 +79,13 @@ Checked September 2026. Re-verify anything older than six months.
 
 ### Source list
 
-The 53 employer boards with resolvable handles recorded in `Operating Plan\Reference\Jobs\Apify Run Log and ATS Registry.md`. Coverage is defined by that list and extended only by adding to it.
+Two classes.
+
+**Employer ATS boards.** The 53 with resolvable handles recorded in the operator's registry. One endpoint returns one employer.
+
+**Aggregator feeds.** Six keyless, dated endpoints identified by research pass 0003: Jobicy, Himalayas, Arbeitnow, RemoteOK, We Work Remotely, ai-jobs.net. One endpoint returns many employers. ADR-0019.
+
+Coverage is defined by those two lists and extended only by adding to them. Employer is always read from the response payload, never derived from a configuration entry, which is what lets one model serve both shapes.
 
 ---
 
@@ -90,20 +96,23 @@ flowchart TD
     OP["Operator<br/><i>person</i>"]
     SYS["Job Aggregator<br/><i>scheduled pipeline</i>"]
     ATS["Employer ATS boards<br/><i>53 public JSON endpoints</i>"]
+    AGG["Aggregator feeds<br/><i>6 keyless public endpoints</i>"]
     AT["Airtable<br/><i>display and manual status</i>"]
     RESUME["Resume workflow<br/><i>separate, out of scope</i>"]
 
     ATS -->|"job postings"| SYS
+    AGG -->|"job postings"| SYS
     SYS -->|"filtered rows"| AT
     AT -->|"reads, sets status"| OP
-    SYS -->|"outcomes, logs, raw data"| GIT["Data branch<br/><i>this repository</i>"]
+    SYS -->|"ATS rows, outcomes, logs"| GIT["Data branch<br/><i>public, this repository</i>"]
+    SYS -->|"aggregator rows"| LOCAL["Local files<br/><i>never pushed</i>"]
     AT -->|"outcomes"| SYS
     OP -->|"job description"| RESUME
 ```
 
 **Inside the boundary:** fetching, normalising, deduplicating, filtering, writing, scheduling, and the outcome sweep.
 
-**Outside, deliberately:** application tailoring, application submission, follow-up tracking, any employer not in the registry, and any judgement about whether a role is worth applying to.
+**Outside, deliberately:** application tailoring, application submission, follow-up tracking, any employer reachable through neither source class, and any judgement about whether a role is worth applying to.
 
 ---
 
@@ -119,7 +128,9 @@ Five decisions shape everything else. Reasoning is in the records named, not her
 
 **Recency is presentation, not ingestion.** Nothing is filtered on publication date at fetch time, so a missed run costs latency rather than data. ADR-0007.
 
-**Ship a slice, then add adapters.** Greenhouse and Lever first, eleven boards, everything else running end to end. Adapters are additive and carry little design risk; the structure carries it all. ADR-0009.
+**Ship a slice, then add adapters.** Greenhouse and Lever first, eleven boards, plus Himalayas on condition so both source shapes are proven at once. Adapters are additive and carry little design risk; the structure carries it all. ADR-0009, ADR-0019.
+
+**Storage routes by source class.** ATS rows go to the public data branch. Aggregator rows stay local, because two feeds prohibit redistribution and a branch inherits its repository's visibility. ADR-0020.
 
 ---
 
@@ -175,11 +186,11 @@ flowchart LR
     HTTP["Shared HTTP module<br/><i>retry, budget, breaker</i>"] --> ADAPT
 ```
 
-**Platform adapters.** One per ATS platform, not per employer. Each carries only that platform's parsing. All fetch behaviour lives in the shared HTTP module. Copying retry logic into an adapter is the failure this split exists to prevent.
+**Platform adapters.** One per platform, never per employer. Greenhouse is one adapter serving nine boards; Himalayas is one adapter serving every employer it indexes. Each carries only that platform's parsing. All fetch behaviour lives in the shared HTTP module. Copying retry logic into an adapter is the failure this split exists to prevent.
 
-**Normaliser.** Maps a platform's response onto one row shape. Records which field supplied the ordering date, so a first-seen fallback is never mistaken for a publication date.
+**Normaliser.** Maps a platform's response onto one row shape. Reads employer from the payload, never from the config. Records which field supplied the ordering date, so a first-seen fallback is never mistaken for a publication date. Records the source, because ADR-0020 routes storage by it.
 
-**Deduplicator.** Employer plus title plus publication date. Not row identity: 20 to 30 percent of harvested rows are one job posted to several cities.
+**Deduplicator.** Employer plus title plus publication date. Not row identity: 20 to 30 percent of harvested rows are one job posted to several cities. Must also work across source classes, since Arbeitnow indexes Greenhouse and SmartRecruiters, so the same posting can arrive twice. That requires an employer alias map, since an aggregator's employer string will differ from the employer's own.
 
 **Filter chain.** Ordered cheapest disqualifier first: expiry, location, stated experience, annotation vendors, then title classification. Each drop records its rule.
 
@@ -237,11 +248,13 @@ Fetch one response per platform. Fingerprint the fields each adapter consumes: p
 
 **Schedules:** fetch twice daily, early PKT morning and early PKT evening; sweep weekly; contract check scheduled separately.
 
-**Branches:** `main` holds code and documentation. A dedicated data branch holds raw, filtered, seen identifiers, outcomes, fingerprints and run logs. The data branch is orphan, with its own layout, and is never checked out into `main`'s working tree. This deliberately avoids the stash-and-restore sequence that the LinkedIn pipeline in `fyp-career-guidance` needs because its data directory is ignored on one branch and tracked on another.
+**Branches:** `main` holds code and documentation. A dedicated orphan data branch holds ATS-sourced rows, filtered rows, seen identifiers, outcomes, fingerprints and run logs. It is never checked out into `main`'s working tree, which deliberately avoids the stash-and-restore sequence the LinkedIn pipeline in `fyp-career-guidance` needs because its data directory is ignored on one branch and tracked on another.
+
+**Local, never pushed:** aggregator-sourced rows, one file per source under `fetch-all/`. `fetch-all/himalayas.json`, `fetch-all/jobicy.json`. Provenance is the filename, so no routing bug can misfile a row. ADR-0020.
 
 **Secrets:** the repository token, and an Airtable personal access token stored as a GitHub secret. No other credentials exist in the system. ADR-0012 keeps it that way.
 
-**Local:** no component runs on the operator's machine. Nothing depends on a laptop being on.
+**Local:** the fetch runs unattended in Actions and depends on no laptop being on. Aggregator raw files are the exception: they exist only on the operator's machine.
 
 ---
 
@@ -280,11 +293,11 @@ Index only. Reasoning lives in `docs/decisions/` and is never restated here.
 | 0001 | Two-layer store, raw and filtered | Accepted |
 | 0002 | Raw layer on a git data branch, not a hosted database | Accepted |
 | 0003 | Append deltas, not snapshots | Accepted |
-| 0004 | Airtable as the filtered display layer | Superseded by 0014 |
+| 0004 | Airtable as the filtered display layer | Accepted, one clause reversed by 0014 |
 | 0005 | Fetch complete board output, filter locally | Accepted |
 | 0006 | Twice-daily fetch cadence | Accepted |
 | 0007 | Recency is a view, not an ingest filter | Accepted |
-| 0008 | Title matching by allowlist, blocklist, and unmatched flag | Superseded by 0016 |
+| 0008 | Title matching by allowlist, blocklist, and unmatched flag | Accepted, extended by 0016 |
 | 0009 | Vertical slice first, adapters incremental | Accepted |
 | 0010 | No relevance scoring, ranking, or model-based screening | Accepted |
 | 0011 | Public repository, metadata only on the data branch | Accepted |
@@ -295,6 +308,8 @@ Index only. Reasoning lives in `docs/decisions/` and is never restated here.
 | 0016 | Title-only matching against a versioned title pool | Accepted |
 | 0017 | Sanitised cassettes as adapter test fixtures | Accepted |
 | 0018 | Scheduled contract check against live boards | Accepted |
+| 0019 | Add aggregator feeds as a second source class | Accepted |
+| 0020 | Route raw storage by source class | Accepted |
 
 ---
 
@@ -352,7 +367,15 @@ Each of these is a check that can fail. A check nobody has seen fail is not a ch
 
 **Title-only matching misses roles.** A posting titled "Software Engineer" whose description describes agentic work is caught by a manual full-text search and missed here. The unmatched bucket and the `rejected_pipeline` outcome reasons are the only signals, so both must be reviewed rather than merely recorded.
 
+**Aggregator rows have no offsite copy.** ADR-0020 keeps them local, so a machine failure loses them permanently. A board only returns what is currently open, so the history cannot be rebuilt. Accepted deliberately; the mitigation is the deferred private repository.
+
+**Aggregator terms may change.** Jobicy and Remotive already restrict redistribution. Quotas and clauses recorded in research 0003 were accurate on 2026-09-10 only.
+
+**Karachi on-site coverage is essentially absent.** None of the six aggregators carry it, and Rozee.pk, the dominant Pakistani board, exposes no API of any kind. Its robots.txt has not been read, so even the scraping option is unassessed.
+
 ### Debt taken deliberately
+
+**No paid data acquisition.** Four Apify censuses cost $2.92 in total, of which $0.73 bought six technical rows out of sixty because one query used a bare seniority term. The pool was declared exhausted and no further paid run is commissioned without a change in the operator's profile. Free sources only, which is why research pass 0003 assessed every candidate on cost first.
 
 **Tier D is excluded from the slice** and may stay excluded. Nine adapters for 17 boards, including the two hardest platforms.
 
@@ -368,7 +391,8 @@ Each of these is a check that can fail. A check nobody has seen fail is not a ch
 
 | Term | Meaning |
 |---|---|
-| **Adapter** | Code for one ATS platform, not one employer |
+| **Adapter** | Code for one platform, never one employer. Greenhouse is one adapter serving nine boards |
+| **Aggregator** | A source whose single endpoint returns postings from many employers |
 | **ATS** | Applicant tracking system. The software an employer's careers page runs on |
 | **Backfill** | Postings already open when the pipeline first polled their board. Excluded from Measure A |
 | **Board** | One employer's job list on an ATS platform |
@@ -381,6 +405,7 @@ Each of these is a check that can fail. A check nobody has seen fail is not a ch
 | **First-seen** | When the pipeline first observed a posting. Distinct from its publication date |
 | **Raw layer** | Every posting fetched, unfiltered, permanent |
 | **Slug** | The identifier an ATS uses for an employer in its URL |
+| **Source class** | Employer ATS board or aggregator feed. Determines where raw rows are stored |
 | **Slice** | The Greenhouse and Lever vertical, live end to end before other adapters exist |
 | **Sweep** | Weekly job reading outcomes from Airtable, persisting them, then deleting the rows |
 | **Unmatched** | A posting whose title matched neither the allowlist nor the blocklist. Shown, marked, separated |
