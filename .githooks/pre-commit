@@ -1,0 +1,133 @@
+#!/usr/bin/env bash
+# Pre-commit gate. Enable once per clone:
+#
+#   git config core.hooksPath .githooks
+#
+# Two checks, both of which must be able to fail. Prove each one by
+# giving it the case built to defeat it before trusting it.
+
+set -e
+
+fail() {
+  echo ""
+  echo "COMMIT BLOCKED: $1"
+  echo ""
+  exit 1
+}
+
+# ---------------------------------------------------------------------
+# 1. Raw payloads must never reach this repository. ADR-0011.
+#
+# .gitignore already excludes these extensions, but an explicit
+# "git add -f" bypasses it. This does not.
+# ---------------------------------------------------------------------
+
+staged=$(git diff --cached --name-only --diff-filter=ACM)
+
+for file in $staged; do
+  case "$file" in
+    *.html|*.eml|*.har)
+      fail "raw payload file staged: $file
+       ADR-0011 keeps employer description text out of this repository."
+      ;;
+  esac
+done
+
+# ---------------------------------------------------------------------
+# 2. Cassettes must be sanitised. ADR-0017.
+#
+# A committed cassette carries a real board response. Description fields
+# are stripped and replaced with a fixed placeholder before commit.
+# ---------------------------------------------------------------------
+
+for file in $staged; do
+  case "$file" in
+    tests/cassettes/*)
+      if grep -qiE '"(description|content|job_description|body)"[[:space:]]*:[[:space:]]*"' "$file" 2>/dev/null; then
+        if ! grep -q 'STRIPPED' "$file" 2>/dev/null; then
+          fail "unsanitised cassette staged: $file
+       Strip description fields and replace each with the STRIPPED
+       placeholder. ADR-0017."
+        fi
+      fi
+      ;;
+  esac
+done
+
+# ---------------------------------------------------------------------
+# 3. No Obsidian wikilinks. This repository is public.
+#
+# [[Some File]] renders as literal text on GitHub, points at a file that
+# is not in the repository, and leaks the operator's private vault
+# filenames. Seven of these were found and removed by hand; this gate
+# exists because a hand sweep cannot prove it found them all.
+# ---------------------------------------------------------------------
+
+for file in $staged; do
+  case "$file" in
+    *.md)
+      if grep -qE '\[\[[^]]+\]\]' "$file" 2>/dev/null; then
+        fail "Obsidian wikilink staged in: $file
+       This repository is public. State the substance inline, or use a
+       relative markdown link to a file that is actually in the repo."
+      fi
+      ;;
+  esac
+done
+
+# ---------------------------------------------------------------------
+# 4. The map must not be stale. It is generated, not written.
+#
+# This is the gate that makes the same-operation rule real. Without it
+# the rule is advice, and advice about updating an index is the advice
+# most reliably forgotten.
+#
+# Python is resolved by RUNNING it, not by command -v. On Windows,
+# command -v matches the App Execution Alias stub in WindowsApps, which
+# exits non-zero without executing anything. An earlier version of this
+# hook read that as "map is stale" and announced a cause it had not
+# tested. Worse, had the stub exited zero, the gate would have passed
+# while checking nothing.
+#
+# A missing Python is a hard failure, never a skip. A check that is
+# silently skipped is indistinguishable from a check that passed.
+# ---------------------------------------------------------------------
+
+PY=""
+for candidate in python3 python py; do
+  if command -v "$candidate" >/dev/null 2>&1; then
+    if "$candidate" -c "import sys; sys.exit(0)" >/dev/null 2>&1; then
+      PY="$candidate"
+      break
+    fi
+  fi
+done
+
+if [ -z "$PY" ]; then
+  fail "no working Python found, so MAP.md could not be verified.
+       Tried python3, python, py. On Windows, 'python' may resolve to the
+       Microsoft Store alias stub, which is not a Python.
+       Install Python or put a real one on the PATH that git hooks see.
+       This is a hard failure on purpose: a skipped check is not a check."
+fi
+
+set +e
+"$PY" tools/generate_map.py --check
+map_status=$?
+set -e
+
+case "$map_status" in
+  0)
+    ;;
+  2)
+    fail "MAP.md is stale or missing.
+       Run: $PY tools/generate_map.py
+       Then stage MAP.md and commit again."
+    ;;
+  *)
+    fail "the map check failed for a reason other than staleness.
+       Its output is above. Fix that, do not regenerate blindly."
+    ;;
+esac
+
+exit 0
