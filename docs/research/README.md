@@ -13,10 +13,13 @@ A research record is never edited to reflect a later finding. A new pass gets a 
 | 0001 | Architecture documentation | 2026-09-09 | `0001-architecture-documentation.md`, plus the operator's cross-project standards on arc42, C4, Diataxis and the MADR 4.0.0 record format used in `docs/decisions/`. | complete |
 | 0002 | Agentic implementation flow | 2026-09-10 | `0002-agentic-implementation.md`, plus the operator's cross-project standard on instruction files, skills, subagents, verification gates and briefs, plus ADR-0017 and ADR-0018. | complete, **thinly sourced, read its caveat first** |
 | 0003 | Job source survey | 2026-09-10 | `0003-job-source-survey.md`, plus ADR-0019 and ADR-0020. | complete |
+| 0004 | Project context documentation | 2026-09-11 | `0004-project-context-documentation.md`, plus ADR-0022, ADR-0023 and ADR-0024. Corrects pass 0002 on instruction-file length. | complete |
 
 Passes 0001 and 0002 also produced cross-project standards, which live outside this repository because their findings apply to every project rather than this one. The records here carry the evidence and the source ratings; the standards carry the conclusions.
 
-**Every pass records its own sources with a quality rating**, and records where a source turned out to be unreliable. Two passes contain an error found and corrected mid-pass. Those are kept deliberately: a research record that reports only what survived is not a record of the research.
+**Every pass records its own sources with a quality rating**, and records where a source turned out to be unreliable. Three passes contain an error found and corrected mid-pass. Those are kept deliberately: a research record that reports only what survived is not a record of the research.
+
+**Pass 0004 found its strongest source was not published practice but the operator's own prior repository.** Where that happens, the record says so plainly rather than dressing a port up as a discovery.
 
 ## Residuals, permanent rather than pending
 

@@ -17,7 +17,7 @@ Records are written at the moment a decision concludes. An accepted record is ne
 | 0005 | Fetch complete board output, filter locally | Accepted |
 | 0006 | Twice-daily fetch cadence | Accepted |
 | 0007 | Recency is a view, not an ingest filter | Accepted |
-| 0008 | Title matching by allowlist, blocklist, and unmatched flag | Accepted, extended by 0016 |
+| 0008 | Title matching by allowlist, blocklist, and unmatched flag | Superseded by 0021 |
 | 0009 | Vertical slice first, adapters incremental | Accepted |
 | 0010 | No relevance scoring, ranking, or model-based screening | Accepted |
 | 0011 | Public repository, metadata only on the data branch | Accepted |
@@ -25,11 +25,15 @@ Records are written at the moment a decision concludes. An accepted record is ne
 | 0013 | Three layers, filtered set persisted independently of the display | Accepted |
 | 0014 | Weekly status sweep, with a four-status outcome taxonomy | Accepted |
 | 0015 | Two measures, and the archive protocol | Accepted |
-| 0016 | Title-only matching against a versioned title pool | Accepted |
+| 0016 | Title-only matching against a versioned title pool | Accepted, one clause reversed by 0021 |
 | 0017 | Sanitised cassettes as adapter test fixtures | Accepted |
 | 0018 | Scheduled contract check against live boards | Accepted |
 | 0019 | Add aggregator feeds as a second source class | Accepted |
 | 0020 | Route raw storage by source class | Accepted |
+| 0021 | Allowlist-only title matching, with normalisation | Accepted |
+| 0022 | Document authority order | Accepted |
+| 0023 | Context artifact set and onboarding order | Accepted |
+| 0024 | Session log format | Accepted |
 
 ## Pending
 
@@ -39,7 +43,9 @@ Decisions identified but not concluded.
 - Reuse boundary against the LinkedIn pipeline in fyp-career-guidance: which components are adopted, which are deliberately not.
 - Description matching, deferred by ADR-0016 until field coverage per platform is known.
 - Deduplication across source classes, and the employer alias map ADR-0019 makes necessary.
-- Whether Rozee.pk is scraped, which is blocked on reading its robots.txt.
+- Whether Rozee.pk is added as a source. robots.txt permits the job paths and the terms carry no automated-access clause; a sitemap index publishes job URLs daily with the title in the slug.
+- An end-state document stating what the finished system is. Confirmed genuinely open by ADR-0023: no prior art exists in either project.
+- An in-flight register separate from `STATE.md`, wanted once work is in flight.
 - A second private repository for aggregator data, deferred by ADR-0020.
 - Which skills the project needs, and whether the session log becomes a skill with dynamic context injection.
 - Whether an AGENTS.md symlink is added for Antigravity. Claude Code reads CLAUDE.md only, with no fallback, so CLAUDE.md is the real file either way.
@@ -54,7 +60,7 @@ A record's factual error may be corrected in place, marked as a correction with 
 
 Records 0004 and 0008 were wrongly stamped superseded on 2026-09-09 and corrected on 2026-09-10. Both remained fully in force, and one held a decision the architecture still depends on.
 
-No record currently carries superseded status.
+ADR-0008 was then genuinely superseded by ADR-0021 on 2026-09-11, this time by the criteria: more than half its Decision Outcome was replaced. Its Changes table records both events, which is the point of keeping one.
 
 **Changes that are not supersessions are logged in a `## Changes` table at the bottom of the record.** Six records carry one, all dated 2026-09-10, all recording the correction of a wrongly claimed supersession.
 

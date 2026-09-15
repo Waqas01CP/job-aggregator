@@ -288,6 +288,8 @@ Fetch one response per platform. Fingerprint the fields each adapter consumes: p
 
 Index only. Reasoning lives in `docs/decisions/` and is never restated here.
 
+**On conflict between documents, ADR-0022 sets the order of authority.** This document sits below the decision records and above the reference material.
+
 | ID | Decision | Status |
 |----|----------|--------|
 | 0001 | Two-layer store, raw and filtered | Accepted |
@@ -297,7 +299,7 @@ Index only. Reasoning lives in `docs/decisions/` and is never restated here.
 | 0005 | Fetch complete board output, filter locally | Accepted |
 | 0006 | Twice-daily fetch cadence | Accepted |
 | 0007 | Recency is a view, not an ingest filter | Accepted |
-| 0008 | Title matching by allowlist, blocklist, and unmatched flag | Accepted, extended by 0016 |
+| 0008 | Title matching by allowlist, blocklist, and unmatched flag | Superseded by 0021 |
 | 0009 | Vertical slice first, adapters incremental | Accepted |
 | 0010 | No relevance scoring, ranking, or model-based screening | Accepted |
 | 0011 | Public repository, metadata only on the data branch | Accepted |
@@ -305,11 +307,15 @@ Index only. Reasoning lives in `docs/decisions/` and is never restated here.
 | 0013 | Three layers, filtered set persisted independently | Accepted |
 | 0014 | Weekly status sweep, four-status outcome taxonomy | Accepted |
 | 0015 | Two measures, and the archive protocol | Accepted |
-| 0016 | Title-only matching against a versioned title pool | Accepted |
+| 0016 | Title-only matching against a versioned title pool | Accepted, one clause reversed by 0021 |
 | 0017 | Sanitised cassettes as adapter test fixtures | Accepted |
 | 0018 | Scheduled contract check against live boards | Accepted |
 | 0019 | Add aggregator feeds as a second source class | Accepted |
 | 0020 | Route raw storage by source class | Accepted |
+| 0021 | Allowlist-only title matching, with normalisation | Accepted |
+| 0022 | Document authority order | Accepted |
+| 0023 | Context artifact set and onboarding order | Accepted |
+| 0024 | Session log format | Accepted |
 
 ---
 
