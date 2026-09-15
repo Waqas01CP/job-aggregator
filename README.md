@@ -45,6 +45,27 @@ The hook blocks a commit that stages a raw payload, an unsanitised test fixture,
 
 Waqas Sharif. If something in this repository should not be here, open an issue and it will be removed.
 
-## Licence
+## Licence and scope
 
-Not yet chosen.
+The code and documentation in this repository are licensed under the MIT
+Licence. See `LICENSE`.
+
+**That licence covers the code and documentation only.** Job posting metadata
+is factual information about third-party job advertisements. It is not
+authored by this project and is not licensed by it.
+
+This project is not affiliated with, endorsed by, or connected to any employer,
+applicant tracking system, or job board named anywhere in it. It reads publicly
+accessible endpoints that those services publish for third-party use, at a low
+rate, for one person's own job search.
+
+The design deliberately keeps collected job data out of this repository.
+Employer description text is never stored here in any form, and data from
+sources whose terms restrict redistribution is never committed at all. See
+ADR-0011 and ADR-0020 in `docs/decisions/`.
+
+Anyone who forks this repository and uses it to collect, publish or
+redistribute job data does so on their own responsibility and is bound by the
+terms of whichever sources they poll, not by anything here.
+
+Nothing in this repository is legal advice.
