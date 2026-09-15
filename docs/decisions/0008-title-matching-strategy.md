@@ -1,5 +1,5 @@
 ---
-status: accepted
+status: superseded by ADR-0021
 date: 2026-09-09
 decision-makers: Waqas Sharif
 # consulted:
@@ -58,8 +58,11 @@ Review the unmatched bucket weekly for the first month. A role in it that should
 
 Extended by ADR-0016, which keeps this three-way classification unchanged and adds versioning of the title pool, a rule to store every field a board returns, and the deferral of description matching.
 
+**Superseded by ADR-0021.** The three-way classification is replaced by allowlist-only matching. The unmatched bucket duplicated a safety net ADR-0001 already provides, and filled the display with the finance and operations roles of every large employer polled. With unmatched rows dropped, the blocklist had nothing left to do.
+
 ## Changes
 
 | Date | Change | Reason |
 |---|---|---|
-| 2026-09-10 | Status was `superseded by ADR-0016`, now `accepted, extended by 0016` | ADR-0016 reverses nothing here and builds on it. Marking this superseded retired a classification that is fully in force and is the mechanism ADR-0016 depends on |
+| 2026-09-10 | Status was `superseded by ADR-0016`, now `accepted, extended by 0016` | ADR-0016 reverses nothing here and builds on it. Marking this superseded retired a classification that was fully in force and is the mechanism ADR-0016 depended on |
+| 2026-09-11 | Status now `superseded by ADR-0021` | ADR-0021 replaces the three-way classification with allowlist-only. Two of the three branches are removed, which is more than half the Decision Outcome. This is a genuine supersession, unlike the 2026-09-10 entry above |

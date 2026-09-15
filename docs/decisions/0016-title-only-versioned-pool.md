@@ -43,7 +43,7 @@ We will match on title only. We will store every field each board returns in the
 
 We will keep the title pool in a versioned file with dated changes, so any historical filter run can be reproduced.
 
-We will treat the unmatched bucket, retained from ADR-0008 and restated in this record, as the mechanism for extending the pool: a role appearing there that should have been applied to identifies a missing term.
+We will treat the drop log as the mechanism for extending the pool: a title appearing there that should have been matched identifies a missing term.
 
 Description matching is deferred, not rejected. It is revisited once field coverage per platform is known.
 
@@ -51,7 +51,7 @@ Description matching is deferred, not rejected. It is revisited once field cover
 
 The filter stays cheap and every match is explainable by naming a term.
 
-Some suitable roles are missed. The unmatched bucket and the `rejected_pipeline` outcome reasons are the only signals that will show this, so both must be reviewed rather than merely recorded.
+Some suitable roles are missed. The title drop log and the `rejected_pipeline` outcome reasons are the only signals that will show this, so both must be reviewed rather than merely recorded.
 
 Field coverage reporting costs nothing at logging time and answers the description-matching question before it is asked.
 
@@ -61,7 +61,7 @@ Adding description matching later would require revisiting ADR-0011, since descr
 
 ### Confirmation
 
-Review the unmatched bucket weekly for the first month. A role in it worth applying to means a missing term, and the term is added with the date. Field coverage per platform appears in the run log from the first run.
+Review the title drop log weekly for the first month. A title there worth applying to means a missing term, and the term is added to the pool with the date. Field coverage per platform appears in the run log from the first run.
 
 ## Pros and Cons of the Options
 
@@ -74,10 +74,15 @@ Bad, because it produces more weak matches before any evidence exists that title
 
 ## More Information
 
-Extends ADR-0008, whose allowlist, blocklist and unmatched-flagged classification is carried forward unchanged and is the mechanism this record depends on for extending the pool.
+Extends ADR-0008, whose classification was carried forward unchanged when this record was written. ADR-0008 has since been superseded by ADR-0021.
+
+One clause of this record was reversed by ADR-0021: the unmatched bucket as the pool-extension mechanism, now the drop log. Everything else stands unchanged, including title-only matching, storing every field a board returns, the versioned pool, and the deferral of description matching.
+
+The pool itself: `docs/reference/title-pool.md`.
 
 ## Changes
 
 | Date | Change | Reason |
 |---|---|---|
 | 2026-09-10 | Said it superseded ADR-0008, now says it extends it | It reverses nothing in ADR-0008. Claiming supersession would have retired the classification this record itself depends on |
+| 2026-09-11 | Pool-extension mechanism was the unmatched bucket, now the drop log | ADR-0021 removes the unmatched bucket. The drop log already records every dropped title with its rule, so the feedback signal survives at no display cost |
