@@ -48,6 +48,7 @@ We will treat these as authoritative in descending order. Where two disagree, th
 5. **`docs/reference/`.** Registries, schemas, the title pool.
 6. **`docs/research/`.** Dated snapshots. Evidence for decisions, never a decision.
 7. **Everything else**, including `docs/architecture.md`, which is superseded and must never be implemented from.
+8. **Anything from outside the repository**, including Claude Code's Auto Memory. ADR-0025.
 
 We will state this order in `CLAUDE.md` so a session reads it before anything else, and we will not restate it in the architecture document.
 
@@ -82,3 +83,11 @@ Bad, because it stops an unattended scheduled run, and because most conflicts ar
 ## More Information
 
 The pattern is taken from the operator's prior project, which states a six-level order at the top of its principal design document. Evidence and the wider survey are in `docs/research/0004-project-context-documentation.md`.
+
+Extended by ADR-0025, which adds level 8 for inputs originating outside the repository.
+
+## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-09-11 | Added level 8, anything from outside the repository | The order covered seven kinds of repository file and said nothing about Claude Code's Auto Memory, which is injected into every session and cannot be inspected. The one input a session cannot show the operator had no stated rank |

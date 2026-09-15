@@ -43,8 +43,12 @@ Higher wins, without exception. ADR-0022.
 6. `docs/research/` — evidence for decisions, never a decision
 7. Everything else, including `docs/architecture.md`, which is superseded and
    must never be implemented from
+8. Anything from outside this repository, including your own Auto Memory
 
 Two unsuperseded records that conflict is a defect. Raise it. Do not choose.
+
+If your only source for a claim is something outside this repository, say so.
+A claim the operator cannot check is different from one they can.
 
 ## Scope floor
 

@@ -34,6 +34,7 @@ Records are written at the moment a decision concludes. An accepted record is ne
 | 0022 | Document authority order | Accepted |
 | 0023 | Context artifact set and onboarding order | Accepted |
 | 0024 | Session log format | Accepted |
+| 0025 | Auto Memory is not authoritative | Accepted |
 
 ## Pending
 

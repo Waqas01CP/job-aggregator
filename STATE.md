@@ -6,7 +6,7 @@ status: current
 
 # STATE
 
-**Last verified against `main` at `ed0c4f4`, 2026-09-11.**
+**Last verified against `main` at `ed0c4f4`, 2026-09-11.** Amended the same day for ADR-0025 and the state gate; next commit updates the hash.
 
 This file is ground truth. If a row says DONE, it is done. If you believe otherwise, read the file the pointer names before claiming a conflict. Memory is not evidence.
 
@@ -46,20 +46,21 @@ The project is blocked on one thing that is not mine: the endpoint feasibility s
 | Research records with source trails | DONE | [VERIFIED] | 2026-09-11 | 4 passes in `docs/research/` |
 | Title pool, 50 terms with matching rules | DONE | [VERIFIED] | 2026-09-11 | `docs/reference/title-pool.md`, ADR-0021 |
 | README, licence and scope statement | DONE | [VERIFIED] | 2026-09-11 | `README.md`, `LICENSE` |
-| Instruction file with reading and authority order | DONE | [VERIFIED] | 2026-09-11 | `CLAUDE.md`, ADR-0022, ADR-0023 |
+| Instruction file with reading and authority order | DONE | [VERIFIED] | 2026-09-11 | `CLAUDE.md`, ADR-0022, ADR-0023, ADR-0025 |
+| Auto Memory ranked and excluded from design | DONE | [VERIFIED] | 2026-09-11 | ADR-0025 |
 | This file | DONE | [VERIFIED] | 2026-09-11 | ADR-0023 |
-| Log index and directory | PENDING | — | — | ADR-0023, ADR-0024 |
+| Log index and directory | DONE | [VERIFIED] | 2026-09-11 | `logs/README.md`, ADR-0023, ADR-0024 |
 | End-state document | PENDING | — | — | Confirmed open in ADR-0023. No prior art exists |
 
 ## Tooling
 
 | Task | Status | Evidence | Date | Proof |
 |---|---|---|---|---|
-| Map generated from frontmatter | DONE | [VERIFIED] ran, 29 files | 2026-09-11 | `tools/generate_map.py` |
-| Pre-commit hook, four gates | DONE | [VERIFIED] all four proven to fire | 2026-09-11 | `.githooks/pre-commit` |
+| Map generated from frontmatter | DONE | [VERIFIED] ran, 38 files | 2026-09-11 | `tools/generate_map.py` |
+| Pre-commit hook, five gates | DONE | [VERIFIED] all five proven to fire | 2026-09-11 | `.githooks/pre-commit` |
 | Map gate Python resolution fixed | DONE | [VERIFIED] fired correctly after fix | 2026-09-11 | commit `ed0c4f4` |
 | Line endings forced to LF | DONE | [BELIEVED] renormalise found nothing | 2026-09-11 | `.gitattributes` |
-| State file staleness gate | PENDING | — | — | Named as a gap in ADR-0023 |
+| State file staleness gate | DONE | [VERIFIED] blocked a commit staging `tools/` without `STATE.md` | 2026-09-11 | `.githooks/pre-commit` gate 4, ADR-0023 |
 
 ## Pipeline
 

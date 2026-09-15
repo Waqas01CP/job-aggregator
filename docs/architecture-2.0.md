@@ -316,6 +316,7 @@ Index only. Reasoning lives in `docs/decisions/` and is never restated here.
 | 0022 | Document authority order | Accepted |
 | 0023 | Context artifact set and onboarding order | Accepted |
 | 0024 | Session log format | Accepted |
+| 0025 | Auto Memory is not authoritative | Accepted |
 
 ---
 

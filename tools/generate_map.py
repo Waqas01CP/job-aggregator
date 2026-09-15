@@ -41,8 +41,15 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 MAP_PATH = REPO_ROOT / "MAP.md"
 
-SKIP_DIRS = {".git", ".github", "node_modules", "__pycache__", ".venv", "venv"}
-SKIP_FILES = {"MAP.md", "MAP.generated.md"}
+SKIP_DIRS = {".git", ".github", "node_modules", "__pycache__", ".venv", "venv", ".commitmsg"}
+
+# Files this generator walks past. MAP.md is its own output. CHAT_STATE.md
+# is gitignored local scratch: it is not part of the project record, so it
+# must not appear in a map that claims to list what the repository holds.
+# The generator does not read .gitignore, so anything ignored and ending
+# in .md has to be named here or it will halt the run demanding
+# frontmatter it should never have.
+SKIP_FILES = {"MAP.md", "MAP.generated.md", "CHAT_STATE.md"}
 
 DECISIONS_DIR = REPO_ROOT / "docs" / "decisions"
 
