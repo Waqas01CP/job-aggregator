@@ -49,7 +49,7 @@ DECISIONS_DIR = REPO_ROOT / "docs" / "decisions"
 FRONTMATTER_RE = re.compile(r"\A---\r?\n(.*?)\r?\n---\r?\n", re.DOTALL)
 H1_RE = re.compile(r"^#\s+(.+?)\s*$", re.MULTILINE)
 
-VALID_TYPES = {"instruction", "explanation", "reference", "how-to", "decision", "research", "entry"}
+VALID_TYPES = {"instruction", "state", "explanation", "reference", "how-to", "decision", "research", "entry"}
 
 
 class MapError(Exception):
@@ -181,7 +181,8 @@ def render(entries):
         "does. The pre-commit hook fails the commit when it is stale.",
         "",
         "**Types.** `entry` is where to start. `instruction` is how an agent",
-        "should work in this repository. `explanation` is why the system is",
+        "should work in this repository. `state` is what is true right now.",
+        "`explanation` is why the system is",
         "as it is. `reference` is what things are, opened while working.",
         "`how-to` is how to accomplish a task. `decision` is one recorded choice.",
         "`research` is a dated snapshot of what was found, valid as a record",
@@ -192,7 +193,7 @@ def render(entries):
         "",
     ]
 
-    order = ["entry", "instruction", "explanation", "how-to", "reference", "research", "decision"]
+    order = ["entry", "instruction", "state", "explanation", "how-to", "reference", "research", "decision"]
     for file_type in order:
         rows = by_type.pop(file_type, [])
         if not rows:

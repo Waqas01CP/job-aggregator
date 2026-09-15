@@ -11,7 +11,8 @@ It cannot describe a file that does not exist and cannot omit one that
 does. The pre-commit hook fails the commit when it is stale.
 
 **Types.** `entry` is where to start. `instruction` is how an agent
-should work in this repository. `explanation` is why the system is
+should work in this repository. `state` is what is true right now.
+`explanation` is why the system is
 as it is. `reference` is what things are, opened while working.
 `how-to` is how to accomplish a task. `decision` is one recorded choice.
 `research` is a dated snapshot of what was found, valid as a record
@@ -32,6 +33,12 @@ supersedes and superseded-by links, deliberately not duplicated here.
 | --- | --- | --- |
 | `CLAUDE.md` | How to work in this repository. Scope floor, conventions, commands. Read before touching anything. | current |
 
+## state
+
+| File | Holds | Status |
+| --- | --- | --- |
+| `STATE.md` | What exists right now, what is blocked and on whom, and where the proof is. Ground truth, not memory. | current |
+
 ## explanation
 
 | File | Holds | Status |
@@ -44,7 +51,9 @@ supersedes and superseded-by links, deliberately not duplicated here.
 | File | Holds | Status |
 | --- | --- | --- |
 | `docs/decisions/README.md` | Every architecture decision made on this project, one file per decision, with the reasoning that produced it and the conditions that would show it was wrong. | current |
+| `docs/reference/title-pool.md` | The 50 title terms a posting must match to be admitted, plus the normalisation and matching rules applied to both sides. | current |
 | `docs/research/README.md` | Dated snapshots of what was found and when. Numbered by the order the pass was run, so a later reader knows what was known at each point. | current |
+| `logs/README.md` | One log per session, newest at the top. This table is the navigation index for all session history. | current |
 
 ## research
 
@@ -53,6 +62,7 @@ supersedes and superseded-by links, deliberately not duplicated here.
 | `docs/research/0001-architecture-documentation.md` | Pass 0001. Architecture documentation formats. Produced the arc42 structure, C4 in Mermaid, and the MADR 4.0.0 record format with two deviations. | current |
 | `docs/research/0002-agentic-implementation.md` | Pass 0002. Agentic implementation flow. Thinnest of the three passes; read the sourcing caveat before relying on it. | current |
 | `docs/research/0003-job-source-survey.md` | Pass 0003. Survey of free, pollable job board and aggregator APIs. Six keyless feeds recommended; Rozee.pk has no API path. | current |
+| `docs/research/0004-project-context-documentation.md` | Pass 0004. Project context documentation for humans and AI agents. Corrects pass 0002 on CLAUDE.md length; finds the strongest source was the operator's own prior repository. | current |
 
 ## decision
 
@@ -65,7 +75,7 @@ supersedes and superseded-by links, deliberately not duplicated here.
 | `docs/decisions/0005-fetch-complete-board-output.md` | ADR-0005: Fetch complete board output, filter locally | accepted |
 | `docs/decisions/0006-twice-daily-fetch-cadence.md` | ADR-0006: Twice-daily fetch cadence | accepted |
 | `docs/decisions/0007-recency-as-a-view.md` | ADR-0007: Recency is a view, not an ingest filter | accepted |
-| `docs/decisions/0008-title-matching-strategy.md` | ADR-0008: Title matching by allowlist, blocklist, and unmatched flag | accepted |
+| `docs/decisions/0008-title-matching-strategy.md` | ADR-0008: Title matching by allowlist, blocklist, and unmatched flag | superseded by ADR-0021 |
 | `docs/decisions/0009-vertical-slice-first.md` | ADR-0009: Vertical slice first, adapters incremental | accepted |
 | `docs/decisions/0010-no-relevance-scoring.md` | ADR-0010: No relevance scoring, ranking, or model-based screening | accepted |
 | `docs/decisions/0011-public-repository-metadata-only.md` | ADR-0011: Public repository, metadata only on the data branch | accepted |
@@ -78,5 +88,9 @@ supersedes and superseded-by links, deliberately not duplicated here.
 | `docs/decisions/0018-scheduled-contract-check.md` | ADR-0018: Scheduled contract check against live boards | accepted |
 | `docs/decisions/0019-add-aggregator-source-class.md` | ADR-0019: Add aggregator feeds as a second source class | accepted |
 | `docs/decisions/0020-route-raw-storage-by-source-class.md` | ADR-0020: Route raw storage by source class | accepted |
+| `docs/decisions/0021-allowlist-only-title-matching.md` | ADR-0021: Allowlist-only title matching, with normalisation | accepted |
+| `docs/decisions/0022-document-authority-order.md` | ADR-0022: Document authority order | accepted |
+| `docs/decisions/0023-context-artifact-set.md` | ADR-0023: Context artifact set and onboarding order | accepted |
+| `docs/decisions/0024-session-log-format.md` | ADR-0024: Session log format | accepted |
 
-Files listed: 29
+Files listed: 37

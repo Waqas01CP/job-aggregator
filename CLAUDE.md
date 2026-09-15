@@ -11,13 +11,40 @@ against fixed rules, and writes what survives to a table for review.
 
 **Nothing is built yet.** Documentation only.
 
-## Read the map first
+## Reading order
 
-`MAP.md` lists every documented file, what it holds, and what kind of answer it
-gives. Open it before searching the tree.
+Read these four, in this order, then stop and follow pointers. Do not read the
+documented file set.
 
-`MAP.md` is generated. Never edit it by hand. Edit the source file's
-frontmatter and regenerate.
+1. **This file.** How to work here.
+2. **`STATE.md`.** What exists, what is blocked, and where the proof is. It is
+   ground truth, not memory. If it says done, it is done. "I remember this was
+   pending" is not evidence.
+3. **`logs/README.md`.** What prior sessions did. When you need more, read the
+   most recent relevant log; it references the one before it; chain backwards
+   only as far as you need and stop when you have enough.
+4. **`MAP.md`**, on demand. Every documented file, what it holds, what kind of
+   answer it gives.
+
+Then the brief for your task.
+
+`MAP.md` is generated. Never edit it by hand. Edit the source file's frontmatter
+and regenerate.
+
+## When documents disagree
+
+Higher wins, without exception. ADR-0022.
+
+1. The operator's instruction in this conversation
+2. This file
+3. `docs/decisions/`, excluding anything marked superseded
+4. `docs/architecture-2.0.md`
+5. `docs/reference/`
+6. `docs/research/` — evidence for decisions, never a decision
+7. Everything else, including `docs/architecture.md`, which is superseded and
+   must never be implemented from
+
+Two unsuperseded records that conflict is a defect. Raise it. Do not choose.
 
 ## Scope floor
 
