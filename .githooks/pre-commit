@@ -3,8 +3,10 @@
 #
 #   git config core.hooksPath .githooks
 #
-# Two checks, both of which must be able to fail. Prove each one by
-# giving it the case built to defeat it before trusting it.
+# Five checks, every one of which must be able to fail. Prove each by
+# giving it the case built to defeat it before trusting it. A gate nobody
+# has seen fire is indistinguishable from an absent one, and worse,
+# because it is trusted.
 
 set -e
 
@@ -76,7 +78,44 @@ for file in $staged; do
 done
 
 # ---------------------------------------------------------------------
-# 4. The map must not be stale. It is generated, not written.
+# 4. STATE.md must move when implementation work moves.
+#
+# STATE.md is the only hand-written artifact in this repository with no
+# generator behind it, which makes it the one most able to lie. ADR-0023
+# requires it to be updated in the same commit as the work, never in a
+# separate bookkeeping pass. A bookkeeping pass is a pass that gets
+# skipped.
+#
+# Scoped to implementation paths on purpose. A typo fix in a decision
+# record does not change what is built, and a gate that fires on every
+# commit is a gate people learn to bypass.
+# ---------------------------------------------------------------------
+
+touched_impl=0
+for file in $staged; do
+  case "$file" in
+    src/*|tools/*.py|.github/workflows/*)
+      touched_impl=1
+      ;;
+    logs/*)
+      if [ "$file" != "logs/README.md" ]; then
+        touched_impl=1
+      fi
+      ;;
+  esac
+done
+
+if [ "$touched_impl" -eq 1 ]; then
+  if ! echo "$staged" | grep -qx 'STATE.md'; then
+    fail "implementation work is staged but STATE.md is not.
+       ADR-0023: STATE.md is updated in the same commit as the work.
+       Update the affected rows and the verified-against line, stage
+       STATE.md, and commit again."
+  fi
+fi
+
+# ---------------------------------------------------------------------
+# 5. The map must not be stale. It is generated, not written.
 #
 # This is the gate that makes the same-operation rule real. Without it
 # the rule is advice, and advice about updating an index is the advice
