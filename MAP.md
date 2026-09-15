@@ -92,5 +92,6 @@ supersedes and superseded-by links, deliberately not duplicated here.
 | `docs/decisions/0022-document-authority-order.md` | ADR-0022: Document authority order | accepted |
 | `docs/decisions/0023-context-artifact-set.md` | ADR-0023: Context artifact set and onboarding order | accepted |
 | `docs/decisions/0024-session-log-format.md` | ADR-0024: Session log format | accepted |
+| `docs/decisions/0025-auto-memory-not-authoritative.md` | ADR-0025: Auto Memory is not authoritative | accepted |
 
-Files listed: 37
+Files listed: 38
