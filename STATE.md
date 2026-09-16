@@ -6,7 +6,7 @@ status: current
 
 # STATE
 
-**Last verified against `main` at `26d0073`, 2026-09-16**, for the Pipeline rows, the Blocked section and the Known unverified section, which the three spikes touched. Documentation and Tooling rows are carried forward from the `ed0c4f4` verification and were not rechecked in that session.
+**Last verified against `main` at `3552b35`, 2026-09-16**, for the Pipeline rows the slice build touched. Documentation and Tooling rows are carried forward from earlier verifications and were not rechecked.
 
 This file is ground truth. If a row says DONE, it is done. If you believe otherwise, read the file the pointer names before claiming a conflict. Memory is not evidence.
 
@@ -30,9 +30,9 @@ Update the verified-against line whenever you touch this file.
 
 ## Headline
 
-**Nothing is built. No pipeline code exists.** Everything below is documentation, tooling for documentation, and decisions. The first line of pipeline code has not been written.
+**The vertical slice is under construction.** Board configuration, the shared HTTP module and both adapters are built and tested. The normaliser, deduplicator, filter chain, writers and schedule are not. Nothing has run against a live board from pipeline code yet.
 
-The endpoint feasibility spike and its follow-up checks have run. Their findings contradict figures in accepted records, and those records are unrevised. That revision is the operator's, not an implementing session's.
+Four spikes have run and their findings are folded into the records. The four decisions they raised are answered by ADR-0028 and ADR-0029.
 
 ---
 
@@ -64,17 +64,16 @@ The endpoint feasibility spike and its follow-up checks have run. Their findings
 
 ## Pipeline
 
-**Nothing in this section is started.**
-
 | Task | Status | Evidence | Date | Proof |
 |---|---|---|---|---|
 | Endpoint feasibility spike, Greenhouse, Lever, Himalayas | DONE | [VERIFIED] ran; 11 of 11 board files re-checked against printed byte counts on 2026-09-15 | 2026-09-11 | `2026-09-11-endpoint-feasibility-spike.md`, written retroactively |
 | Spike follow-up: board volume, Speechify age floor, Lever `createdAt`, Himalayas pagination | PARTIAL | [VERIFIED] checks 1 to 3 complete. Check 4 complete except whether browse pagination terminates, not establishable inside its 7-request cap | 2026-09-15 | `2026-09-15-spike-followup-checks.md` |
 | Publication-date discovery across the 13 untested ATS platforms | DONE | [VERIFIED] 53 of 60 permitted requests, one board per platform, two boards for Manatal and Workable | 2026-09-16 | `2026-09-16-publication-date-across-untested-platforms.md` |
 | Second-observation checks on Lever `createdAt`, Workday `startDate`, iCIMS `datePosted` | DONE | [VERIFIED] 7 requests against a self-imposed cap of 12 | 2026-09-16 | `2026-09-16-second-observation-checks.md` |
-| Shared HTTP module | PENDING | — | — | ADR-0009 |
-| Greenhouse adapter | PENDING | — | — | ADR-0009 |
-| Lever adapter | PENDING | — | — | ADR-0009 |
+| Board configuration, eleven boards from the registry | DONE | [VERIFIED] 16 tests; 4 mutations applied and all caught | 2026-09-16 | `2026-09-16-vertical-slice.md` |
+| Shared HTTP module | DONE | [VERIFIED] 21 tests; 8 mutations applied and all caught, including budget, breaker and status classification | 2026-09-16 | `2026-09-16-vertical-slice.md`, ADR-0028 |
+| Greenhouse adapter, nine boards | DONE | [VERIFIED] parses a sanitised cassette of 21 real postings and one of 1086; 11 adapter mutations all caught | 2026-09-16 | `2026-09-16-vertical-slice.md` |
+| Lever adapter, two boards | DONE | [VERIFIED] employer derived from slug with provenance recorded, epoch-ms range checked | 2026-09-16 | `2026-09-16-vertical-slice.md`, ADR-0026 |
 | Himalayas adapter, conditional | PENDING | — | — | ADR-0019 |
 | Normaliser | PENDING | — | — | ADR-0019 |
 | Deduplicator | PENDING | — | — | ADR-0001 |
@@ -93,13 +92,9 @@ The endpoint feasibility spike and its follow-up checks have run. Their findings
 
 **ADR-0007's publication-date assumption is not falsified: it holds for Manatal**, the one platform of sixteen exposing no date at all.
 
-**What remains is four decisions, and they belong to the architecture chat.** Adapter order after the slice, the N+1 policy for platforms carrying a date only per posting, Dover's source class, and the provenance enum in ADR-0026. All four concern what happens after the vertical slice, not the slice itself. `2026-09-16-publication-date-across-untested-platforms.md` states each in full.
+**The four decisions the spikes raised are answered.** ADR-0028 sets a per-run fetch budget and fetches a posting's detail once ever rather than once per run. ADR-0029 fixes adapter order after the slice at Ashby, Workable, SmartRecruiters, Breezy and Manatal, drops Dover, and declares the registry tiers obsolete. ADR-0026 gained `envelope` and `constructed` and now covers the canonical URL.
 
-**Two questions are blocked on the architecture chat, not on the operator alone.** Both change what the pipeline does, and `2026-09-16-publication-date-across-untested-platforms.md` states each in full.
-
-*Policy for platforms whose list endpoint omits the publication date.* BambooHR and Workday carry a date only on a per-posting detail fetch; JazzHR, Freshteam, iCIMS and Zoho only inside per-posting HTML. Contour's Workday board alone would cost 90 extra requests per run, twice daily. Needs a decision between N+1 fetching under a stated ceiling, ADR-0007's first-seen fallback for those platforms, or deferral. Touches ADR-0003, ADR-0005, ADR-0006 and ADR-0009.
-
-*Whether Dover's cross-client job board is a source at all.* Dover's only dated feed spans 45 employers and 482 postings and is not the employer's board; the per-employer endpoint carries no date. Needs a decision under ADR-0019's source classes and ADR-0020's raw-storage routing.
+**Two filter rules have no definition anywhere and are not built.** The architecture document names a stated-experience rule and an annotation-vendor rule in the filter chain; no record defines a threshold for the first or a list for the second. Neither Greenhouse nor Lever returns a structured experience field, so the first has nothing to read. See the open question in `2026-09-16-vertical-slice.md`.
 
 **The blocklist is no longer needed.** ADR-0021 removed it. Previously blocked on the operator; now closed.
 

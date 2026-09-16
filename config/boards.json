@@ -1,0 +1,73 @@
+{
+  "source": "Operating Plan/Reference/Jobs/Apify Run Log and ATS Registry.md. Greenhouse and Lever slugs from Part 3; coderoad from Part 12. Read 2026-09-16.",
+  "boards": [
+    {
+      "platform": "greenhouse",
+      "slug": "veeamsoftware",
+      "normalisations": [],
+      "note": "Registry Part 3. EU-hosted board; the standard API host serves it."
+    },
+    {
+      "platform": "greenhouse",
+      "slug": "careem",
+      "normalisations": [],
+      "note": "Registry Part 3."
+    },
+    {
+      "platform": "greenhouse",
+      "slug": "speechify",
+      "normalisations": ["strip_location_suffix"],
+      "note": "Registry Part 3. ADR-0027: measured convention, location inside the title. 1086 postings are 8 base titles across 329 locations."
+    },
+    {
+      "platform": "greenhouse",
+      "slug": "brkz",
+      "normalisations": [],
+      "note": "Registry Part 3. EU-hosted board; the standard API host serves it."
+    },
+    {
+      "platform": "greenhouse",
+      "slug": "globalli",
+      "normalisations": [],
+      "note": "Registry Part 3."
+    },
+    {
+      "platform": "greenhouse",
+      "slug": "gomotive",
+      "normalisations": [],
+      "note": "Registry Part 3. Employer is Motive; company_name comes from the payload."
+    },
+    {
+      "platform": "greenhouse",
+      "slug": "joblogic",
+      "normalisations": [],
+      "note": "Registry Part 3. EU-hosted board; the standard API host serves it."
+    },
+    {
+      "platform": "greenhouse",
+      "slug": "banyancanopygroup",
+      "normalisations": [],
+      "note": "Registry Part 3."
+    },
+    {
+      "platform": "greenhouse",
+      "slug": "coderoad",
+      "normalisations": [],
+      "note": "Registry Part 12."
+    },
+    {
+      "platform": "lever",
+      "slug": "smart-working-solutions",
+      "employer_alias": "Smart Working Solutions",
+      "normalisations": [],
+      "note": "Registry Part 3. Lever returns no employer field; the alias is the employer name as the registry writes it, not a guessed expansion of the slug. ADR-0026."
+    },
+    {
+      "platform": "lever",
+      "slug": "spreetail",
+      "employer_alias": "Spreetail",
+      "normalisations": [],
+      "note": "Registry Part 3. Lever returns no employer field; alias from the registry. ADR-0026."
+    }
+  ]
+}

@@ -1,0 +1,1834 @@
+{
+ "jobs": [
+  {
+   "absolute_url": "https://boards.greenhouse.io/careem/jobs/8783573002?gh_jid=8783573002",
+   "application_deadline": null,
+   "company_name": "Careem",
+   "data_compliance": [
+    {
+     "demographic_data_consent_applies": false,
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "type": "gdpr"
+    }
+   ],
+   "first_published": "2026-09-07T11:02:32-04:00",
+   "id": 8783573002,
+   "internal_job_id": 6513878002,
+   "language": "en",
+   "location": {
+    "name": "Karachi, Pakistan"
+   },
+   "metadata": [
+    {
+     "id": 4471783002,
+     "name": "Division",
+     "value": "Marketplace Business",
+     "value_type": "single_select"
+    },
+    {
+     "id": 4221047002,
+     "name": "Sub-Division",
+     "value": "Food & Dineout",
+     "value_type": "single_select"
+    },
+    {
+     "id": 10033485002,
+     "name": "Sub-Department",
+     "value": "Food UAE - Online accounts",
+     "value_type": "single_select"
+    },
+    {
+     "id": 22986410002,
+     "name": "Hiring Manager",
+     "value": "muhammad.arsal1@careem.com",
+     "value_type": "short_text"
+    },
+    {
+     "id": 12565152002,
+     "name": "Job Family",
+     "value": "Sales & Account management",
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653543002,
+     "name": "Tribe",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653550002,
+     "name": "Squad",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 24594952002,
+     "name": "Country",
+     "value": "Pakistan",
+     "value_type": "single_select"
+    },
+    {
+     "id": 24436433002,
+     "name": "Evergreen Role (TA)",
+     "value": false,
+     "value_type": "yes_no"
+    },
+    {
+     "id": 22868282002,
+     "name": "SOURCER (TA)",
+     "value": null,
+     "value_type": "short_text"
+    }
+   ],
+   "requisition_id": "9978",
+   "title": "Account Manager I",
+   "updated_at": "2026-09-07T11:02:32-04:00"
+  },
+  {
+   "absolute_url": "https://boards.greenhouse.io/careem/jobs/8618945002?gh_jid=8618945002",
+   "application_deadline": null,
+   "company_name": "Careem",
+   "data_compliance": [
+    {
+     "demographic_data_consent_applies": false,
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "type": "gdpr"
+    }
+   ],
+   "first_published": "2026-07-13T05:10:34-04:00",
+   "id": 8618945002,
+   "internal_job_id": 6442292002,
+   "language": "en",
+   "location": {
+    "name": "Dubai, United Arab Emirates"
+   },
+   "metadata": [
+    {
+     "id": 4471783002,
+     "name": "Division",
+     "value": "Strategic Partnerships",
+     "value_type": "single_select"
+    },
+    {
+     "id": 4221047002,
+     "name": "Sub-Division",
+     "value": "Strategic Partnerships",
+     "value_type": "single_select"
+    },
+    {
+     "id": 10033485002,
+     "name": "Sub-Department",
+     "value": "Ads Commercial",
+     "value_type": "single_select"
+    },
+    {
+     "id": 22986410002,
+     "name": "Hiring Manager",
+     "value": "dana.elzein@careem.com",
+     "value_type": "short_text"
+    },
+    {
+     "id": 12565152002,
+     "name": "Job Family",
+     "value": "Partnership",
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653543002,
+     "name": "Tribe",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653550002,
+     "name": "Squad",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 24594952002,
+     "name": "Country",
+     "value": "United Arab Emirates",
+     "value_type": "single_select"
+    },
+    {
+     "id": 24436433002,
+     "name": "Evergreen Role (TA)",
+     "value": false,
+     "value_type": "yes_no"
+    },
+    {
+     "id": 22868282002,
+     "name": "SOURCER (TA)",
+     "value": null,
+     "value_type": "short_text"
+    }
+   ],
+   "requisition_id": "9887",
+   "title": "Associate Director of Ads Sales",
+   "updated_at": "2026-09-04T03:33:10-04:00"
+  },
+  {
+   "absolute_url": "https://boards.greenhouse.io/careem/jobs/8620725002?gh_jid=8620725002",
+   "application_deadline": null,
+   "company_name": "Careem",
+   "data_compliance": [
+    {
+     "demographic_data_consent_applies": false,
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "type": "gdpr"
+    }
+   ],
+   "first_published": "2026-07-11T15:52:24-04:00",
+   "id": 8620725002,
+   "internal_job_id": 6442755002,
+   "language": "en",
+   "location": {
+    "name": "Karachi, Pakistan"
+   },
+   "metadata": [
+    {
+     "id": 4471783002,
+     "name": "Division",
+     "value": "Tech",
+     "value_type": "single_select"
+    },
+    {
+     "id": 4221047002,
+     "name": "Sub-Division",
+     "value": "Information Security & IT",
+     "value_type": "single_select"
+    },
+    {
+     "id": 10033485002,
+     "name": "Sub-Department",
+     "value": "ERP Digital Transformation",
+     "value_type": "single_select"
+    },
+    {
+     "id": 22986410002,
+     "name": "Hiring Manager",
+     "value": "tarun.matai@careem.com",
+     "value_type": "short_text"
+    },
+    {
+     "id": 12565152002,
+     "name": "Job Family",
+     "value": "ERP",
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653543002,
+     "name": "Tribe",
+     "value": "IT",
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653550002,
+     "name": "Squad",
+     "value": "it-erp-digital-transformation",
+     "value_type": "single_select"
+    },
+    {
+     "id": 24594952002,
+     "name": "Country",
+     "value": "Pakistan",
+     "value_type": "single_select"
+    },
+    {
+     "id": 24436433002,
+     "name": "Evergreen Role (TA)",
+     "value": false,
+     "value_type": "yes_no"
+    },
+    {
+     "id": 22868282002,
+     "name": "SOURCER (TA)",
+     "value": null,
+     "value_type": "short_text"
+    }
+   ],
+   "requisition_id": "9896",
+   "title": "Associate Director of ERP Digital Transformation",
+   "updated_at": "2026-09-04T03:33:10-04:00"
+  },
+  {
+   "absolute_url": "https://boards.greenhouse.io/careem/jobs/8598718002?gh_jid=8598718002",
+   "application_deadline": null,
+   "company_name": "Careem",
+   "data_compliance": [
+    {
+     "demographic_data_consent_applies": false,
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "type": "gdpr"
+    }
+   ],
+   "first_published": "2026-09-11T05:34:48-04:00",
+   "id": 8598718002,
+   "internal_job_id": 6434318002,
+   "language": "en",
+   "location": {
+    "name": "Karachi, Pakistan"
+   },
+   "metadata": [
+    {
+     "id": 4471783002,
+     "name": "Division",
+     "value": "Groceries",
+     "value_type": "single_select"
+    },
+    {
+     "id": 4221047002,
+     "name": "Sub-Division",
+     "value": "Groceries Category Management",
+     "value_type": "single_select"
+    },
+    {
+     "id": 10033485002,
+     "name": "Sub-Department",
+     "value": "Groceries Category Management",
+     "value_type": "single_select"
+    },
+    {
+     "id": 22986410002,
+     "name": "Hiring Manager",
+     "value": "ali.hodroj@careem.com",
+     "value_type": "short_text"
+    },
+    {
+     "id": 12565152002,
+     "name": "Job Family",
+     "value": "Category management",
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653543002,
+     "name": "Tribe",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653550002,
+     "name": "Squad",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 24594952002,
+     "name": "Country",
+     "value": "Pakistan",
+     "value_type": "single_select"
+    },
+    {
+     "id": 24436433002,
+     "name": "Evergreen Role (TA)",
+     "value": false,
+     "value_type": "yes_no"
+    },
+    {
+     "id": 22868282002,
+     "name": "SOURCER (TA)",
+     "value": null,
+     "value_type": "short_text"
+    }
+   ],
+   "requisition_id": "9869",
+   "title": "Category Assistant",
+   "updated_at": "2026-09-11T05:34:48-04:00"
+  },
+  {
+   "absolute_url": "https://boards.greenhouse.io/careem/jobs/8696157002?gh_jid=8696157002",
+   "application_deadline": null,
+   "company_name": "Careem",
+   "data_compliance": [
+    {
+     "demographic_data_consent_applies": false,
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "type": "gdpr"
+    }
+   ],
+   "first_published": "2026-09-07T04:57:38-04:00",
+   "id": 8696157002,
+   "internal_job_id": 6474721002,
+   "language": "en",
+   "location": {
+    "name": "Dubai, United Arab Emirates"
+   },
+   "metadata": [
+    {
+     "id": 4471783002,
+     "name": "Division",
+     "value": "Groceries",
+     "value_type": "single_select"
+    },
+    {
+     "id": 4221047002,
+     "name": "Sub-Division",
+     "value": "Groceries Category Management",
+     "value_type": "single_select"
+    },
+    {
+     "id": 10033485002,
+     "name": "Sub-Department",
+     "value": "Groceries Category Management",
+     "value_type": "single_select"
+    },
+    {
+     "id": 22986410002,
+     "name": "Hiring Manager",
+     "value": "ali.hodroj@careem.com",
+     "value_type": "short_text"
+    },
+    {
+     "id": 12565152002,
+     "name": "Job Family",
+     "value": "Category management",
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653543002,
+     "name": "Tribe",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653550002,
+     "name": "Squad",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 24594952002,
+     "name": "Country",
+     "value": "United Arab Emirates",
+     "value_type": "single_select"
+    },
+    {
+     "id": 24436433002,
+     "name": "Evergreen Role (TA)",
+     "value": false,
+     "value_type": "yes_no"
+    },
+    {
+     "id": 22868282002,
+     "name": "SOURCER (TA)",
+     "value": null,
+     "value_type": "short_text"
+    }
+   ],
+   "requisition_id": "9948",
+   "title": "Category Executive",
+   "updated_at": "2026-09-07T04:57:38-04:00"
+  },
+  {
+   "absolute_url": "https://boards.greenhouse.io/careem/jobs/8605307002?gh_jid=8605307002",
+   "application_deadline": null,
+   "company_name": "Careem",
+   "data_compliance": [
+    {
+     "demographic_data_consent_applies": false,
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "type": "gdpr"
+    }
+   ],
+   "first_published": "2026-07-31T06:59:56-04:00",
+   "id": 8605307002,
+   "internal_job_id": 6437125002,
+   "language": "en",
+   "location": {
+    "name": "Dubai, United Arab Emirates"
+   },
+   "metadata": [
+    {
+     "id": 4471783002,
+     "name": "Division",
+     "value": "Marketplace Business",
+     "value_type": "single_select"
+    },
+    {
+     "id": 4221047002,
+     "name": "Sub-Division",
+     "value": "Marketplace Revenue Management",
+     "value_type": "single_select"
+    },
+    {
+     "id": 10033485002,
+     "name": "Sub-Department",
+     "value": "Marketplace Revenue Management",
+     "value_type": "single_select"
+    },
+    {
+     "id": 22986410002,
+     "name": "Hiring Manager",
+     "value": "raghavendra.pai@careem.com",
+     "value_type": "short_text"
+    },
+    {
+     "id": 12565152002,
+     "name": "Job Family",
+     "value": "Insights & Analytics",
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653543002,
+     "name": "Tribe",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653550002,
+     "name": "Squad",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 24594952002,
+     "name": "Country",
+     "value": "United Arab Emirates",
+     "value_type": "single_select"
+    },
+    {
+     "id": 24436433002,
+     "name": "Evergreen Role (TA)",
+     "value": false,
+     "value_type": "yes_no"
+    },
+    {
+     "id": 22868282002,
+     "name": "SOURCER (TA)",
+     "value": null,
+     "value_type": "short_text"
+    }
+   ],
+   "requisition_id": "9874",
+   "title": "Growth Manager",
+   "updated_at": "2026-09-04T03:33:10-04:00"
+  },
+  {
+   "absolute_url": "https://boards.greenhouse.io/careem/jobs/8696177002?gh_jid=8696177002",
+   "application_deadline": null,
+   "company_name": "Careem",
+   "data_compliance": [
+    {
+     "demographic_data_consent_applies": false,
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "type": "gdpr"
+    }
+   ],
+   "first_published": "2026-08-12T08:22:00-04:00",
+   "id": 8696177002,
+   "internal_job_id": 6474731002,
+   "language": "en",
+   "location": {
+    "name": "Dubai, United Arab Emirates"
+   },
+   "metadata": [
+    {
+     "id": 4471783002,
+     "name": "Division",
+     "value": "Groceries",
+     "value_type": "single_select"
+    },
+    {
+     "id": 4221047002,
+     "name": "Sub-Division",
+     "value": "Groceries Category Management",
+     "value_type": "single_select"
+    },
+    {
+     "id": 10033485002,
+     "name": "Sub-Department",
+     "value": "Groceries Category Management",
+     "value_type": "single_select"
+    },
+    {
+     "id": 22986410002,
+     "name": "Hiring Manager",
+     "value": "dusty.tourani@careem.com",
+     "value_type": "short_text"
+    },
+    {
+     "id": 12565152002,
+     "name": "Job Family",
+     "value": "Category management",
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653543002,
+     "name": "Tribe",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653550002,
+     "name": "Squad",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 24594952002,
+     "name": "Country",
+     "value": "United Arab Emirates",
+     "value_type": "single_select"
+    },
+    {
+     "id": 24436433002,
+     "name": "Evergreen Role (TA)",
+     "value": false,
+     "value_type": "yes_no"
+    },
+    {
+     "id": 22868282002,
+     "name": "SOURCER (TA)",
+     "value": null,
+     "value_type": "short_text"
+    }
+   ],
+   "requisition_id": "9949",
+   "title": "Junior Category Executive",
+   "updated_at": "2026-09-04T03:33:10-04:00"
+  },
+  {
+   "absolute_url": "https://boards.greenhouse.io/careem/jobs/8772907002?gh_jid=8772907002",
+   "application_deadline": null,
+   "company_name": "Careem",
+   "data_compliance": [
+    {
+     "demographic_data_consent_applies": false,
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "type": "gdpr"
+    }
+   ],
+   "first_published": "2026-09-10T09:04:10-04:00",
+   "id": 8772907002,
+   "internal_job_id": 6510182002,
+   "language": "en",
+   "location": {
+    "name": "Karachi, Pakistan"
+   },
+   "metadata": [
+    {
+     "id": 4471783002,
+     "name": "Division",
+     "value": "Marketplace Business",
+     "value_type": "single_select"
+    },
+    {
+     "id": 4221047002,
+     "name": "Sub-Division",
+     "value": "Shops",
+     "value_type": "single_select"
+    },
+    {
+     "id": 10033485002,
+     "name": "Sub-Department",
+     "value": "Shops Operations - UAE",
+     "value_type": "single_select"
+    },
+    {
+     "id": 22986410002,
+     "name": "Hiring Manager",
+     "value": "fakhruddin.saifuddin@careem.com",
+     "value_type": "short_text"
+    },
+    {
+     "id": 12565152002,
+     "name": "Job Family",
+     "value": "Operations",
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653543002,
+     "name": "Tribe",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653550002,
+     "name": "Squad",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 24594952002,
+     "name": "Country",
+     "value": "Pakistan",
+     "value_type": "single_select"
+    },
+    {
+     "id": 24436433002,
+     "name": "Evergreen Role (TA)",
+     "value": false,
+     "value_type": "yes_no"
+    },
+    {
+     "id": 22868282002,
+     "name": "SOURCER (TA)",
+     "value": null,
+     "value_type": "short_text"
+    }
+   ],
+   "requisition_id": "9963",
+   "title": "Operations Coordinator",
+   "updated_at": "2026-09-10T09:04:10-04:00"
+  },
+  {
+   "absolute_url": "https://boards.greenhouse.io/careem/jobs/8699351002?gh_jid=8699351002",
+   "application_deadline": null,
+   "company_name": "Careem",
+   "data_compliance": [
+    {
+     "demographic_data_consent_applies": false,
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "type": "gdpr"
+    }
+   ],
+   "first_published": "2026-08-13T04:10:51-04:00",
+   "id": 8699351002,
+   "internal_job_id": 6476230002,
+   "language": "en",
+   "location": {
+    "name": "Dubai, United Arab Emirates"
+   },
+   "metadata": [
+    {
+     "id": 4471783002,
+     "name": "Division",
+     "value": "Legal",
+     "value_type": "single_select"
+    },
+    {
+     "id": 4221047002,
+     "name": "Sub-Division",
+     "value": "Legal",
+     "value_type": "single_select"
+    },
+    {
+     "id": 10033485002,
+     "name": "Sub-Department",
+     "value": "Safety & Security",
+     "value_type": "single_select"
+    },
+    {
+     "id": 22986410002,
+     "name": "Hiring Manager",
+     "value": "daniela.bartolo@careem.com",
+     "value_type": "short_text"
+    },
+    {
+     "id": 12565152002,
+     "name": "Job Family",
+     "value": "Safety Operations",
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653543002,
+     "name": "Tribe",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653550002,
+     "name": "Squad",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 24594952002,
+     "name": "Country",
+     "value": "United Arab Emirates",
+     "value_type": "single_select"
+    },
+    {
+     "id": 24436433002,
+     "name": "Evergreen Role (TA)",
+     "value": false,
+     "value_type": "yes_no"
+    },
+    {
+     "id": 22868282002,
+     "name": "SOURCER (TA)",
+     "value": null,
+     "value_type": "short_text"
+    }
+   ],
+   "requisition_id": "9950",
+   "title": "Safety & Security Lead",
+   "updated_at": "2026-09-04T03:33:10-04:00"
+  },
+  {
+   "absolute_url": "https://boards.greenhouse.io/careem/jobs/8320185002?gh_jid=8320185002",
+   "application_deadline": null,
+   "company_name": "Careem",
+   "data_compliance": [
+    {
+     "demographic_data_consent_applies": false,
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "type": "gdpr"
+    }
+   ],
+   "first_published": "2025-12-15T02:14:20-05:00",
+   "id": 8320185002,
+   "internal_job_id": 6322087002,
+   "language": "en",
+   "location": {
+    "name": "Dubai, United Arab Emirates"
+   },
+   "metadata": [
+    {
+     "id": 4471783002,
+     "name": "Division",
+     "value": "Strategic Partnerships",
+     "value_type": "single_select"
+    },
+    {
+     "id": 4221047002,
+     "name": "Sub-Division",
+     "value": "Strategic Partnerships",
+     "value_type": "single_select"
+    },
+    {
+     "id": 10033485002,
+     "name": "Sub-Department",
+     "value": "External Communications",
+     "value_type": "single_select"
+    },
+    {
+     "id": 22986410002,
+     "name": "Hiring Manager",
+     "value": "daniela.pereira@careem.com",
+     "value_type": "short_text"
+    },
+    {
+     "id": 12565152002,
+     "name": "Job Family",
+     "value": "Corporate Affairs",
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653543002,
+     "name": "Tribe",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653550002,
+     "name": "Squad",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 24594952002,
+     "name": "Country",
+     "value": "United Arab Emirates",
+     "value_type": "single_select"
+    },
+    {
+     "id": 24436433002,
+     "name": "Evergreen Role (TA)",
+     "value": false,
+     "value_type": "yes_no"
+    },
+    {
+     "id": 22868282002,
+     "name": "SOURCER (TA)",
+     "value": null,
+     "value_type": "short_text"
+    }
+   ],
+   "requisition_id": "9499",
+   "title": "Senior Communications Specialist (1-Year Contract - Fixed Term)",
+   "updated_at": "2026-09-04T03:33:10-04:00"
+  },
+  {
+   "absolute_url": "https://boards.greenhouse.io/careem/jobs/8620292002?gh_jid=8620292002",
+   "application_deadline": null,
+   "company_name": "Careem",
+   "data_compliance": [
+    {
+     "demographic_data_consent_applies": false,
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "type": "gdpr"
+    }
+   ],
+   "first_published": "2026-07-07T07:26:47-04:00",
+   "id": 8620292002,
+   "internal_job_id": 6442613002,
+   "language": "en",
+   "location": {
+    "name": "Karachi, Pakistan"
+   },
+   "metadata": [
+    {
+     "id": 4471783002,
+     "name": "Division",
+     "value": "Tech",
+     "value_type": "single_select"
+    },
+    {
+     "id": 4221047002,
+     "name": "Sub-Division",
+     "value": "Information Security & IT",
+     "value_type": "single_select"
+    },
+    {
+     "id": 10033485002,
+     "name": "Sub-Department",
+     "value": "ERP Digital Transformation",
+     "value_type": "single_select"
+    },
+    {
+     "id": 22986410002,
+     "name": "Hiring Manager",
+     "value": "tarun.matai@careem.com",
+     "value_type": "short_text"
+    },
+    {
+     "id": 12565152002,
+     "name": "Job Family",
+     "value": "ERP",
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653543002,
+     "name": "Tribe",
+     "value": "IT",
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653550002,
+     "name": "Squad",
+     "value": "it-erp-digital-transformation",
+     "value_type": "single_select"
+    },
+    {
+     "id": 24594952002,
+     "name": "Country",
+     "value": "Pakistan",
+     "value_type": "single_select"
+    },
+    {
+     "id": 24436433002,
+     "name": "Evergreen Role (TA)",
+     "value": false,
+     "value_type": "yes_no"
+    },
+    {
+     "id": 22868282002,
+     "name": "SOURCER (TA)",
+     "value": null,
+     "value_type": "short_text"
+    }
+   ],
+   "requisition_id": "9892",
+   "title": "Senior Integration Manager - ERP Digital Transformation",
+   "updated_at": "2026-09-04T03:33:10-04:00"
+  },
+  {
+   "absolute_url": "https://boards.greenhouse.io/careem/jobs/8620488002?gh_jid=8620488002",
+   "application_deadline": null,
+   "company_name": "Careem",
+   "data_compliance": [
+    {
+     "demographic_data_consent_applies": false,
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "type": "gdpr"
+    }
+   ],
+   "first_published": "2026-07-09T01:14:35-04:00",
+   "id": 8620488002,
+   "internal_job_id": 6442661002,
+   "language": "en",
+   "location": {
+    "name": "Karachi, Pakistan"
+   },
+   "metadata": [
+    {
+     "id": 4471783002,
+     "name": "Division",
+     "value": "Tech",
+     "value_type": "single_select"
+    },
+    {
+     "id": 4221047002,
+     "name": "Sub-Division",
+     "value": "Information Security & IT",
+     "value_type": "single_select"
+    },
+    {
+     "id": 10033485002,
+     "name": "Sub-Department",
+     "value": "IT Infrastructure & Services",
+     "value_type": "single_select"
+    },
+    {
+     "id": 22986410002,
+     "name": "Hiring Manager",
+     "value": "pawan.negi@careem.com",
+     "value_type": "short_text"
+    },
+    {
+     "id": 12565152002,
+     "name": "Job Family",
+     "value": "IT Infrastructure",
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653543002,
+     "name": "Tribe",
+     "value": "IT",
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653550002,
+     "name": "Squad",
+     "value": "it-infrastructure",
+     "value_type": "single_select"
+    },
+    {
+     "id": 24594952002,
+     "name": "Country",
+     "value": "Pakistan",
+     "value_type": "single_select"
+    },
+    {
+     "id": 24436433002,
+     "name": "Evergreen Role (TA)",
+     "value": false,
+     "value_type": "yes_no"
+    },
+    {
+     "id": 22868282002,
+     "name": "SOURCER (TA)",
+     "value": null,
+     "value_type": "short_text"
+    }
+   ],
+   "requisition_id": "9893",
+   "title": "Senior IT Infrastructure Engineer II",
+   "updated_at": "2026-09-04T03:33:10-04:00"
+  },
+  {
+   "absolute_url": "https://boards.greenhouse.io/careem/jobs/8617519002?gh_jid=8617519002",
+   "application_deadline": null,
+   "company_name": "Careem",
+   "data_compliance": [
+    {
+     "demographic_data_consent_applies": false,
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "type": "gdpr"
+    }
+   ],
+   "first_published": "2026-07-03T03:23:50-04:00",
+   "id": 8617519002,
+   "internal_job_id": 6441691002,
+   "language": "en",
+   "location": {
+    "name": "Dubai, United Arab Emirates"
+   },
+   "metadata": [
+    {
+     "id": 4471783002,
+     "name": "Division",
+     "value": "Groceries",
+     "value_type": "single_select"
+    },
+    {
+     "id": 4221047002,
+     "name": "Sub-Division",
+     "value": "Groceries Revenue Management",
+     "value_type": "single_select"
+    },
+    {
+     "id": 10033485002,
+     "name": "Sub-Department",
+     "value": "Groceries Merchandising",
+     "value_type": "single_select"
+    },
+    {
+     "id": 22986410002,
+     "name": "Hiring Manager",
+     "value": "mariam.nagui@careem.com",
+     "value_type": "short_text"
+    },
+    {
+     "id": 12565152002,
+     "name": "Job Family",
+     "value": "Category management",
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653543002,
+     "name": "Tribe",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653550002,
+     "name": "Squad",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 24594952002,
+     "name": "Country",
+     "value": "United Arab Emirates",
+     "value_type": "single_select"
+    },
+    {
+     "id": 24436433002,
+     "name": "Evergreen Role (TA)",
+     "value": false,
+     "value_type": "yes_no"
+    },
+    {
+     "id": 22868282002,
+     "name": "SOURCER (TA)",
+     "value": null,
+     "value_type": "short_text"
+    }
+   ],
+   "requisition_id": "9886",
+   "title": "Senior Merchandising Executive",
+   "updated_at": "2026-09-04T03:33:10-04:00"
+  },
+  {
+   "absolute_url": "https://boards.greenhouse.io/careem/jobs/8640594002?gh_jid=8640594002",
+   "application_deadline": null,
+   "company_name": "Careem",
+   "data_compliance": [
+    {
+     "demographic_data_consent_applies": false,
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "type": "gdpr"
+    }
+   ],
+   "first_published": "2026-07-22T08:32:08-04:00",
+   "id": 8640594002,
+   "internal_job_id": 6450980002,
+   "language": "en",
+   "location": {
+    "name": "Dubai, United Arab Emirates"
+   },
+   "metadata": [
+    {
+     "id": 4471783002,
+     "name": "Division",
+     "value": "Marketplace Business",
+     "value_type": "single_select"
+    },
+    {
+     "id": 4221047002,
+     "name": "Sub-Division",
+     "value": "Shops",
+     "value_type": "single_select"
+    },
+    {
+     "id": 10033485002,
+     "name": "Sub-Department",
+     "value": "Shops Operations - UAE",
+     "value_type": "single_select"
+    },
+    {
+     "id": 22986410002,
+     "name": "Hiring Manager",
+     "value": "emad.gharzuddine@careem.com",
+     "value_type": "short_text"
+    },
+    {
+     "id": 12565152002,
+     "name": "Job Family",
+     "value": "Operations",
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653543002,
+     "name": "Tribe",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653550002,
+     "name": "Squad",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 24594952002,
+     "name": "Country",
+     "value": "United Arab Emirates",
+     "value_type": "single_select"
+    },
+    {
+     "id": 24436433002,
+     "name": "Evergreen Role (TA)",
+     "value": false,
+     "value_type": "yes_no"
+    },
+    {
+     "id": 22868282002,
+     "name": "SOURCER (TA)",
+     "value": null,
+     "value_type": "short_text"
+    }
+   ],
+   "requisition_id": "9928",
+   "title": "Senior Operations Associate - Shops",
+   "updated_at": "2026-09-09T04:59:03-04:00"
+  },
+  {
+   "absolute_url": "https://boards.greenhouse.io/careem/jobs/8651240002?gh_jid=8651240002",
+   "application_deadline": null,
+   "company_name": "Careem",
+   "data_compliance": [
+    {
+     "demographic_data_consent_applies": false,
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "type": "gdpr"
+    }
+   ],
+   "first_published": "2026-07-29T10:21:31-04:00",
+   "id": 8651240002,
+   "internal_job_id": 6455065002,
+   "language": "en",
+   "location": {
+    "name": "Dubai, United Arab Emirates"
+   },
+   "metadata": [
+    {
+     "id": 4471783002,
+     "name": "Division",
+     "value": "Tech",
+     "value_type": "single_select"
+    },
+    {
+     "id": 4221047002,
+     "name": "Sub-Division",
+     "value": "Product",
+     "value_type": "single_select"
+    },
+    {
+     "id": 10033485002,
+     "name": "Sub-Department",
+     "value": "Product Design",
+     "value_type": "single_select"
+    },
+    {
+     "id": 22986410002,
+     "name": "Hiring Manager",
+     "value": "dom.dressler@careem.com",
+     "value_type": "short_text"
+    },
+    {
+     "id": 12565152002,
+     "name": "Job Family",
+     "value": "Product Designer",
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653543002,
+     "name": "Tribe",
+     "value": "Captain",
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653550002,
+     "name": "Squad",
+     "value": "ea-plus-profile",
+     "value_type": "single_select"
+    },
+    {
+     "id": 24594952002,
+     "name": "Country",
+     "value": "United Arab Emirates",
+     "value_type": "single_select"
+    },
+    {
+     "id": 24436433002,
+     "name": "Evergreen Role (TA)",
+     "value": false,
+     "value_type": "yes_no"
+    },
+    {
+     "id": 22868282002,
+     "name": "SOURCER (TA)",
+     "value": null,
+     "value_type": "short_text"
+    }
+   ],
+   "requisition_id": "9933",
+   "title": "Senior Product Designer ",
+   "updated_at": "2026-09-04T03:33:10-04:00"
+  },
+  {
+   "absolute_url": "https://boards.greenhouse.io/careem/jobs/8651241002?gh_jid=8651241002",
+   "application_deadline": null,
+   "company_name": "Careem",
+   "data_compliance": [
+    {
+     "demographic_data_consent_applies": false,
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "type": "gdpr"
+    }
+   ],
+   "first_published": "2026-07-31T03:51:59-04:00",
+   "id": 8651241002,
+   "internal_job_id": 6455066002,
+   "language": "en",
+   "location": {
+    "name": "Dubai, United Arab Emirates"
+   },
+   "metadata": [
+    {
+     "id": 4471783002,
+     "name": "Division",
+     "value": "Tech",
+     "value_type": "single_select"
+    },
+    {
+     "id": 4221047002,
+     "name": "Sub-Division",
+     "value": "Product",
+     "value_type": "single_select"
+    },
+    {
+     "id": 10033485002,
+     "name": "Sub-Department",
+     "value": "Product Design",
+     "value_type": "single_select"
+    },
+    {
+     "id": 22986410002,
+     "name": "Hiring Manager",
+     "value": "dom.dressler@careem.com",
+     "value_type": "short_text"
+    },
+    {
+     "id": 12565152002,
+     "name": "Job Family",
+     "value": "Product Designer",
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653543002,
+     "name": "Tribe",
+     "value": "Transport & Global Experiences",
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653550002,
+     "name": "Squad",
+     "value": "ea-core-platform",
+     "value_type": "single_select"
+    },
+    {
+     "id": 24594952002,
+     "name": "Country",
+     "value": "United Arab Emirates",
+     "value_type": "single_select"
+    },
+    {
+     "id": 24436433002,
+     "name": "Evergreen Role (TA)",
+     "value": false,
+     "value_type": "yes_no"
+    },
+    {
+     "id": 22868282002,
+     "name": "SOURCER (TA)",
+     "value": null,
+     "value_type": "short_text"
+    }
+   ],
+   "requisition_id": "9934",
+   "title": "Senior Product Designer (Design Systems)",
+   "updated_at": "2026-09-04T03:33:10-04:00"
+  },
+  {
+   "absolute_url": "https://boards.greenhouse.io/careem/jobs/8622174002?gh_jid=8622174002",
+   "application_deadline": null,
+   "company_name": "Careem",
+   "data_compliance": [
+    {
+     "demographic_data_consent_applies": false,
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "type": "gdpr"
+    }
+   ],
+   "first_published": "2026-07-09T06:46:10-04:00",
+   "id": 8622174002,
+   "internal_job_id": 6443340002,
+   "language": "en",
+   "location": {
+    "name": "Karachi, Pakistan"
+   },
+   "metadata": [
+    {
+     "id": 4471783002,
+     "name": "Division",
+     "value": "Careem Pay",
+     "value_type": "single_select"
+    },
+    {
+     "id": 4221047002,
+     "name": "Sub-Division",
+     "value": "Careem Pay",
+     "value_type": "single_select"
+    },
+    {
+     "id": 10033485002,
+     "name": "Sub-Department",
+     "value": "Pay Product",
+     "value_type": "single_select"
+    },
+    {
+     "id": 22986410002,
+     "name": "Hiring Manager",
+     "value": "fathy.abdelmonam@careem.com",
+     "value_type": "short_text"
+    },
+    {
+     "id": 12565152002,
+     "name": "Job Family",
+     "value": "Product Operations",
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653543002,
+     "name": "Tribe",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653550002,
+     "name": "Squad",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 24594952002,
+     "name": "Country",
+     "value": "Pakistan",
+     "value_type": "single_select"
+    },
+    {
+     "id": 24436433002,
+     "name": "Evergreen Role (TA)",
+     "value": false,
+     "value_type": "yes_no"
+    },
+    {
+     "id": 22868282002,
+     "name": "SOURCER (TA)",
+     "value": null,
+     "value_type": "short_text"
+    }
+   ],
+   "requisition_id": "9899",
+   "title": "Senior Product Operations Specialist",
+   "updated_at": "2026-09-04T03:33:10-04:00"
+  },
+  {
+   "absolute_url": "https://boards.greenhouse.io/careem/jobs/8682543002?gh_jid=8682543002",
+   "application_deadline": null,
+   "company_name": "Careem",
+   "data_compliance": [
+    {
+     "demographic_data_consent_applies": false,
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "type": "gdpr"
+    }
+   ],
+   "first_published": "2026-08-19T04:50:15-04:00",
+   "id": 8682543002,
+   "internal_job_id": 6468735002,
+   "language": "en",
+   "location": {
+    "name": "Karachi, Pakistan; Lahore, Pakistan"
+   },
+   "metadata": [
+    {
+     "id": 4471783002,
+     "name": "Division",
+     "value": "Tech",
+     "value_type": "single_select"
+    },
+    {
+     "id": 4221047002,
+     "name": "Sub-Division",
+     "value": "Engineering",
+     "value_type": "single_select"
+    },
+    {
+     "id": 10033485002,
+     "name": "Sub-Department",
+     "value": "Deliveries Discovery",
+     "value_type": "single_select"
+    },
+    {
+     "id": 22986410002,
+     "name": "Hiring Manager",
+     "value": "sergio.garre@careem.com",
+     "value_type": "short_text"
+    },
+    {
+     "id": 12565152002,
+     "name": "Job Family",
+     "value": "Software engineering - Backend",
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653543002,
+     "name": "Tribe",
+     "value": "Deliveries Discovery",
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653550002,
+     "name": "Squad",
+     "value": "quick-shops-box",
+     "value_type": "single_select"
+    },
+    {
+     "id": 24594952002,
+     "name": "Country",
+     "value": "Pakistan",
+     "value_type": "single_select"
+    },
+    {
+     "id": 24436433002,
+     "name": "Evergreen Role (TA)",
+     "value": false,
+     "value_type": "yes_no"
+    },
+    {
+     "id": 22868282002,
+     "name": "SOURCER (TA)",
+     "value": null,
+     "value_type": "short_text"
+    }
+   ],
+   "requisition_id": "9946",
+   "title": "Senior Software Engineer I",
+   "updated_at": "2026-09-04T03:33:10-04:00"
+  },
+  {
+   "absolute_url": "https://boards.greenhouse.io/careem/jobs/8593696002?gh_jid=8593696002",
+   "application_deadline": null,
+   "company_name": "Careem",
+   "data_compliance": [
+    {
+     "demographic_data_consent_applies": false,
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "type": "gdpr"
+    }
+   ],
+   "first_published": "2026-06-16T08:14:18-04:00",
+   "id": 8593696002,
+   "internal_job_id": 6432536002,
+   "language": "en",
+   "location": {
+    "name": "Dubai, United Arab Emirates"
+   },
+   "metadata": [
+    {
+     "id": 4471783002,
+     "name": "Division",
+     "value": "Groceries",
+     "value_type": "single_select"
+    },
+    {
+     "id": 4221047002,
+     "name": "Sub-Division",
+     "value": "Supply Chain & Store Operations",
+     "value_type": "single_select"
+    },
+    {
+     "id": 10033485002,
+     "name": "Sub-Department",
+     "value": "Supply Chain Planning",
+     "value_type": "single_select"
+    },
+    {
+     "id": 22986410002,
+     "name": "Hiring Manager",
+     "value": "omair.siddiqui@careem.com",
+     "value_type": "short_text"
+    },
+    {
+     "id": 12565152002,
+     "name": "Job Family",
+     "value": "Insights & Analytics",
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653543002,
+     "name": "Tribe",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653550002,
+     "name": "Squad",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 24594952002,
+     "name": "Country",
+     "value": "United Arab Emirates",
+     "value_type": "single_select"
+    },
+    {
+     "id": 24436433002,
+     "name": "Evergreen Role (TA)",
+     "value": false,
+     "value_type": "yes_no"
+    },
+    {
+     "id": 22868282002,
+     "name": "SOURCER (TA)",
+     "value": null,
+     "value_type": "short_text"
+    }
+   ],
+   "requisition_id": "9865",
+   "title": "Senior Supply Chain Manager",
+   "updated_at": "2026-09-04T03:33:10-04:00"
+  },
+  {
+   "absolute_url": "https://boards.greenhouse.io/careem/jobs/7107610002?gh_jid=7107610002",
+   "application_deadline": null,
+   "company_name": "Careem",
+   "data_compliance": [
+    {
+     "demographic_data_consent_applies": false,
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "type": "gdpr"
+    }
+   ],
+   "first_published": "2024-01-24T01:43:42-05:00",
+   "id": 7107610002,
+   "internal_job_id": 5721590002,
+   "language": "en",
+   "location": {
+    "name": "Karachi, Pakistan; Lahore, Pakistan"
+   },
+   "metadata": [
+    {
+     "id": 4471783002,
+     "name": "Division",
+     "value": "Tech",
+     "value_type": "single_select"
+    },
+    {
+     "id": 4221047002,
+     "name": "Sub-Division",
+     "value": "Satellite Engineering",
+     "value_type": "single_select"
+    },
+    {
+     "id": 10033485002,
+     "name": "Sub-Department",
+     "value": "Satellite Engineering",
+     "value_type": "single_select"
+    },
+    {
+     "id": 22986410002,
+     "name": "Hiring Manager",
+     "value": null,
+     "value_type": "short_text"
+    },
+    {
+     "id": 12565152002,
+     "name": "Job Family",
+     "value": "Software engineering",
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653543002,
+     "name": "Tribe",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653550002,
+     "name": "Squad",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 24594952002,
+     "name": "Country",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 24436433002,
+     "name": "Evergreen Role (TA)",
+     "value": null,
+     "value_type": "yes_no"
+    },
+    {
+     "id": 22868282002,
+     "name": "SOURCER (TA)",
+     "value": null,
+     "value_type": "short_text"
+    }
+   ],
+   "requisition_id": "EG7836",
+   "title": "Software Engineer I ",
+   "updated_at": "2026-09-04T03:33:10-04:00"
+  },
+  {
+   "absolute_url": "https://boards.greenhouse.io/careem/jobs/7004825002?gh_jid=7004825002",
+   "application_deadline": null,
+   "company_name": "Careem",
+   "data_compliance": [
+    {
+     "demographic_data_consent_applies": false,
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "type": "gdpr"
+    }
+   ],
+   "first_published": "2023-11-02T12:13:14-04:00",
+   "id": 7004825002,
+   "internal_job_id": 5398554002,
+   "language": "en",
+   "location": {
+    "name": "Lahore, Pakistan"
+   },
+   "metadata": [
+    {
+     "id": 4471783002,
+     "name": "Division",
+     "value": "Tech",
+     "value_type": "single_select"
+    },
+    {
+     "id": 4221047002,
+     "name": "Sub-Division",
+     "value": "Core Engineering",
+     "value_type": "single_select"
+    },
+    {
+     "id": 10033485002,
+     "name": "Sub-Department",
+     "value": "Satellite Engineering",
+     "value_type": "single_select"
+    },
+    {
+     "id": 22986410002,
+     "name": "Hiring Manager",
+     "value": null,
+     "value_type": "short_text"
+    },
+    {
+     "id": 12565152002,
+     "name": "Job Family",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653543002,
+     "name": "Tribe",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653550002,
+     "name": "Squad",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 24594952002,
+     "name": "Country",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 24436433002,
+     "name": "Evergreen Role (TA)",
+     "value": true,
+     "value_type": "yes_no"
+    },
+    {
+     "id": 22868282002,
+     "name": "SOURCER (TA)",
+     "value": null,
+     "value_type": "short_text"
+    }
+   ],
+   "requisition_id": "EG7761",
+   "title": "Software Engineer II - Backend | NextGen Engineering",
+   "updated_at": "2026-09-04T03:33:10-04:00"
+  }
+ ],
+ "meta": {
+  "total": 21
+ }
+}
