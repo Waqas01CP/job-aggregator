@@ -267,3 +267,106 @@ Beyond Speechify falling from 1086 postings to 361.
 - **`docs/architecture-2.0.md` runtime view, step 8**, says "Batch-write to Airtable, ten per call" as a step of a normal run. There is no Airtable writer and, by the operator's own decision, no base. It reads as description rather than intent.
 - **ADR-0009 says the slice is eleven boards**; `config/boards.json` holds twelve entries. The twelfth is the ADR-0019 conditional and a test says so explicitly, but the arithmetic will confuse someone.
 - **`CHAT_STATE.md`** at the repository root is gitignored local scratch and still describes the spike as the one open item. It is not an implementing session's to edit, and the map deliberately skips it.
+
+## Measurements taken after the body of this log was written
+
+These were computed while preparing the architecture-chat brief, after the
+sections above were finished. They exist nowhere else and several bear directly
+on open Confirmations.
+
+### Measure A is computable on every row in the slice
+
+| Source | Rows carrying a real publication date |
+|---|---|
+| Greenhouse and Lever | 916 of 916, **100%** |
+| Himalayas | 500 of 500, **100%** |
+
+Nothing in the slice falls back to first-seen. 43 Lever rows carry
+`published_meaning_unconfirmed`, because `createdAt`'s meaning is still
+unproven, but they do carry a date.
+
+### First data toward ADR-0028's Confirmation
+
+ADR-0028 sets the ceiling at 500, says explicitly that it is a runaway guard
+rather than a measured volume, and says the real number comes from the run log
+after a month. The first four observations:
+
+| Run | Requests | Of 500 |
+|---|---|---|
+| 11 ATS boards only | 11 | 2.2% |
+| 11 ATS + Himalayas, first contact | 36 | 7.2% |
+| 11 ATS + Himalayas, steady state | 12 | 2.4% |
+
+**Steady state for the whole slice is 12 requests per run, 24 a day.** The
+ceiling is roughly forty times the observed need. That is one month short of
+the evidence the record asks for, but it is the first real data and it points
+at a much smaller number.
+
+### What survived the filter, and whether it is reachable
+
+Nineteen rows from 916 ATS postings. **Seven are Pakistan-reachable:**
+
+| Title | Employer | Location |
+|---|---|---|
+| Senior Software Engineer I | Careem | Karachi, Lahore |
+| Software Engineer I | Careem | Karachi, Lahore |
+| Senior AI Engineer, twice | BRKZ | Cairo, Islamabad, Karachi, Lahore |
+| AI Engineer | Globalli | India, Pakistan |
+| AI/ML Engineer | Joblogic | Lahore |
+| Senior Backend Engineer, PHP/Symfony | Smart Working Solutions | Pakistan |
+
+The other twelve are US, Australia, India, Latin America and Vietnam.
+
+### The title pool admits 2.1%, and ADR-0021's feedback loop has now fired
+
+ADR-0021 says the drop log is the sole feedback signal for a missing term and
+that reading it is load-bearing rather than optional. This is the first run that
+produced one, so this is the first time anyone has read it.
+
+**916 ATS postings, 19 admitted, a 2.1% survival rate.** Himalayas admits 4.0%.
+
+Ten terms did all the admitting. `ai engineer` 7, `ai ml` 2,
+`software engineer i` 2, `backend engineer` 2, then one each for
+`forward deployed`, `ai platform`, `agentic`, `ai solution`,
+`machine learning`, `ai automation`. **Forty of the fifty terms admitted
+nothing.**
+
+**One concrete gap, three postings.** "Forward Deployment Engineer" was dropped
+while "Senior Forward Deployed Engineer" was kept. The term is
+`forward deployed`, and ADR-0021's plural rule appends `(?:e?s)?` to the
+term's final word, which cannot reach "Deployment". That is the pool's own
+machinery working exactly as specified and still missing a real variant. Adding
+`forward deployment` as its own term is the fix; the existing machinery cannot
+produce it.
+
+**What the other 897 drops are**, by inspection: Java and C# developers, QA and
+SDET roles, Customer Success Engineers, Solutions Architects, sales. The
+allowlist is doing its job. 476 of the 897 contain an engineering word, and
+almost all of those are genuinely out of domain. The open question is not
+whether 2.1% is too low in general but whether any of those specific families
+should be admitted, and that is the operator's call, not an implementing
+session's.
+
+### Per board, from the first live run
+
+| Board | Postings | Dropped | Kept |
+|---|---|---|---|
+| greenhouse:speechify | 361 | 361 | **0** |
+| greenhouse:veeamsoftware | 243 | 241 | 2 |
+| greenhouse:gomotive | 150 | 148 | 2 |
+| greenhouse:joblogic | 33 | 31 | 2 |
+| greenhouse:coderoad | 29 | 22 | 6 |
+| lever:spreetail | 24 | 23 | 1 |
+| greenhouse:careem | 21 | 19 | 2 |
+| greenhouse:brkz | 19 | 17 | 2 |
+| lever:smart-working-solutions | 19 | 18 | 1 |
+| greenhouse:globalli | 12 | 11 | 1 |
+| greenhouse:banyancanopygroup | 6 | 6 | 0 |
+
+### A note on leftover state
+
+`data/test/` holds the artefacts of this session's four TEST_MODE runs,
+including a seen store with 1416 identities. It is gitignored and it is not
+production state. A first production run starts from an empty store and will
+therefore treat every posting as new, which is correct. Delete `data/test/` if
+a clean test run is wanted.

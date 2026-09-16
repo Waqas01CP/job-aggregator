@@ -122,6 +122,12 @@ Four spikes have run and their findings are folded into the records. The four de
 
 **iCIMS `datePosted` is generated, not real.** [VERIFIED] false. The earlier suspicion is **withdrawn**: an older posting reports `2025-05-15T04:00:00.000Z`, sixteen months before the three that shared `2026-09-10T04:00:00.000Z`. The field varies per posting. The shared `04:00:00.000Z` is midnight US Eastern, so the value is a date with no time. `2026-09-16-second-observation-checks.md`.
 
+**Measure A's coverage on the slice is 100%.** [VERIFIED] every one of 916 Greenhouse and Lever rows and all 500 Himalayas rows carries a real publication date; nothing falls back to first-seen. 43 Lever rows carry the date with its meaning unconfirmed. `2026-09-17-vertical-slice.md`.
+
+**ADR-0028's ceiling of 500 is forty times the observed need.** [VERIFIED] first four observations: 11 requests for the eleven ATS boards, 36 on first contact with Himalayas, 12 in steady state for the whole slice. That is one month short of the evidence the record's Confirmation asks for, and nothing yet reads the run logs to aggregate it. `2026-09-17-vertical-slice.md`.
+
+**The title pool admits 2.1% of postings, and 40 of its 50 terms admitted nothing.** [VERIFIED] 19 rows from 916, seven of them Pakistan-reachable. One concrete gap found: "Forward Deployment Engineer" is dropped while "Senior Forward Deployed Engineer" is kept, because ADR-0021's plural rule cannot reach "Deployment" from `forward deployed`. Widening the pool is the operator's call. `2026-09-17-vertical-slice.md`.
+
 **Lever `createdAt` means published.** Still open. [VERIFIED] not contradicted: across five days both Lever boards produced one new posting, whose `createdAt` postdates the baseline clock, so 0 of 1 newly visible postings predate it. One appearance cannot establish the field's meaning. If Lever enters the slice, twice-daily polling answers this from the pipeline's own data within days. `2026-09-16-second-observation-checks.md`.
 
 **Postings per run are on the order of one thousand.** ADR-0001:27, inherited by ADR-0003:28. [VERIFIED] false: 11 of the 53 boards return 1646 postings. Median 27 per board, maximum 1086. The 53-board total is unmeasured. `2026-09-15-spike-followup-checks.md`.
