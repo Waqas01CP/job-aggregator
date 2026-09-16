@@ -2,7 +2,7 @@
 
 One log per session, newest at the top. This table is the navigation index for all session history.
 
-**No logs yet.** Nothing has been implemented. The first row lands when the first implementing session runs.
+Nothing has been implemented. The first rows are diagnostic sessions, not implementing ones.
 
 ## How to use this file
 
@@ -36,4 +36,7 @@ When this directory passes roughly 80 to 100 files at its root, split by lane in
 
 | Date | Session | What was done | Outcome |
 |---|---|---|---|
-| — | — | No sessions yet | — |
+| 2026-09-16 | Second-observation checks on three date fields | 7 GETs of a self-imposed 12. Tests chosen to need no elapsed time, since only 1h31m had passed | Workday `startDate` confirmed behaviourally, 7 of 7 across ages 1 to 13 days. The iCIMS "generated timestamp" suspicion is **withdrawn**: an older posting reads 2025-05-15. Lever `createdAt` still unsettled on one appearance in five days |
+| 2026-09-16 | Publication date across the 13 untested platforms | 53 GETs of a 60 cap, one board per platform. Item 54: both earlier logs retyped `research` to `log`, map regenerated | Zero NO ENDPOINT. PROCEED: Ashby, Workable, SmartRecruiters, Breezy, Pinpoint, BambooHR. INVESTIGATE: the other 7. Manatal exposes no date field on 34 postings across 2 boards, which is ADR-0007's material case. Workday and BambooHR need 1 request per posting for a date |
+| 2026-09-15 | Spike follow-up checks | 4 checks: 2 on disk, 10 GETs (Lever pages, Himalayas). Backfilled the 2026-09-11 log. STATE rows updated | 1646 postings on 11 boards falsifies ADR-0001:27 and ADR-0003:28. Speechify floor real: 8 titles across 329 locations. Lever pages show no date. Himalayas browse paginates newest-first; search does not |
+| 2026-09-11 | Endpoint feasibility spike, log written 2026-09-15 | 13 GETs: Greenhouse 9 boards, Lever 2, Himalayas 1 | Greenhouse PROCEED, Lever INVESTIGATE (no employer field), Himalayas PROCEED. Publication date on 100% of postings on all three |

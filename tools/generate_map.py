@@ -56,7 +56,7 @@ DECISIONS_DIR = REPO_ROOT / "docs" / "decisions"
 FRONTMATTER_RE = re.compile(r"\A---\r?\n(.*?)\r?\n---\r?\n", re.DOTALL)
 H1_RE = re.compile(r"^#\s+(.+?)\s*$", re.MULTILINE)
 
-VALID_TYPES = {"instruction", "state", "explanation", "reference", "how-to", "decision", "research", "entry"}
+VALID_TYPES = {"instruction", "state", "explanation", "reference", "how-to", "decision", "research", "log", "entry"}
 
 
 class MapError(Exception):
@@ -193,14 +193,15 @@ def render(entries):
         "as it is. `reference` is what things are, opened while working.",
         "`how-to` is how to accomplish a task. `decision` is one recorded choice.",
         "`research` is a dated snapshot of what was found, valid as a record",
-        "of that moment even once its findings go stale.",
+        "of that moment even once its findings go stale. `log` is what one",
+        "session did, append-only, chained backwards through the index.",
         "",
         "Relations between decision records live inside those records as",
         "supersedes and superseded-by links, deliberately not duplicated here.",
         "",
     ]
 
-    order = ["entry", "instruction", "state", "explanation", "how-to", "reference", "research", "decision"]
+    order = ["entry", "instruction", "state", "explanation", "how-to", "reference", "research", "log", "decision"]
     for file_type in order:
         rows = by_type.pop(file_type, [])
         if not rows:

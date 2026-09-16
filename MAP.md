@@ -16,7 +16,8 @@ should work in this repository. `state` is what is true right now.
 as it is. `reference` is what things are, opened while working.
 `how-to` is how to accomplish a task. `decision` is one recorded choice.
 `research` is a dated snapshot of what was found, valid as a record
-of that moment even once its findings go stale.
+of that moment even once its findings go stale. `log` is what one
+session did, append-only, chained backwards through the index.
 
 Relations between decision records live inside those records as
 supersedes and superseded-by links, deliberately not duplicated here.
@@ -64,6 +65,15 @@ supersedes and superseded-by links, deliberately not duplicated here.
 | `docs/research/0003-job-source-survey.md` | Pass 0003. Survey of free, pollable job board and aggregator APIs. Six keyless feeds recommended; Rozee.pk has no API path. | current |
 | `docs/research/0004-project-context-documentation.md` | Pass 0004. Project context documentation for humans and AI agents. Corrects pass 0002 on CLAUDE.md length; finds the strongest source was the operator's own prior repository. | current |
 
+## log
+
+| File | Holds | Status |
+| --- | --- | --- |
+| `logs/2026-09-11-endpoint-feasibility-spike.md` | Endpoint feasibility spike against Greenhouse, Lever and Himalayas, run 2026-09-11. Written retroactively on 2026-09-15 from the run's own report. | current |
+| `logs/2026-09-15-spike-followup-checks.md` | Spike follow-up. Board volume measured, Speechify age floor examined, Lever createdAt checked against hosted pages, Himalayas newest-first pagination tested. | current |
+| `logs/2026-09-16-publication-date-across-untested-platforms.md` | Discovery spike across the thirteen untested ATS platforms. Whether each exposes a machine-readable endpoint and a publication date, with field names, formats and coverage. | current |
+| `logs/2026-09-16-second-observation-checks.md` | Second-observation checks on three date fields left open by the platform spike. Workday startDate confirmed behaviourally, the iCIMS suspicion withdrawn, Lever createdAt still unsettled. | current |
+
 ## decision
 
 | File | Holds | Status |
@@ -93,5 +103,7 @@ supersedes and superseded-by links, deliberately not duplicated here.
 | `docs/decisions/0023-context-artifact-set.md` | ADR-0023: Context artifact set and onboarding order | accepted |
 | `docs/decisions/0024-session-log-format.md` | ADR-0024: Session log format | accepted |
 | `docs/decisions/0025-auto-memory-not-authoritative.md` | ADR-0025: Auto Memory is not authoritative | accepted |
+| `docs/decisions/0026-employer-provenance.md` | ADR-0026: Employer provenance where a payload does not carry it | accepted |
+| `docs/decisions/0027-dedupe-key-normalisation.md` | ADR-0027: Deduplication key normalisation, configured per source | accepted |
 
-Files listed: 38
+Files listed: 44

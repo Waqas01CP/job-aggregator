@@ -6,7 +6,7 @@ status: current
 
 # STATE
 
-**Last verified against `main` at `ed0c4f4`, 2026-09-11.** Amended the same day for ADR-0025 and the state gate; next commit updates the hash.
+**Last verified against `main` at `26d0073`, 2026-09-16**, for the Pipeline rows, the Blocked section and the Known unverified section, which the three spikes touched. Documentation and Tooling rows are carried forward from the `ed0c4f4` verification and were not rechecked in that session.
 
 This file is ground truth. If a row says DONE, it is done. If you believe otherwise, read the file the pointer names before claiming a conflict. Memory is not evidence.
 
@@ -32,7 +32,7 @@ Update the verified-against line whenever you touch this file.
 
 **Nothing is built. No pipeline code exists.** Everything below is documentation, tooling for documentation, and decisions. The first line of pipeline code has not been written.
 
-The project is blocked on one thing that is not mine: the endpoint feasibility spike.
+The endpoint feasibility spike and its follow-up checks have run. Their findings contradict figures in accepted records, and those records are unrevised. That revision is the operator's, not an implementing session's.
 
 ---
 
@@ -68,7 +68,10 @@ The project is blocked on one thing that is not mine: the endpoint feasibility s
 
 | Task | Status | Evidence | Date | Proof |
 |---|---|---|---|---|
-| Endpoint feasibility spike, Greenhouse, Lever, Himalayas | PENDING | — | — | Brief written, not run |
+| Endpoint feasibility spike, Greenhouse, Lever, Himalayas | DONE | [VERIFIED] ran; 11 of 11 board files re-checked against printed byte counts on 2026-09-15 | 2026-09-11 | `2026-09-11-endpoint-feasibility-spike.md`, written retroactively |
+| Spike follow-up: board volume, Speechify age floor, Lever `createdAt`, Himalayas pagination | PARTIAL | [VERIFIED] checks 1 to 3 complete. Check 4 complete except whether browse pagination terminates, not establishable inside its 7-request cap | 2026-09-15 | `2026-09-15-spike-followup-checks.md` |
+| Publication-date discovery across the 13 untested ATS platforms | DONE | [VERIFIED] 53 of 60 permitted requests, one board per platform, two boards for Manatal and Workable | 2026-09-16 | `2026-09-16-publication-date-across-untested-platforms.md` |
+| Second-observation checks on Lever `createdAt`, Workday `startDate`, iCIMS `datePosted` | DONE | [VERIFIED] 7 requests against a self-imposed cap of 12 | 2026-09-16 | `2026-09-16-second-observation-checks.md` |
 | Shared HTTP module | PENDING | — | — | ADR-0009 |
 | Greenhouse adapter | PENDING | — | — | ADR-0009 |
 | Lever adapter | PENDING | — | — | ADR-0009 |
@@ -86,7 +89,17 @@ The project is blocked on one thing that is not mine: the endpoint feasibility s
 
 ## Blocked, and on whom
 
-**The spike is blocked on the operator.** The brief is written. It has not been run. Nothing downstream of it should be built first, because it tests the two assumptions ADR-0006 and ADR-0007 rest on, and a bad result changes records before any code exists.
+**The record revisions from spikes 1 and 2 are done.** ADR-0001 and ADR-0003 carry the falsified volume assumptions, ADR-0006 records the propagation assumption as confirmed, ADR-0018 bars `updated_at` as a change signal, ADR-0019's employer clause is reversed by ADR-0026, ADR-0026's key list is corrected from 18 to 20, and ADR-0027 adds per-source title normalisation. The architecture document's coverage table was corrected on 2026-09-16 for spike 3.
+
+**ADR-0007's publication-date assumption is not falsified: it holds for Manatal**, the one platform of sixteen exposing no date at all.
+
+**What remains is four decisions, and they belong to the architecture chat.** Adapter order after the slice, the N+1 policy for platforms carrying a date only per posting, Dover's source class, and the provenance enum in ADR-0026. All four concern what happens after the vertical slice, not the slice itself. `2026-09-16-publication-date-across-untested-platforms.md` states each in full.
+
+**Two questions are blocked on the architecture chat, not on the operator alone.** Both change what the pipeline does, and `2026-09-16-publication-date-across-untested-platforms.md` states each in full.
+
+*Policy for platforms whose list endpoint omits the publication date.* BambooHR and Workday carry a date only on a per-posting detail fetch; JazzHR, Freshteam, iCIMS and Zoho only inside per-posting HTML. Contour's Workday board alone would cost 90 extra requests per run, twice daily. Needs a decision between N+1 fetching under a stated ceiling, ADR-0007's first-seen fallback for those platforms, or deferral. Touches ADR-0003, ADR-0005, ADR-0006 and ADR-0009.
+
+*Whether Dover's cross-client job board is a source at all.* Dover's only dated feed spans 45 employers and 482 postings and is not the employer's board; the per-employer endpoint carries no date. Needs a decision under ADR-0019's source classes and ADR-0020's raw-storage routing.
 
 **The blocklist is no longer needed.** ADR-0021 removed it. Previously blocked on the operator; now closed.
 
@@ -96,8 +109,20 @@ The project is blocked on one thing that is not mine: the endpoint feasibility s
 
 ## Known unverified
 
-Two assumptions carry accepted decisions and neither has been tested. Both are recorded as Assumptions in their records, and the spike is what settles them.
+**Boards publish to their APIs at the moment a posting goes live.** ADR-0006's cadence rests on it. [VERIFIED] partially: one run found a Greenhouse posting 0.26 hours old. That cannot separate instant publication from a quiet window. The second run that settles it has not been done. `2026-09-11-endpoint-feasibility-spike.md`.
 
-**Boards publish to their APIs at the moment a posting goes live.** ADR-0006's cadence rests on it. Not measured for any platform.
+**Many ATS platforms expose no publication date.** ADR-0007 asserts it. **Now settled across 16 platforms and it holds, narrowly.** [VERIFIED] a publication date exists on Greenhouse, Lever, Himalayas, Ashby, Workable, SmartRecruiters, Breezy, Pinpoint and BambooHR, and on JazzHR, Freshteam, Zoho and iCIMS only inside per-posting HTML. [VERIFIED] **Manatal exposes no date field of any kind**, across 2 boards and 34 postings, and it holds 8 registry boards. Dover's per-employer board carries none either. Manatal rows can never satisfy Measure A and must use ADR-0007's first-seen fallback. ADR-0007 is unrevised. `2026-09-16-publication-date-across-untested-platforms.md`.
 
-**Many ATS platforms expose no publication date.** ADR-0007 asserts it from a registry's notes. No endpoint has been requested. ADR-0015's Measure A, the project's only binding success measure, is uncomputable without one.
+**Workday `startDate` means publication.** [VERIFIED] behaviourally: it equals the fetch date minus the relative age in `postedOn` on 7 of 7 postings spanning ages 1 to 13 days, and none is in the future. An employment start date would not track posting age. The field name still does not say what it holds, so provenance must be recorded. `2026-09-16-second-observation-checks.md`.
+
+**iCIMS `datePosted` is generated, not real.** [VERIFIED] false. The earlier suspicion is **withdrawn**: an older posting reports `2025-05-15T04:00:00.000Z`, sixteen months before the three that shared `2026-09-10T04:00:00.000Z`. The field varies per posting. The shared `04:00:00.000Z` is midnight US Eastern, so the value is a date with no time. `2026-09-16-second-observation-checks.md`.
+
+**Lever `createdAt` means published.** Still open. [VERIFIED] not contradicted: across five days both Lever boards produced one new posting, whose `createdAt` postdates the baseline clock, so 0 of 1 newly visible postings predate it. One appearance cannot establish the field's meaning. If Lever enters the slice, twice-daily polling answers this from the pipeline's own data within days. `2026-09-16-second-observation-checks.md`.
+
+**Postings per run are on the order of one thousand.** ADR-0001:27, inherited by ADR-0003:28. [VERIFIED] false: 11 of the 53 boards return 1646 postings. Median 27 per board, maximum 1086. The 53-board total is unmeasured. `2026-09-15-spike-followup-checks.md`.
+
+**Lever `createdAt` means published.** Measure A on Lever rows depends on it. [VERIFIED] not established: hosted pages display no date. Page-source JSON-LD `datePosted` matches `createdAt`'s UTC date on 3 of 3, but both come from Lever, so the match is not independent. `2026-09-15-spike-followup-checks.md`.
+
+**Greenhouse `updated_at` marks an edit to a posting.** [VERIFIED] unreliable as such: it is bulk-stamped. 16 of 21 Careem postings share one instant, and Speechify's run in four rotating batches of about 265. What writes it is unknown. `2026-09-15-spike-followup-checks.md`.
+
+**Himalayas can be read newest-first and stopped early.** [VERIFIED] partially: the browse endpoint orders by `pubDate` and paginates by cursor without duplicates over 3 pages. The search endpoint does neither. Browse's newest posting trailed search's by 97.7 minutes. [BELIEVED] from that lag, not observed: a stopping rule keyed to a run's wall clock would skip postings that reach browse late. Termination is not established. `2026-09-15-spike-followup-checks.md`.
