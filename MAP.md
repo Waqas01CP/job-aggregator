@@ -105,5 +105,7 @@ supersedes and superseded-by links, deliberately not duplicated here.
 | `docs/decisions/0025-auto-memory-not-authoritative.md` | ADR-0025: Auto Memory is not authoritative | accepted |
 | `docs/decisions/0026-employer-provenance.md` | ADR-0026: Employer provenance where a payload does not carry it | accepted |
 | `docs/decisions/0027-dedupe-key-normalisation.md` | ADR-0027: Deduplication key normalisation, configured per source | accepted |
+| `docs/decisions/0028-fetch-budget-and-detail-once.md` | ADR-0028: Per-run fetch budget, and detail fetched once per posting | accepted |
+| `docs/decisions/0029-adapter-order-and-dover.md` | ADR-0029: Adapter order after the slice, and Dover dropped | accepted |
 
-Files listed: 44
+Files listed: 46

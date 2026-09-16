@@ -200,6 +200,37 @@ flowchart LR
 
 ### Coverage by platform
 
+Measured across three spikes, 11 to 16 September 2026. Sixteen platforms probed.
+
+**The tier assignments below are obsolete.** They were constructed for an eight-hour scope that no longer exists, on assumptions about endpoints that have since been measured directly. This table supersedes them, per ADR-0029.
+
+| Platform | Publication date | Cost per board | Employer | Absolute URL |
+|---|---|---|---|---|
+| Greenhouse | `first_published`, 100% | 1 GET | yes | yes |
+| Ashby | `publishedAt`, 100% | 1 GET | no field | yes |
+| Workable | `published_on`, 100% | 1 GET | envelope only | yes |
+| SmartRecruiters | `releasedDate`, 100% | 1 GET | yes | constructed |
+| Breezy | `published_date`, 100% | 1 GET | yes | yes |
+| Pinpoint | `pubDate`, 100%, RSS only | 1 GET | no | yes |
+| Lever | `createdAt`, meaning unproven | 1 GET | no field | yes |
+| Himalayas | `pubDate`, 100% | cursor paging | yes | yes |
+| BambooHR | `datePosted` | 1 + N | no | detail only |
+| Workday | `startDate` | 1 + N | top level | detail only |
+| JazzHR | `datePosted`, JSON-LD | 1 per posting | yes | yes |
+| Freshteam | `datePosted`, JSON-LD | 1 per posting | yes | yes |
+| iCIMS | `datePosted`, JSON-LD | 1 per posting | yes | yes |
+| Zoho Recruit | `Date_Opened`, embedded | 1 per posting, no enumeration found | n/a | n/a |
+| Manatal | **none** | 1 GET | no | constructible |
+| Dover | none usable | n/a | no | no |
+
+Workday's `startDate` is the publication date on behaviour, tracking posting age on 7 of 7 postings aged 1 to 13 days. The name is wrong for what it holds.
+
+Manatal is the material case ADR-0007 was written for, and the first one found: a clean public JSON API with no date field of any kind. Its rows can only ever be ordered by first-seen.
+
+Dover, EY and Recruitee are excluded. ADR-0029.
+
+### Coverage by platform, as originally tiered
+
 53 boards with resolvable handles, counted from the registry.
 
 | Tier | Platforms | Boards | Status |
@@ -321,6 +352,8 @@ Index only. Reasoning lives in `docs/decisions/` and is never restated here.
 | 0025 | Auto Memory is not authoritative | Accepted |
 | 0026 | Employer provenance where a payload does not carry it | Accepted |
 | 0027 | Deduplication key normalisation, configured per source | Accepted |
+| 0028 | Per-run fetch budget, and detail fetched once per posting | Accepted |
+| 0029 | Adapter order after the slice, and Dover dropped | Accepted |
 
 ---
 

@@ -44,7 +44,11 @@ Chosen option: "derive with a recorded provenance, and expand through the alias 
 
 We will derive the employer from the configuration slug where the payload carries no employer field.
 
-We will record **how** every employer value was obtained, on every row, as one of `payload`, `slug`, or `url`. A derived employer is never indistinguishable from a returned one.
+We will record **how** every employer value was obtained, on every row, as one of `payload`, `envelope`, `slug`, `url`, or `constructed`. A derived employer is never indistinguishable from a returned one.
+
+We will record provenance on the canonical URL by the same enum, for the same reason. SmartRecruiters returns no human-facing URL: its `ref` is an absolute API address and the careers URL must be built from `id`. A constructed URL and a returned one carry different risk, and ADR-0011 stores a canonical URL with no provenance concept at all.
+
+Provenance is recorded for these two fields and no others. Generalising it to every derived field would mean recording provenance on things nobody questions.
 
 We will expand a derived slug to a display name through the employer alias map that ADR-0019 already requires for cross-source deduplication, and we will record when no alias entry exists rather than guessing an expansion.
 
@@ -95,3 +99,4 @@ Lever's `createdAt` semantics remain untested and are a separate open question. 
 | Date | Change | Reason |
 |---|---|---|
 | 2026-09-15 | The key enumeration listed 18 keys and called them "every key." There are 20 | `salaryDescription` and `salaryDescriptionPlain` appear on one Spreetail posting and were missed by the first spike, whose report this record copied. The conclusion is unchanged: neither new key contains compan, employ or org, so no employer field exists. But an enumeration described as complete was not, and the corrected list is now here |
+| 2026-09-16 | The provenance enum gains `envelope` and `constructed`, and now covers the canonical URL as well as the employer | Two shapes were uncovered. Workable returns the employer in the response envelope rather than on the posting, which is neither a per-row field nor a slug derivation and is more reliable than either. SmartRecruiters returns no human-facing URL at all, so the careers address must be constructed from `id`. Extending the enum and the field set once is better than touching the normaliser, a shared component, twice for one class of problem |

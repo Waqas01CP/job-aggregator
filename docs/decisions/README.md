@@ -37,12 +37,14 @@ Records are written at the moment a decision concludes. An accepted record is ne
 | 0025 | Auto Memory is not authoritative | Accepted |
 | 0026 | Employer provenance where a payload does not carry it | Accepted |
 | 0027 | Deduplication key normalisation, configured per source | Accepted |
+| 0028 | Per-run fetch budget, and detail fetched once per posting | Accepted |
+| 0029 | Adapter order after the slice, and Dover dropped | Accepted |
 
 ## Pending
 
 Decisions identified but not concluded.
 
-- Platform adapter order after the vertical slice. Blocked on feasibility spikes.
+- Platform adapter order after the vertical slice. **Closed by ADR-0029.**
 - Reuse boundary against the LinkedIn pipeline in fyp-career-guidance: which components are adopted, which are deliberately not.
 - Description matching, deferred by ADR-0016 until field coverage per platform is known.
 - Deduplication across source classes, and the employer alias map ADR-0019 makes necessary.
