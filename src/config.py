@@ -20,12 +20,18 @@ REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEFAULT_PATH = os.path.join(REPO_ROOT, "config", "boards.json")
 
 # Platforms this build adapts. ADR-0009 fixes the slice at these two.
-PLATFORMS = frozenset({"greenhouse", "lever"})
+PLATFORMS = frozenset({"greenhouse", "lever", "himalayas"})
 
 # Every normalisation that may be named by a board entry. A name outside this
 # set is a typo, and a typo that silently did nothing would be invisible: the
 # dedupe key would quietly stop collapsing a board's location variants.
 NORMALISATIONS = frozenset({"strip_location_suffix"})
+
+# ADR-0019 source classes. ADR-0020 routes raw storage by this: employer ATS
+# rows go to the public data branch, aggregator rows stay local and are never
+# committed, because two feeds prohibit redistribution and a branch inherits
+# its repository's visibility.
+AGGREGATOR_PLATFORMS = frozenset({"himalayas"})
 
 # Platforms whose payload carries no employer field. A board on one of these
 # needs an alias or its employer is unresolvable. ADR-0026 requires the absence
@@ -44,6 +50,10 @@ class Board:
     normalisations: tuple = ()
     employer_alias: str = None
     note: str = ""
+
+    @property
+    def source_class(self):
+        return "aggregator" if self.platform in AGGREGATOR_PLATFORMS else "ats"
 
     @property
     def source(self):

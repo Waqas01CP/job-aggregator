@@ -35,6 +35,8 @@ REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 DATA_BRANCH = "data"
 RAW_DIR = "fetch-all"
+# ADR-0020: aggregator rows live here and are never committed or pushed.
+LOCAL_RAW_DIR = "fetch-all-local"
 FILTERED_FILE = "filtered.json"
 SEEN_FILE = "seen.json"
 RUNLOG_DIR = "logs-runs"
@@ -53,14 +55,19 @@ def layout(test_mode=False):
     prefix = TEST_PREFIX if test_mode else ""
     return {
         "raw_dir": prefix + RAW_DIR,
+        "local_raw_dir": prefix + LOCAL_RAW_DIR,
         "filtered": prefix + FILTERED_FILE,
         "seen": prefix + SEEN_FILE,
         "runlog_dir": prefix + RUNLOG_DIR,
     }
 
 
-def raw_path(source, test_mode=False):
-    return "%s/%s.json" % (layout(test_mode)["raw_dir"], source)
+def raw_path(source, test_mode=False, source_class="ats"):
+    """One file per source. ADR-0020. An aggregator's file sits in a separate
+    directory that the data-branch commit never reads, so a routing bug cannot
+    push a row that must not be published."""
+    key = "local_raw_dir" if source_class == "aggregator" else "raw_dir"
+    return "%s/%s.json" % (layout(test_mode)[key], source)
 
 
 # ------------------------------------------------------------ local files

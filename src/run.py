@@ -25,7 +25,7 @@ import traceback
 from datetime import datetime, timezone
 
 from . import storage
-from .adapters import greenhouse, lever
+from .adapters import greenhouse, himalayas, lever
 from .config import ConfigError, load_boards
 from .dedupe import counts as dedupe_counts
 from .dedupe import group, split_new
@@ -37,7 +37,12 @@ EXIT_OK = 0
 EXIT_CANNOT_START = 1
 EXIT_STOPPED_RESUMABLE = 2
 
-ADAPTERS = {"greenhouse": greenhouse, "lever": lever}
+ADAPTERS = {"greenhouse": greenhouse, "lever": lever,
+            "himalayas": himalayas}
+
+# A paginated feed is read until it reaches postings already stored. The cap is
+# a runaway guard on top of the stop rule, in the same spirit as ADR-0028.
+MAX_PAGES = 25
 
 
 class Run:
@@ -60,7 +65,10 @@ class Run:
         log = {"board": board.board_id, "fetched": 0, "parse_problems": 0,
                "new": 0, "kept": 0, "drops": {}, "status": "ok", "detail": None}
         try:
-            payload = self.client.get_json(adapter.url_for(board), board.source)
+            if getattr(adapter, "PAGINATED", False):
+                payload = self._fetch_pages(adapter, board, log)
+            else:
+                payload = self.client.get_json(adapter.url_for(board), board.source)
         except (BudgetExhausted, CircuitOpen) as stop:
             log["status"] = "not reached"
             log["detail"] = str(stop)
@@ -96,10 +104,35 @@ class Run:
         self._log_for = log
         return rows
 
+    def _fetch_pages(self, adapter, board, log):
+        """Read a paginated feed newest-first until it reaches what is already
+        stored, then stop. The anchor is the newest publication date actually
+        stored for this source, never the previous run's clock: this feed is
+        known to trail by at least 97.7 minutes, so a clock anchor would step
+        over postings that arrive late and never look again."""
+        high_water = self.high_water.get(board.source)
+        merged, cursor, pages = {"jobs": []}, None, 0
+        while pages < MAX_PAGES:
+            payload = self.client.get_json(adapter.url_for(board, cursor), board.source)
+            pages += 1
+            merged["jobs"].extend(payload.get("jobs", []))
+            if adapter.stop_after(payload, high_water):
+                break
+            cursor = adapter.next_cursor(payload)
+            if not cursor:
+                break
+        log["pages"] = pages
+        return merged
+
     # ---------------------------------------------------------------- main
     def execute(self):
         seen = storage.SeenStore.load(self.paths["seen"])
         first_seen = seen.first_seen_map()
+        self.high_water = {}
+        for entry in seen.entries.values():
+            source, published = entry.get("source"), entry.get("published_at")
+            if source and published:
+                self.high_water[source] = max(self.high_water.get(source, ""), published)
 
         all_rows, reached = [], set()
         try:
@@ -121,14 +154,18 @@ class Run:
         new_rows, _ = split_new(all_rows, seen.identities)
 
         # Raw first: everything fetched is stored before anything is judged.
-        by_source = {}
+        by_source, source_class = {}, {}
         for row in new_rows:
             by_source.setdefault(row.source, []).append(row)
+        for board in self.boards:
+            source_class[board.source] = board.source_class
         raw_written = {}
         for source, rows in sorted(by_source.items()):
             raw_written[source] = storage.append_delta(
-                storage.raw_path(source, self.test_mode),
+                storage.raw_path(source, self.test_mode,
+                                 source_class.get(source, "ats")),
                 [r.as_record() for r in rows])
+        self.source_class = source_class
 
         kept, drops = apply_chain(all_rows, iso(self.now), matcher=self.matcher)
         kept_rows = [row for row, _ in kept]
@@ -166,6 +203,7 @@ class Run:
             },
             "requests": self.client.counters(),
             "stopped": self.stopped,
+            "source_class": dict(self.source_class),
         }
         return run_log
 
@@ -196,6 +234,30 @@ def summarise(run_log):
     if run_log["stopped"]:
         lines.append("  STOPPED: %s. Unreached boards resume next run." % run_log["stopped"])
     return "\n".join(lines)
+
+
+def files_to_commit(run_log, paths, log_path, test_mode):
+    """What goes to the data branch.
+
+    **An aggregator's raw file never does.** ADR-0020: two feeds prohibit
+    redistribution and a branch inherits its repository's visibility, so those
+    rows stay in a local directory. This is the last gate before a push, and
+    it selects by source class rather than by filename, because a filename
+    convention is one rename away from leaking."""
+    files = {}
+    for source in sorted(run_log["totals"]["written_raw"]):
+        if run_log["source_class"].get(source) == "aggregator":
+            continue
+        path = storage.raw_path(source, test_mode,
+                                run_log["source_class"].get(source, "ats"))
+        if os.path.exists(path):
+            with open(path, encoding="utf-8") as f:
+                files[path] = f.read()
+    for path in (paths["filtered"], paths["seen"], log_path):
+        if os.path.exists(path):
+            with open(path, encoding="utf-8") as f:
+                files[path] = f.read()
+    return files
 
 
 def main(argv=None):
@@ -232,16 +294,7 @@ def main(argv=None):
     storage.write_atomic(log_path, dumps(run_log))
 
     if not args.no_commit:
-        files = {}
-        for source in sorted(run_log["totals"]["written_raw"]):
-            p = storage.raw_path(source, test_mode)
-            if os.path.exists(p):
-                with open(p, encoding="utf-8") as f:
-                    files[p] = f.read()
-        for p in (run.paths["filtered"], run.paths["seen"], log_path):
-            if os.path.exists(p):
-                with open(p, encoding="utf-8") as f:
-                    files[p] = f.read()
+        files = files_to_commit(run_log, run.paths, log_path, test_mode)
         sha = storage.commit_files(files, "run %s" % run_log["run_at"])
         print("  data branch: %s" % (sha or "nothing changed, no commit"))
 

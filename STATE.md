@@ -6,7 +6,7 @@ status: current
 
 # STATE
 
-**Last verified against `main` at `9d8f9c1`, 2026-09-17**, for the Pipeline rows the slice build touched. Documentation and Tooling rows are carried forward from earlier verifications and were not rechecked.
+**Last verified against `main` at `3f0ba06`, 2026-09-17**, for the Pipeline rows the slice build touched. Documentation and Tooling rows are carried forward from earlier verifications and were not rechecked.
 
 This file is ground truth. If a row says DONE, it is done. If you believe otherwise, read the file the pointer names before claiming a conflict. Memory is not evidence.
 
@@ -74,7 +74,7 @@ Four spikes have run and their findings are folded into the records. The four de
 | Shared HTTP module | DONE | [VERIFIED] 21 tests; 8 mutations applied and all caught, including budget, breaker and status classification | 2026-09-16 | `2026-09-16-vertical-slice.md`, ADR-0028 |
 | Greenhouse adapter, nine boards | DONE | [VERIFIED] parses a sanitised cassette of 21 real postings and one of 1086; 11 adapter mutations all caught | 2026-09-16 | `2026-09-16-vertical-slice.md` |
 | Lever adapter, two boards | DONE | [VERIFIED] employer derived from slug with provenance recorded, epoch-ms range checked | 2026-09-16 | `2026-09-16-vertical-slice.md`, ADR-0026 |
-| Himalayas adapter, conditional | PENDING | — | — | ADR-0019 |
+| Himalayas adapter, conditional | PARTIAL | [VERIFIED] built, tested and run live: cursor pagination, stop anchored on stored data, aggregator rows routed to a local file never committed. **Whether it stays is unresolved: ADR-0019's condition passes on its three named components and fails on its "config entry and adapter file" wording.** Removing it is a one-line config deletion | 2026-09-17 | `2026-09-17-vertical-slice.md`, ADR-0019 |
 | Normaliser, one row shape for every source | DONE | [VERIFIED] 29 tests; 10 mutations all caught, including a first-seen fallback relabelled as publication | 2026-09-17 | `2026-09-17-vertical-slice.md`, ADR-0007, ADR-0026 |
 | Deduplicator | DONE | [VERIFIED] Speechify's 1086 postings collapse to 8 roles across 11 keys; 6 mutations all caught | 2026-09-17 | `2026-09-17-vertical-slice.md`, ADR-0001, ADR-0027 |
 | Filter chain | PARTIAL | [VERIFIED] expiry and title built and tested, 34 tests, 10 mutations all caught. **Experience is disabled: no record names a threshold and no slice platform returns the field. The annotation-vendor list is provisional, sourced from the title pool's prose, not from a record** | 2026-09-17 | `2026-09-17-vertical-slice.md`, ADR-0005, ADR-0021 |
@@ -94,7 +94,15 @@ Four spikes have run and their findings are folded into the records. The four de
 
 **The four decisions the spikes raised are answered.** ADR-0028 sets a per-run fetch budget and fetches a posting's detail once ever rather than once per run. ADR-0029 fixes adapter order after the slice at Ashby, Workable, SmartRecruiters, Breezy and Manatal, drops Dover, and declares the registry tiers obsolete. ADR-0026 gained `envelope` and `constructed` and now covers the canonical URL.
 
-**Two filter rules have no definition anywhere and are not built.** The architecture document names a stated-experience rule and an annotation-vendor rule in the filter chain; no record defines a threshold for the first or a list for the second. Neither Greenhouse nor Lever returns a structured experience field, so the first has nothing to read. See the open question in `2026-09-16-vertical-slice.md`.
+**Four questions are open for the architecture chat**, all raised by the slice build and stated in full in `2026-09-17-vertical-slice.md`:
+
+*Does Himalayas stay?* ADR-0019's condition passes on its three named components and fails on its "config entry and adapter file" wording.
+
+*The stated-experience threshold and the annotation-vendor list.* Both are named in the architecture document as filter rules and defined nowhere. The experience rule also has no source field: no slice platform returns one.
+
+*The location filter's deferral has no record.* ADR-0001's Confirmation names a filter the pipeline does not have, and `docs/architecture-2.0.md:195` still lists it in the chain.
+
+*ADR-0011's enumeration reads as a schema and is eight fields out of date*, every one of them required by a later record.
 
 **The blocklist is no longer needed.** ADR-0021 removed it. Previously blocked on the operator; now closed.
 

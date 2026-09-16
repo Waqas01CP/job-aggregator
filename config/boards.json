@@ -16,7 +16,9 @@
     {
       "platform": "greenhouse",
       "slug": "speechify",
-      "normalisations": ["strip_location_suffix"],
+      "normalisations": [
+        "strip_location_suffix"
+      ],
       "note": "Registry Part 3. ADR-0027: measured convention, location inside the title. 1086 postings are 8 base titles across 329 locations."
     },
     {
@@ -68,6 +70,12 @@
       "employer_alias": "Spreetail",
       "normalisations": [],
       "note": "Registry Part 3. Lever returns no employer field; alias from the registry. ADR-0026."
+    },
+    {
+      "platform": "himalayas",
+      "slug": "browse",
+      "normalisations": [],
+      "note": "Aggregator feed, not an employer board. ADR-0019 conditional. Browse endpoint only: the search endpoint is not recency-ordered and ignores the cursor. The slug is a placeholder because the endpoint takes none."
     }
   ]
 }

@@ -37,8 +37,15 @@ class TestRealConfig(unittest.TestCase):
     def setUp(self):
         self.boards = load_boards()
 
-    def test_eleven_boards(self):
-        self.assertEqual(len(self.boards), 11)
+    def test_eleven_ats_boards_plus_the_conditional_aggregator(self):
+        """ADR-0009 fixes the slice at eleven employer boards. Himalayas is
+        the conditional twelfth from ADR-0019 and is an aggregator, not an
+        employer board, so it is counted separately."""
+        ats = [b for b in self.boards if b.source_class == "ats"]
+        aggregators = [b for b in self.boards if b.source_class == "aggregator"]
+        self.assertEqual(len(ats), 11)
+        self.assertEqual([b.slug for b in aggregators], ["browse"])
+        self.assertEqual([b.platform for b in aggregators], ["himalayas"])
 
     def test_slugs_match_the_registry(self):
         gh = {b.slug for b in self.boards if b.platform == "greenhouse"}
@@ -67,7 +74,16 @@ class TestRealConfig(unittest.TestCase):
 
     def test_source_is_the_platform(self):
         """ADR-0020 stores one file per source, so source names the file."""
-        self.assertEqual({b.source for b in self.boards}, {"greenhouse", "lever"})
+        self.assertEqual({b.source for b in self.boards},
+                         {"greenhouse", "lever", "himalayas"})
+
+    def test_source_class_separates_employer_boards_from_aggregators(self):
+        """ADR-0020 routes raw storage by source class: employer rows to the
+        public data branch, aggregator rows to local files never committed."""
+        by_platform = {b.platform: b.source_class for b in self.boards}
+        self.assertEqual(by_platform["greenhouse"], "ats")
+        self.assertEqual(by_platform["lever"], "ats")
+        self.assertEqual(by_platform["himalayas"], "aggregator")
 
 
 class TestDefeatCases(unittest.TestCase):

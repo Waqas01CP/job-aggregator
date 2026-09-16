@@ -31,7 +31,7 @@ DESCRIPTION_FIELDS = frozenset({
     "openingPlain", "job_description", "jobDescription", "excerpt",
     "salaryDescription", "salaryDescriptionPlain", "benefits",
     "key_responsibilities", "skills_knowledge_expertise", "publicDescription",
-    "Job_Description", "descriptionHtml",
+    "Job_Description", "descriptionHtml", "companyLogo",
 })
 
 # The fields the adapters actually read. --keep-only-read-fields trims to these,

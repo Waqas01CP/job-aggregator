@@ -231,7 +231,7 @@ class TestDataBranch(unittest.TestCase):
         run("git", "config", "user.email", "t@test")
         run("git", "config", "user.name", "t")
         run("git", "config", "commit.gpgsign", "false")
-        open(os.path.join(self.dir, "README.md"), "w").write("main\n")
+        write_text(os.path.join(self.dir, "README.md"), "main\n")
         run("git", "add", "README.md")
         run("git", "commit", "-q", "-m", "main")
 
@@ -270,7 +270,7 @@ class TestDataBranch(unittest.TestCase):
         """A run must be able to commit data while the operator has work in
         progress on main."""
         scratch = os.path.join(self.dir, "wip.txt")
-        open(scratch, "w").write("work in progress\n")
+        write_text(scratch, "work in progress\n")
         storage.commit_files({"fetch-all/greenhouse.json": "[]\n"}, "run", branch="data")
         self.assertTrue(os.path.exists(scratch))
         status = subprocess.run(["git", "status", "--porcelain"], cwd=self.dir,
