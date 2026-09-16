@@ -22,6 +22,18 @@ raw_responses/
 data/
 *.jsonl
 
+# The layers the run writes. These live on the orphan data branch, which is
+# never checked out, so on main they are working files and never committed.
+filtered.json
+seen.json
+logs-runs/
+
+# A TEST_MODE run writes the same shapes beside production data.
+test-fetch-all/
+test-filtered.json
+test-seen.json
+test-logs-runs/
+
 # Aggregator-sourced raw files. ADR-0020 keeps these off the public
 # repository entirely, because Jobicy and Remotive prohibit
 # redistribution and a branch inherits its repository's visibility.

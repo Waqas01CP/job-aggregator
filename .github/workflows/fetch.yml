@@ -1,0 +1,88 @@
+name: fetch
+
+# Twice daily, ADR-0006. Times are UTC; Pakistan is UTC+5 with no daylight
+# saving, so these are 05:00 and 18:00 PKT.
+#
+#   00:00 UTC = 05:00 PKT, early morning, catching postings published
+#               overnight during North American and European working hours.
+#   13:00 UTC = 18:00 PKT, early evening, catching postings published by
+#               Pakistani employers during their working day.
+#
+# GitHub documents scheduled runs as best-effort: they may be delayed or
+# dropped under load, with no error. ADR-0007 absorbs that, because nothing is
+# filtered on publication date at fetch time, so a missed run costs latency
+# rather than data.
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+    - cron: "0 13 * * *"
+  workflow_dispatch:
+    inputs:
+      test_mode:
+        description: "Write to alternate files, leaving production data alone"
+        type: boolean
+        default: false
+
+# Two runs must never write the data branch at once. A queued run waits rather
+# than being cancelled, because cancelling would drop the fetch entirely.
+concurrency:
+  group: fetch
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # The data branch is orphan and is never checked out. The run writes
+          # it with plumbing, so only main is needed here.
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - run: pip install -r requirements.txt
+
+      - name: Run the tests before touching a live board
+        run: python -m unittest discover -s tests -t .
+
+      - name: Fetch
+        id: fetch
+        env:
+          TEST_MODE: ${{ inputs.test_mode && '1' || '0' }}
+        run: |
+          set +e
+          python -m src.run
+          code=$?
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          # Three exit codes, and only one of them is a failure.
+          #   0 finished
+          #   2 stopped deliberately and resumable: the budget was reached or
+          #     the circuit opened. The run log names what it did not reach and
+          #     the next run picks it up.
+          #   1 could not start
+          if [ "$code" -eq 1 ]; then
+            echo "::error::the run could not start"
+            exit 1
+          fi
+          if [ "$code" -eq 2 ]; then
+            echo "::warning::the run stopped early and is resumable; see the run log"
+          fi
+          exit 0
+
+      - name: Push the data branch
+        if: steps.fetch.outputs.exit_code != '1'
+        run: |
+          if git rev-parse --verify --quiet data >/dev/null; then
+            git push origin data:data
+          else
+            echo "no data branch was written, so nothing to push"
+          fi

@@ -1,0 +1,252 @@
+"""The fetch run. Loads config, polls every board, writes both layers.
+
+Exit codes, because the orchestrator needs to tell three things apart:
+
+  0  finished
+  1  could not start
+  2  stopped deliberately and resumable
+
+Two runs a day, early PKT morning and early PKT evening. ADR-0006.
+
+**A run logs every board every run, including the ones that returned zero.**
+A board returning nothing for a week is a broken adapter, and without a zero
+logged it is indistinguishable from a quiet market.
+
+Stopping is not failing. When the request budget is exhausted or the circuit
+breaker opens, the run records which boards it did not reach and exits 2. The
+next run picks them up, which is safe because ADR-0007 makes a late posting a
+latency cost rather than a loss.
+"""
+
+import argparse
+import os
+import sys
+import traceback
+from datetime import datetime, timezone
+
+from . import storage
+from .adapters import greenhouse, lever
+from .config import ConfigError, load_boards
+from .dedupe import counts as dedupe_counts
+from .dedupe import group, split_new
+from .filters import FilterError, TitleMatcher, apply_chain, drop_counts
+from .http_client import (BudgetExhausted, CircuitOpen, HttpClient, HttpError)
+from .normalise import dumps, iso, normalise
+
+EXIT_OK = 0
+EXIT_CANNOT_START = 1
+EXIT_STOPPED_RESUMABLE = 2
+
+ADAPTERS = {"greenhouse": greenhouse, "lever": lever}
+
+
+class Run:
+    def __init__(self, boards, client, now=None, test_mode=False, matcher=None):
+        self.boards = boards
+        self.client = client
+        self.now = now or datetime.now(timezone.utc)
+        self.test_mode = test_mode
+        self.matcher = matcher or TitleMatcher()
+        self.paths = storage.layout(test_mode)
+        self.board_logs = []
+        self.stopped = None
+
+    # ------------------------------------------------------------ per board
+    def poll(self, board, seen_first_seen):
+        """Fetch, parse and normalise one board. Raises only for stop
+        conditions; a board-level failure is recorded and the run continues,
+        because one dead board must not cost the other ten."""
+        adapter = ADAPTERS[board.platform]
+        log = {"board": board.board_id, "fetched": 0, "parse_problems": 0,
+               "new": 0, "kept": 0, "drops": {}, "status": "ok", "detail": None}
+        try:
+            payload = self.client.get_json(adapter.url_for(board), board.source)
+        except (BudgetExhausted, CircuitOpen) as stop:
+            log["status"] = "not reached"
+            log["detail"] = str(stop)
+            self.board_logs.append(log)
+            raise
+        except HttpError as e:
+            log["status"] = "failed"
+            log["detail"] = str(e)
+            self.board_logs.append(log)
+            return []
+        except Exception as e:
+            # Distinct from "failed" on purpose: a board answering 500 is the
+            # board's problem, an unexpected exception here is ours, and a run
+            # log that spelled them the same would hide our own bugs among
+            # theirs.
+            log["status"] = "error"
+            log["detail"] = "%s: %s" % (type(e).__name__, e)
+            self.board_logs.append(log)
+            return []
+
+        try:
+            parsed = adapter.parse(payload, board)
+        except Exception as e:
+            log["status"] = "unparseable"
+            log["detail"] = "%s: %s" % (type(e).__name__, e)
+            self.board_logs.append(log)
+            return []
+
+        log["fetched"] = len(parsed.postings)
+        log["parse_problems"] = len(parsed.problems)
+        rows = normalise(parsed.postings, board, self.now, seen=seen_first_seen)
+        self.board_logs.append(log)
+        self._log_for = log
+        return rows
+
+    # ---------------------------------------------------------------- main
+    def execute(self):
+        seen = storage.SeenStore.load(self.paths["seen"])
+        first_seen = seen.first_seen_map()
+
+        all_rows, reached = [], set()
+        try:
+            for board in self.boards:
+                rows = self.poll(board, first_seen)
+                reached.add(board.board_id)
+                all_rows.extend(rows)
+        except (BudgetExhausted, CircuitOpen) as stop:
+            self.stopped = str(stop)
+
+        # Every board gets a line, including the ones never reached.
+        for board in self.boards:
+            if board.board_id not in {l["board"] for l in self.board_logs}:
+                self.board_logs.append({"board": board.board_id, "fetched": 0,
+                                        "parse_problems": 0, "new": 0, "kept": 0,
+                                        "drops": {}, "status": "not reached",
+                                        "detail": self.stopped})
+
+        new_rows, _ = split_new(all_rows, seen.identities)
+
+        # Raw first: everything fetched is stored before anything is judged.
+        by_source = {}
+        for row in new_rows:
+            by_source.setdefault(row.source, []).append(row)
+        raw_written = {}
+        for source, rows in sorted(by_source.items()):
+            raw_written[source] = storage.append_delta(
+                storage.raw_path(source, self.test_mode),
+                [r.as_record() for r in rows])
+
+        kept, drops = apply_chain(all_rows, iso(self.now), matcher=self.matcher)
+        kept_rows = [row for row, _ in kept]
+        new_kept, _ = split_new(kept_rows, seen.identities)
+        filtered_written = storage.append_delta(
+            self.paths["filtered"], [r.as_record() for r in new_kept])
+
+        for row in all_rows:
+            seen.record(row)
+            seen.mark_seen(row.identity, iso(self.now))
+        seen.save(self.paths["seen"])
+
+        per_board_drops = {}
+        for d in drops:
+            per_board_drops.setdefault(d["board_id"], {})
+            per_board_drops[d["board_id"]][d["rule"]] = \
+                per_board_drops[d["board_id"]].get(d["rule"], 0) + 1
+        for log in self.board_logs:
+            log["drops"] = per_board_drops.get(log["board"], {})
+            log["new"] = sum(1 for r in new_rows if r.board_id == log["board"])
+            log["kept"] = sum(1 for r in kept_rows if r.board_id == log["board"])
+
+        run_log = {
+            "run_at": iso(self.now),
+            "test_mode": self.test_mode,
+            "boards": sorted(self.board_logs, key=lambda l: l["board"]),
+            "totals": {
+                "fetched": sum(l["fetched"] for l in self.board_logs),
+                "new": len(new_rows),
+                "kept": len(kept_rows),
+                "written_raw": raw_written,
+                "written_filtered": filtered_written,
+                "drops": drop_counts(drops),
+                "dedupe": dedupe_counts(group(all_rows)),
+            },
+            "requests": self.client.counters(),
+            "stopped": self.stopped,
+        }
+        return run_log
+
+    def exit_code(self):
+        return EXIT_STOPPED_RESUMABLE if self.stopped else EXIT_OK
+
+
+def summarise(run_log):
+    """One line per board, including zeros, then the totals."""
+    lines = ["run at %s%s" % (run_log["run_at"],
+                              "  TEST MODE" if run_log["test_mode"] else "")]
+    for b in run_log["boards"]:
+        drops = ", ".join("%s=%d" % (k, v) for k, v in sorted(b["drops"].items()))
+        lines.append("  %-34s %-12s fetched %4d  new %4d  kept %3d  %s%s"
+                     % (b["board"], b["status"], b["fetched"], b["new"], b["kept"],
+                        drops or "no drops",
+                        "  [%s]" % b["detail"] if b["detail"] else ""))
+    t = run_log["totals"]
+    lines.append("  totals: fetched %d, new %d, kept %d, raw %s, filtered %d"
+                 % (t["fetched"], t["new"], t["kept"], t["written_raw"],
+                    t["written_filtered"]))
+    lines.append("  drops by rule: %s" % t["drops"])
+    lines.append("  dedupe: %s" % t["dedupe"])
+    r = run_log["requests"]
+    lines.append("  requests: %d of %d, by source %s, retries %d, failures %d"
+                 % (r["requests_used"], r["budget"], r["by_source"],
+                    r["retries"], r["failures"]))
+    if run_log["stopped"]:
+        lines.append("  STOPPED: %s. Unreached boards resume next run." % run_log["stopped"])
+    return "\n".join(lines)
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(description="One fetch run.")
+    parser.add_argument("--test-mode", action="store_true",
+                        help="write to alternate files, leaving production data alone")
+    parser.add_argument("--budget", type=int, default=None,
+                        help="override the per-run request ceiling (ADR-0028)")
+    parser.add_argument("--no-commit", action="store_true",
+                        help="write files but do not commit to the data branch")
+    args = parser.parse_args(argv)
+
+    test_mode = args.test_mode or os.environ.get("TEST_MODE") == "1"
+
+    try:
+        boards = load_boards()
+        matcher = TitleMatcher()
+    except (ConfigError, FilterError) as e:
+        print("could not start: %s" % e, file=sys.stderr)
+        return EXIT_CANNOT_START
+
+    client = HttpClient(**({"budget": args.budget} if args.budget else {}))
+    run = Run(boards, client, test_mode=test_mode, matcher=matcher)
+    try:
+        run_log = run.execute()
+    except Exception:
+        traceback.print_exc()
+        return EXIT_CANNOT_START
+
+    print(summarise(run_log))
+
+    stamp = run_log["run_at"].replace(":", "").replace("-", "")
+    log_path = "%s/%s.json" % (run.paths["runlog_dir"], stamp)
+    storage.write_atomic(log_path, dumps(run_log))
+
+    if not args.no_commit:
+        files = {}
+        for source in sorted(run_log["totals"]["written_raw"]):
+            p = storage.raw_path(source, test_mode)
+            if os.path.exists(p):
+                with open(p, encoding="utf-8") as f:
+                    files[p] = f.read()
+        for p in (run.paths["filtered"], run.paths["seen"], log_path):
+            if os.path.exists(p):
+                with open(p, encoding="utf-8") as f:
+                    files[p] = f.read()
+        sha = storage.commit_files(files, "run %s" % run_log["run_at"])
+        print("  data branch: %s" % (sha or "nothing changed, no commit"))
+
+    return run.exit_code()
+
+
+if __name__ == "__main__":
+    sys.exit(main())

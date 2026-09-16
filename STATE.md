@@ -30,7 +30,7 @@ Update the verified-against line whenever you touch this file.
 
 ## Headline
 
-**The vertical slice is under construction.** Board configuration, the shared HTTP module, both adapters, the normaliser, the deduplicator, the filter chain and both writers are built and tested. The orchestrator and the schedule are not. Nothing has run against a live board from pipeline code yet.
+**The vertical slice runs end to end.** Every component is built and tested, and the orchestrator has polled all eleven live boards twice in TEST_MODE. What remains before go-live: the workflow has never run on GitHub, nothing has been written to the data branch in anger, and the Airtable display layer does not exist. Nothing has run against a live board from pipeline code yet.
 
 Four spikes have run and their findings are folded into the records. The four decisions they raised are answered by ADR-0028 and ADR-0029.
 
@@ -82,7 +82,7 @@ Four spikes have run and their findings are folded into the records. The four de
 | Filtered layer writer | DONE | [VERIFIED] same append-delta writer, separate file, ADR-0013 | 2026-09-17 | `2026-09-17-vertical-slice.md` |
 | Airtable base and schema | PENDING | — | — | Deferred until real output exists |
 | Airtable writer | PENDING | — | — | ADR-0004 |
-| Scheduled workflow | PENDING | — | — | ADR-0006 |
+| Scheduled workflow | DONE | [VERIFIED] orchestrator run twice against all 11 live boards in TEST_MODE: 917 postings, 19 kept, second run wrote nothing and both files byte-identical. Workflow file written, not yet exercised by GitHub | 2026-09-17 | `2026-09-17-vertical-slice.md`, ADR-0006 |
 | Weekly outcome sweep | PENDING | — | — | ADR-0014 |
 | Contract check | PENDING | — | — | ADR-0018 |
 
