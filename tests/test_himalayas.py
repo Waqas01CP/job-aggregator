@@ -165,8 +165,8 @@ class TestRunIntegration(unittest.TestCase):
                 "nextCursor": None}
         log = Run([BOARD], self._client([page]), now=NOW, matcher=MATCHER).execute()
         self.assertEqual(log["source_class"], {"himalayas": "aggregator"})
-        self.assertTrue(os.path.exists("fetch-all-local/himalayas.json"))
-        self.assertFalse(os.path.exists("fetch-all/himalayas.json"),
+        self.assertTrue(os.path.exists("data/fetch-all-local/himalayas.json"))
+        self.assertFalse(os.path.exists("data/fetch-all/himalayas.json"),
                          "an aggregator row reached the committed directory")
 
     def test_the_aggregator_file_is_never_offered_to_the_data_branch(self):
@@ -198,8 +198,8 @@ class TestRunIntegration(unittest.TestCase):
         run = Run([gh, BOARD], client, now=NOW, matcher=MATCHER)
         log = run.execute()
         files = files_to_commit(log, run.paths, "logs-runs/x.json", False)
-        self.assertIn("fetch-all/greenhouse.json", files)
-        self.assertNotIn("fetch-all-local/himalayas.json", files)
+        self.assertIn("fetch-all/greenhouse.json", files)   # branch path, ADR-0020
+        self.assertNotIn("data/fetch-all-local/himalayas.json", files)
         self.assertFalse([p for p in files if "himalayas" in p],
                          "an aggregator file reached the data-branch commit set")
 

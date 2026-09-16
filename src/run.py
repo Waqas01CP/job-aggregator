@@ -252,11 +252,11 @@ def files_to_commit(run_log, paths, log_path, test_mode):
                                 run_log["source_class"].get(source, "ats"))
         if os.path.exists(path):
             with open(path, encoding="utf-8") as f:
-                files[path] = f.read()
+                files[storage.branch_path(path, test_mode)] = f.read()
     for path in (paths["filtered"], paths["seen"], log_path):
         if os.path.exists(path):
             with open(path, encoding="utf-8") as f:
-                files[path] = f.read()
+                files[storage.branch_path(path, test_mode)] = f.read()
     return files
 
 

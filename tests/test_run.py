@@ -101,8 +101,8 @@ class TestNormalRun(RunHarness):
         self.assertEqual(log["totals"]["kept"], 2, "the happiness officer is dropped")
         self.assertEqual(log["totals"]["written_raw"], {"greenhouse": 3})
         self.assertEqual(log["totals"]["written_filtered"], 2)
-        self.assertEqual(len(storage.read_records("fetch-all/greenhouse.json")), 3)
-        self.assertEqual(len(storage.read_records("filtered.json")), 2)
+        self.assertEqual(len(storage.read_records("data/fetch-all/greenhouse.json")), 3)
+        self.assertEqual(len(storage.read_records("data/filtered.json")), 2)
 
     def test_a_board_returning_zero_still_gets_a_line(self):
         """A board returning nothing for a week is a broken adapter, and
@@ -136,10 +136,10 @@ class TestNormalRun(RunHarness):
         """The brief's check, end to end."""
         payload = gh_payload(["AI Engineer"])
         Run([GH], client_for({"careem": payload}), now=NOW, matcher=MATCHER).execute()
-        before = read_text("fetch-all/greenhouse.json")
+        before = read_text("data/fetch-all/greenhouse.json")
 
         log = Run([GH], client_for({"careem": payload}), now=NOW, matcher=MATCHER).execute()
-        after = read_text("fetch-all/greenhouse.json")
+        after = read_text("data/fetch-all/greenhouse.json")
 
         self.assertEqual(log["totals"]["new"], 0)
         self.assertEqual(before, after)
@@ -147,10 +147,10 @@ class TestNormalRun(RunHarness):
     def test_first_seen_survives_the_second_run(self):
         payload = gh_payload(["AI Engineer"])
         Run([GH], client_for({"careem": payload}), now=NOW, matcher=MATCHER).execute()
-        seen_first = json.loads(read_text("seen.json"))
+        seen_first = json.loads(read_text("data/seen.json"))
         later = datetime(2026, 10, 1, tzinfo=timezone.utc)
         Run([GH], client_for({"careem": payload}), now=later, matcher=MATCHER).execute()
-        seen_second = json.loads(read_text("seen.json"))
+        seen_second = json.loads(read_text("data/seen.json"))
         key = list(seen_first)[0]
         self.assertEqual(seen_first[key]["first_seen"], seen_second[key]["first_seen"])
         self.assertNotEqual(seen_second[key]["last_seen"], seen_second[key]["first_seen"])
@@ -196,7 +196,7 @@ class TestFailureHandling(RunHarness):
                             budget=1)
         log = Run([GH, GH2], client, now=NOW, matcher=MATCHER).execute()
         self.assertEqual(log["totals"]["written_raw"], {"greenhouse": 1})
-        self.assertEqual(len(storage.read_records("fetch-all/greenhouse.json")), 1)
+        self.assertEqual(len(storage.read_records("data/fetch-all/greenhouse.json")), 1)
 
 
 class TestSourceRouting(RunHarness):
@@ -210,8 +210,8 @@ class TestSourceRouting(RunHarness):
                            "categories": {"location": "Karachi"}}]})
         log = Run([GH, LV], client, now=NOW, matcher=MATCHER).execute()
         self.assertEqual(log["totals"]["written_raw"], {"greenhouse": 1, "lever": 1})
-        gh_rows = storage.read_records("fetch-all/greenhouse.json")
-        lv_rows = storage.read_records("fetch-all/lever.json")
+        gh_rows = storage.read_records("data/fetch-all/greenhouse.json")
+        lv_rows = storage.read_records("data/fetch-all/lever.json")
         self.assertEqual({r["source"] for r in gh_rows}, {"greenhouse"})
         self.assertEqual({r["source"] for r in lv_rows}, {"lever"})
 
@@ -221,7 +221,7 @@ class TestSourceRouting(RunHarness):
              "hostedUrl": "https://jobs.lever.co/spreetail/lv1",
              "createdAt": 1789018446882, "categories": {"location": "Karachi"}}]})
         Run([LV], client, now=NOW, matcher=MATCHER).execute()
-        row = storage.read_records("fetch-all/lever.json")[0]
+        row = storage.read_records("data/fetch-all/lever.json")[0]
         self.assertEqual(row["employer"], "Spreetail")
         self.assertEqual(row["employer_provenance"], "slug")
         self.assertTrue(row["published_meaning_unconfirmed"])
@@ -232,15 +232,15 @@ class TestTestMode(RunHarness):
         """The brief's check."""
         payload = gh_payload(["AI Engineer"])
         Run([GH], client_for({"careem": payload}), now=NOW, matcher=MATCHER).execute()
-        production = read_text("fetch-all/greenhouse.json")
+        production = read_text("data/fetch-all/greenhouse.json")
 
         client = client_for({"careem": gh_payload(["Data Scientist"], start=99)})
         Run([GH], client, now=NOW, test_mode=True, matcher=MATCHER).execute()
 
-        self.assertEqual(read_text("fetch-all/greenhouse.json"),
+        self.assertEqual(read_text("data/fetch-all/greenhouse.json"),
                          production)
-        self.assertTrue(os.path.exists("test-fetch-all/greenhouse.json"))
-        self.assertEqual(len(storage.read_records("test-fetch-all/greenhouse.json")), 1)
+        self.assertTrue(os.path.exists("data/test/fetch-all/greenhouse.json"))
+        self.assertEqual(len(storage.read_records("data/test/fetch-all/greenhouse.json")), 1)
 
     def test_test_mode_isolates_the_filtered_layer_and_the_seen_store(self):
         """Isolating only the raw file is not isolation: a test run that
@@ -249,16 +249,16 @@ class TestTestMode(RunHarness):
         test rows in front of the operator."""
         payload = gh_payload(["AI Engineer"])
         Run([GH], client_for({"careem": payload}), now=NOW, matcher=MATCHER).execute()
-        filtered_before = read_text("filtered.json")
-        seen_before = read_text("seen.json")
+        filtered_before = read_text("data/filtered.json")
+        seen_before = read_text("data/seen.json")
 
         client = client_for({"careem": gh_payload(["Machine Learning Engineer"], start=99)})
         Run([GH], client, now=NOW, test_mode=True, matcher=MATCHER).execute()
 
-        self.assertEqual(read_text("filtered.json"), filtered_before)
-        self.assertEqual(read_text("seen.json"), seen_before)
-        self.assertTrue(os.path.exists("test-filtered.json"))
-        self.assertTrue(os.path.exists("test-seen.json"))
+        self.assertEqual(read_text("data/filtered.json"), filtered_before)
+        self.assertEqual(read_text("data/seen.json"), seen_before)
+        self.assertTrue(os.path.exists("data/test/filtered.json"))
+        self.assertTrue(os.path.exists("data/test/seen.json"))
 
 
 class TestSummary(RunHarness):

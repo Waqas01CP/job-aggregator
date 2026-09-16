@@ -23,8 +23,8 @@ from src import storage
 from src.adapters.base import Posting
 from src.config import Board
 from src.normalise import dumps, normalise
-from src.storage import (SeenStore, StorageError, append_delta, layout,
-                         raw_path, read_records, write_atomic)
+from src.storage import (SeenStore, StorageError, append_delta, branch_path,
+                         layout, raw_path, read_records, write_atomic)
 
 def read_text(path):
     with open(path, encoding="utf-8") as f:
@@ -163,14 +163,33 @@ class TestTestMode(unittest.TestCase):
         for key in prod:
             self.assertNotEqual(prod[key], test[key], key)
         self.assertEqual(raw_path("greenhouse", test_mode=False),
-                         "fetch-all/greenhouse.json")
+                         "data/fetch-all/greenhouse.json")
         self.assertEqual(raw_path("greenhouse", test_mode=True),
-                         "test-fetch-all/greenhouse.json")
+                         "data/test/fetch-all/greenhouse.json")
 
     def test_one_file_per_source(self):
         """ADR-0020: a row's provenance is its filename."""
-        self.assertEqual(raw_path("lever"), "fetch-all/lever.json")
+        self.assertEqual(raw_path("lever"), "data/fetch-all/lever.json")
         self.assertNotEqual(raw_path("lever"), raw_path("greenhouse"))
+
+    def test_working_files_live_under_one_ignored_directory(self):
+        """Not scattered across the repository root, so `git status` shows the
+        operator's work rather than the pipeline's."""
+        for key, path in layout(False).items():
+            self.assertTrue(path == "data" or path.startswith("data/"), path)
+        for key, path in layout(True).items():
+            self.assertTrue(path.startswith("data/test"), path)
+
+    def test_the_branch_layout_is_unchanged_by_the_local_tidying(self):
+        """ADR-0020 fixes the paths inside the data branch. Moving the working
+        copies into data/ must not move them on the branch, or every historical
+        path breaks."""
+        self.assertEqual(branch_path(raw_path("greenhouse")), "fetch-all/greenhouse.json")
+        self.assertEqual(branch_path(layout()["filtered"]), "filtered.json")
+        self.assertEqual(branch_path(layout()["seen"]), "seen.json")
+        self.assertEqual(
+            branch_path(raw_path("greenhouse", test_mode=True), test_mode=True),
+            "fetch-all/greenhouse.json")
 
 
 class TestSeenStore(unittest.TestCase):

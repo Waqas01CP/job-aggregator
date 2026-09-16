@@ -139,10 +139,24 @@ documentation. A comment restating the next line is noise.
 ## Commands
 
 ```
+python -m venv .venv                   create the environment, once per clone
+.venv/Scripts/python -m pip install -r requirements.txt     Windows
+.venv/bin/python -m pip install -r requirements.txt         Linux and macOS
+
+.venv/Scripts/python -m unittest discover -s tests -t .     run every test
+.venv/Scripts/python -m src.run --test-mode --no-commit     one run, alternate
+                                                            files, no commit
+
 python tools/generate_map.py           regenerate MAP.md
 python tools/generate_map.py --check   report whether MAP.md is current
 git config core.hooksPath .githooks    enable the hook, once per clone
 ```
+
+Everything a run writes lives under `data/`, which is gitignored: the raw
+layers, the filtered layer, the seen store and the run logs. A `--test-mode`
+run writes the same shapes under `data/test/`. The paths inside the orphan
+data branch are ADR-0020's and are not affected by where the working copies
+sit.
 
 ## The hook blocks
 

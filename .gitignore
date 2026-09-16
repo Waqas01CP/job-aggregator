@@ -22,22 +22,11 @@ raw_responses/
 data/
 *.jsonl
 
-# The layers the run writes. These live on the orphan data branch, which is
-# never checked out, so on main they are working files and never committed.
-filtered.json
-seen.json
-logs-runs/
-
-# Aggregator rows. ADR-0020 keeps these off the repository entirely: two
-# feeds prohibit redistribution and a branch inherits its visibility.
-fetch-all-local/
-
-# A TEST_MODE run writes the same shapes beside production data.
-test-fetch-all/
-test-fetch-all-local/
-test-filtered.json
-test-seen.json
-test-logs-runs/
+# Everything the run writes locally lives under data/, which is already
+# ignored above: the raw layers, the filtered layer, the seen store and the
+# run logs, for both a production run and a TEST_MODE one. The paths inside
+# the orphan data branch are ADR-0020's and are unaffected by where the
+# working copies sit.
 
 # Aggregator-sourced raw files. ADR-0020 keeps these off the public
 # repository entirely, because Jobicy and Remotive prohibit

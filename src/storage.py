@@ -34,6 +34,14 @@ from .normalise import dumps, loads
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 DATA_BRANCH = "data"
+
+# Where the working copies live. One ignored directory rather than a scatter of
+# files at the repository root, so `git status` shows the operator's work and
+# not the pipeline's. The paths *inside* the data branch are unaffected: those
+# are fixed by ADR-0020 and are produced by branch_path() below.
+DATA_ROOT = "data"
+TEST_SUBDIR = "test"          # a test run writes beside production, never over it
+
 RAW_DIR = "fetch-all"
 # ADR-0020: aggregator rows live here and are never committed or pushed.
 LOCAL_RAW_DIR = "fetch-all-local"
@@ -41,25 +49,37 @@ FILTERED_FILE = "filtered.json"
 SEEN_FILE = "seen.json"
 RUNLOG_DIR = "logs-runs"
 
-# A test run writes beside production data, never over it.
-TEST_PREFIX = "test-"
-
 
 class StorageError(Exception):
     pass
 
 
+def data_root(test_mode=False):
+    return "%s/%s" % (DATA_ROOT, TEST_SUBDIR) if test_mode else DATA_ROOT
+
+
 def layout(test_mode=False):
     """Every path the pipeline writes, in one place so a test run cannot
     accidentally inherit a production path."""
-    prefix = TEST_PREFIX if test_mode else ""
+    root = data_root(test_mode)
     return {
-        "raw_dir": prefix + RAW_DIR,
-        "local_raw_dir": prefix + LOCAL_RAW_DIR,
-        "filtered": prefix + FILTERED_FILE,
-        "seen": prefix + SEEN_FILE,
-        "runlog_dir": prefix + RUNLOG_DIR,
+        "root": root,
+        "raw_dir": "%s/%s" % (root, RAW_DIR),
+        "local_raw_dir": "%s/%s" % (root, LOCAL_RAW_DIR),
+        "filtered": "%s/%s" % (root, FILTERED_FILE),
+        "seen": "%s/%s" % (root, SEEN_FILE),
+        "runlog_dir": "%s/%s" % (root, RUNLOG_DIR),
     }
+
+
+def branch_path(local_path, test_mode=False):
+    """The path a local file takes inside the data branch.
+
+    The branch layout is ADR-0020's and does not move just because the working
+    copies were tidied into one directory: `fetch-all/greenhouse.json` on the
+    branch, whatever the local tree looks like."""
+    root = data_root(test_mode) + "/"
+    return local_path[len(root):] if local_path.startswith(root) else local_path
 
 
 def raw_path(source, test_mode=False, source_class="ats"):
