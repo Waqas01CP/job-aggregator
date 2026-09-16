@@ -187,3 +187,83 @@ The substantive one is `run.py`. Himalayas is the first source that needs more t
 - **Speechify's drop from 1086 to 361 postings** was noticed, not investigated.
 - **The weekly outcome sweep and the contract check** are untouched; they were not in this brief.
 - No decision record was written or edited.
+
+---
+
+# Added at session close
+
+Everything above was written during the work. This section is what existed only in the session's context and would otherwise die with it. None of it is in the diff.
+
+## Why each of the eight mutation survivors survived
+
+The brief named the `rag` one. The other seven are the useful part, because the *shape* of each failure recurs.
+
+1. **The dedupe representative, "latest instead of earliest".** The tests asserted the choice was *order-independent*, which every stable rule satisfies. Determinism was tested; the documented rule was not. **Shape: testing a property weaker than the guarantee.**
+2. **`rag` matching "storage".** The pool contains no bare `rag` term, because ADR-0021 forbids single tokens, so substring matching had nothing to collide with: "storage engineer" does not contain "rag engineer". The brief's own case could not fail. **Shape: a test whose precondition never occurs.**
+3. **`rule_experience`'s default threshold.** `apply_chain` passes `max_years` explicitly on every path, so the function's own default was unreachable. Mutating it changed nothing because nothing read it. **Shape: dead code, which no test can guard and none should try to.**
+4. **Snapshot instead of append.** Every test passed a batch that was a superset of what was stored, so `dumps(records)` and `dumps(existing + fresh)` produced identical files. The distinguishing case is a batch that *omits* an earlier record. **Shape: fixtures that only ever grow.**
+5. **The seen store's sorted save.** The fixture inserted identities 0, 1, 2 in already-sorted order, so `dict(entries)` and `sorted(entries)` were the same bytes. **Shape: a fixture accidentally satisfying the invariant under test.**
+6. **One dead board aborting the run.** `except HttpError` and `except Exception` both set status `"failed"`, so narrowing the first changed nothing: the second caught it identically. The specific handler was dead weight. **Shape: two branches with identical effect, so neither is load-bearing.**
+7. **TEST_MODE ignored by the run's paths.** `self.paths` covered the filtered layer, seen store and run log, but `raw_path()` took `test_mode` as its own argument, so the raw file stayed isolated even with `self.paths` pointed at production. The test only checked the raw file. **Shape: partial isolation, sampled by the test on its working half.**
+8. **The aggregator file reaching the data-branch commit.** The exclusion lived inside `main()`, which no test called. **Shape: a guarantee implemented in an entry point rather than a unit.**
+
+## The `_git` default-argument defect, in full
+
+    def _git(args, cwd=REPO_ROOT, env=None, check=True, stdin=None):   # wrong
+
+Python evaluates a default argument **once, at import**. `REPO_ROOT` was bound into the signature when the module loaded. `TestDataBranch.setUp` did `storage.REPO_ROOT = self.dir` to point the code at a throwaway repository, which rebinds the module global and does nothing at all to the already-bound default. Every `_git` call therefore ran in the real repository, and `commit_files` created `refs/heads/data` here with a commit named "run".
+
+**What made it invisible.** Three things compounding.
+
+- **The other two functions were correct.** `branch_exists()` and `read_branch_file()` referenced `REPO_ROOT` *inside their bodies*, so they resolved at call time and honoured the patch. The harness looked like it was isolating properly, because two thirds of it was.
+- **The plumbing design never touches the working tree.** That is the feature that kept the blast radius small, and also the reason nothing looked wrong: `git status` stayed clean throughout.
+- **An orphan branch is invisible in normal use.** Never checked out, absent from `git log` on main, visible only in `git branch`.
+
+**What caught it.** `test_the_data_branch_is_orphan` failed with `0 != 1`: it ran `git rev-list --parents -n 1 data` inside the temp repo and got nothing, because no `data` branch existed *there*. The assertion was about orphanhood and the failure was about location, which is why it took a moment to read.
+
+**What would have caught it earlier.** Asserting on *where the ref landed* rather than on the returned sha. One line, `git -C self.dir rev-parse data`, fails instantly. More generally: never take a mutable module global as a default argument. The fix resolves it per call, and a mutation reintroducing the default is now caught by three tests.
+
+**It recurs during mutation testing**, by design: the mutation that reinstates the default recreates the stray branch every time it runs. Both occurrences were deleted, neither was pushed. A future session running `mutations_step7.json` should expect it and check `git branch` afterwards.
+
+## What was tried and did not work
+
+- **Heredocs for content containing backslashes.** `<<'PY'` mangled escapes at least five times, including while writing this very section: `\n` became a literal newline inside a string literal, and `\a` in `.venv\Scripts\activate` became a bell character that reached `CLAUDE.md` and had to be repaired. Anything with a backslash goes through the Write tool, or is built with `chr(92)`.
+- **The first mutation harness** embedded mutations as Python literals inside `mutate.py` and rewrote that list with a regex. It broke on the same escaping problem. Restructured to read mutations from a JSON file, which is what made the remaining eight steps cheap.
+- **`tempfile.NamedTemporaryFile(delete=False)` for the scratch git index.** It leaves a zero-byte file, and git refuses that with "index file smaller than expected" rather than treating it as empty. A path inside `mkdtemp()` that git creates itself works.
+- **`unittest discover` without `tests/__init__.py`** fails with "Start directory is not importable" rather than simply finding nothing, which is an opaque error for a missing file.
+- **Writing working files to the repository root.** `filtered.json`, `seen.json`, `fetch-all/`, `logs-runs/` and a `test-` copy of each went to the root for most of the build, then had to move under `data/` with a `branch_path()` mapping so the data branch's own layout did not move with them. `.gitignore` had said `data/` since before any of this code existed.
+- **In-place text replacement without asserting the anchor.** A `write_text` substitution silently matched nothing because the file had been rewritten between edits. Every later replacement asserts the anchor first, and `mutate.py` refuses a mutation whose anchor does not appear exactly once.
+- **`Edit` on the operator's registry file** failed because the tool requires the file to have been read in-session. A script with an explicit uniqueness check did the job and left a backup.
+
+## Where the close alternative was wrong
+
+Each of these had a defensible-looking other answer.
+
+- **Speechify's 11 dedupe keys.** The alternative was to drop the publication date from the key so the brief's predicted 8 came true. It would have merged a 2023 posting with a 2025 one and contradicted ADR-0001. The number was reported instead.
+- **The two undefined filter rules.** The alternative was to invent a threshold and a vendor list. The chain would have looked complete while enforcing policy nobody decided.
+- **The location filter.** The alternative was to build it, since two records still describe it. It would have dropped the Careem Karachi role, because the geocoder writes "Karachi, Punjab, Pakistan" and Karachi is in Sindh.
+- **The Himalayas verdict.** The alternatives were to declare it passing and move on, or to delete it. Either would have been an implementing session deciding scope.
+- **Pagination placement.** The alternative was the shared HTTP module, which is the cleaner API. It would have failed ADR-0019's condition outright and pre-decided the question above.
+- **`requests` over `urllib`.** The brief permits it, but the spikes had proved `urllib` sufficient and CLAUDE.md requires a dependency to survive "the standard library can do this". Taken as a choice and recorded as one, not as a necessity.
+- **`charset-normalizer`.** The alternative was to uninstall it alongside the other four for tidiness. Its mtime is two months older and it sits in user site-packages, so it was never mine.
+
+## Noticed and not investigated
+
+Beyond Speechify falling from 1086 postings to 361.
+
+- **Speechify is 39% of volume and has produced zero kept rows on every run.** Whether it belongs in the board list at all is a question nobody has asked.
+- **CodeRoad keeps 6 of 29, a 21% yield, far above every other board.** The registry records it as Latin America only, so its high yield may be worth nothing to this operator.
+- **Greenhouse's `metadata` array is parsed away, and it may answer Question 3.** On veeamsoftware it carries `Workday P Level` on all 242 postings, plus `Job Family`, `Worker Type` and `Work Type`. A seniority signal in a structured field is exactly what the stated-experience rule lacks. **This is the most promising unexplored lead in the repository.**
+- **Lever's `country` and `workplaceType` are also discarded.** The adapter reads `categories.location` only; `country` gives "IN" and "PK", `workplaceType` gives "remote", both cleaner than the free-text location.
+- **Board counts drift between runs and nobody has characterised the churn:** gomotive 148 to 150, brkz 23 to 19, joblogic 31 to 33, smart-working-solutions 21 to 19, spreetail 27 to 24. That rate bears directly on ADR-0003's unmeasured "20 to 50 new postings a day".
+- **Careem returned exactly 21 postings on 2026-09-11 and 21 today**, and nobody checked whether they are the same 21.
+- **Himalayas' first contact stops at the page cap, not at the end of the feed.** 25 pages, 500 postings, out of 100,000-plus. The first run captures an arbitrary depth of the newest, and whether 500 is the right first-contact depth was never considered.
+- **Nothing reads the run log.** ADR-0028's Confirmation requires aggregating per-source request counts over a month, and no tooling exists to do it. Logs accumulate one file per run under `data/logs-runs/` with no rotation.
+
+## Records believed stale, not raised because nothing was blocked
+
+- **`STATE.md`'s Documentation table says "24 records in `docs/decisions/`".** There are 29.
+- **`README.md` predates the code.** It documents what the repository stores and names `tools/generate_map.py`, but says nothing about the virtual environment, how to run the tests, or how to run a fetch. It is the first thing a stranger reads and it now describes half the repository.
+- **`docs/architecture-2.0.md` runtime view, step 8**, says "Batch-write to Airtable, ten per call" as a step of a normal run. There is no Airtable writer and, by the operator's own decision, no base. It reads as description rather than intent.
+- **ADR-0009 says the slice is eleven boards**; `config/boards.json` holds twelve entries. The twelfth is the ADR-0019 conditional and a test says so explicitly, but the arithmetic will confuse someone.
+- **`CHAT_STATE.md`** at the repository root is gitignored local scratch and still describes the spike as the one open item. It is not an implementing session's to edit, and the map deliberately skips it.

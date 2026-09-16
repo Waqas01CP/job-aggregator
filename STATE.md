@@ -6,7 +6,7 @@ status: current
 
 # STATE
 
-**Last verified against `main` at `3f0ba06`, 2026-09-17**, for the Pipeline rows the slice build touched. Documentation and Tooling rows are carried forward from earlier verifications and were not rechecked.
+**Last verified against `main` at `603752e`, 2026-09-17**, for the Pipeline rows the slice build touched. Documentation and Tooling rows are carried forward from earlier verifications and were not rechecked.
 
 This file is ground truth. If a row says DONE, it is done. If you believe otherwise, read the file the pointer names before claiming a conflict. Memory is not evidence.
 
@@ -42,7 +42,7 @@ Four spikes have run and their findings are folded into the records. The four de
 |---|---|---|---|---|
 | Architecture document, arc42, twelve sections | DONE | [VERIFIED] | 2026-09-10 | `docs/architecture-2.0.md` |
 | Rejected architecture bannered, not deleted | DONE | [VERIFIED] | 2026-09-10 | `docs/architecture.md` |
-| Decision records, MADR 4.0.0 plus Assumptions | DONE | [VERIFIED] | 2026-09-11 | 24 records in `docs/decisions/` |
+| Decision records, MADR 4.0.0 plus Assumptions | DONE | [VERIFIED] counted 2026-09-17 | 2026-09-17 | 29 records in `docs/decisions/` |
 | Research records with source trails | DONE | [VERIFIED] | 2026-09-11 | 4 passes in `docs/research/` |
 | Title pool, 50 terms with matching rules | DONE | [VERIFIED] | 2026-09-11 | `docs/reference/title-pool.md`, ADR-0021 |
 | README, licence and scope statement | DONE | [VERIFIED] | 2026-09-11 | `README.md`, `LICENSE` |
