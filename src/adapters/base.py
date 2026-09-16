@@ -42,6 +42,7 @@ class Posting:
     employer_provenance: str = None
     url_provenance: str = "payload"
     location: str = None
+    expires_at: str = None      # ISO date or None; read where the platform has one
 
     def __post_init__(self):
         if self.employer_provenance is not None and self.employer_provenance not in PROVENANCE:

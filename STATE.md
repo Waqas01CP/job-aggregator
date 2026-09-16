@@ -6,7 +6,7 @@ status: current
 
 # STATE
 
-**Last verified against `main` at `3552b35`, 2026-09-16**, for the Pipeline rows the slice build touched. Documentation and Tooling rows are carried forward from earlier verifications and were not rechecked.
+**Last verified against `main` at `9d8f9c1`, 2026-09-17**, for the Pipeline rows the slice build touched. Documentation and Tooling rows are carried forward from earlier verifications and were not rechecked.
 
 This file is ground truth. If a row says DONE, it is done. If you believe otherwise, read the file the pointer names before claiming a conflict. Memory is not evidence.
 
@@ -30,7 +30,7 @@ Update the verified-against line whenever you touch this file.
 
 ## Headline
 
-**The vertical slice is under construction.** Board configuration, the shared HTTP module and both adapters are built and tested. The normaliser, deduplicator, filter chain, writers and schedule are not. Nothing has run against a live board from pipeline code yet.
+**The vertical slice is under construction.** Board configuration, the shared HTTP module, both adapters, the normaliser, the deduplicator and the filter chain are built and tested. The writers and the schedule are not. Nothing has run against a live board from pipeline code yet.
 
 Four spikes have run and their findings are folded into the records. The four decisions they raised are answered by ADR-0028 and ADR-0029.
 
@@ -75,9 +75,9 @@ Four spikes have run and their findings are folded into the records. The four de
 | Greenhouse adapter, nine boards | DONE | [VERIFIED] parses a sanitised cassette of 21 real postings and one of 1086; 11 adapter mutations all caught | 2026-09-16 | `2026-09-16-vertical-slice.md` |
 | Lever adapter, two boards | DONE | [VERIFIED] employer derived from slug with provenance recorded, epoch-ms range checked | 2026-09-16 | `2026-09-16-vertical-slice.md`, ADR-0026 |
 | Himalayas adapter, conditional | PENDING | — | — | ADR-0019 |
-| Normaliser | PENDING | — | — | ADR-0019 |
-| Deduplicator | PENDING | — | — | ADR-0001 |
-| Filter chain | PENDING | — | — | ADR-0005, ADR-0021 |
+| Normaliser, one row shape for every source | DONE | [VERIFIED] 29 tests; 10 mutations all caught, including a first-seen fallback relabelled as publication | 2026-09-17 | `2026-09-17-vertical-slice.md`, ADR-0007, ADR-0026 |
+| Deduplicator | DONE | [VERIFIED] Speechify's 1086 postings collapse to 8 roles across 11 keys; 6 mutations all caught | 2026-09-17 | `2026-09-17-vertical-slice.md`, ADR-0001, ADR-0027 |
+| Filter chain | PARTIAL | [VERIFIED] expiry and title built and tested, 34 tests, 10 mutations all caught. **Experience is disabled: no record names a threshold and no slice platform returns the field. The annotation-vendor list is provisional, sourced from the title pool's prose, not from a record** | 2026-09-17 | `2026-09-17-vertical-slice.md`, ADR-0005, ADR-0021 |
 | Raw layer writer, orphan data branch | PENDING | — | — | ADR-0002, ADR-0003, ADR-0020 |
 | Filtered layer writer | PENDING | — | — | ADR-0013 |
 | Airtable base and schema | PENDING | — | — | Deferred until real output exists |

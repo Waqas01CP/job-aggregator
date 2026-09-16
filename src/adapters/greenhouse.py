@@ -90,6 +90,12 @@ def parse(payload, board):
                            "%s missing or unparseable: %r" % (PUBLISHED_FIELD, published_raw))
             continue
 
+        # Null on all 1598 postings measured, and read anyway: the expiry
+        # rule exists for the day a board starts populating it.
+        expires_at = entry.get("application_deadline") or None
+        if isinstance(expires_at, dict):
+            expires_at = expires_at.get("date") or None
+
         employer = (entry.get("company_name") or "").strip() or None
         location = entry.get("location") or {}
         location_name = (location.get("name") or "").strip() if isinstance(location, dict) else None
@@ -107,5 +113,6 @@ def parse(payload, board):
             employer_provenance="payload" if employer else None,
             url_provenance="payload",
             location=location_name or None,
+            expires_at=expires_at,
         ))
     return result
