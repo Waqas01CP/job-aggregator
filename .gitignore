@@ -28,8 +28,13 @@ filtered.json
 seen.json
 logs-runs/
 
+# Aggregator rows. ADR-0020 keeps these off the repository entirely: two
+# feeds prohibit redistribution and a branch inherits its visibility.
+fetch-all-local/
+
 # A TEST_MODE run writes the same shapes beside production data.
 test-fetch-all/
+test-fetch-all-local/
 test-filtered.json
 test-seen.json
 test-logs-runs/
