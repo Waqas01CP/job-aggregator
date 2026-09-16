@@ -157,6 +157,27 @@ python tools/generate_map.py --check   report whether MAP.md is current
 git config core.hooksPath .githooks    enable the hook, once per clone
 ```
 
+**Changing Python version is a rebuild, not a migration.** Delete `.venv`,
+make a new one on the interpreter you want, reinstall. Nothing else in the
+repository is tied to a version:
+
+```
+rm -rf .venv                           or Remove-Item -Recurse -Force .venv
+py -3.13 -m venv .venv                 Windows, a specific version
+python3.13 -m venv .venv               Linux and macOS
+.venv/Scripts/python -m pip install -r requirements.txt
+```
+
+The suite has been run on 3.11 and 3.12 and passes identically on both.
+The scheduled workflow pins 3.11, so that is the version the pipeline
+actually runs on; a local venv on a newer one is fine for development but
+is not what ships.
+
+**Never install this project's dependency outside a venv.** A global
+`pip install requests` makes the dependency invisible to anyone cloning the
+repository and leaves an unactivated shell silently using it. This happened
+once and was undone.
+
 **Activating is optional.** The commands above name the interpreter inside
 `.venv` explicitly, which works from any shell without activating and cannot
 pick up the system Python by accident. Activating only puts that interpreter
