@@ -143,6 +143,11 @@ python -m venv .venv                   create the environment, once per clone
 .venv/Scripts/python -m pip install -r requirements.txt     Windows
 .venv/bin/python -m pip install -r requirements.txt         Linux and macOS
 
+.venv\Scripts\activate                 activate, PowerShell or cmd
+source .venv/Scripts/activate          activate, git bash on Windows
+source .venv/bin/activate              activate, Linux and macOS
+deactivate                             leave it
+
 .venv/Scripts/python -m unittest discover -s tests -t .     run every test
 .venv/Scripts/python -m src.run --test-mode --no-commit     one run, alternate
                                                             files, no commit
@@ -151,6 +156,14 @@ python tools/generate_map.py           regenerate MAP.md
 python tools/generate_map.py --check   report whether MAP.md is current
 git config core.hooksPath .githooks    enable the hook, once per clone
 ```
+
+**Activating is optional.** The commands above name the interpreter inside
+`.venv` explicitly, which works from any shell without activating and cannot
+pick up the system Python by accident. Activating only puts that interpreter
+on `PATH` for the current shell, so `python` means the venv's one. Use whichever
+you prefer; the explicit form is what this file documents because it is
+unambiguous in a log or a bug report. If PowerShell refuses the activation
+script, that is its execution policy, and the explicit form sidesteps it.
 
 Everything a run writes lives under `data/`, which is gitignored: the raw
 layers, the filtered layer, the seen store and the run logs. A `--test-mode`
