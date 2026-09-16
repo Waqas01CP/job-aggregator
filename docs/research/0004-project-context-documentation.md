@@ -86,6 +86,10 @@ Section 1.5 is the one with no counterpart anywhere in the published practice: *
 
 **It proposed inventing artifacts that already existed**, in better form, in a repository it had partially read.
 
+**It asserted a propagation path without checking it, four days after proposing a rule against exactly that.** On 2026-09-15, reviewing the endpoint spike, this chat stated that the fabricated "roughly twenty open roles per board" figure had propagated into ADR-0001, ADR-0003 **and the architecture document**. The implementing seat grepped the working tree and HEAD and found it in neither architecture document. The figure had reached two records, not three documents.
+
+The error is recorded here rather than in a decision record because no record contains it. It was made in conversation and in a brief, neither of which persists. It belongs with the pass that produced the assumption-basis rule, because it is the same failure the rule exists to prevent: a plausible claim stated as established without the check that would have taken one command.
+
 ## Sources
 
 | Source | Rating | Used for |

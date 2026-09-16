@@ -23,7 +23,7 @@ Rozee.pk, the dominant Pakistani board and the largest known coverage gap, has n
 | Source | Endpoint | Free quota | PK on-site | Remote usable from PK | ToS permits polling | Publication date | Overlaps existing ATS |
 |---|---|---|---|---|---|---|---|
 | Jobicy | open JSON + RSS | unlimited, no key, max 1/hr, 6h delay | No | Yes, geo filter | Yes, attribution, no redistribution | `pubDate` | Minimal |
-| Himalayas | open JSON + RSS | unlimited, no key, 24h cache, 429 if abused | No | Yes, restriction fields | Yes, attribution | `pubDate` ISO 8601 | Minimal |
+| Himalayas | open JSON + RSS | unlimited, no key, 24h cache, 429 if abused | No | Yes, restriction fields | Yes, attribution | `pubDate` epoch seconds | Minimal |
 | Arbeitnow | open JSON | unlimited, no key | No | Yes, `remote` flag | Yes, public API | creation timestamp, verify name | **Yes** |
 | RemoteOK | open JSON + RSS | unlimited, no key | No | Yes, parse `location` | Yes, attribution | `date` + `epoch` | Minimal |
 | We Work Remotely | RSS | unlimited, no key | No | Yes, body text only | Yes, attribution | RSS `pubDate` | Minimal |
@@ -48,7 +48,7 @@ Rozee.pk, the dominant Pakistani board and the largest known coverage gap, has n
 
 **Jobicy.** `https://jobicy.com/api/v2/remote-jobs`, params `count` (default 200), `geo`, `industry`, `tag`, `search`. Taxonomy at `?get=industries` and `?get=locations`. Publication date is `pubDate`. First-party guidance says a few times daily suffices and must not exceed once per hour; postings are delayed 6 hours so Jobicy is credited as source. Attribution and canonical URL required, redistribution to other job boards prohibited. A Hugging Face dataset `jobicy/remote-jobs` mirrors the feed as daily JSONL, a free alternate path.
 
-**Himalayas.** Best documented of the set. Browse `https://himalayas.app/jobs/api`, cursor pagination, limit 20. Search `https://himalayas.app/jobs/api/search` with `q`, `country`, `worldwide`, `seniority`, `employment_type`, `company`, `timezone`, `sort`, `page`. OpenAPI spec at `https://himalayas.app/docs/openapi.json`. Carries `pubDate` ISO 8601, `expiryDate`, `guid`, `locationRestrictions[]`, `timezoneRestrictions[]`, salary fields. Documentation states data is cached and refreshed every 24 hours so there is no benefit to polling more often, and returns 429 if abused. Attribution required; building apps and databases explicitly permitted. `locationRestrictions`, empty array meaning worldwide, is the closest thing available to an eligibility field.
+**Himalayas.** Best documented of the set. Browse `https://himalayas.app/jobs/api`, cursor pagination, limit 20. Search `https://himalayas.app/jobs/api/search` with `q`, `country`, `worldwide`, `seniority`, `employment_type`, `company`, `timezone`, `sort`, `page`. OpenAPI spec at `https://himalayas.app/docs/openapi.json`. Carries `pubDate` as **epoch seconds**, plus `expiryDate`, `guid`, `locationRestrictions[]`, `timezoneRestrictions[]`, salary fields. Documentation states data is cached and refreshed every 24 hours so there is no benefit to polling more often, and returns 429 if abused. Attribution required; building apps and databases explicitly permitted. `locationRestrictions`, empty array meaning worldwide, is the closest thing available to an eligibility field.
 
 **Arbeitnow.** `https://www.arbeitnow.com/api/job-board-api`, params include `visa_sponsorship=true`. UK variant at `arbeitnow.co.uk`. Documented via Postman at `documenter.getpostman.com/view/18545278/UVJbJdKh`. Carries a creation timestamp plus `slug`, `remote` boolean, `job_types`, `tags`, `location`, `url`. Feed updates hourly. **Overlap flag: its source is ATS-fed, naming Greenhouse, SmartRecruiters, Join.com, Team Tailor, Recruitee and Comeet, so part of this feed duplicates boards already polled directly.**
 
@@ -143,3 +143,11 @@ Remote does not mean eligible from Pakistan. Himalayas carries `locationRestrict
 Listicle sources were treated as unverified and cross-checked against first-party documentation wherever possible. Where only third-party evidence exists, including the Working Nomads endpoint and some quota figures, it is flagged above.
 
 All quotas and counts are current as found on 2026-09-10 and should be reconfirmed at integration time.
+
+## Corrections
+
+| Date | Correction | Source |
+|---|---|---|
+| 2026-09-15 | Himalayas `pubDate` was recorded as ISO 8601. It is epoch seconds | Measured directly against the live endpoint during the endpoint feasibility spike. The original came from documentation reading rather than from a request |
+| 2026-09-15 | Himalayas `sort=recent` on the search endpoint does not order by date and silently ignores the cursor, returning byte-identical responses | Measured. Ordering broke at positions 3, 5 and 8. The browse endpoint does order newest-first and pages cleanly, 60 of 60 guids distinct across three pages |
+| 2026-09-15 | The envelope's `updatedAt` is not a cache timestamp | It equals the newest `pubDate` on whatever page is returned, on 8 of 8 observations. The first spike inferred it was cache age and that inference was repeated in discussion |

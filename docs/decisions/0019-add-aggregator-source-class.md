@@ -100,3 +100,11 @@ Evidence: `docs/research/0003-job-source-survey.md`, including endpoints, field 
 Does not reverse ADR-0012, which prohibits email and search-alert ingestion. An aggregator API is a documented endpoint returning structured data. ADR-0012 carries a correction removing a sentence that had described the registry as the source list.
 
 Storage routing by source class is ADR-0020.
+
+One clause is reversed by ADR-0026: employer read from the payload in every case. Lever returns no employer field, so derivation with recorded provenance replaces it. The rest of this record stands, including the reason that clause existed.
+
+## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-09-11 | The employer-from-payload clause is reversed by ADR-0026 | The endpoint spike enumerated all 18 keys across 48 Lever postings and found none containing compan, employ or org. The rule assumed every payload names its employer; two of three platforms measured do |

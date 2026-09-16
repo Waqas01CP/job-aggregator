@@ -10,7 +10,7 @@ Records are written at the moment a decision concludes. An accepted record is ne
 
 | ID | Title | Status |
 |----|-------|--------|
-| 0001 | Two-layer store, raw and filtered | Accepted |
+| 0001 | Two-layer store, raw and filtered | Accepted, extended by 0027 |
 | 0002 | Raw layer on a git data branch, not a hosted database | Accepted |
 | 0003 | Append deltas, not snapshots | Accepted |
 | 0004 | Airtable as the filtered display layer | Accepted, one clause reversed by 0014 |
@@ -28,13 +28,15 @@ Records are written at the moment a decision concludes. An accepted record is ne
 | 0016 | Title-only matching against a versioned title pool | Accepted, one clause reversed by 0021 |
 | 0017 | Sanitised cassettes as adapter test fixtures | Accepted |
 | 0018 | Scheduled contract check against live boards | Accepted |
-| 0019 | Add aggregator feeds as a second source class | Accepted |
+| 0019 | Add aggregator feeds as a second source class | Accepted, one clause reversed by 0026 |
 | 0020 | Route raw storage by source class | Accepted |
 | 0021 | Allowlist-only title matching, with normalisation | Accepted |
 | 0022 | Document authority order | Accepted |
 | 0023 | Context artifact set and onboarding order | Accepted |
 | 0024 | Session log format | Accepted |
 | 0025 | Auto Memory is not authoritative | Accepted |
+| 0026 | Employer provenance where a payload does not carry it | Accepted |
+| 0027 | Deduplication key normalisation, configured per source | Accepted |
 
 ## Pending
 

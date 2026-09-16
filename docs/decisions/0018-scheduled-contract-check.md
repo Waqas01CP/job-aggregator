@@ -31,6 +31,7 @@ Existing tooling for this is paid SaaS, surveyed at roughly $50 to $2,500 a mont
 
 - Board responses are stable enough that a key-set fingerprint changes rarely, so an alert means something real. Not measured; if fingerprints churn the check becomes noise and the fingerprint must be narrowed to consumed fields only.
 - The fields each adapter consumes are a small subset of what a board returns. True by construction under the Tolerant Reader rule below.
+- An `updated_at` or equivalent field would indicate that a posting changed. **Falsified 2026-09-15.** See Changes.
 
 ## Considered Options
 
@@ -80,6 +81,12 @@ Bad, because most operate on published OpenAPI specifications, which these board
 ### Consumer-driven contract testing
 
 Bad, because it requires the provider to participate. Not applicable.
+
+## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-09-15 | `updated_at` must not be used to detect that a posting changed | It is stamped in bulk, not on edit. Greenhouse rewrote it across roughly 265 Speechify postings on each of four dates, drawing evenly from every publication month, and 16 of 21 Careem postings share one exact second. The fingerprint comparison in this record is unaffected, because it compares the response shape rather than any posting's timestamp. But no mechanism may treat that field as a change signal |
 
 ## More Information
 

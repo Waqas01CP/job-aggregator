@@ -25,7 +25,7 @@ Some fields change over time. A posting's last-seen date and closure status are 
 ## Assumptions
 
 - A posting record serialises to roughly 2 KB. Estimated from field count; not measured.
-- Roughly one thousand postings are fetched per run. Estimated as in ADR-0001; not measured.
+- Roughly one thousand postings are fetched per run. **Falsified 2026-09-15.** Eleven boards returned 1646. See Changes.
 - Genuinely new postings arrive at twenty to fifty a day. Estimated; not measured, and the figure most likely to be wrong.
 
 On those assumptions, snapshots cost roughly 1.4 GB of repository growth a year and deltas roughly 36 MB. The ratio, not the absolute figures, is what carries the decision.
@@ -56,5 +56,11 @@ A run that fails partway appends a partial set. Individual records are complete,
 Measure data-branch size monthly for the first three months and compare against the 36 MB per year projection. Also confirm that a run adding no new postings produces a commit whose only change is the run log, per the serialisation discipline in section 8 of the architecture document.
 
 ## Pros and Cons of the Options
+
+## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-09-15 | The postings-per-run assumption is falsified and the snapshot cost projection rises | Eleven boards returned 1646 postings, so the snapshot cost at measured volume is 2.40 GB a year rather than 1.4 GB. **The decision is unaffected.** The argument was the ratio between snapshots and deltas, and the delta cost does not depend on postings per run at all. A higher fetch volume makes snapshots worse, not deltas |
 
 ## More Information

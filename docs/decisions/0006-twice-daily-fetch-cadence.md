@@ -26,7 +26,7 @@ The operator's existing LinkedIn pipeline runs once daily at 04:00 UTC and has c
 
 ## Assumptions
 
-- ATS boards publish to their APIs at or near the moment a posting goes live, so board-side propagation is near zero. Not measured for any platform; assumed from the nature of the endpoints.
+- ATS boards publish to their APIs at or near the moment a posting goes live, so board-side propagation is near zero. **Confirmed 2026-09-11.** See Changes.
 - The operator's reading cadence, not the polling interval, dominates the total publication-to-application gap. Stated by the operator.
 
 ## Considered Options
@@ -56,5 +56,11 @@ Three runs a day remain available at no cost if measurement shows discovery domi
 Measure A itself. If median age at first appearance exceeds 12 hours, the board-side propagation assumption above is wrong and should be investigated before the cadence is changed.
 
 ## Pros and Cons of the Options
+
+## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-09-11 | The near-zero propagation assumption is confirmed, and the Confirmation is met | Greenhouse's youngest posting was 0.26 hours old at fetch, about 16 minutes, against a 2-hour bar. A quiet market would mean nothing recent existed; something published 16 minutes earlier was already in the feed, which is positive evidence rather than an absence of evidence for lag. A second run would tighten the bound and cannot change the verdict. Himalayas' 5.27-hour floor is its own feed staleness, and Lever's 35 hours is a volume artefact from 48 postings |
 
 ## More Information

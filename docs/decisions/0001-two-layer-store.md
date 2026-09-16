@@ -24,7 +24,7 @@ The filters will meet real board data for the first time at go-live, and will ne
 
 ## Assumptions
 
-- Postings fetched per run across the full board set are on the order of one thousand. Estimated from 53 boards at roughly twenty open roles each; not measured.
+- Postings fetched per run across the full board set are on the order of one thousand. **Falsified 2026-09-15.** Eleven boards returned 1646. See Changes.
 - No filter will ever require data beyond what the board returns at fetch time.
 
 ## Considered Options
@@ -59,3 +59,11 @@ Within the first week of live running, re-run the location filter over the raw l
 ## More Information
 
 Extended by ADR-0013, which persists the filtered layer independently of the display.
+
+Extended by ADR-0027, which normalises the title before the deduplication key is computed. The key itself is unchanged.
+
+## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-09-15 | The one-thousand-postings-per-run assumption is falsified | Eleven of 53 boards returned 1646 postings. Median 27, mean 149.6, maximum 1086, with three boards holding 89.7% of volume. The original figure rested on "roughly twenty open roles per board," which was invented rather than estimated, and the distribution is nothing like uniform. Extrapolation to 53 boards gives 2780, 3998 or 7931 depending on the assumption used, and the 11 measured boards are not a random sample |
