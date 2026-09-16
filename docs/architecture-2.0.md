@@ -190,7 +190,7 @@ flowchart LR
 
 **Normaliser.** Maps a platform's response onto one row shape. Reads employer from the payload, never from the config. Records which field supplied the ordering date, so a first-seen fallback is never mistaken for a publication date. Records the source, because ADR-0020 routes storage by it.
 
-**Deduplicator.** Employer plus title plus publication date. Not row identity: 20 to 30 percent of harvested rows are one job posted to several cities. Must also work across source classes, since Arbeitnow indexes Greenhouse and SmartRecruiters, so the same posting can arrive twice. That requires an employer alias map, since an aggregator's employer string will differ from the employer's own.
+**Deduplicator.** Employer plus title plus publication date, with the title normalised first per ADR-0027. Normalisation is configured per source, not globally: Speechify puts the location inside the title, turning 8 jobs into 1086 postings, and that is Speechify's convention rather than Greenhouse's. Must also work across source classes, since Arbeitnow indexes Greenhouse and SmartRecruiters, so the same posting can arrive twice. That requires an employer alias map, since an aggregator's employer string will differ from the employer's own, and ADR-0026 means some employers arrive as slugs rather than names.
 
 **Filter chain.** Ordered cheapest disqualifier first: expiry, location, stated experience, annotation vendors, then title classification. Each drop records its rule.
 
@@ -204,10 +204,12 @@ flowchart LR
 
 | Tier | Platforms | Boards | Status |
 |---|---|---|---|
-| A | Greenhouse, Lever | 11 | Endpoints documented. The slice. |
-| B | Ashby, Workable, SmartRecruiters | 6 | Reported JSON, unverified |
-| C | JazzHR, Manatal | 19 | No verified JSON. Pakistani-dominant. |
-| D | Freshteam, BambooHR, Zoho, Workday, Pinpoint, Breezy, Dover, iCIMS, EY | 17 | Hardest, thinnest payoff |
+| A | Greenhouse, Lever | 11 | Endpoints verified. The slice. |
+| B | Ashby, Workable, SmartRecruiters | 6 | **JSON verified 2026-09-16.** All three carry a publication date at 100% |
+| C | JazzHR, Manatal | 19 | Pakistani-dominant. **Manatal has a public JSON API and no date field of any kind.** JazzHR has no list endpoint; its date is in per-posting JSON-LD |
+| D | Freshteam, BambooHR, Zoho, Workday, Pinpoint, Breezy, Dover, iCIMS, EY | 17 | **All reached except EY, untested.** Breezy, BambooHR and Pinpoint proved easy; Workday and iCIMS were the hardest, as expected |
+
+The 2026-09-16 spike probed one board per platform for all thirteen outside tier A, 53 requests, and found no platform with nothing machine-readable. Six carry a publication date on a single unauthenticated GET; the rest carry it per posting, or in Manatal's case not at all. Tier assignments above are unchanged and are a separate question from these status corrections. Evidence and per-platform field names are in `logs/2026-09-16-publication-date-across-untested-platforms.md`, corrected by `logs/2026-09-16-second-observation-checks.md`.
 
 Eight further employers are named in the registry without a resolvable handle, seven Workable and one Greenhouse, and are unpollable until someone reads the slug off the board.
 
@@ -292,7 +294,7 @@ Index only. Reasoning lives in `docs/decisions/` and is never restated here.
 
 | ID | Decision | Status |
 |----|----------|--------|
-| 0001 | Two-layer store, raw and filtered | Accepted |
+| 0001 | Two-layer store, raw and filtered | Accepted, extended by 0027 |
 | 0002 | Raw layer on a git data branch, not a hosted database | Accepted |
 | 0003 | Append deltas, not snapshots | Accepted |
 | 0004 | Airtable as the filtered display layer | Accepted, one clause reversed by 0014 |
@@ -310,13 +312,15 @@ Index only. Reasoning lives in `docs/decisions/` and is never restated here.
 | 0016 | Title-only matching against a versioned title pool | Accepted, one clause reversed by 0021 |
 | 0017 | Sanitised cassettes as adapter test fixtures | Accepted |
 | 0018 | Scheduled contract check against live boards | Accepted |
-| 0019 | Add aggregator feeds as a second source class | Accepted |
+| 0019 | Add aggregator feeds as a second source class | Accepted, one clause reversed by 0026 |
 | 0020 | Route raw storage by source class | Accepted |
 | 0021 | Allowlist-only title matching, with normalisation | Accepted |
 | 0022 | Document authority order | Accepted |
 | 0023 | Context artifact set and onboarding order | Accepted |
 | 0024 | Session log format | Accepted |
 | 0025 | Auto Memory is not authoritative | Accepted |
+| 0026 | Employer provenance where a payload does not carry it | Accepted |
+| 0027 | Deduplication key normalisation, configured per source | Accepted |
 
 ---
 
