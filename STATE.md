@@ -6,7 +6,7 @@ status: current
 
 # STATE
 
-**Last verified against `main` at `659bbee` plus the commit that carries this line, 2026-09-17**, for the Headline, the Blocked section, the Known unverified entries dated 2026-09-17, the Pipeline rows, and the Tooling rows for the mutation harness and the run-log reader. Documentation and Tooling rows are carried forward from earlier verifications and were not rechecked.
+**Last verified against `main` at `8e3bd85` plus the commit that carries this line, 2026-09-17**, for the Headline, the Blocked section, the Known unverified entries dated 2026-09-17, the Pipeline rows, and the Tooling rows for the mutation harness and the run-log reader. Documentation and Tooling rows are carried forward from earlier verifications and were not rechecked.
 
 This file is where to start, not where to stop. It outranks memory: if you believe a row is wrong, read the file the pointer names before claiming a conflict. It does not outrank the code or the data. Where a row disagrees with them, the row is stale; report it and correct it. On 2026-09-17 four stale lines were found here that way.
 
@@ -145,7 +145,7 @@ Four spikes have run and their findings are folded into the records. The four de
 
 **Speechify's shrinking board is closures, not a fault.** [VERIFIED] for 2026-09-11 to 2026-09-16, 1086 to 361: 723 of the 813 lost postings are four whole roles that closed, each posted once per location; the other 90 are location copies of open roles, nearly matched by 87 new copies. [RUN LOG] 191 on 2026-09-17, not explained, since that run's postings were discarded. The first pushed run answers it without an extra request. `2026-09-17-run-log-reader-and-speechify.md`.
 
-**Scheduled runs keep running.** [VERIFIED] from GitHub's documentation: "In a public repository, scheduled workflows are automatically disabled when no repository activity has occurred in 60 days." Whether the pipeline's own data-branch pushes count as activity is not established. `2026-09-17-run-log-reader-and-speechify.md`.
+**Scheduled runs keep running.** [VERIFIED] from GitHub's documentation: "In a public repository, scheduled workflows are automatically disabled when no repository activity has occurred in 60 days." Whether the pipeline's own data-branch pushes count as activity is not established. Already recorded as a risk in `docs/architecture-2.0.md`, with the operator's LinkedIn pipeline running over 100 times on bot commits alone as evidence against it. `2026-09-17-run-log-reader-and-speechify.md`.
 
 **Postings per run are on the order of one thousand.** ADR-0001:27, inherited by ADR-0003:28. [VERIFIED] false: 11 of the 53 boards return 1646 postings. Median 27 per board, maximum 1086. The 53-board total is unmeasured. `2026-09-15-spike-followup-checks.md`.
 
