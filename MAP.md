@@ -53,7 +53,7 @@ supersedes and superseded-by links, deliberately not duplicated here.
 | --- | --- | --- |
 | `docs/decisions/README.md` | Every architecture decision made on this project, one file per decision, with the reasoning that produced it and the conditions that would show it was wrong. | current |
 | `docs/reference/seniority-exclusions.md` | The senior-level title words that drop a posting the title pool admitted, the levels deliberately left in, and the evidence behind the numbered levels. | current |
-| `docs/reference/title-pool.md` | The 61 title terms a posting must match, grouped into the operator's four role families in order of precedence to be admitted, plus the normalisation and matching rules applied to both sides. | current |
+| `docs/reference/title-pool.md` | The 79 title terms a posting must match, grouped into the operator's four role families in order of precedence to be admitted, plus the normalisation and matching rules applied to both sides. | current |
 | `docs/research/README.md` | Dated snapshots of what was found and when. Numbered by the order the pass was run, so a later reader knows what was known at each point. | current |
 | `logs/README.md` | One log per session, newest at the top. This table is the navigation index for all session history. | current |
 
@@ -82,6 +82,7 @@ supersedes and superseded-by links, deliberately not duplicated here.
 | `logs/2026-09-17-runner-safe-data-branch.md` | The first GitHub run failed at the commit; five defects behind it fixed, reproduced locally before and after, and a standing verify-do-not-trust rule recorded. | current |
 | `logs/2026-09-17-test-run-verified-and-no-input-work.md` | The ticked test run verified on GitHub, a publication-lag report built, the README brought up to date, ADR-0023 annotated, a decision pack prepared for the operator, and the Airtable writer found to need the architecture chat first. | current |
 | `logs/2026-09-17-vertical-slice.md` | The vertical slice built end to end. Config, HTTP module, Greenhouse and Lever adapters, normaliser, deduplicator, filter chain, writers, orchestrator and schedule, plus Himalayas on condition. | current |
+| `logs/2026-09-18-pool-version-4.md` | Pool version 4 with eighteen AI terms added ahead of the boards that carry them, one of which immediately admitted a missed AI internship; why Himalayas cannot be seen from GitHub; and why Airtable could not be built in this session. | current |
 
 ## decision
 
@@ -117,4 +118,4 @@ supersedes and superseded-by links, deliberately not duplicated here.
 | `docs/decisions/0028-fetch-budget-and-detail-once.md` | ADR-0028: Per-run fetch budget, and detail fetched once per posting | accepted |
 | `docs/decisions/0029-adapter-order-and-dover.md` | ADR-0029: Adapter order after the slice, and Dover dropped | accepted |
 
-Files listed: 55
+Files listed: 56

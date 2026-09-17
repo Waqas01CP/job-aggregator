@@ -46,13 +46,13 @@ def keep(**kw):
 
 
 class TestTitlePool(unittest.TestCase):
-    def test_pool_has_sixty_one_terms(self):
-        """Version 3, 2026-09-17: the 51 of version 2 plus ten software terms
-        the operator chose. The measurement section after Known behaviour
-        quotes 39 terms in backticks, and none may be read as pool terms."""
+    def test_pool_has_seventy_nine_terms(self):
+        """Version 4, 2026-09-18: the 61 of version 3 plus eighteen AI terms.
+        The measurement section after Known behaviour quotes 39 terms in
+        backticks, and none may be read as pool terms."""
         terms, exempt = load_title_pool()
-        self.assertEqual(len(terms), 61, "the pool file says 61 terms")
-        self.assertEqual(len(set(terms)), 61, "a term is listed twice")
+        self.assertEqual(len(terms), 79, "the pool file says 79 terms")
+        self.assertEqual(len(set(terms)), 79, "a term is listed twice")
 
     def test_forward_deployment_closes_the_gap_the_plural_rule_leaves(self):
         """On 2026-09-16 "Forward Deployment Engineer" was dropped while
@@ -289,6 +289,57 @@ class TestRoleFamilies(unittest.TestCase):
                             ("Software Developer in Test (Python)", "software developer"),
                             ("Software Engineer, Platform", "software engineer")):
             self.assertEqual(MATCHER.match(title), term, title)
+
+
+class TestAITermsVersionFour(unittest.TestCase):
+    """The eighteen terms the operator added on 2026-09-18, before the boards
+    that carry such roles exist. Only one matched anything on the 804 postings
+    stored then, which is why they are in place early."""
+
+    def test_the_gerund_forms_the_plural_rule_cannot_produce(self):
+        """`ai engineer` cannot produce "AI Engineering": the suffix is
+        "(?:e?s)?" on the last word. The same gap as `forward deployment`."""
+        self.assertEqual(MATCHER.match("AI Engineering Intern"), "ai engineering")
+        self.assertEqual(MATCHER.match("Prompt Engineering Specialist"), "prompt engineering")
+        self.assertEqual(MATCHER.match("Context Engineering Analyst"), "context engineering")
+
+    def test_the_real_posting_that_proved_the_gap(self):
+        """Veeam's "Platform, Security & AI Engineering Intern - Summer 2027",
+        on the data branch at 91f7518, was dropped by version 3 and is the
+        only posting version 4 admits."""
+        kept, drop = keep(title="Platform, Security & AI Engineering Intern - Summer 2027")
+        self.assertTrue(kept, drop and drop["rule"])
+
+    def test_the_other_new_terms_admit_their_titles(self):
+        for title, term in (("Agent Developer", "agent developer"),
+                            ("Autonomous Agents Engineer", "autonomous agent"),
+                            ("ML Engineer", "ml engineer"),
+                            ("ML Ops Engineer", "ml ops"),
+                            ("Computer Vision Engineer", "computer vision"),
+                            ("Data Science Intern", "data science"),
+                            ("AI Researcher", "ai researcher"),
+                            ("AI Research Scientist", "ai research"),
+                            ("Applied Scientist", "applied scientist"),
+                            ("AI Specialist", "ai specialist"),
+                            ("AI Architect", "ai architect"),
+                            ("AI Integration Engineer", "ai integration"),
+                            ("AI Consultant", "ai consultant"),
+                            ("AI Infrastructure Engineer", "ai infrastructure")):
+            self.assertEqual(MATCHER.match(title), term, title)
+
+    def test_bare_research_engineer_is_not_a_term(self):
+        """Rejected under ADR-0021's `ai red team` precedent: the bare term
+        pulls research engineering of every other kind."""
+        self.assertIsNone(MATCHER.match("Research Engineer"))
+        self.assertIsNone(MATCHER.match("Senior Research Engineer, Materials"))
+        self.assertEqual(MATCHER.match("AI Research Engineer"), "ai research")
+
+    def test_gen_ai_spelled_apart_is_admitted(self):
+        """`genai` is an exempt single token and cannot match "Gen AI". The
+        title has to be one no earlier term also matches, or the test passes
+        with `gen ai` gone: "Gen AI Engineer" is credited to `ai engineer`."""
+        self.assertEqual(MATCHER.match("Gen AI Specialist"), "gen ai")
+        self.assertEqual(MATCHER.match("GenAI Engineer"), "genai")
 
 
 class TestSeniority(unittest.TestCase):

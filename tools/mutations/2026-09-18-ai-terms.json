@@ -1,0 +1,26 @@
+[
+ {
+  "label": "pool: the ai engineering gerund removed",
+  "path": "docs/reference/title-pool.md",
+  "find": " · `ai engineering` · ",
+  "replace": " · "
+ },
+ {
+  "label": "pool: gen ai removed",
+  "path": "docs/reference/title-pool.md",
+  "find": " · `gen ai` · ",
+  "replace": " · "
+ },
+ {
+  "label": "pool: ml engineer removed",
+  "path": "docs/reference/title-pool.md",
+  "find": " · `ml engineer` · ",
+  "replace": " · "
+ },
+ {
+  "label": "pool: bare research engineer added against the operator's reasoning",
+  "path": "docs/reference/title-pool.md",
+  "find": " · `ai researcher` · ",
+  "replace": " · `ai researcher` · `research engineer` · "
+ }
+]

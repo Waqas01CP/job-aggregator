@@ -1,12 +1,12 @@
 ---
 type: reference
-description: The 61 title terms a posting must match, grouped into the operator's four role families in order of precedence to be admitted, plus the normalisation and matching rules applied to both sides.
+description: The 79 title terms a posting must match, grouped into the operator's four role families in order of precedence to be admitted, plus the normalisation and matching rules applied to both sides.
 status: current
 ---
 
 # Title pool
 
-Version 3, 2026-09-17.
+Version 4, 2026-09-18.
 
 A posting is admitted to the display only if its normalised title contains one of these terms. Nothing else is shown. Reasoning and consequences are in ADR-0021.
 
@@ -47,21 +47,21 @@ Order matters in one way only. A title is credited to the first term it matches,
 
 ### 1. Agentic AI
 
-`agentic` · `ai agent` · `agent engineer` · `multi agent` · `agentops`
+`agentic` · `ai agent` · `agent engineer` · `multi agent` · `agentops` · `agent developer` · `autonomous agent`
 
 ### 2. LLM and applied AI
 
-`ai engineer` · `ai developer` · `ai software` · `applied ai` · `generative ai` · `genai` · `llm` · `large language model` · `prompt engineer` · `context engineer` · `rag engineer` · `retrieval augmented` · `evals engineer` · `eval engineer` · `evaluation engineer` · `ai evaluator` · `ai quality` · `ai red team` · `model behavior` · `model behaviour` · `ai trainer` · `ai reliability` · `llmops` · `ai platform` · `ai system` · `ai product engineer` · `ai solution` · `conversational ai` · `forward deployed` · `forward deployment` · `ai automation`
+`ai engineer` · `ai developer` · `ai software` · `applied ai` · `generative ai` · `genai` · `llm` · `large language model` · `prompt engineer` · `context engineer` · `rag engineer` · `retrieval augmented` · `evals engineer` · `eval engineer` · `evaluation engineer` · `ai evaluator` · `ai quality` · `ai red team` · `model behavior` · `model behaviour` · `ai trainer` · `ai reliability` · `llmops` · `ai platform` · `ai system` · `ai product engineer` · `ai solution` · `conversational ai` · `forward deployed` · `forward deployment` · `ai automation` · `gen ai` · `ai engineering` · `prompt engineering` · `context engineering` · `ai research` · `ai researcher` · `applied scientist` · `ai specialist` · `ai architect` · `ai integration` · `ai consultant` · `ai infrastructure`
 
 ### 3. Traditional AI and ML
 
-`machine learning` · `deep learning` · `data scientist` · `ai ml` · `mlops` · `aiops` · `ai ops` · `nlp`
+`machine learning` · `deep learning` · `data scientist` · `ai ml` · `mlops` · `aiops` · `ai ops` · `nlp` · `ml engineer` · `ml ops` · `computer vision` · `data science`
 
 ### 4. Software engineering
 
 `software engineer i` · `associate software engineer` · `junior software engineer` · `backend engineer` · `back end engineer` · `backend developer` · `back end developer` · `python developer` · `python engineer` · `full stack` · `fullstack developer` · `fullstack engineer` · `mobile developer` · `data engineer` · `automation engineer` · `software developer` · `software engineer`
 
-**61 terms.**
+**79 terms.**
 
 ## Known behaviour, accepted deliberately
 
@@ -72,6 +72,10 @@ Order matters in one way only. A title is credited to the first term it matches,
 **`software engineer i` does not match "Software Engineer II" or "III".** Corrected 2026-09-17: this note used to say it did, because the boundary falls after `i`; the plural suffix cannot consume a second `i`, so the pattern fails there. Since version 3, the generic `software engineer` admits both, and the seniority rule in `docs/reference/seniority-exclusions.md` drops them.
 
 **`ai trainer` and `ai evaluator` will pull annotation gig work.** One prior census measured 17 of 34 rows as Welo Data, Welocalize and Innodata. The annotation-vendor drop rule catches those by employer, so the terms stay and a different filter does the work.
+
+**`ai research` and `ai researcher` rather than bare `research engineer`.** The same reasoning as `ai red team`: the bare term pulls research engineering of every other kind. `applied scientist` is listed despite the same risk, because in this market it is an ML title in practice; if it starts admitting chemistry and materials roles, it is the first term to drop.
+
+**The pool's plural rule cannot produce an "-ing" form**, since the suffix it appends is `(?:e?s)?` on the term's last word. So `ai engineering`, `prompt engineering` and `context engineering` are listed beside `ai engineer`, `prompt engineer` and `context engineer`, as `forward deployment` is beside `forward deployed`. Any later term whose gerund is idiomatic needs the same treatment.
 
 **Never used as terms: bare `junior`, `associate`, `trainee`.** In the Pakistani market these match sales, HR, bookkeeping, Amazon PPC and clinical QA far more often than engineering. One paid run spent $0.73 that way and returned six technical rows out of sixty. Seniority words are always qualified.
 
@@ -87,6 +91,8 @@ Recorded so that the choice to keep these terms is revisited with evidence rathe
 - `mlops` matched one posting, which `machine learning` is credited with because it comes first.
 - An earlier local run, 2026-09-16, gave the same shape: 19 admitted from 916, 40 terms credited with nothing.
 
+**Planned by the operator, 2026-09-17:** once enough postings have accumulated, a pass over the dropped titles alone, harvesting the AI ones into the pool. That pass happens before the filter runs against them, and `tools/title_pool_report.py --dropped` lists exactly that set.
+
 **The operator's decision, 2026-09-17: keep all 39.** Eleven boards, most of them not AI employers, are too few to condemn a term. The same census on the local Himalayas sample matched `ai trainer`, `data scientist` and `llm`, none of which fired on the employer boards. Revisit once the board list has grown under ADR-0029.
 
 ## Changes
@@ -100,3 +106,4 @@ Recorded so that the choice to keep these terms is revisited with evidence rathe
 | 2026-09-17 | Recorded the first measurement against real postings, and the decision to keep the 39 terms that matched nothing | Decided by the operator, so the finding is kept with its evidence rather than lost in a session log |
 | 2026-09-17 | Version 3. Terms regrouped into the operator's four role families, in order of precedence. Added `backend developer`, `back end developer`, `full stack`, `fullstack developer`, `fullstack engineer`, `mobile developer`, `data engineer`, `automation engineer`, `software developer`, `software engineer`. 51 terms to 61 | Decided by the operator, who is open to software engineering roles with AI taking precedence. Each added term was previewed against 796 production postings with `tools/title_pool_report.py`. `back end developer`, `fullstack developer` and `fullstack engineer` are the spelling variants ADR-0021 requires to be listed explicitly. Senior titles these terms admit are dropped by the seniority rule, version 1 |
 | 2026-09-17 | Corrected the note claiming `software engineer i` matches "Software Engineer II" and "III" | It never did; checked against the compiled pattern |
+| 2026-09-18 | Version 4. Added eighteen AI terms: `agent developer`, `autonomous agent`, `gen ai`, `ai engineering`, `prompt engineering`, `context engineering`, `ai research`, `ai researcher`, `applied scientist`, `ai specialist`, `ai architect`, `ai integration`, `ai consultant`, `ai infrastructure`, `ml engineer`, `ml ops`, `computer vision`, `data science`. 61 terms to 79 | Decided by the operator, who is moving toward AI roles first and wants the terms in place before the boards that carry them are added. Every one was previewed against the 796 production postings; none matches anything there yet, which is the point. Bare `research engineer` was rejected under ADR-0021's `ai red team` precedent |
