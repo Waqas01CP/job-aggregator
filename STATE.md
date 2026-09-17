@@ -62,6 +62,7 @@ Four spikes have run and their findings are folded into the records. The four de
 | Line endings forced to LF | DONE | [BELIEVED] renormalise found nothing | 2026-09-11 | `.gitattributes` |
 | Virtual environment and dependency pin | DONE | [VERIFIED] `.venv` created, `requirements.txt` pinned at requests 2.34.2, 185 tests run under it | 2026-09-17 | `CLAUDE.md` commands |
 | Working files consolidated under `data/` | DONE | [VERIFIED] repository root holds 7 files and nothing the pipeline writes; branch paths unchanged per ADR-0020 | 2026-09-17 | `2026-09-17-vertical-slice.md` |
+| Mutation harness kept in the repository | DONE | [VERIFIED] a known mutation reported caught, a docstring edit reported survived with exit 1, an anchor occurring 23 times refused before anything ran, and every file byte-identical afterwards. The previous harness and its 79 mutations lived in a scratchpad and are lost | 2026-09-17 | `tools/mutate.py`, `2026-09-17-runner-safe-data-branch.md` |
 | State file staleness gate | DONE | [VERIFIED] blocked a commit staging `tools/` without `STATE.md` | 2026-09-11 | `.githooks/pre-commit` gate 4, ADR-0023 |
 
 ## Pipeline
