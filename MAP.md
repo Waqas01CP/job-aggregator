@@ -38,7 +38,7 @@ supersedes and superseded-by links, deliberately not duplicated here.
 
 | File | Holds | Status |
 | --- | --- | --- |
-| `STATE.md` | What exists right now, what is blocked and on whom, and where the proof is. Ground truth, not memory. | current |
+| `STATE.md` | What exists right now, what is blocked and on whom, and where the proof is. Where to start, then checked against the code and data. | current |
 
 ## explanation
 

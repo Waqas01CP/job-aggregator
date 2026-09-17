@@ -1,6 +1,6 @@
 ---
 type: state
-description: What exists right now, what is blocked and on whom, and where the proof is. Ground truth, not memory.
+description: What exists right now, what is blocked and on whom, and where the proof is. Where to start, then checked against the code and data.
 status: current
 ---
 
