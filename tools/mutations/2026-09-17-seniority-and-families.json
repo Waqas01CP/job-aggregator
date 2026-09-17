@@ -1,0 +1,80 @@
+[
+ {
+  "label": "chain: seniority rule removed",
+  "path": "src/filters.py",
+  "find": "         (\"title\", rule_title),\n         (\"seniority\", rule_seniority))",
+  "replace": "         (\"title\", rule_title))"
+ },
+ {
+  "label": "chain: seniority runs before the title rule",
+  "path": "src/filters.py",
+  "find": "         (\"title\", rule_title),\n         (\"seniority\", rule_seniority))",
+  "replace": "         (\"seniority\", rule_seniority),\n         (\"title\", rule_title))"
+ },
+ {
+  "label": "rule: never drops",
+  "path": "src/filters.py",
+  "find": "    if word is not None:\n        return Verdict(False, \"seniority\"",
+  "replace": "    if False:\n        return Verdict(False, \"seniority\""
+ },
+ {
+  "label": "matcher: raw substring instead of whole words",
+  "path": "src/filters.py",
+  "find": "        for word, pattern in self.seniority_patterns:\n            if pattern.search(folded):",
+  "replace": "        for word, pattern in self.seniority_patterns:\n            if word in folded:"
+ },
+ {
+  "label": "loader: reads past the Excluded words section",
+  "path": "src/filters.py",
+  "find": "    section = text[start:end if end != -1 else len(text)]\n    words = ",
+  "replace": "    section = text[start:]\n    words = "
+ },
+ {
+  "label": "loader: an empty list accepted",
+  "path": "src/filters.py",
+  "find": "    if not words:\n        raise FilterError(\"seniority exclusions list no words\")",
+  "replace": "    if False:\n        raise FilterError(\"seniority exclusions list no words\")"
+ },
+ {
+  "label": "chain: a kept row loses its matched term",
+  "path": "src/filters.py",
+  "find": "            kept.append((row, reason))",
+  "replace": "            kept.append((row, verdict.reason))"
+ },
+ {
+  "label": "words: ii no longer excluded",
+  "path": "docs/reference/seniority-exclusions.md",
+  "find": " · `ii` · ",
+  "replace": " · "
+ },
+ {
+  "label": "words: sr no longer excluded",
+  "path": "docs/reference/seniority-exclusions.md",
+  "find": "`senior` · `sr` · ",
+  "replace": "`senior` · "
+ },
+ {
+  "label": "words: architect excluded against the operator's decision",
+  "path": "docs/reference/seniority-exclusions.md",
+  "find": " · `iv`\n",
+  "replace": " · `iv` · `architect`\n"
+ },
+ {
+  "label": "pool: software engineer removed",
+  "path": "docs/reference/title-pool.md",
+  "find": " · `software developer` · `software engineer`\n",
+  "replace": " · `software developer`\n"
+ },
+ {
+  "label": "pool: software family placed above traditional AI and ML",
+  "path": "docs/reference/title-pool.md",
+  "find": "### 3. Traditional AI and ML\n\n`machine learning` · `deep learning` · `data scientist` · `ai ml` · `mlops` · `aiops` · `ai ops` · `nlp`\n\n### 4. Software engineering\n\n`software engineer i` · `associate software engineer` · `junior software engineer` · `backend engineer` · `back end engineer` · `backend developer` · `back end developer` · `python developer` · `python engineer` · `full stack` · `fullstack developer` · `fullstack engineer` · `mobile developer` · `data engineer` · `automation engineer` · `software developer` · `software engineer`\n\n",
+  "replace": "### 4. Software engineering\n\n`software engineer i` · `associate software engineer` · `junior software engineer` · `backend engineer` · `back end engineer` · `backend developer` · `back end developer` · `python developer` · `python engineer` · `full stack` · `fullstack developer` · `fullstack engineer` · `mobile developer` · `data engineer` · `automation engineer` · `software developer` · `software engineer`\n\n### 3. Traditional AI and ML\n\n`machine learning` · `deep learning` · `data scientist` · `ai ml` · `mlops` · `aiops` · `ai ops` · `nlp`\n\n"
+ },
+ {
+  "label": "pool: generic software engineer placed before the entry-level terms",
+  "path": "docs/reference/title-pool.md",
+  "find": "`software engineer i` · `associate software engineer` · `junior software engineer` · ",
+  "replace": "`software engineer` · `software engineer i` · `associate software engineer` · `junior software engineer` · "
+ }
+]

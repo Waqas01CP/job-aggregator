@@ -16,8 +16,9 @@ from src.adapters.base import Posting
 from src.config import Board
 from src.filters import (ANNOTATION_VENDORS, FilterError, TitleMatcher,
                          apply_chain, compile_terms, drop_counts,
-                         load_title_pool, rule_annotation_vendor,
-                         rule_experience, rule_expiry)
+                         load_seniority_words, load_title_pool,
+                         rule_annotation_vendor, rule_experience, rule_expiry,
+                         rule_seniority)
 from src.normalise import normalise
 
 NOW = datetime(2026, 9, 16, 12, 0, tzinfo=timezone.utc)
@@ -45,13 +46,13 @@ def keep(**kw):
 
 
 class TestTitlePool(unittest.TestCase):
-    def test_pool_has_fifty_one_terms(self):
-        """Version 2, 2026-09-17, added `forward deployment` to the 50 of
-        version 1. The measurement section after Known behaviour quotes 39
-        more terms in backticks, and none of them may be read as pool terms."""
+    def test_pool_has_sixty_one_terms(self):
+        """Version 3, 2026-09-17: the 51 of version 2 plus ten software terms
+        the operator chose. The measurement section after Known behaviour
+        quotes 39 terms in backticks, and none may be read as pool terms."""
         terms, exempt = load_title_pool()
-        self.assertEqual(len(terms), 51, "the pool file says 51 terms")
-        self.assertEqual(len(set(terms)), 51, "a term is listed twice")
+        self.assertEqual(len(terms), 61, "the pool file says 61 terms")
+        self.assertEqual(len(set(terms)), 61, "a term is listed twice")
 
     def test_forward_deployment_closes_the_gap_the_plural_rule_leaves(self):
         """On 2026-09-16 "Forward Deployment Engineer" was dropped while
@@ -247,6 +248,168 @@ class TestChainOrder(unittest.TestCase):
         self.assertEqual(counts["expiry"], 0)
         self.assertEqual(counts["annotation_vendor"], 0)
         self.assertEqual(counts["experience"], 0)
+
+
+class TestRoleFamilies(unittest.TestCase):
+    """The operator's order, 2026-09-17: agentic AI, then LLM and applied AI,
+    then traditional AI and ML, then software engineering. Order decides only
+    which term a title is credited to; ADR-0010 still orders the display by
+    date."""
+
+    def test_the_families_come_in_the_operators_order(self):
+        terms = MATCHER.terms
+        first = {name: terms.index(name) for name in
+                 ("agentic", "ai engineer", "machine learning", "software engineer i")}
+        self.assertLess(first["agentic"], first["ai engineer"])
+        self.assertLess(first["ai engineer"], first["machine learning"])
+        self.assertLess(first["machine learning"], first["software engineer i"])
+        self.assertEqual(terms[:5], ["agentic", "ai agent", "agent engineer",
+                                     "multi agent", "agentops"])
+
+    def test_a_title_in_two_families_is_credited_to_the_higher(self):
+        self.assertEqual(MATCHER.match("Senior Agentic AI Engineer"), "agentic")
+        self.assertEqual(MATCHER.match("Software Engineer, Machine Learning"), "machine learning")
+        self.assertEqual(MATCHER.match("Backend Engineer, AI Platform"), "ai platform")
+
+    def test_entry_level_software_terms_keep_their_credit(self):
+        self.assertEqual(MATCHER.match("Software Engineer I"), "software engineer i")
+        self.assertEqual(MATCHER.match("Junior Software Engineer"), "junior software engineer")
+        self.assertEqual(MATCHER.match("Software Engineer"), "software engineer")
+
+    def test_the_software_terms_the_operator_chose_admit_their_titles(self):
+        for title, term in (("Python Backend Engineer", "backend engineer"),
+                            ("Backend Developer", "backend developer"),
+                            ("Back-End Developer", "back end developer"),
+                            ("Full Stack Python and React Engineer", "full stack"),
+                            ("FullStack Developer", "fullstack developer"),
+                            ("Fullstack Engineer", "fullstack engineer"),
+                            ("Mobile Developer (Flutter)", "mobile developer"),
+                            ("Data Engineer", "data engineer"),
+                            ("QA Automation Engineer", "automation engineer"),
+                            ("Software Developer in Test (Python)", "software developer"),
+                            ("Software Engineer, Platform", "software engineer")):
+            self.assertEqual(MATCHER.match(title), term, title)
+
+
+class TestSeniority(unittest.TestCase):
+    """docs/reference/seniority-exclusions.md, version 1, decided by the
+    operator on 2026-09-17: open to intern, junior, associate, mid-level and
+    untitled roles; II and III excluded after checking; architect kept."""
+
+    def test_senior_level_titles_are_dropped_by_the_seniority_rule(self):
+        for title in ("Senior AI Engineer", "Sr. AI Engineer", "Staff AI Engineer",
+                      "Lead AI Engineer", "Machine Learning Team Lead", "Principal AI Engineer",
+                      "Head of Machine Learning", "Machine Learning Manager",
+                      "Director, Machine Learning", "VP, AI Platform",
+                      "Vice President, Applied AI", "Chief Machine Learning Scientist",
+                      "AI Engineer II", "Software Engineer III - Backend",
+                      "Machine Learning Engineer IV", "AI Engineer - Mid/Senior"):
+            kept, drop = keep(title=title)
+            self.assertFalse(kept, title)
+            self.assertEqual(drop["rule"], "seniority", title)
+
+    def test_the_levels_the_operator_can_reach_are_kept(self):
+        for title in ("AI Engineer", "AI/ML Intern Summer 2027", "Junior AI Engineer",
+                      "Associate Machine Learning Engineer", "AI Engineer (Mid-Level)",
+                      "Graduate AI Engineer", "Software Engineer I",
+                      "AI Solutions Architect", "AI Automation Engineer, Management Trainee"):
+            kept, drop = keep(title=title)
+            self.assertTrue(kept, "%s dropped by %s" % (title, drop and drop["rule"]))
+
+    def test_senior_with_level_one_is_still_dropped(self):
+        """Careem's "Senior Software Engineer I": the operator accepted that a
+        senior word drops it whatever level follows."""
+        kept, drop = keep(title="Senior Software Engineer I")
+        self.assertFalse(kept)
+        self.assertEqual(drop["rule"], "seniority")
+
+    def test_words_match_whole_never_inside_another_word(self):
+        for title in ("Staffing AI Engineer", "Headless AI Engineer",
+                      "AI Engineer, Leadership Programme", "AI Engineer, Directory Services",
+                      "AI Engineer, Seniority Models", "AI Engineer, Chiefly Remote"):
+            self.assertIsNone(MATCHER.senior_word(title), title)
+        self.assertEqual(MATCHER.senior_word("AI Team Leads"), "lead")
+
+    def test_uk_and_i_is_not_a_level(self):
+        """A naive level match read "UK&I" as level I in the evidence check."""
+        self.assertIsNone(MATCHER.senior_word("AI Engineer, UK&I"))
+
+    def test_an_unadmitted_senior_title_is_a_title_drop(self):
+        """Seniority runs after the title rule, so the drop log keeps recording
+        every title the pool is missing, senior or not."""
+        kept, drop = keep(title="Senior Account Executive")
+        self.assertFalse(kept)
+        self.assertEqual(drop["rule"], "title")
+
+    def test_a_kept_row_still_names_the_term_that_admitted_it(self):
+        kept, _ = apply_chain([row(title="Junior Data Engineer")], NOW_ISO, matcher=MATCHER)
+        self.assertEqual(kept[0][1], "matched 'data engineer'")
+
+    def test_the_run_log_counts_seniority_drops_separately(self):
+        _, drops = apply_chain([row(title="Senior AI Engineer"),
+                                row(title="Chief Happiness Officer")],
+                               NOW_ISO, matcher=MATCHER)
+        counts = drop_counts(drops)
+        self.assertEqual((counts["seniority"], counts["title"]), (1, 1))
+
+    def test_the_rule_names_the_word(self):
+        verdict = rule_seniority(row(title="Principal AI Engineer"), matcher=MATCHER)
+        self.assertEqual(verdict.reason, "senior-level word 'principal' in title")
+
+    def test_the_word_list_is_read_from_its_section_only(self):
+        """The file quotes the words it deliberately keeps elsewhere; reading
+        them would exclude architects and interns."""
+        words = load_seniority_words()
+        self.assertEqual(words, ["senior", "sr", "staff", "lead", "principal", "head",
+                                 "manager", "director", "vp", "vice president", "chief",
+                                 "ii", "iii", "iv"])
+        for kept_word in ("architect", "intern", "junior", "associate", "i"):
+            self.assertNotIn(kept_word, words)
+
+    def test_a_missing_or_empty_word_list_stops_the_run_starting(self):
+        import tempfile
+        with self.assertRaises(FilterError):
+            load_seniority_words(os.path.join(tempfile.gettempdir(), "no-such-file.md"))
+        for text in ("# nothing here\n", "## Excluded words\n\nnone listed\n\n## Next\n`senior`\n"):
+            fd, path = tempfile.mkstemp(suffix=".md")
+            with os.fdopen(fd, "w", encoding="utf-8") as f:
+                f.write(text)
+            try:
+                with self.assertRaises(FilterError):
+                    load_seniority_words(path)
+            finally:
+                os.unlink(path)
+
+
+class TestADR0021CaseSet(unittest.TestCase):
+    """ADR-0021's Confirmation, through the whole chain. The first two must be
+    admitted, the next five must not, and the last is the one to watch.
+
+    Pool version 3 adds `software engineer`, so "Software Engineer II" now
+    matches the pool; the seniority rule is what keeps it out. That departs
+    from the record's wording and is raised with the architecture chat."""
+
+    def test_the_two_that_must_be_admitted(self):
+        for title in ("AI-Agent Engineer", "Agentic Systems Engineer"):
+            self.assertTrue(keep(title=title)[0], title)
+
+    def test_the_five_that_must_not(self):
+        for title, rule in (("Storage Engineer", "title"),
+                            ("Senior Red Team Operator", "title"),
+                            ("Accounts Officer", "title"),
+                            ("Sales Executive – Healthcare IT", "title"),
+                            ("Software Engineer II", "seniority")):
+            kept, drop = keep(title=title)
+            self.assertFalse(kept, title)
+            self.assertEqual(drop["rule"], rule, title)
+        self.assertEqual(MATCHER.match("Software Engineer II"), "software engineer")
+
+    def test_the_one_to_watch(self):
+        """"Non-AI Systems Analyst" normalises to contain "ai systems", so
+        `ai system` admits it. A false admission, recorded as current
+        behaviour so that any change to it is noticed."""
+        self.assertEqual(MATCHER.match("Non-AI Systems Analyst"), "ai system")
+        self.assertTrue(keep(title="Non-AI Systems Analyst")[0])
 
 
 if __name__ == "__main__":

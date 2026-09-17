@@ -1,12 +1,12 @@
 ---
 type: reference
-description: The 51 title terms a posting must match to be admitted, plus the normalisation and matching rules applied to both sides.
+description: The 61 title terms a posting must match, grouped into the operator's four role families in order of precedence to be admitted, plus the normalisation and matching rules applied to both sides.
 status: current
 ---
 
 # Title pool
 
-Version 2, 2026-09-17.
+Version 3, 2026-09-17.
 
 A posting is admitted to the display only if its normalised title contains one of these terms. Nothing else is shown. Reasoning and consequences are in ADR-0021.
 
@@ -41,35 +41,27 @@ Exempt single tokens: `agentic`, `genai`, `llm`, `nlp`, `mlops`, `llmops`, `agen
 
 ## Terms
 
-### Core AI
+The terms are grouped into the operator's four role families, in the operator's order of precedence, decided on 2026-09-17: agentic AI first, then the broad LLM and applied AI field, then traditional AI and ML, then software engineering the operator can do. AI takes precedence over software engineering.
 
-`ai engineer` · `ai developer` · `ai software` · `applied ai` · `generative ai` · `genai` · `machine learning` · `deep learning` · `data scientist` · `ai ml`
+Order matters in one way only. A title is credited to the first term it matches, reading top to bottom, so a title matching terms in two families is credited to the higher family. Admission does not depend on order, and ADR-0010 still orders the display by date alone. Within the software family, the entry-level terms come before the generic one so that they keep the credit.
 
-### Agentic
+### 1. Agentic AI
 
-`agentic` · `ai agent` · `agent engineer` · `multi agent`
+`agentic` · `ai agent` · `agent engineer` · `multi agent` · `agentops`
 
-### LLM and prompting
+### 2. LLM and applied AI
 
-`llm` · `large language model` · `prompt engineer` · `context engineer` · `rag engineer` · `retrieval augmented`
+`ai engineer` · `ai developer` · `ai software` · `applied ai` · `generative ai` · `genai` · `llm` · `large language model` · `prompt engineer` · `context engineer` · `rag engineer` · `retrieval augmented` · `evals engineer` · `eval engineer` · `evaluation engineer` · `ai evaluator` · `ai quality` · `ai red team` · `model behavior` · `model behaviour` · `ai trainer` · `ai reliability` · `llmops` · `ai platform` · `ai system` · `ai product engineer` · `ai solution` · `conversational ai` · `forward deployed` · `forward deployment` · `ai automation`
 
-### Evaluation
+### 3. Traditional AI and ML
 
-`evals engineer` · `eval engineer` · `evaluation engineer` · `ai evaluator` · `ai quality` · `ai red team` · `model behavior` · `model behaviour` · `ai trainer` · `ai reliability`
+`machine learning` · `deep learning` · `data scientist` · `ai ml` · `mlops` · `aiops` · `ai ops` · `nlp`
 
-### Ops
+### 4. Software engineering
 
-`mlops` · `llmops` · `agentops` · `aiops` · `ai ops`
+`software engineer i` · `associate software engineer` · `junior software engineer` · `backend engineer` · `back end engineer` · `backend developer` · `back end developer` · `python developer` · `python engineer` · `full stack` · `fullstack developer` · `fullstack engineer` · `mobile developer` · `data engineer` · `automation engineer` · `software developer` · `software engineer`
 
-### Platform and systems
-
-`ai platform` · `ai system` · `ai product engineer` · `ai solution` · `conversational ai` · `forward deployed` · `forward deployment` · `ai automation` · `nlp`
-
-### Generic entry rung
-
-`software engineer i` · `associate software engineer` · `junior software engineer` · `backend engineer` · `back end engineer` · `python developer` · `python engineer`
-
-**51 terms.**
+**61 terms.**
 
 ## Known behaviour, accepted deliberately
 
@@ -77,7 +69,7 @@ Exempt single tokens: `agentic`, `genai`, `llm`, `nlp`, `mlops`, `llmops`, `agen
 
 **`model behavior` and `model behaviour` are both listed.** Spelling variants are listed, never derived.
 
-**`software engineer i` also matches "Software Engineer II" and "III"**, because the boundary falls after `i`. Accepted. Skimming an occasional Software Engineer II costs less than the special case needed to prevent it.
+**`software engineer i` does not match "Software Engineer II" or "III".** Corrected 2026-09-17: this note used to say it did, because the boundary falls after `i`; the plural suffix cannot consume a second `i`, so the pattern fails there. Since version 3, the generic `software engineer` admits both, and the seniority rule in `docs/reference/seniority-exclusions.md` drops them.
 
 **`ai trainer` and `ai evaluator` will pull annotation gig work.** One prior census measured 17 of 34 rows as Welo Data, Welocalize and Innodata. The annotation-vendor drop rule catches those by employer, so the terms stay and a different filter does the work.
 
@@ -106,3 +98,5 @@ Recorded so that the choice to keep these terms is revisited with evidence rathe
 | 2026-09-11 | Stated that the plural suffix reaches the term's final word only | The rule was true but unwritten, so a later term like `system engineer` would have silently failed to match its plural |
 | 2026-09-17 | Version 2. Added `forward deployment`. 50 terms to 51 | Decided by the operator. On 2026-09-16 three "Forward Deployment Engineer" postings were dropped while "Senior Forward Deployed Engineer" was kept: the plural rule reaches only a term's final word, so `forward deployed` cannot produce "deployment". None of those postings was open on 2026-09-17, so the term admits nothing today |
 | 2026-09-17 | Recorded the first measurement against real postings, and the decision to keep the 39 terms that matched nothing | Decided by the operator, so the finding is kept with its evidence rather than lost in a session log |
+| 2026-09-17 | Version 3. Terms regrouped into the operator's four role families, in order of precedence. Added `backend developer`, `back end developer`, `full stack`, `fullstack developer`, `fullstack engineer`, `mobile developer`, `data engineer`, `automation engineer`, `software developer`, `software engineer`. 51 terms to 61 | Decided by the operator, who is open to software engineering roles with AI taking precedence. Each added term was previewed against 796 production postings with `tools/title_pool_report.py`. `back end developer`, `fullstack developer` and `fullstack engineer` are the spelling variants ADR-0021 requires to be listed explicitly. Senior titles these terms admit are dropped by the seniority rule, version 1 |
+| 2026-09-17 | Corrected the note claiming `software engineer i` matches "Software Engineer II" and "III" | It never did; checked against the compiled pattern |

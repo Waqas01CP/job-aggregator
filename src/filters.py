@@ -1,6 +1,13 @@
 """The filter chain. Cheapest disqualifier first, every drop naming its rule.
 
-Order: expiry, stated experience, annotation vendors, title.
+Order: expiry, stated experience, annotation vendors, title, seniority.
+
+**Seniority runs after the title rule on purpose.** It drops a posting the
+pool admitted, so its count in the run log is the number of relevant roles
+excluded for level, and a title the pool never admitted stays a title drop,
+which keeps the drop log a clean record of what the pool is missing. The
+rule was decided by the operator on 2026-09-17; its words and evidence are in
+docs/reference/seniority-exclusions.md, and no record carries it yet.
 
 **There is no location filter.** The brief defers it to MVP 2. Location is
 recorded on every row and never used to drop, which is why a posting in
@@ -40,6 +47,7 @@ from .normalise import fold
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TITLE_POOL_PATH = os.path.join(REPO_ROOT, "docs", "reference", "title-pool.md")
+SENIORITY_PATH = os.path.join(REPO_ROOT, "docs", "reference", "seniority-exclusions.md")
 
 # Sourced from docs/reference/title-pool.md, "Known behaviour, accepted
 # deliberately". PROVISIONAL: no decision record carries this list.
@@ -96,6 +104,29 @@ def load_title_pool(path=None):
     return terms, exempt
 
 
+def load_seniority_words(path=None):
+    """Read the excluded senior-level words from their versioned file.
+
+    Only the section headed "Excluded words" is read, so the words the file
+    names as deliberately kept can never be excluded by being quoted. Single
+    words are the point here, so the pool's two-word rule does not apply."""
+    path = path or SENIORITY_PATH
+    try:
+        with open(path, encoding="utf-8") as f:
+            text = f.read()
+    except FileNotFoundError:
+        raise FilterError("seniority exclusions not found at %s" % path)
+    start = text.find("## Excluded words")
+    if start == -1:
+        raise FilterError("seniority exclusions have no '## Excluded words' section")
+    end = text.find("\n## ", start + 1)
+    section = text[start:end if end != -1 else len(text)]
+    words = [w for w in (fold(t) for t in re.findall(r"`([^`]+)`", section)) if w]
+    if not words:
+        raise FilterError("seniority exclusions list no words")
+    return words
+
+
 def compile_terms(terms):
     """Word-boundary patterns with an optional plural suffix on the final word.
 
@@ -110,9 +141,11 @@ def compile_terms(terms):
 
 
 class TitleMatcher:
-    def __init__(self, path=None):
+    def __init__(self, path=None, seniority_path=None):
         self.terms, self.exempt = load_title_pool(path)
         self.patterns = compile_terms(self.terms)
+        self.seniority_words = load_seniority_words(seniority_path)
+        self.seniority_patterns = compile_terms(self.seniority_words)
 
     def match(self, title):
         """The first term that matches, or None. Returning the term is the
@@ -121,6 +154,14 @@ class TitleMatcher:
         for term, pattern in self.patterns:
             if pattern.search(folded):
                 return term
+        return None
+
+    def senior_word(self, title):
+        """The first excluded senior-level word in the title, or None."""
+        folded = fold(title)
+        for word, pattern in self.seniority_patterns:
+            if pattern.search(folded):
+                return word
         return None
 
 
@@ -179,10 +220,20 @@ def rule_title(row, matcher=None, **kw):
     return Verdict(True, reason="matched %r" % term)
 
 
+def rule_seniority(row, matcher=None, **kw):
+    """Drop an admitted posting whose title carries a senior-level word.
+    Decided by the operator on 2026-09-17; see the module docstring."""
+    word = matcher.senior_word(row.title_normalised)
+    if word is not None:
+        return Verdict(False, "seniority", "senior-level word %r in title" % word)
+    return Verdict(True)
+
+
 CHAIN = (("expiry", rule_expiry),
          ("experience", rule_experience),
          ("annotation_vendor", rule_annotation_vendor),
-         ("title", rule_title))
+         ("title", rule_title),
+         ("seniority", rule_seniority))
 
 
 def apply_chain(rows, now_iso, matcher=None, max_years=None,
@@ -191,17 +242,19 @@ def apply_chain(rows, now_iso, matcher=None, max_years=None,
     matcher = matcher or TitleMatcher()
     kept, drops = [], []
     for row in rows:
-        verdict = Verdict(True)
+        verdict, reason = Verdict(True), None
         for name, rule in CHAIN:
             verdict = rule(row, now_iso=now_iso, matcher=matcher,
                            max_years=max_years, vendors=vendors)
+            reason = verdict.reason or reason
             if not verdict.keep:
                 drops.append({"identity": row.identity, "rule": verdict.rule,
                               "reason": verdict.reason, "title": row.title,
                               "employer": row.employer, "board_id": row.board_id})
                 break
         if verdict.keep:
-            kept.append((row, verdict.reason))
+            # The title rule's "matched <term>" must survive the rules after it.
+            kept.append((row, reason))
     return kept, drops
 
 

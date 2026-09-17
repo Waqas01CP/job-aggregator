@@ -52,8 +52,9 @@ class TestMeasure(unittest.TestCase):
         self.assertEqual(r["credited"]["ai engineer"], 2)
         self.assertEqual(r["credited"]["ai platform"], 1)
         self.assertEqual(r["matches"]["ai platform"], 1)
-        self.assertEqual(len(r["admitted"]), 3)
-        self.assertEqual(len(r["dropped"]), 3)
+        self.assertEqual(r["credited"]["software engineer"], 2, "pool version 3")
+        self.assertEqual(len(r["admitted"]), 5)
+        self.assertEqual([x["title"] for x in r["dropped"]], ["Storage Engineer"])
 
     def test_a_term_matched_but_never_credited_is_not_a_zero(self):
         """`mlops` on 2026-09-17: it matched a posting that `machine learning`
@@ -79,9 +80,9 @@ class TestTry(unittest.TestCase):
         self.assertEqual(t["new"], [], "it is already admitted by `ai platform`")
 
     def test_a_candidate_is_normalised_exactly_as_the_pool_is(self):
-        t = pool.try_term("Software-Engineer", ROWS, MATCHER)
-        self.assertEqual(t["term"], "software engineer")
-        self.assertEqual(len(t["new"]), 2)
+        t = pool.try_term("Storage-Engineer", ROWS, MATCHER)
+        self.assertEqual(t["term"], "storage engineer")
+        self.assertEqual(len(t["new"]), 1)
 
     def test_a_candidate_matches_on_word_boundaries(self):
         t = pool.try_term("storage engineer", ROWS, MATCHER)
@@ -102,8 +103,7 @@ class TestTry(unittest.TestCase):
         self.assertEqual(pool.try_term("AI Engineer", ROWS, MATCHER)["already"], ["ai engineer"])
 
     def test_the_preview_groups_titles_with_their_boards(self):
-        t = pool.try_term("software engineer", ROWS, MATCHER)
-        lines = pool.titles_table(t["new"], 5)
+        lines = pool.titles_table(ROWS[3:5], 5)
         self.assertEqual(lines, ["       2  Software Engineer, Platform  [greenhouse:speechify 2]"])
 
 
@@ -135,10 +135,13 @@ class TestReading(unittest.TestCase):
 
     def test_the_cli_reports_and_previews(self):
         storage.commit_files({"fetch-all/greenhouse.json": dumps(ROWS)}, "run", branch="data")
-        code, out, _ = self.run_tool("--repo", self.dir, "--try", "software engineer", "--dropped")
+        code, out, _ = self.run_tool("--repo", self.dir, "--try", "storage engineer",
+                                     "--try", "software engineer", "--dropped")
         self.assertEqual(code, 0)
         self.assertIn("Title pool against 6 postings", out)
-        self.assertIn("Candidate `software engineer`: matches 2, of which 2 are dropped today", out)
+        self.assertIn("Candidate `storage engineer`: matches 1, of which 1 are dropped today", out)
+        self.assertIn("Candidate `software engineer`: matches 2, of which 0 are dropped today", out)
+        self.assertIn("already in the pool", out)
         self.assertIn("Every dropped title:", out)
         self.assertIn("Storage Engineer", out)
 
