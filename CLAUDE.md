@@ -108,6 +108,13 @@ kind and was reported as the first.
 **Log per board every run, including zero.** A board returning nothing for a
 week is a broken adapter. Without a zero logged it looks like a quiet market.
 
+**Dates are UTC, and schedules are reasoned about in UTC.** This machine runs
+at UTC+5, so for five hours of every day its local date is already tomorrow's.
+A session dated its log and its handoff 2026-09-18 from the local clock while
+UTC was still the 17th, and sent the next session to look for a scheduled run
+that could not have fired yet. Date logs in UTC, read `cron` in UTC, and when
+a local date differs from the UTC one, say which is which.
+
 ## Verification
 
 **Verify, do not trust.** Every claim is unverified until you have checked it
