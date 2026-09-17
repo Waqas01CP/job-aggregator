@@ -14,7 +14,7 @@ Previous log: `2026-09-17-first-scheduled-run.md`.
 | Model | claude-opus-5 |
 | HEAD at start | `57f9382`, two commits ahead of `origin/main` at `bac377c` |
 | Mode | **Mutating.** No job board contacted. The production branch in a scratch clone was read |
-| Tests | 303 at start, 311 at end, all passing, also with `TEST_MODE=1` |
+| Tests | 303 at start, 308 at end, all passing, also with `TEST_MODE=1`. **Corrected 2026-09-18 by the next session:** this row said 311. The suite reports "Ran 308 tests" at `2bfb393` with `TEST_MODE` unset and with `TEST_MODE=1`, 308 `def test_` methods are in `tests/`, and `085c434` added exactly 5 of them to `tests/test_filters.py` on top of 303. No test file has changed since. The same 311 appears in this log's row in `logs/README.md`, which is not edited under that file's rules |
 | Verification | 4 new mutations, all caught; one was caught only by a count test at first and its test was strengthened |
 
 **Tags.** `[VERIFIED]` exercised and observed this session. Unmarked means believed.
