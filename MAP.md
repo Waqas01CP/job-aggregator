@@ -52,6 +52,7 @@ supersedes and superseded-by links, deliberately not duplicated here.
 | File | Holds | Status |
 | --- | --- | --- |
 | `docs/decisions/README.md` | Every architecture decision made on this project, one file per decision, with the reasoning that produced it and the conditions that would show it was wrong. | current |
+| `docs/reference/airtable-schema.md` | The Airtable display's tables and fields as actually built, the ADR-0014 choices they carry, and the two things the Airtable MCP cannot do. | current |
 | `docs/reference/seniority-exclusions.md` | The senior-level title words that drop a posting the title pool admitted, the levels deliberately left in, and the evidence behind the numbered levels. | current |
 | `docs/reference/title-pool.md` | The 79 title terms a posting must match, grouped into the operator's four role families in order of precedence to be admitted, plus the normalisation and matching rules applied to both sides. | current |
 | `docs/research/README.md` | Dated snapshots of what was found and when. Numbered by the order the pass was run, so a later reader knows what was known at each point. | current |
@@ -74,6 +75,7 @@ supersedes and superseded-by links, deliberately not duplicated here.
 | `logs/2026-09-15-spike-followup-checks.md` | Spike follow-up. Board volume measured, Speechify age floor examined, Lever createdAt checked against hosted pages, Himalayas newest-first pagination tested. | current |
 | `logs/2026-09-16-publication-date-across-untested-platforms.md` | Discovery spike across the thirteen untested ATS platforms. Whether each exposes a machine-readable endpoint and a publication date, with field names, formats and coverage. | current |
 | `logs/2026-09-16-second-observation-checks.md` | Second-observation checks on three date fields left open by the platform spike. Workday startDate confirmed behaviourally, the iCIMS suspicion withdrawn, Lever createdAt still unsettled. | current |
+| `logs/2026-09-17-corrections-and-airtable-schema.md` | Four stale STATE.md lines and a test count corrected; the discovery that a pool widening is not retroactive, so 257 kept rows can never reach the filtered file; the UTC dating rule; and the Airtable schema built and verified through the MCP. | current |
 | `logs/2026-09-17-families-seniority-and-trials.md` | Pool version 3 in the operator's role-family order with ten software terms, a seniority rule decided by the operator and checked against evidence, and one-week trials for Himalayas and Banyan Canopy. | current |
 | `logs/2026-09-17-first-github-runs.md` | The first manual GitHub runs. The ticked test-mode run failed its own tests because TEST_MODE reached the test step; the unticked run succeeded and created the public data branch. Fix, reproduction, and the Speechify 191 explained. | current |
 | `logs/2026-09-17-first-scheduled-run.md` | The first successful scheduled run, which proved on GitHub that a run restores from the data branch, appends, and pushes on top; the first publication-lag evidence; and a question for the display about rows kept under older rules. | current |
@@ -118,4 +120,4 @@ supersedes and superseded-by links, deliberately not duplicated here.
 | `docs/decisions/0028-fetch-budget-and-detail-once.md` | ADR-0028: Per-run fetch budget, and detail fetched once per posting | accepted |
 | `docs/decisions/0029-adapter-order-and-dover.md` | ADR-0029: Adapter order after the slice, and Dover dropped | accepted |
 
-Files listed: 56
+Files listed: 58
