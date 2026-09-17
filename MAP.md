@@ -76,6 +76,7 @@ supersedes and superseded-by links, deliberately not duplicated here.
 | `logs/2026-09-16-second-observation-checks.md` | Second-observation checks on three date fields left open by the platform spike. Workday startDate confirmed behaviourally, the iCIMS suspicion withdrawn, Lever createdAt still unsettled. | current |
 | `logs/2026-09-17-families-seniority-and-trials.md` | Pool version 3 in the operator's role-family order with ten software terms, a seniority rule decided by the operator and checked against evidence, and one-week trials for Himalayas and Banyan Canopy. | current |
 | `logs/2026-09-17-first-github-runs.md` | The first manual GitHub runs. The ticked test-mode run failed its own tests because TEST_MODE reached the test step; the unticked run succeeded and created the public data branch. Fix, reproduction, and the Speechify 191 explained. | current |
+| `logs/2026-09-17-first-scheduled-run.md` | The first successful scheduled run, which proved on GitHub that a run restores from the data branch, appends, and pushes on top; the first publication-lag evidence; and a question for the display about rows kept under older rules. | current |
 | `logs/2026-09-17-operator-decisions-d1-to-d5.md` | The operator's answers on Himalayas, local test data, the title pool, the experience rule and the board list, what was done with each, the evidence gathered for the ones still open, and the Airtable plugin examined. | current |
 | `logs/2026-09-17-run-log-reader-and-speechify.md` | The four follow-ups done without operator input. Workflow actions moved to Node 24, the em-dash count corrected, a run-log reader for ADR-0028 built, and Speechify's shrinkage explained from saved data. | current |
 | `logs/2026-09-17-runner-safe-data-branch.md` | The first GitHub run failed at the commit; five defects behind it fixed, reproduced locally before and after, and a standing verify-do-not-trust rule recorded. | current |
@@ -116,4 +117,4 @@ supersedes and superseded-by links, deliberately not duplicated here.
 | `docs/decisions/0028-fetch-budget-and-detail-once.md` | ADR-0028: Per-run fetch budget, and detail fetched once per posting | accepted |
 | `docs/decisions/0029-adapter-order-and-dover.md` | ADR-0029: Adapter order after the slice, and Dover dropped | accepted |
 
-Files listed: 54
+Files listed: 55
