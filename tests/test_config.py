@@ -14,7 +14,7 @@ import unittest
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.config import (Board, ConfigError, boards_missing_employer_alias,
-                        load_boards)
+                        is_publishable, load_boards)
 
 # The eleven, as the registry records them. Part 3 for all but coderoad,
 # which is Part 12. Written here so the test fails if the config drifts.
@@ -84,6 +84,15 @@ class TestRealConfig(unittest.TestCase):
         self.assertEqual(by_platform["greenhouse"], "ats")
         self.assertEqual(by_platform["lever"], "ats")
         self.assertEqual(by_platform["himalayas"], "aggregator")
+
+    def test_only_named_ats_sources_may_be_published(self):
+        """ADR-0020, failing closed: a source nobody named stays local. Jobicy
+        and Remotive are the two feeds that threaten termination for
+        redistribution, and neither has an adapter, so both are unknown here."""
+        self.assertTrue(is_publishable("greenhouse"))
+        self.assertTrue(is_publishable("lever"))
+        for source in ("himalayas", "jobicy", "remotive", "", None):
+            self.assertFalse(is_publishable(source), source)
 
 
 class TestDefeatCases(unittest.TestCase):

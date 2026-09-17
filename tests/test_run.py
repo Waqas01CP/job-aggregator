@@ -6,9 +6,12 @@ including zeros, and a TEST_MODE run that leaves production data alone.
 No test here touches the network or the real repository.
 """
 
+import contextlib
+import io
 import json
 import os
 import shutil
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -18,7 +21,8 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src import run as run_module
 from src import storage
-from src.config import Board
+from src.config import Board, ConfigError
+from src.normalise import dumps
 from src.filters import TitleMatcher
 from src.http_client import HttpClient
 from src.run import EXIT_OK, EXIT_STOPPED_RESUMABLE, Run, summarise
@@ -259,6 +263,169 @@ class TestTestMode(RunHarness):
         self.assertEqual(read_text("data/seen.json"), seen_before)
         self.assertTrue(os.path.exists("data/test/filtered.json"))
         self.assertTrue(os.path.exists("data/test/seen.json"))
+
+
+class TestMain(unittest.TestCase):
+    """The entry point the workflow calls, end to end against a throwaway
+    repository and a fake network. Never the real repository, never a board.
+
+    `fresh_machine` is what a GitHub runner starts with: the repository and
+    its branches, and no working copies under data/."""
+
+    def setUp(self):
+        self.dir = tempfile.mkdtemp()
+        self.cwd = os.getcwd()
+        os.chdir(self.dir)
+        self.real = (storage.REPO_ROOT, storage.commit_files, storage.restore_from_branch,
+                     run_module.load_boards, run_module.HttpClient)
+        storage.REPO_ROOT = self.dir
+        subprocess.run(["git", "init", "-q"], cwd=self.dir)
+        self.payload = gh_payload(["AI Engineer"])
+        run_module.load_boards = lambda: [GH]
+        run_module.HttpClient = lambda **kw: client_for({"careem": self.payload})
+
+    def tearDown(self):
+        (storage.REPO_ROOT, storage.commit_files, storage.restore_from_branch,
+         run_module.load_boards, run_module.HttpClient) = self.real
+        os.chdir(self.cwd)
+        shutil.rmtree(self.dir, ignore_errors=True)
+
+    def main(self, *argv):
+        out, err = io.StringIO(), io.StringIO()
+        with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+            code = run_module.main(list(argv))
+        return code, out.getvalue(), err.getvalue()
+
+    def git(self, *args):
+        p = subprocess.run(["git"] + list(args), cwd=self.dir, capture_output=True,
+                           text=True, encoding="utf-8")
+        return p.returncode, p.stdout.strip()
+
+    def on_branch(self, branch, path):
+        code, text = self.git("show", "%s:%s" % (branch, path))
+        self.assertEqual(code, 0, "%s:%s is missing" % (branch, path))
+        return text
+
+    def identities(self, branch):
+        return [r["identity"] for r in json.loads(self.on_branch(branch, "fetch-all/greenhouse.json"))]
+
+    def last_run_log(self, test_mode=False):
+        d = storage.layout(test_mode)["runlog_dir"]
+        with open(os.path.join(d, sorted(os.listdir(d))[-1]), encoding="utf-8") as f:
+            return json.load(f)
+
+    def fresh_machine(self):
+        shutil.rmtree("data", ignore_errors=True)
+
+    # ------------------------------------------------ state across machines
+    def test_a_fresh_machine_continues_from_the_branch(self):
+        self.assertEqual(self.main()[0], EXIT_OK)
+        _, first = self.git("rev-parse", "data")
+        raw_before = self.on_branch("data", "fetch-all/greenhouse.json")
+        seen_before = json.loads(self.on_branch("data", "seen.json"))
+
+        self.fresh_machine()
+        code, out, _ = self.main()
+        self.assertEqual(code, EXIT_OK)
+        self.assertEqual(self.last_run_log()["totals"]["new"], 0,
+                         "the second run did not know what the first stored")
+        self.assertEqual(self.on_branch("data", "fetch-all/greenhouse.json"), raw_before)
+        seen_after = json.loads(self.on_branch("data", "seen.json"))
+        for identity, entry in seen_before.items():
+            self.assertEqual(seen_after[identity]["first_seen"], entry["first_seen"],
+                             "first_seen was re-dated")
+        self.assertEqual(self.git("rev-parse", "data^")[1], first,
+                         "the second commit does not continue the first")
+        self.assertIn("restored from the data branch", out)
+
+    def test_a_posting_a_board_stops_sending_stays_on_the_branch(self):
+        """ADR-0003 on a machine with no working copies. Without the restore
+        the second commit is a snapshot of one run, and history is deleted."""
+        self.payload = gh_payload(["AI Engineer", "ML Engineer"])
+        self.main()
+        self.fresh_machine()
+        self.payload = gh_payload(["ML Engineer", "Data Engineer"], start=1)
+        self.assertEqual(self.main()[0], EXIT_OK)
+        self.assertEqual(self.identities("data"),
+                         ["greenhouse:1000", "greenhouse:1001", "greenhouse:1002"])
+
+    def test_a_no_commit_run_neither_reads_nor_writes_the_branch(self):
+        self.main()
+        _, before = self.git("rev-parse", "data")
+        self.fresh_machine()
+        code, out, _ = self.main("--no-commit")
+        self.assertEqual(code, EXIT_OK)
+        self.assertEqual(self.git("rev-parse", "data")[1], before)
+        self.assertEqual(self.last_run_log()["totals"]["new"], 1,
+                         "a no-commit run read the branch")
+        self.assertNotIn("restored", out)
+
+    # ------------------------------------------------------------ test mode
+    def test_test_mode_commits_to_its_own_branch_and_never_to_production(self):
+        """The handoff believed a test_mode dispatch left production alone. It
+        did not: test files were committed to production paths on `data`."""
+        self.main()
+        _, production = self.git("rev-parse", "data")
+        self.payload = gh_payload(["Data Scientist"], start=99)
+        self.assertEqual(self.main("--test-mode")[0], EXIT_OK)
+        self.assertEqual(self.git("rev-parse", "data")[1], production)
+        self.assertIn("greenhouse:1099", self.identities("data-test"))
+        self.assertNotIn("greenhouse:1099", self.identities("data"))
+
+    def test_test_mode_with_no_production_branch_creates_none(self):
+        self.assertEqual(self.main("--test-mode")[0], EXIT_OK)
+        self.assertEqual(self.git("rev-parse", "--verify", "--quiet", "data-test")[0], 0)
+        self.assertNotEqual(self.git("rev-parse", "--verify", "--quiet", "data")[0], 0)
+
+    def test_test_mode_starts_from_the_test_branch_not_production(self):
+        self.main()
+        self.fresh_machine()
+        self.main("--test-mode")
+        self.assertEqual(self.last_run_log(True)["totals"]["new"], 1,
+                         "a test run started from production's state")
+
+    # ------------------------------------------------- failures and labels
+    def test_a_commit_failure_after_a_fetch_is_not_reported_as_could_not_start(self):
+        """Run 35179218050 fetched 1239 postings, failed at commit-tree, and
+        the workflow reported that the run could not start."""
+        def refuse(*args, **kwargs):
+            raise storage.StorageError("git commit-tree failed: Author identity unknown")
+        storage.commit_files = refuse
+        code, _, err = self.main()
+        self.assertEqual(code, 1)
+        self.assertNotIn("could not start", err)
+        self.assertIn("the fetch completed", err)
+        self.assertIn("committing to the data branch", err)
+        self.assertIn("Author identity unknown", err)
+        self.assertEqual(len(storage.read_records("data/fetch-all/greenhouse.json")), 1,
+                         "the fetched work is not on disk")
+
+    def test_a_refused_commit_set_fails_the_run_and_commits_nothing(self):
+        """ADR-0020's last gate raising is a failure, never a quiet success."""
+        storage.write_atomic("data/filtered.json",
+                             dumps([{"identity": "himalayas:x", "source": "himalayas"}]))
+        code, _, err = self.main()
+        self.assertEqual(code, 1)
+        self.assertIn("refusing to commit filtered.json", err)
+        self.assertNotEqual(self.git("rev-parse", "--verify", "--quiet", "data")[0], 0)
+
+    def test_a_config_error_is_reported_as_could_not_start(self):
+        def broken():
+            raise ConfigError("board config not found")
+        run_module.load_boards = broken
+        code, _, err = self.main()
+        self.assertEqual(code, 1)
+        self.assertIn("could not start", err)
+
+    def test_an_unreadable_branch_stops_the_run_before_any_fetch(self):
+        def unreadable(test_mode=False):
+            raise storage.StorageError("data:seen.json is listed but could not be read")
+        storage.restore_from_branch = unreadable
+        code, _, err = self.main()
+        self.assertEqual(code, 1)
+        self.assertIn("could not start", err)
+        self.assertFalse(os.path.exists("data/fetch-all/greenhouse.json"),
+                         "the run fetched without its state")
 
 
 class TestSummary(RunHarness):

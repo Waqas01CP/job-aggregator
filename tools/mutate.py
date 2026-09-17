@@ -3,6 +3,7 @@ suite notices.
 
     python tools/mutate.py tools/mutations/<file>.json
     python tools/mutate.py tools/mutations/<file>.json --only <label>
+    python tools/mutate.py tools/mutations/<file>.json --why
 
 A mutation file is a JSON list of {"label", "path", "find", "replace"}. Each
 mutation replaces one exact, unique piece of source text, runs the whole suite,
@@ -46,8 +47,10 @@ KEYS = {"label", "path", "find", "replace"}
 
 
 def run_suite():
-    """True when the suite passes. The last lines of its output come back so a
-    failing baseline can be read without rerunning."""
+    """(passed, tail, failing). The tail lets a failing baseline be read
+    without rerunning; `failing` names the tests that failed or errored, so
+    `--why` can show that a mutation was caught by the test meant to catch it
+    rather than by an unrelated crash."""
     cache = tempfile.mkdtemp(prefix="mutate-pyc-")
     env = dict(os.environ, PYTHONPYCACHEPREFIX=cache)
     try:
@@ -55,8 +58,10 @@ def run_suite():
                            text=True, encoding="utf-8", errors="replace")
     finally:
         shutil.rmtree(cache, ignore_errors=True)
-    tail = "\n".join((p.stdout + p.stderr).strip().splitlines()[-6:])
-    return p.returncode == 0, tail
+    output = (p.stdout + p.stderr).strip().splitlines()
+    failing = sorted({line.split(" ", 1)[1] for line in output
+                      if line.startswith(("FAIL: ", "ERROR: "))})
+    return p.returncode == 0, "\n".join(output[-6:]), failing
 
 
 def refs():
@@ -100,30 +105,32 @@ def load(path, only=None):
 
 
 def apply_one(m):
-    """Mutate, run, restore. Returns (caught, tail)."""
+    """Mutate, run, restore. Returns (caught, failing test names)."""
     target = REPO_ROOT / m["path"]
     original = target.read_bytes()
     mutated = original.decode("utf-8").replace(m["find"], m["replace"], 1).encode("utf-8")
     try:
         target.write_bytes(mutated)
-        passed, tail = run_suite()
+        passed, _, failing = run_suite()
     finally:
         target.write_bytes(original)
     if target.read_bytes() != original:
         raise SystemExit("RESTORE FAILED for %s. Stop and repair it by hand." % m["path"])
-    return not passed, tail
+    return not passed, failing
 
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("file", help="a JSON list of mutations")
     parser.add_argument("--only", help="apply only the mutation with this label")
+    parser.add_argument("--why", action="store_true",
+                        help="name the tests that caught each mutation")
     args = parser.parse_args(argv)
 
     mutations = load(args.file, args.only)
     originals = {m["path"]: (REPO_ROOT / m["path"]).read_bytes() for m in mutations}
 
-    passed, tail = run_suite()
+    passed, tail, _ = run_suite()
     if not passed:
         print("baseline suite fails, so no mutation result would mean anything:\n" + tail)
         return 1
@@ -132,18 +139,21 @@ def main(argv=None):
     before = refs()
     results = []
     for m in mutations:
-        caught, _ = apply_one(m)
+        caught, failing = apply_one(m)
         stray = sorted(refs() - before)
         results.append((m["label"], caught, stray))
         print("  %-9s %s%s" % ("caught" if caught else "SURVIVED", m["label"],
                                "   STRAY REF: %s" % ", ".join(stray) if stray else ""))
+        if args.why:
+            for name in failing:
+                print("              by %s" % name)
         before |= set(stray)
 
     for path, data in originals.items():
         if (REPO_ROOT / path).read_bytes() != data:
             print("RESTORE CHECK FAILED: %s differs from its original" % path)
             return 1
-    passed, tail = run_suite()
+    passed, tail, _ = run_suite()
     if not passed:
         print("the suite fails after restoring every file:\n" + tail)
         return 1

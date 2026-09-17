@@ -33,6 +33,16 @@ NORMALISATIONS = frozenset({"strip_location_suffix"})
 # its repository's visibility.
 AGGREGATOR_PLATFORMS = frozenset({"himalayas"})
 
+# Sources whose rows may reach the public data branch. Named rather than
+# derived as "not an aggregator", so a source this build does not know, such
+# as one whose platform has since been removed, stays local. Defaulting an
+# unknown source to public is the direction that leaks.
+PUBLISHABLE_SOURCES = PLATFORMS - AGGREGATOR_PLATFORMS
+
+
+def is_publishable(source):
+    return source in PUBLISHABLE_SOURCES
+
 # Platforms whose payload carries no employer field. A board on one of these
 # needs an alias or its employer is unresolvable. ADR-0026 requires the absence
 # to be recorded rather than guessed, so this is not a hard error here.

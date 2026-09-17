@@ -6,7 +6,7 @@ status: current
 
 # STATE
 
-**Last verified against `main` at `cd1f290`, 2026-09-17**, for the Headline, the propagation entry under Known unverified, and the Pipeline rows the slice build touched. Documentation and Tooling rows are carried forward from earlier verifications and were not rechecked.
+**Last verified against `main` at `dcc056a` plus the commit that carries this line, 2026-09-17**, for the Headline, the Blocked section, the propagation entry under Known unverified, the Pipeline rows, and the mutation harness row. Documentation and Tooling rows are carried forward from earlier verifications and were not rechecked.
 
 This file is where to start, not where to stop. It outranks memory: if you believe a row is wrong, read the file the pointer names before claiming a conflict. It does not outrank the code or the data. Where a row disagrees with them, the row is stale; report it and correct it. On 2026-09-17 four stale lines were found here that way.
 
@@ -87,6 +87,9 @@ Four spikes have run and their findings are folded into the records. The four de
 | Airtable writer | PENDING | — | — | ADR-0004 |
 | Scheduled workflow | DONE | [VERIFIED] orchestrator run twice against all 11 live boards in TEST_MODE: 917 postings, 19 kept, second run wrote nothing and both files byte-identical. Workflow file written, not yet exercised by GitHub | 2026-09-17 | `2026-09-17-vertical-slice.md`, ADR-0006 |
 | Scheduled workflow, first run on GitHub. Supersedes the row above's "not yet exercised by GitHub" | PARTIAL | [VERIFIED] through the public Actions API: run 35179218050, schedule event, 2026-09-17T03:43Z, head `cd1f290`; the test step passed, Fetch failed with "the run could not start", push skipped; `git ls-remote --heads origin` shows only `main`. From the step 6 log the operator supplied, not checkable here: Python 3.11.16, all 12 boards `ok`, 1239 fetched, 37 kept, 36 of 500 requests, then `commit-tree` failed with "Author identity unknown" and the run exited 1 as an uncaught exception | 2026-09-17 | Run 35179218050 and its step 6 log |
+| Data branch safe on a runner: fixed commit identity, bytes at the git boundary, state restored from the branch before a committing run, test mode on its own `data-test` branch, and the workflow fetching and pushing the branch its mode chose | DONE | [VERIFIED] by tests, mutations, and simulated runs against a local bare repository with the network replaced. **Not pushed, so not yet run on GitHub** | 2026-09-17 | `2026-09-17-runner-safe-data-branch.md` |
+| ADR-0020 applied to the filtered layer and the seen store, with a content guard on every file offered to the branch | DONE | [VERIFIED] the old code pushed 2 Himalayas records in each of `filtered.json` and `seen.json` in simulation; the new code pushes none, keeps them in `data/local/`, and refuses to commit a file holding a record whose source is not publishable | 2026-09-17 | `2026-09-17-runner-safe-data-branch.md` |
+| A run that fails after fetching says so | DONE | [VERIFIED] exit 1 still, with the failing stage named and "the fetch completed" printed; the workflow no longer annotates every exit 1 as "could not start" | 2026-09-17 | `2026-09-17-runner-safe-data-branch.md` |
 | Weekly outcome sweep | PENDING | — | — | ADR-0014 |
 | Contract check | PENDING | — | — | ADR-0018 |
 
@@ -98,7 +101,11 @@ Four spikes have run and their findings are folded into the records. The four de
 
 **The four decisions the spikes raised are answered.** ADR-0028 sets a per-run fetch budget and fetches a posting's detail once ever rather than once per run. ADR-0029 fixes adapter order after the slice at Ashby, Workable, SmartRecruiters, Breezy and Manatal, drops Dover, and declares the registry tiers obsolete. ADR-0026 gained `envelope` and `constructed` and now covers the canonical URL.
 
-**Four questions are open for the architecture chat**, all raised by the slice build and stated in full in `2026-09-17-vertical-slice.md`:
+**Waiting on the operator, as of 2026-09-17.** Pushing `main`: the scheduled run on GitHub still uses `cd1f290` and will fail at the commit, twice a day, after 36 requests. Pausing the schedule until then is recommended as hygiene: nothing can leak while the identity failure stands, but every run spends its requests for nothing. A manual `test_mode` dispatch is safe only after the push. Whether Himalayas stays in `config/boards.json` meanwhile, given the finding below. The title pool, the experience threshold's value, and the board list (Speechify, CodeRoad) are the operator's, not the chat's.
+
+**New for the architecture chat, from `2026-09-17-runner-safe-data-branch.md`.** *Himalayas on a runner keeps nothing:* ADR-0020 assumes aggregator history lives on the operator's machine, but the schedule runs on a discarded runner, so every scheduled run is Himalayas' first contact and its kept rows are lost. *ADR-0020's promised hook guard was never added*, and a hook cannot see a `commit-tree` commit anyway. *Seen-store entries were treated as rows* under ADR-0020, the conservative reading. *Exit 1 now has two causes* within the three fixed codes.
+
+**Five questions were open for the architecture chat before that.** The title pool was the second, and under the protocol it belongs to the operator; it is stated under Known unverified. The other four were raised by the slice build and are stated in full in `2026-09-17-vertical-slice.md`:
 
 *Does Himalayas stay?* ADR-0019's condition passes on its three named components and fails on its "config entry and adapter file" wording.
 
@@ -115,6 +122,8 @@ Four spikes have run and their findings are folded into the records. The four de
 **Rozee.pk is unblocked and undecided.** robots.txt permits the job paths, the terms carry no automated-access clause, and a sitemap index publishes job URLs daily with the title in the slug. No decision record exists yet.
 
 ## Known unverified
+
+**The workflow's branch fetch and push behave on GitHub as they did in simulation.** [VERIFIED] only against a local bare repository reached by `file://`, with a depth-1 clone of `main` standing in for the checkout. [BELIEVED], from outside this repository: `actions/checkout` with `fetch-depth: 1` fetches only the triggering ref, `inputs.test_mode` resolves in a job-level `env`, and the runner's locale is UTF-8. The first run after the push settles all three. `2026-09-17-runner-safe-data-branch.md`.
 
 **Boards publish to their APIs at the moment a posting goes live.** ADR-0006's cadence rests on it. **Recorded as confirmed 2026-09-11** in ADR-0006's Assumptions, and its Changes row explains why: a posting 0.26 hours old at fetch is positive evidence, and a second run "would tighten the bound and cannot change the verdict". The record outranks this file under ADR-0022. Until 2026-09-17 this entry read "[VERIFIED] partially" and asked for a second run; it predated the record's amendment and was stale. `2026-09-11-endpoint-feasibility-spike.md`, ADR-0006.
 

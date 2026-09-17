@@ -7,8 +7,17 @@ proportional to genuinely new postings rather than to board size.
 **One file per source.** ADR-0020. `fetch-all/greenhouse.json`,
 `fetch-all/lever.json`. A row's provenance is its filename, so no routing bug
 can misfile a row into the wrong store. Aggregator sources write to local files
-that are never committed; the slice has none, and the split is by directory so
-that moving a source later is a file move rather than a transformation.
+that are never committed, and the split is by directory so that moving a source
+later is a file move rather than a transformation. That covers every store, not
+only the raw one: an aggregator's filtered rows and seen-store entries are local
+too, because a filtered row is a row and a seen entry carries the posting's URL
+and publication date.
+
+**The data branch is the store; `data/` is a working copy.** A GitHub runner
+starts from an empty checkout, so a committing run first replaces its working
+copies with the branch's. Without that, every run on a runner is first
+contact: every posting new, first_seen re-dated, the history on the branch
+replaced by one run's snapshot.
 
 **Metadata only.** ADR-0011. The row shape has nowhere to put description text,
 which is the guard: there is no field to fill.
@@ -34,6 +43,22 @@ from .normalise import dumps, loads
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 DATA_BRANCH = "data"
+# A test run keeps production's layout inside its branch, which is exactly why
+# it needs a branch of its own: on the same branch, test files land on
+# production paths. `.github/workflows/fetch.yml` names both branches and a
+# test holds them in step.
+TEST_DATA_BRANCH = "data-test"
+
+# The data branch is written by a machine, so its commits carry a fixed,
+# non-personal identity rather than whatever the host has configured. A GitHub
+# runner has none and commit-tree refuses to guess: run 35179218050 fetched
+# 1239 postings and then died here with "Author identity unknown".
+COMMIT_IDENTITY = {
+    "GIT_AUTHOR_NAME": "job-aggregator",
+    "GIT_AUTHOR_EMAIL": "job-aggregator@invalid",
+    "GIT_COMMITTER_NAME": "job-aggregator",
+    "GIT_COMMITTER_EMAIL": "job-aggregator@invalid",
+}
 
 # Where the working copies live. One ignored directory rather than a scatter of
 # files at the repository root, so `git status` shows the operator's work and
@@ -45,9 +70,18 @@ TEST_SUBDIR = "test"          # a test run writes beside production, never over 
 RAW_DIR = "fetch-all"
 # ADR-0020: aggregator rows live here and are never committed or pushed.
 LOCAL_RAW_DIR = "fetch-all-local"
+# The same rule for the filtered layer and the seen store. A separate directory
+# from LOCAL_RAW_DIR because that one is the raw layer's local twin and already
+# holds data on the operator's machine.
+LOCAL_DIR = "local"
 FILTERED_FILE = "filtered.json"
 SEEN_FILE = "seen.json"
 RUNLOG_DIR = "logs-runs"
+
+# What a committing run reads back from the branch before it starts. Run logs
+# are history rather than state, so they are not restored.
+RESTORED_FILES = (FILTERED_FILE, SEEN_FILE)
+RESTORED_DIRS = (RAW_DIR,)
 
 
 class StorageError(Exception):
@@ -56,6 +90,10 @@ class StorageError(Exception):
 
 def data_root(test_mode=False):
     return "%s/%s" % (DATA_ROOT, TEST_SUBDIR) if test_mode else DATA_ROOT
+
+
+def data_branch(test_mode=False):
+    return TEST_DATA_BRANCH if test_mode else DATA_BRANCH
 
 
 def layout(test_mode=False):
@@ -68,6 +106,8 @@ def layout(test_mode=False):
         "local_raw_dir": "%s/%s" % (root, LOCAL_RAW_DIR),
         "filtered": "%s/%s" % (root, FILTERED_FILE),
         "seen": "%s/%s" % (root, SEEN_FILE),
+        "local_filtered": "%s/%s/%s" % (root, LOCAL_DIR, FILTERED_FILE),
+        "local_seen": "%s/%s/%s" % (root, LOCAL_DIR, SEEN_FILE),
         "runlog_dir": "%s/%s" % (root, RUNLOG_DIR),
     }
 
@@ -157,6 +197,26 @@ class SeenStore:
             text = f.read()
         return cls(loads(text) if text.strip() else {})
 
+    @classmethod
+    def load_many(cls, paths):
+        """One store from several files, for the committed and local halves."""
+        store = cls()
+        for path in paths:
+            store.entries.update(cls.load(path).entries)
+        return store
+
+    def partition(self, publishable):
+        """Two stores: entries whose source may be published, and the rest.
+
+        The run partitions before it saves, so a seen file written before the
+        split, which holds both classes, is corrected by the next run rather
+        than carried."""
+        public, local = SeenStore(), SeenStore()
+        for identity, entry in self.entries.items():
+            side = public if publishable(entry.get("source")) else local
+            side.entries[identity] = entry
+        return public, local
+
     def save(self, path):
         ordered = {k: self.entries[k] for k in sorted(self.entries)}
         write_atomic(path, dumps(ordered))
@@ -198,16 +258,23 @@ def _git(args, cwd=None, env=None, check=True, stdin=None):
     cwd = cwd or REPO_ROOT
     full = dict(os.environ)
     full.update(env or {})
-    p = subprocess.run(["git"] + args, cwd=cwd, env=full, input=stdin,
-                       capture_output=True, text=True)
+    # Bytes across the boundary, encoded and decoded here as UTF-8. Text mode
+    # uses the locale's encoding and, on Windows, turns "\n" into "\r\n" on the
+    # way in. On a cp1252 host a title outside cp1252 raised, and every blob
+    # was written with CRLF endings in cp1252, while reading it back through
+    # text mode undid both and the round-trip test passed.
+    p = subprocess.run(["git"] + args, cwd=cwd, env=full,
+                       input=None if stdin is None else stdin.encode("utf-8"),
+                       capture_output=True)
     if check and p.returncode != 0:
-        raise StorageError("git %s failed: %s" % (" ".join(args), p.stderr.strip()))
-    return p.stdout.strip()
+        raise StorageError("git %s failed: %s"
+                           % (" ".join(args), p.stderr.decode("utf-8", "replace").strip()))
+    return p.stdout.decode("utf-8").strip()
 
 
 def branch_exists(branch=DATA_BRANCH):
     p = subprocess.run(["git", "rev-parse", "--verify", "--quiet", branch],
-                       cwd=REPO_ROOT, capture_output=True, text=True)
+                       cwd=REPO_ROOT, capture_output=True)
     return p.returncode == 0
 
 
@@ -215,9 +282,40 @@ def read_branch_file(path, branch=DATA_BRANCH):
     """Read one file from the branch without checking it out."""
     if not branch_exists(branch):
         return None
+    # Bytes, for the reason given in _git: text mode would silently turn a
+    # blob's "\r\n" into "\n" and hide a wrongly written blob.
     p = subprocess.run(["git", "show", "%s:%s" % (branch, path)],
-                       cwd=REPO_ROOT, capture_output=True, text=True)
-    return p.stdout if p.returncode == 0 else None
+                       cwd=REPO_ROOT, capture_output=True)
+    return p.stdout.decode("utf-8") if p.returncode == 0 else None
+
+
+def restore_from_branch(test_mode=False):
+    """Replace the local working copies of the committed stores with the
+    branch's. Returns the local paths written.
+
+    The branch wins over a local file that exists, not only over a missing one.
+    A local copy older than the branch, on a machine that has not run for a
+    while, would otherwise be appended to and committed, deleting every record
+    the branch gained in between. That is the snapshot failure ADR-0003 exists
+    to prevent. With no branch there is nothing to restore and local files are
+    left as they are."""
+    branch = data_branch(test_mode)
+    if not branch_exists(branch):
+        return []
+    listed = _git(["ls-tree", "-r", "--name-only", branch]).splitlines()
+    wanted = [p for p in listed
+              if p in RESTORED_FILES
+              or any(p.startswith(d + "/") and p.endswith(".json") for d in RESTORED_DIRS)]
+    root = data_root(test_mode)
+    written = []
+    for path in wanted:
+        text = read_branch_file(path, branch)
+        if text is None:
+            raise StorageError("%s:%s is listed but could not be read" % (branch, path))
+        local = "%s/%s" % (root, path)
+        write_atomic(local, text)
+        written.append(local)
+    return written
 
 
 def commit_files(files, message, branch=DATA_BRANCH):
@@ -252,7 +350,7 @@ def commit_files(files, message, branch=DATA_BRANCH):
         args = ["commit-tree", tree, "-m", message]
         if parent:
             args += ["-p", parent]
-        commit = _git(args, env=env)
+        commit = _git(args, env=dict(env, **COMMIT_IDENTITY))
         _git(["update-ref", "refs/heads/%s" % branch, commit])
         return commit
     finally:

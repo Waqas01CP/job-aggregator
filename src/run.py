@@ -3,8 +3,14 @@
 Exit codes, because the orchestrator needs to tell three things apart:
 
   0  finished
-  1  could not start
+  1  could not start, or fetched and could not store the result
   2  stopped deliberately and resumable
+
+Exit 1 has two causes because CLAUDE.md fixes the codes at three, and a
+completed fetch that cannot be stored is neither a clean finish nor a
+deliberate stop. The printed message says which cause it was. Run 35179218050
+failed at the commit after fetching 1239 postings, and was reported as "could
+not start" because nothing distinguished the two.
 
 Two runs a day, early PKT morning and early PKT evening. ADR-0006.
 
@@ -26,12 +32,12 @@ from datetime import datetime, timezone
 
 from . import storage
 from .adapters import greenhouse, himalayas, lever
-from .config import ConfigError, load_boards
+from .config import ConfigError, is_publishable, load_boards
 from .dedupe import counts as dedupe_counts
 from .dedupe import group, split_new
 from .filters import FilterError, TitleMatcher, apply_chain, drop_counts
 from .http_client import (BudgetExhausted, CircuitOpen, HttpClient, HttpError)
-from .normalise import dumps, iso, normalise
+from .normalise import dumps, iso, loads, normalise
 
 EXIT_OK = 0
 EXIT_CANNOT_START = 1
@@ -126,7 +132,7 @@ class Run:
 
     # ---------------------------------------------------------------- main
     def execute(self):
-        seen = storage.SeenStore.load(self.paths["seen"])
+        seen = storage.SeenStore.load_many([self.paths["seen"], self.paths["local_seen"]])
         first_seen = seen.first_seen_map()
         self.high_water = {}
         for entry in seen.entries.values():
@@ -170,13 +176,21 @@ class Run:
         kept, drops = apply_chain(all_rows, iso(self.now), matcher=self.matcher)
         kept_rows = [row for row, _ in kept]
         new_kept, _ = split_new(kept_rows, seen.identities)
+        # ADR-0020 governs every store, so the filtered layer splits the same
+        # way the raw layer does: an aggregator's kept rows are rows.
+        filtered_local = storage.append_delta(
+            self.paths["local_filtered"],
+            [r.as_record() for r in new_kept if not is_publishable(r.source)])
         filtered_written = storage.append_delta(
-            self.paths["filtered"], [r.as_record() for r in new_kept])
+            self.paths["filtered"],
+            [r.as_record() for r in new_kept if is_publishable(r.source)]) + filtered_local
 
         for row in all_rows:
             seen.record(row)
             seen.mark_seen(row.identity, iso(self.now))
-        seen.save(self.paths["seen"])
+        public_seen, local_seen = seen.partition(is_publishable)
+        public_seen.save(self.paths["seen"])
+        local_seen.save(self.paths["local_seen"])
 
         per_board_drops = {}
         for d in drops:
@@ -198,6 +212,7 @@ class Run:
                 "kept": len(kept_rows),
                 "written_raw": raw_written,
                 "written_filtered": filtered_written,
+                "written_filtered_local": filtered_local,
                 "drops": drop_counts(drops),
                 "dedupe": dedupe_counts(group(all_rows)),
             },
@@ -222,9 +237,9 @@ def summarise(run_log):
                         drops or "no drops",
                         "  [%s]" % b["detail"] if b["detail"] else ""))
     t = run_log["totals"]
-    lines.append("  totals: fetched %d, new %d, kept %d, raw %s, filtered %d"
+    lines.append("  totals: fetched %d, new %d, kept %d, raw %s, filtered %d (%d of them local only)"
                  % (t["fetched"], t["new"], t["kept"], t["written_raw"],
-                    t["written_filtered"]))
+                    t["written_filtered"], t["written_filtered_local"]))
     lines.append("  drops by rule: %s" % t["drops"])
     lines.append("  dedupe: %s" % t["dedupe"])
     r = run_log["requests"]
@@ -243,13 +258,22 @@ def files_to_commit(run_log, paths, log_path, test_mode):
     redistribution and a branch inherits its repository's visibility, so those
     rows stay in a local directory. This is the last gate before a push, and
     it selects by source class rather than by filename, because a filename
-    convention is one rename away from leaking."""
+    convention is one rename away from leaking.
+
+    **Nor does any record of theirs inside a shared file.** Selecting files was
+    not enough: until 2026-09-17 the filtered layer and seen store were single
+    files holding every source, offered here unconditionally. The first GitHub
+    run kept 18 Himalayas rows and saw 500 Himalayas postings, and only its
+    failure to commit kept them off the public branch; a local simulation of
+    the same workflow steps, given an identity, pushed them. So every record
+    file offered is read and refused if it holds a record whose source may not
+    be published. The run writes them split; this is the check that the split
+    held, including for files written before it existed."""
     files = {}
     for source in sorted(run_log["totals"]["written_raw"]):
-        if run_log["source_class"].get(source) == "aggregator":
+        if not is_publishable(source):
             continue
-        path = storage.raw_path(source, test_mode,
-                                run_log["source_class"].get(source, "ats"))
+        path = storage.raw_path(source, test_mode, "ats")
         if os.path.exists(path):
             with open(path, encoding="utf-8") as f:
                 files[storage.branch_path(path, test_mode)] = f.read()
@@ -257,6 +281,17 @@ def files_to_commit(run_log, paths, log_path, test_mode):
         if os.path.exists(path):
             with open(path, encoding="utf-8") as f:
                 files[storage.branch_path(path, test_mode)] = f.read()
+    for committed_path, text in sorted(files.items()):
+        if committed_path.startswith(storage.RUNLOG_DIR + "/"):
+            continue
+        records = loads(text)
+        entries = records.values() if isinstance(records, dict) else records
+        refused = sorted({str(e.get("source")) for e in entries
+                          if not is_publishable(e.get("source"))})
+        if refused:
+            raise storage.StorageError(
+                "refusing to commit %s: it holds records from %s, which ADR-0020 "
+                "keeps off the data branch" % (committed_path, ", ".join(refused)))
     return files
 
 
@@ -279,24 +314,48 @@ def main(argv=None):
         print("could not start: %s" % e, file=sys.stderr)
         return EXIT_CANNOT_START
 
+    # A run that commits starts from the branch, so that it appends to what is
+    # stored rather than to whatever this machine happens to hold. A no-commit
+    # run is exploratory and chains from the local files, as it always has.
+    branch = storage.data_branch(test_mode)
+    if not args.no_commit:
+        try:
+            restored = storage.restore_from_branch(test_mode)
+        except Exception as e:
+            print("could not start: reading state from the %s branch failed: %s"
+                  % (branch, e), file=sys.stderr)
+            return EXIT_CANNOT_START
+        print("state: %s" % ("%d file(s) restored from the %s branch" % (len(restored), branch)
+                             if restored else "no %s branch, starting from local files" % branch))
+
     client = HttpClient(**({"budget": args.budget} if args.budget else {}))
     run = Run(boards, client, test_mode=test_mode, matcher=matcher)
     try:
         run_log = run.execute()
     except Exception:
         traceback.print_exc()
+        print("could not complete the run: the exception above was raised before "
+              "anything was committed", file=sys.stderr)
         return EXIT_CANNOT_START
 
     print(summarise(run_log))
 
-    stamp = run_log["run_at"].replace(":", "").replace("-", "")
-    log_path = "%s/%s.json" % (run.paths["runlog_dir"], stamp)
-    storage.write_atomic(log_path, dumps(run_log))
+    stage = "writing the run log"
+    try:
+        stamp = run_log["run_at"].replace(":", "").replace("-", "")
+        log_path = "%s/%s.json" % (run.paths["runlog_dir"], stamp)
+        storage.write_atomic(log_path, dumps(run_log))
 
-    if not args.no_commit:
-        files = files_to_commit(run_log, run.paths, log_path, test_mode)
-        sha = storage.commit_files(files, "run %s" % run_log["run_at"])
-        print("  data branch: %s" % (sha or "nothing changed, no commit"))
+        if not args.no_commit:
+            stage = "committing to the %s branch" % branch
+            files = files_to_commit(run_log, run.paths, log_path, test_mode)
+            sha = storage.commit_files(files, "run %s" % run_log["run_at"], branch=branch)
+            print("  %s branch: %s" % (branch, sha or "nothing changed, no commit"))
+    except Exception:
+        traceback.print_exc()
+        print("the fetch completed and its files are written locally, but %s "
+              "failed, so nothing was committed" % stage, file=sys.stderr)
+        return EXIT_CANNOT_START
 
     return run.exit_code()
 

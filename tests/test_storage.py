@@ -296,6 +296,226 @@ class TestDataBranch(unittest.TestCase):
                                 capture_output=True, text=True).stdout
         self.assertIn("wip.txt", status)
 
+    def test_the_commit_lands_in_the_repository_it_was_pointed_at(self):
+        """Asserted on where the ref landed, not on the returned sha. The
+        `_git(cwd=REPO_ROOT)` default once sent this commit to the real
+        repository while every sha-based assertion passed."""
+        sha = storage.commit_files({"seen.json": "{}\n"}, "run", branch="data")
+        here = subprocess.run(["git", "rev-parse", "data"], cwd=self.dir,
+                              capture_output=True, text=True).stdout.strip()
+        self.assertEqual(here, sha)
+
+    def test_text_reaches_the_branch_as_the_exact_bytes_written_locally(self):
+        """The blob must be the UTF-8 bytes of the text with LF endings,
+        whatever the host. On Windows the text-mode writer raised for the
+        second title, and stored every blob in cp1252 with CRLF endings while
+        reading it back unchanged, so the read-back assertion alone could not
+        fail there. On a Linux host this test cannot fail for either reason;
+        the next one can, anywhere."""
+        text = dumps([{"identity": "a", "title": "Ingénieur"},
+                      {"identity": "b", "title": "データ — AI"}])
+        storage.commit_files({"filtered.json": text}, "run", branch="data")
+        blob = subprocess.run(["git", "cat-file", "blob", "data:filtered.json"],
+                              cwd=self.dir, capture_output=True).stdout
+        self.assertEqual(blob, text.encode("utf-8"))
+        self.assertEqual(storage.read_branch_file("filtered.json", "data"), text)
+
+    def test_no_git_call_runs_in_text_mode(self):
+        """The host-independent form of the check above. Text mode is where
+        both the locale's encoding and the newline translation come from, so
+        content must cross the git boundary as bytes in both directions."""
+        calls = []
+        real = subprocess.run
+
+        def spy(*args, **kwargs):
+            calls.append((args[0], kwargs))
+            return real(*args, **kwargs)
+
+        cwd = os.getcwd()
+        os.chdir(self.dir)
+        storage.subprocess.run = spy
+        try:
+            storage.commit_files({"seen.json": "{}\n"}, "run", branch="data")
+            storage.read_branch_file("seen.json", "data")
+            storage.restore_from_branch()
+        finally:
+            storage.subprocess.run = real
+            os.chdir(cwd)
+        self.assertIn("hash-object", [c[0][1] for c in calls])
+        self.assertIn("show", [c[0][1] for c in calls])
+        for argv, kwargs in calls:
+            self.assertFalse(kwargs.get("text") or kwargs.get("universal_newlines")
+                             or kwargs.get("encoding"), " ".join(argv))
+            if kwargs.get("input") is not None:
+                self.assertIsInstance(kwargs["input"], bytes, " ".join(argv))
+
+
+class TestCommitIdentity(unittest.TestCase):
+    """Run 35179218050 fetched 1239 postings on a GitHub runner, then failed
+    at commit-tree with "Author identity unknown": a runner has no git
+    identity and git refuses to guess one."""
+
+    def setUp(self):
+        self.dir = tempfile.mkdtemp()
+        self.empty = tempfile.mkdtemp()
+        empty_config = os.path.join(self.empty, "gitconfig")
+        write_text(empty_config, "")
+        self.real_root = storage.REPO_ROOT
+        storage.REPO_ROOT = self.dir
+        self.real_env = dict(os.environ)
+        for key in list(os.environ):
+            if key.startswith(("GIT_AUTHOR_", "GIT_COMMITTER_")) or key in ("EMAIL",):
+                del os.environ[key]
+        os.environ["GIT_CONFIG_GLOBAL"] = empty_config
+        os.environ["GIT_CONFIG_NOSYSTEM"] = "1"
+        subprocess.run(["git", "init", "-q"], cwd=self.dir)
+        # Never guess a name or address from the host: the runner's condition,
+        # made the same on every machine.
+        subprocess.run(["git", "config", "user.useConfigOnly", "true"], cwd=self.dir)
+
+    def tearDown(self):
+        os.environ.clear()
+        os.environ.update(self.real_env)
+        storage.REPO_ROOT = self.real_root
+        shutil.rmtree(self.dir, ignore_errors=True)
+        shutil.rmtree(self.empty, ignore_errors=True)
+
+    def test_a_host_with_no_git_identity_can_still_commit(self):
+        tree = subprocess.run(["git", "mktree"], cwd=self.dir, input="",
+                              capture_output=True, text=True).stdout.strip()
+        bare = subprocess.run(["git", "commit-tree", tree, "-m", "x"], cwd=self.dir,
+                              capture_output=True, text=True)
+        self.assertNotEqual(bare.returncode, 0,
+                            "precondition: this host must refuse to commit "
+                            "without an identity, or the test proves nothing")
+
+        sha = storage.commit_files({"seen.json": "{}\n"}, "run", branch="data")
+        here = subprocess.run(["git", "rev-parse", "data"], cwd=self.dir,
+                              capture_output=True, text=True).stdout.strip()
+        self.assertEqual(here, sha)
+
+    def test_the_identity_is_fixed_and_carries_no_personal_data(self):
+        storage.commit_files({"seen.json": "{}\n"}, "run", branch="data")
+        who = subprocess.run(["git", "log", "-1", "--format=%an <%ae>|%cn <%ce>", "data"],
+                             cwd=self.dir, capture_output=True, text=True).stdout.strip()
+        self.assertEqual(who, "job-aggregator <job-aggregator@invalid>|"
+                              "job-aggregator <job-aggregator@invalid>")
+
+
+class TestBranchPerMode(unittest.TestCase):
+    def test_test_mode_has_a_branch_of_its_own(self):
+        """Test mode keeps production's layout inside its branch, so on a
+        shared branch its files would land on production paths."""
+        self.assertEqual(storage.data_branch(False), "data")
+        self.assertNotEqual(storage.data_branch(True), storage.data_branch(False))
+
+
+class TestRestoreFromBranch(unittest.TestCase):
+    """A GitHub runner starts with no working copies. The branch is the store."""
+
+    def setUp(self):
+        self.dir = tempfile.mkdtemp()
+        self.cwd = os.getcwd()
+        os.chdir(self.dir)
+        self.real_root = storage.REPO_ROOT
+        storage.REPO_ROOT = self.dir
+        subprocess.run(["git", "init", "-q"], cwd=self.dir)
+        self.state = {
+            "fetch-all/greenhouse.json": dumps([{"identity": "greenhouse:1", "source": "greenhouse"}]),
+            "filtered.json": dumps([{"identity": "greenhouse:1", "source": "greenhouse"}]),
+            "seen.json": dumps({"greenhouse:1": {"first_seen": "2026-09-10T00:00:00Z",
+                                                 "source": "greenhouse"}}),
+            "logs-runs/20260910T000000Z.json": dumps({"run_at": "x"}),
+        }
+
+    def tearDown(self):
+        os.chdir(self.cwd)
+        storage.REPO_ROOT = self.real_root
+        shutil.rmtree(self.dir, ignore_errors=True)
+
+    def test_a_fresh_checkout_gets_every_committed_store(self):
+        storage.commit_files(self.state, "run", branch="data")
+        written = storage.restore_from_branch(False)
+        self.assertEqual(sorted(written), ["data/fetch-all/greenhouse.json",
+                                           "data/filtered.json", "data/seen.json"])
+        for path in ("fetch-all/greenhouse.json", "filtered.json", "seen.json"):
+            self.assertEqual(read_text("data/" + path), self.state[path], path)
+
+    def test_run_logs_are_history_and_are_not_restored(self):
+        storage.commit_files(self.state, "run", branch="data")
+        storage.restore_from_branch(False)
+        self.assertFalse(os.path.exists("data/logs-runs"))
+
+    def test_the_branch_replaces_a_stale_local_copy(self):
+        """A machine that has not run for a while holds an older copy.
+        Appending to it and committing would delete what the branch gained."""
+        storage.commit_files(self.state, "run", branch="data")
+        write_atomic("data/fetch-all/greenhouse.json", dumps([]))
+        storage.restore_from_branch(False)
+        self.assertEqual(read_text("data/fetch-all/greenhouse.json"),
+                         self.state["fetch-all/greenhouse.json"])
+
+    def test_with_no_branch_local_files_are_left_alone(self):
+        write_atomic("data/seen.json", "{}\n")
+        self.assertEqual(storage.restore_from_branch(False), [])
+        self.assertEqual(read_text("data/seen.json"), "{}\n")
+
+    def test_local_only_stores_are_never_touched(self):
+        """ADR-0020: aggregator stores exist only locally. The branch has no
+        version of them, so a restore must not clear them."""
+        storage.commit_files(self.state, "run", branch="data")
+        write_atomic("data/local/seen.json", '{"himalayas:x": {}}\n')
+        write_atomic("data/fetch-all-local/himalayas.json", "[]\n")
+        storage.restore_from_branch(False)
+        self.assertEqual(read_text("data/local/seen.json"), '{"himalayas:x": {}}\n')
+        self.assertEqual(read_text("data/fetch-all-local/himalayas.json"), "[]\n")
+
+    def test_a_listed_file_that_cannot_be_read_stops_the_restore(self):
+        """Skipping it would start the run from an empty store for that file,
+        and the next commit would replace the branch's copy with one run's."""
+        storage.commit_files(self.state, "run", branch="data")
+        real = storage.read_branch_file
+        storage.read_branch_file = lambda path, branch: None if path == "seen.json" else real(path, branch)
+        try:
+            with self.assertRaises(StorageError):
+                storage.restore_from_branch(False)
+        finally:
+            storage.read_branch_file = real
+
+    def test_test_mode_restores_its_own_branch_into_its_own_directory(self):
+        storage.commit_files(self.state, "run", branch="data")
+        test_state = {"seen.json": dumps({"greenhouse:9": {"source": "greenhouse"}})}
+        storage.commit_files(test_state, "run", branch="data-test")
+        storage.restore_from_branch(True)
+        self.assertEqual(read_text("data/test/seen.json"), test_state["seen.json"])
+        self.assertFalse(os.path.exists("data/seen.json"),
+                         "a test restore wrote a production path")
+        self.assertFalse(os.path.exists("data/test/filtered.json"),
+                         "a test restore read the production branch")
+
+
+class TestSeenStorePartition(unittest.TestCase):
+    def test_a_mixed_store_splits_by_whether_its_source_may_be_published(self):
+        """A seen file written before the split holds both classes, as
+        data/test/seen.json did on 2026-09-17 with 500 Himalayas entries."""
+        store = SeenStore({"greenhouse:1": {"source": "greenhouse"},
+                           "himalayas:2": {"source": "himalayas"},
+                           "unknown:3": {}})
+        public, local = store.partition(lambda s: s == "greenhouse")
+        self.assertEqual(public.identities, {"greenhouse:1"})
+        self.assertEqual(local.identities, {"himalayas:2", "unknown:3"})
+
+    def test_load_many_merges_the_two_halves(self):
+        d = tempfile.mkdtemp()
+        try:
+            a, b = os.path.join(d, "a.json"), os.path.join(d, "b.json")
+            write_atomic(a, dumps({"greenhouse:1": {"source": "greenhouse"}}))
+            write_atomic(b, dumps({"himalayas:2": {"source": "himalayas"}}))
+            merged = SeenStore.load_many([a, b, os.path.join(d, "missing.json")])
+            self.assertEqual(merged.identities, {"greenhouse:1", "himalayas:2"})
+        finally:
+            shutil.rmtree(d, ignore_errors=True)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

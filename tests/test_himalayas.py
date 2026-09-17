@@ -21,12 +21,17 @@ from src.config import Board
 from src.filters import TitleMatcher
 from src.http_client import HttpClient
 from src.normalise import normalise
-from src.run import Run, files_to_commit
+from src.run import Run, files_to_commit, summarise
 
 NOW = datetime(2026, 9, 16, 12, 0, tzinfo=timezone.utc)
 BOARD = Board(platform="himalayas", slug="browse")
 CASSETTES = os.path.join(os.path.dirname(os.path.abspath(__file__)), "cassettes")
 MATCHER = TitleMatcher()
+
+
+def load_json(path):
+    with open(path, encoding="utf-8") as f:
+        return json.load(f)
 
 
 def cassette():
@@ -202,6 +207,124 @@ class TestRunIntegration(unittest.TestCase):
         self.assertNotIn("data/fetch-all-local/himalayas.json", files)
         self.assertFalse([p for p in files if "himalayas" in p],
                          "an aggregator file reached the data-branch commit set")
+
+    def _mixed_run(self):
+        """One ATS board and Himalayas, each with one posting the pool keeps."""
+        page = {"jobs": [{"guid": "https://x.test/h1", "title": "AI Engineer",
+                          "applicationLink": "https://x.test/h1", "pubDate": 1789141813}],
+                "nextCursor": None}
+        ats = {"jobs": [{"id": 1, "title": "AI Engineer",
+                         "absolute_url": "https://boards.test/1",
+                         "first_published": "2026-09-10T05:00:00+00:00",
+                         "company_name": "Careem", "location": {"name": "Karachi"}}]}
+
+        class Session:
+            def get(_s, url, params=None, timeout=None, headers=None):
+                body = page if "himalayas" in url else ats
+
+                class R:
+                    status_code = 200
+                    headers = {}
+
+                    def json(self):
+                        return body
+                return R()
+
+        client = HttpClient(session=Session(), sleep=lambda s: None, min_interval=0)
+        run = Run([Board(platform="greenhouse", slug="careem"), BOARD], client,
+                  now=NOW, matcher=MATCHER)
+        return run, run.execute()
+
+    def test_no_aggregator_record_is_inside_any_file_offered_to_the_branch(self):
+        """ADR-0020: aggregator rows are never committed. The file-name check
+        above passed while filtered.json and seen.json, offered whole, held
+        Himalayas rows and identities. This reads what is inside each file."""
+        run, log = self._mixed_run()
+        files = files_to_commit(log, run.paths, "logs-runs/x.json", False)
+        self.assertEqual(log["totals"]["kept"], 2, "precondition: both sources kept a row")
+
+        filtered = json.loads(files["filtered.json"])
+        seen = json.loads(files["seen.json"])
+        self.assertEqual([r["source"] for r in filtered], ["greenhouse"])
+        self.assertEqual(sorted(e["source"] for e in seen.values()), ["greenhouse"])
+        for path, text in files.items():
+            self.assertNotIn("himalayas", text.lower(), path)
+
+    def test_the_aggregator_rows_are_kept_locally_rather_than_lost(self):
+        run, log = self._mixed_run()
+        local_filtered = storage.read_records("data/local/filtered.json")
+        local_seen = load_json("data/local/seen.json")
+        self.assertEqual([r["source"] for r in local_filtered], ["himalayas"])
+        self.assertEqual([e["source"] for e in local_seen.values()], ["himalayas"])
+        self.assertEqual(log["totals"]["written_filtered"], 2)
+        self.assertEqual(log["totals"]["written_filtered_local"], 1)
+
+    def test_the_summary_says_how_many_kept_rows_stay_local(self):
+        """The Actions log is what the operator reads. "filtered 2" alone, when
+        one of the two never reaches the branch, misstates what was published.
+        Needs a run with an aggregator row: with none, the local count is zero
+        and a summary that always printed zero would pass."""
+        run, log = self._mixed_run()
+        self.assertIn("filtered 2 (1 of them local only)", summarise(log))
+
+    def test_a_record_file_holding_aggregator_rows_is_refused(self):
+        """The last gate, for files written before the split existed.
+        data/test/filtered.json held 20 Himalayas rows on 2026-09-17."""
+        run, log = self._mixed_run()
+        mixed = storage.read_records("data/filtered.json") + \
+            storage.read_records("data/local/filtered.json")
+        storage.write_atomic("data/filtered.json", json.dumps(mixed))
+        with self.assertRaises(storage.StorageError) as caught:
+            files_to_commit(log, run.paths, "logs-runs/x.json", False)
+        self.assertIn("filtered.json", str(caught.exception))
+        self.assertIn("himalayas", str(caught.exception))
+
+    def test_a_stray_aggregator_file_in_the_committed_directory_is_passed_over(self):
+        """A Himalayas raw file left under fetch-all/ by an older build is not
+        offered at all: the commit selects raw files by source, and the run
+        goes on rather than failing on a file it was never going to send."""
+        run, log = self._mixed_run()
+        storage.write_atomic("data/fetch-all/himalayas.json",
+                             json.dumps([{"identity": "himalayas:old", "source": "himalayas"}]))
+        files = files_to_commit(log, run.paths, "logs-runs/x.json", False)
+        self.assertNotIn("fetch-all/himalayas.json", files)
+
+    def test_a_seen_store_holding_aggregator_entries_is_refused(self):
+        run, log = self._mixed_run()
+        seen = load_json("data/seen.json")
+        seen["himalayas:planted"] = {"source": "himalayas"}
+        storage.write_atomic("data/seen.json", json.dumps(seen))
+        with self.assertRaises(storage.StorageError) as caught:
+            files_to_commit(log, run.paths, "logs-runs/x.json", False)
+        self.assertIn("seen.json", str(caught.exception))
+
+    def test_an_entry_with_no_source_is_refused(self):
+        """Unknown provenance is not publishable provenance."""
+        run, log = self._mixed_run()
+        seen = load_json("data/seen.json")
+        seen["mystery:1"] = {"first_seen": "2026-09-10T00:00:00Z"}
+        storage.write_atomic("data/seen.json", json.dumps(seen))
+        with self.assertRaises(storage.StorageError):
+            files_to_commit(log, run.paths, "logs-runs/x.json", False)
+
+    def test_the_stop_rule_still_reads_the_local_half_of_the_seen_store(self):
+        """The high-water mark comes from stored Himalayas entries, which now
+        live only in the local seen file. A run that loaded only the committed
+        half would page to the cap on every run."""
+        page1 = {"jobs": [{"guid": "https://x.test/1", "title": "AI Engineer",
+                           "applicationLink": "https://x.test/1", "pubDate": 1789141813}],
+                 "nextCursor": "c1"}
+        page2 = {"jobs": [{"guid": "https://x.test/2", "title": "Data Scientist",
+                           "applicationLink": "https://x.test/2", "pubDate": 1789141800}],
+                 "nextCursor": None}
+        first = self._client([page1, page2])
+        Run([BOARD], first, now=NOW, matcher=MATCHER).execute()
+        self.assertEqual(first.counters()["by_source"]["himalayas"], 2)
+
+        second = self._client([page1, page2])
+        log = Run([BOARD], second, now=NOW, matcher=MATCHER).execute()
+        self.assertEqual(second.counters()["by_source"]["himalayas"], 1)
+        self.assertEqual(log["totals"]["new"], 0)
 
     def test_paging_is_capped_even_with_an_endless_cursor(self):
         """A feed of 100k postings behind a cursor that never ends must not

@@ -38,6 +38,14 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
+    # A test run writes and pushes its own branch. It keeps production's layout
+    # inside it, so sharing the production branch would put test files on
+    # production paths. src/storage.py names the same two branches and
+    # tests/test_workflow.py holds them in step.
+    env:
+      TEST_MODE: ${{ inputs.test_mode && '1' || '0' }}
+      DATA_BRANCH: ${{ inputs.test_mode && 'data-test' || 'data' }}
+
     steps:
       - uses: actions/checkout@v4
         with:
@@ -54,10 +62,25 @@ jobs:
       - name: Run the tests before touching a live board
         run: python -m unittest discover -s tests -t .
 
+      # The checkout holds main only. The run appends to what the branch
+      # already stores, so the branch is fetched first; without it every run is
+      # first contact and its commit starts a new history that the push then
+      # cannot fast-forward. ls-remote exits 2 for "no such branch", which is
+      # the first run ever, and anything else for a failure to ask.
+      - name: Fetch the data branch
+        run: |
+          set +e
+          git ls-remote --exit-code --heads origin "refs/heads/$DATA_BRANCH" >/dev/null
+          found=$?
+          set -e
+          case "$found" in
+            0) git fetch --no-tags --depth=1 origin "refs/heads/$DATA_BRANCH:refs/heads/$DATA_BRANCH" ;;
+            2) echo "origin has no $DATA_BRANCH branch yet; this run starts it" ;;
+            *) echo "::error::could not ask origin whether $DATA_BRANCH exists"; exit 1 ;;
+          esac
+
       - name: Fetch
         id: fetch
-        env:
-          TEST_MODE: ${{ inputs.test_mode && '1' || '0' }}
         run: |
           set +e
           python -m src.run
@@ -68,9 +91,10 @@ jobs:
           #   2 stopped deliberately and resumable: the budget was reached or
           #     the circuit opened. The run log names what it did not reach and
           #     the next run picks it up.
-          #   1 could not start
+          #   1 failed: either it could not start, or it fetched and could not
+          #     store the result. The run's own output above says which.
           if [ "$code" -eq 1 ]; then
-            echo "::error::the run could not start"
+            echo "::error::the run failed with exit 1; its output above says whether it could not start or could not store a completed fetch"
             exit 1
           fi
           if [ "$code" -eq 2 ]; then
@@ -81,8 +105,8 @@ jobs:
       - name: Push the data branch
         if: steps.fetch.outputs.exit_code != '1'
         run: |
-          if git rev-parse --verify --quiet data >/dev/null; then
-            git push origin data:data
+          if git rev-parse --verify --quiet "refs/heads/$DATA_BRANCH" >/dev/null; then
+            git push origin "refs/heads/$DATA_BRANCH:refs/heads/$DATA_BRANCH"
           else
-            echo "no data branch was written, so nothing to push"
+            echo "no $DATA_BRANCH branch was written, so nothing to push"
           fi

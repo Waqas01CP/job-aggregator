@@ -99,8 +99,11 @@ stores, write to the destination before deleting from the source.
 **One canonical serialisation per file.** Every writer of a file agrees on it,
 so a run that changes nothing produces a diff containing nothing.
 
-**Three exit codes.** 0 finished, 1 could not start, 2 stopped deliberately and
-resumable. The orchestrator treats 2 as non-fatal.
+**Three exit codes.** 0 finished, 1 failed, 2 stopped deliberately and
+resumable. The orchestrator treats 2 as non-fatal. Exit 1 has two causes, a
+run that could not start and a run that fetched but could not store the
+result, and the run's own output says which. Run 35179218050 was the second
+kind and was reported as the first.
 
 **Log per board every run, including zero.** A board returning nothing for a
 week is a broken adapter. Without a zero logged it looks like a quiet market.
