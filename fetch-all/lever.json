@@ -775,5 +775,26 @@
   "url_provenance": "payload",
   "stated_experience": null,
   "expires_at": null
+ },
+ {
+  "identity": "lever:2caa90d8-77f7-4749-873c-53c752d90bfe",
+  "source": "lever",
+  "board_id": "lever:spreetail",
+  "external_id": "2caa90d8-77f7-4749-873c-53c752d90bfe",
+  "employer": "Spreetail",
+  "employer_provenance": "slug",
+  "title": "Senior Payables Analyst",
+  "title_normalised": "Senior Payables Analyst",
+  "location": "Bogota",
+  "published_at": "2026-09-17T15:46:53.425000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-09-17T17:32:06.141514Z",
+  "ordering_date": "2026-09-17T15:46:53.425000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/spreetail/2caa90d8-77f7-4749-873c-53c752d90bfe",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null
  }
 ]
