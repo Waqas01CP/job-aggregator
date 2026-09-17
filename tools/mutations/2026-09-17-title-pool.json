@@ -1,0 +1,98 @@
+[
+ {
+  "label": "pool: forward deployment removed",
+  "path": "docs/reference/title-pool.md",
+  "find": " · `forward deployment` · ",
+  "replace": " · "
+ },
+ {
+  "label": "pool: the measurement section read as terms",
+  "path": "docs/reference/title-pool.md",
+  "find": "## Known behaviour, accepted deliberately",
+  "replace": "## Accepted behaviour"
+ },
+ {
+  "label": "report: credit counted for every matching term",
+  "path": "tools/title_pool_report.py",
+  "find": "            if pattern.search(folded):\n                matches[term] += 1",
+  "replace": "            if pattern.search(folded):\n                matches[term] += 1\n                credited[term] += 1"
+ },
+ {
+  "label": "report: zero list built from credit instead of matches",
+  "path": "tools/title_pool_report.py",
+  "find": "\"zero\": [t for t in matcher.terms if not matches[t]]}",
+  "replace": "\"zero\": [t for t in matcher.terms if not credited[t]]}"
+ },
+ {
+  "label": "try: a bare token accepted",
+  "path": "tools/title_pool_report.py",
+  "find": "    if \" \" not in term and term not in matcher.exempt:\n        raise FilterError(\"%r is a single token",
+  "replace": "    if False:\n        raise FilterError(\"%r is a single token"
+ },
+ {
+  "label": "try: an exempt token refused",
+  "path": "tools/title_pool_report.py",
+  "find": "    if \" \" not in term and term not in matcher.exempt:",
+  "replace": "    if \" \" not in term:"
+ },
+ {
+  "label": "try: candidate not normalised",
+  "path": "tools/title_pool_report.py",
+  "find": "    term = fold(candidate)\n",
+  "replace": "    term = candidate\n"
+ },
+ {
+  "label": "try: raw substring instead of the pool's pattern",
+  "path": "tools/title_pool_report.py",
+  "find": "    hits = [r for r in rows if pattern.search(fold(r.get(\"title_normalised\") or r.get(\"title\") or \"\"))]",
+  "replace": "    hits = [r for r in rows if term in fold(r.get(\"title_normalised\") or r.get(\"title\") or \"\")]"
+ },
+ {
+  "label": "try: already-admitted postings counted as new",
+  "path": "tools/title_pool_report.py",
+  "find": "    new = [r for r in hits if not matcher.match(r.get(\"title_normalised\") or r.get(\"title\") or \"\")]",
+  "replace": "    new = list(hits)"
+ },
+ {
+  "label": "try: existing terms not flagged",
+  "path": "tools/title_pool_report.py",
+  "find": "\"already\": [t for t in matcher.terms if t == term]}",
+  "replace": "\"already\": []}"
+ },
+ {
+  "label": "branch: filtered and seen files read as postings",
+  "path": "tools/title_pool_report.py",
+  "find": "\"refs/heads/\" + branch, \"--\",\n                            storage.RAW_DIR + \"/\").stdout",
+  "replace": "\"refs/heads/\" + branch).stdout"
+ },
+ {
+  "label": "dir: aggregator raw files ignored",
+  "path": "tools/title_pool_report.py",
+  "find": "    files = sorted((root / storage.RAW_DIR).glob(\"*.json\")) + \\\n        sorted((root / storage.LOCAL_RAW_DIR).glob(\"*.json\"))",
+  "replace": "    files = sorted((root / storage.RAW_DIR).glob(\"*.json\"))"
+ },
+ {
+  "label": "cli: another pool file ignored",
+  "path": "tools/title_pool_report.py",
+  "find": "    m = TitleMatcher(args.pool)",
+  "replace": "    m = TitleMatcher()"
+ },
+ {
+  "label": "cli: a refused candidate still exits 0",
+  "path": "tools/title_pool_report.py",
+  "find": "        print(\"refused: %s\" % e, file=sys.stderr)\n        return 1",
+  "replace": "        print(\"refused: %s\" % e, file=sys.stderr)\n        return 0"
+ },
+ {
+  "label": "render: dropped titles never listed",
+  "path": "tools/title_pool_report.py",
+  "find": "    if show_dropped:\n",
+  "replace": "    if False:\n"
+ },
+ {
+  "label": "table: boards not shown",
+  "path": "tools/title_pool_report.py",
+  "find": "\"    %4d  %s  [%s]\"",
+  "replace": "\"    %4d  %s%.0s\""
+ }
+]

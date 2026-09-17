@@ -15,7 +15,11 @@ been updated, and that gap is reported rather than resolved here.
 Lever returns a structured experience field, so nothing reads one today. The
 rule is implemented and disabled: it activates only when a maximum is supplied,
 and the run log says it is off. Inventing a threshold would be policy invented
-by an implementing session.
+by an implementing session. **Deferred by the operator on 2026-09-17** until
+filtering reads descriptions as well as titles, since stated experience lives
+in description text; the operator's reference maximum for that time is three
+years. Seniority words in titles are a separate matter, raised with the
+operator, and are not this rule.
 
 *Annotation vendors.* No record carries the list. Three employers are named in
 `docs/reference/title-pool.md`, which observes that one census measured 17 of

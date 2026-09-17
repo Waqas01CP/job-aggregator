@@ -52,7 +52,7 @@ supersedes and superseded-by links, deliberately not duplicated here.
 | File | Holds | Status |
 | --- | --- | --- |
 | `docs/decisions/README.md` | Every architecture decision made on this project, one file per decision, with the reasoning that produced it and the conditions that would show it was wrong. | current |
-| `docs/reference/title-pool.md` | The 50 title terms a posting must match to be admitted, plus the normalisation and matching rules applied to both sides. | current |
+| `docs/reference/title-pool.md` | The 51 title terms a posting must match to be admitted, plus the normalisation and matching rules applied to both sides. | current |
 | `docs/research/README.md` | Dated snapshots of what was found and when. Numbered by the order the pass was run, so a later reader knows what was known at each point. | current |
 | `logs/README.md` | One log per session, newest at the top. This table is the navigation index for all session history. | current |
 
@@ -74,6 +74,7 @@ supersedes and superseded-by links, deliberately not duplicated here.
 | `logs/2026-09-16-publication-date-across-untested-platforms.md` | Discovery spike across the thirteen untested ATS platforms. Whether each exposes a machine-readable endpoint and a publication date, with field names, formats and coverage. | current |
 | `logs/2026-09-16-second-observation-checks.md` | Second-observation checks on three date fields left open by the platform spike. Workday startDate confirmed behaviourally, the iCIMS suspicion withdrawn, Lever createdAt still unsettled. | current |
 | `logs/2026-09-17-first-github-runs.md` | The first manual GitHub runs. The ticked test-mode run failed its own tests because TEST_MODE reached the test step; the unticked run succeeded and created the public data branch. Fix, reproduction, and the Speechify 191 explained. | current |
+| `logs/2026-09-17-operator-decisions-d1-to-d5.md` | The operator's answers on Himalayas, local test data, the title pool, the experience rule and the board list, what was done with each, the evidence gathered for the ones still open, and the Airtable plugin examined. | current |
 | `logs/2026-09-17-run-log-reader-and-speechify.md` | The four follow-ups done without operator input. Workflow actions moved to Node 24, the em-dash count corrected, a run-log reader for ADR-0028 built, and Speechify's shrinkage explained from saved data. | current |
 | `logs/2026-09-17-runner-safe-data-branch.md` | The first GitHub run failed at the commit; five defects behind it fixed, reproduced locally before and after, and a standing verify-do-not-trust rule recorded. | current |
 | `logs/2026-09-17-test-run-verified-and-no-input-work.md` | The ticked test run verified on GitHub, a publication-lag report built, the README brought up to date, ADR-0023 annotated, a decision pack prepared for the operator, and the Airtable writer found to need the architecture chat first. | current |
@@ -113,4 +114,4 @@ supersedes and superseded-by links, deliberately not duplicated here.
 | `docs/decisions/0028-fetch-budget-and-detail-once.md` | ADR-0028: Per-run fetch budget, and detail fetched once per posting | accepted |
 | `docs/decisions/0029-adapter-order-and-dover.md` | ADR-0029: Adapter order after the slice, and Dover dropped | accepted |
 
-Files listed: 51
+Files listed: 52

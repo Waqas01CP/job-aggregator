@@ -45,9 +45,21 @@ def keep(**kw):
 
 
 class TestTitlePool(unittest.TestCase):
-    def test_pool_has_fifty_terms(self):
+    def test_pool_has_fifty_one_terms(self):
+        """Version 2, 2026-09-17, added `forward deployment` to the 50 of
+        version 1. The measurement section after Known behaviour quotes 39
+        more terms in backticks, and none of them may be read as pool terms."""
         terms, exempt = load_title_pool()
-        self.assertEqual(len(terms), 50, "the pool file says 50 terms")
+        self.assertEqual(len(terms), 51, "the pool file says 51 terms")
+        self.assertEqual(len(set(terms)), 51, "a term is listed twice")
+
+    def test_forward_deployment_closes_the_gap_the_plural_rule_leaves(self):
+        """On 2026-09-16 "Forward Deployment Engineer" was dropped while
+        "Senior Forward Deployed Engineer" was kept: the plural suffix reaches
+        only a term's final word, so `forward deployed` cannot produce it."""
+        self.assertEqual(MATCHER.match("Forward Deployment Engineer"), "forward deployment")
+        self.assertEqual(MATCHER.match("Senior Forward Deployed Engineer"), "forward deployed")
+        self.assertIsNone(MATCHER.match("Deployment Engineer"))
 
     def test_exempt_single_tokens_are_read_from_the_file(self):
         _, exempt = load_title_pool()
