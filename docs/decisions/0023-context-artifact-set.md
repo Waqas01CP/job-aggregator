@@ -73,7 +73,7 @@ Onboarding is four files and a pointer-following rule, rather than a file count 
 
 Two new hand-maintained artifacts exist. Both have a same-commit rule and both are cheap to check.
 
-`STATE.md` is not generated and therefore can drift. The verified-against header makes drift visible; the same-commit rule is what prevents it; neither is a gate yet.
+`STATE.md` is not generated and therefore can drift. The verified-against header makes drift visible; the same-commit rule is what prevents it; neither is a gate yet. *(Annotated 2026-09-17: out of date. The same-commit rule has been a gate since commit `7b5633e`, dated 2026-09-15; see Changes.)*
 
 The `[VERIFIED]` and `[BELIEVED]` split means the state file is honest about its own confidence, which a plain checklist cannot be.
 
@@ -109,3 +109,4 @@ Reading order is authoritative per ADR-0022. Log format is ADR-0024.
 | Date | Change | Reason |
 |---|---|---|
 | 2026-09-11 | The end-state document moved from deferred-pending-a-read to confirmed open | `SPRINT_PLAN.md` was read. It is a task plan, not a statement of the finished system, so there is no prior art to port and the gap is real |
+| 2026-09-17 | Factual correction, not a change of decision: the Consequences sentence saying the same-commit rule is not a gate yet | Gate 4 of `.githooks/pre-commit`, added in commit `7b5633e` (author date 2026-09-15), blocks a commit that stages implementation paths without `STATE.md`. `STATE.md` records it as proven to fire. The verified-against header is still not gated |

@@ -53,7 +53,7 @@ The first report said "the one em-dash, which was already in `CLAUDE.md:46`". **
 | `docs/research/0004-project-context-documentation.md` | 7 | prose in a research record | left; not an implementing session's to restyle |
 | `docs/architecture.md` | 37 | prose in the superseded architecture | left |
 
-**Noticed:** the two `—` escapes I wrote into `tests/test_storage.py` in the previous brief reached the file as literal characters, and so did the Japanese test strings. The editing tool decodes `\u` escapes in its input. Python reads both forms identically, so nothing broke `[VERIFIED]` by the suite, but a later session writing escapes on purpose should check the bytes with `cat -A`.
+**Noticed:** the two `\u2014` escapes I wrote into `tests/test_storage.py` in the previous brief reached the file as literal characters, and so did the Japanese test strings. The editing tool decodes `\u` escapes in its input. Python reads both forms identically, so nothing broke `[VERIFIED]` by the suite, but a later session writing escapes on purpose should check the bytes with `cat -A`.
 
 ## 3. The run-log reader
 
@@ -150,7 +150,7 @@ Design choices, each with its reason:
 - **The handoff's and the slice log's reason for having no location filter is wrong for this pipeline.** Both say the geocoder writes "Karachi, Punjab, Pakistan". That comes from `docs/architecture-2.0.md:408`, about harvested data. `[VERIFIED]` no stored row contains it, and the Careem role reads "Karachi, Pakistan; Lahore, Pakistan". The slice log carries a dated correction.
 - **GitHub's documentation on manual runs** `[VERIFIED]`: "To trigger the `workflow_dispatch` event, your workflow must be in the default branch", and the run's branch is chosen from a Branch dropdown. The disabling page says a disabled workflow is stopped "from being triggered" and does not say whether that includes manual runs.
 - **`docs/architecture-2.0.md:302`** still reads "1 could not start". CLAUDE.md now gives exit 1 two causes. CLAUDE.md outranks it, so this is a stale line, not a conflict.
-- **ADR-0023:76** says of STATE.md's staleness controls that "neither is a gate yet". Gate 4 of the pre-commit hook has been one since 2026-09-11. A factual correction for a dated annotation.
+- **ADR-0023:76** says of STATE.md's staleness controls that "neither is a gate yet". Gate 4 of the pre-commit hook has been one since 2026-09-11. A factual correction for a dated annotation. **Correction, 2026-09-17, later the same day:** the gate was added by commit `7b5633e`, whose author date is 2026-09-15, not 2026-09-11. The 2026-09-11 came from `STATE.md`'s Tooling row, which now carries the same note.
 - **ADR-0023 never calls STATE.md "ground truth"** `[VERIFIED]` by grep, so the verify-do-not-trust rule conflicts with no record.
 
 ## Rejected alternatives
