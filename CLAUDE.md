@@ -9,7 +9,8 @@ status: current
 A scheduled pipeline that polls employer ATS job boards, filters the results
 against fixed rules, and writes what survives to a table for review.
 
-**Nothing is built yet.** Documentation only.
+**The vertical slice is built.** `STATE.md` says what exists, what has run,
+and what is blocked.
 
 ## Reading order
 
@@ -18,8 +19,10 @@ documented file set.
 
 1. **This file.** How to work here.
 2. **`STATE.md`.** What exists, what is blocked, and where the proof is. It is
-   ground truth, not memory. If it says done, it is done. "I remember this was
-   pending" is not evidence.
+   where you start, not where you stop. It outranks memory: "I remember this
+   was pending" is not evidence. It does not outrank the code or the data:
+   where a row disagrees with them, the row is stale. Report it and correct
+   it. See "Verify, do not trust" below.
 3. **`logs/README.md`.** What prior sessions did. When you need more, read the
    most recent relevant log; it references the one before it; chain backwards
    only as far as you need and stop when you have enough.
@@ -103,6 +106,28 @@ resumable. The orchestrator treats 2 as non-fatal.
 week is a broken adapter. Without a zero logged it looks like a quiet market.
 
 ## Verification
+
+**Verify, do not trust.** Every claim is unverified until you have checked it
+in this session. That covers briefs, handoffs, logs, `STATE.md`, decision
+records, anything pasted from another session, anything from outside this
+repository, and your own earlier conclusions. A wrong claim accepted once gets
+built on, and every later session inherits it. A handoff once stated that a
+`test_mode` workflow run would not touch production data. It would have: the
+workflow never passed `--no-commit`, and test-mode files mapped onto
+production paths of the same branch. Reading the code caught it.
+
+- **Check before you act.** A claim you are about to build on gets a command,
+  a file read or a test first. Cheap checks happen now, not later.
+- **A claim you cannot check**, because it needs the network, credentials or
+  the operator, is marked unverified and is not acted on as though true.
+- **A claim that fails its check is reported** with the evidence. Never
+  corrected quietly, never acted on in its unchecked form.
+- **Where a document's account of what exists or what happened disagrees with
+  the code or the data, the code and the data win.** Report the document as
+  stale. This is a different axis from the authority order above, which
+  settles documents against documents.
+- **Tag what you pass on**: checked this session, taken from a log, or
+  inferred, so the next reader knows what to re-check.
 
 **A check that cannot fail is worse than no check.** Prove a check by giving it
 the case built to defeat it, and say what that case was.

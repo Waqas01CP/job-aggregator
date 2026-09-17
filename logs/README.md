@@ -2,7 +2,7 @@
 
 One log per session, newest at the top. This table is the navigation index for all session history.
 
-Nothing has been implemented. The first rows are diagnostic sessions, not implementing ones.
+The first rows are diagnostic sessions. Implementation began with the vertical slice on 2026-09-17.
 
 ## How to use this file
 

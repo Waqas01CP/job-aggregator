@@ -6,9 +6,9 @@ status: current
 
 # STATE
 
-**Last verified against `main` at `603752e`, 2026-09-17**, for the Pipeline rows the slice build touched. Documentation and Tooling rows are carried forward from earlier verifications and were not rechecked.
+**Last verified against `main` at `cd1f290`, 2026-09-17**, for the Headline, the propagation entry under Known unverified, and the Pipeline rows the slice build touched. Documentation and Tooling rows are carried forward from earlier verifications and were not rechecked.
 
-This file is ground truth. If a row says DONE, it is done. If you believe otherwise, read the file the pointer names before claiming a conflict. Memory is not evidence.
+This file is where to start, not where to stop. It outranks memory: if you believe a row is wrong, read the file the pointer names before claiming a conflict. It does not outrank the code or the data. Where a row disagrees with them, the row is stale; report it and correct it. On 2026-09-17 four stale lines were found here that way.
 
 Organised by task, not by session, because logs are chronological and one task spans many of them.
 
@@ -30,7 +30,7 @@ Update the verified-against line whenever you touch this file.
 
 ## Headline
 
-**The vertical slice runs end to end.** Every component is built and tested, and the orchestrator has polled all eleven live boards twice in TEST_MODE. What remains before go-live: the workflow has never run on GitHub, nothing has been written to the data branch in anger, and the Airtable display layer does not exist. Nothing has run against a live board from pipeline code yet.
+**The vertical slice runs end to end on this machine and has run once on GitHub, where it failed at the last step.** Every component is built and tested. The orchestrator polled every configured board in four logged TEST_MODE runs from this machine, all with `--no-commit`. Scheduled run 35179218050 on 2026-09-17 polled all twelve boards on GitHub, fetched 1239 postings and failed at the data-branch commit, so nothing has been written to a data branch anywhere, locally or on the remote. The Airtable display layer does not exist.
 
 Four spikes have run and their findings are folded into the records. The four decisions they raised are answered by ADR-0028 and ADR-0029.
 
@@ -85,6 +85,7 @@ Four spikes have run and their findings are folded into the records. The four de
 | Airtable base and schema | PENDING | — | — | Deferred until real output exists |
 | Airtable writer | PENDING | — | — | ADR-0004 |
 | Scheduled workflow | DONE | [VERIFIED] orchestrator run twice against all 11 live boards in TEST_MODE: 917 postings, 19 kept, second run wrote nothing and both files byte-identical. Workflow file written, not yet exercised by GitHub | 2026-09-17 | `2026-09-17-vertical-slice.md`, ADR-0006 |
+| Scheduled workflow, first run on GitHub. Supersedes the row above's "not yet exercised by GitHub" | PARTIAL | [VERIFIED] through the public Actions API: run 35179218050, schedule event, 2026-09-17T03:43Z, head `cd1f290`; the test step passed, Fetch failed with "the run could not start", push skipped; `git ls-remote --heads origin` shows only `main`. From the step 6 log the operator supplied, not checkable here: Python 3.11.16, all 12 boards `ok`, 1239 fetched, 37 kept, 36 of 500 requests, then `commit-tree` failed with "Author identity unknown" and the run exited 1 as an uncaught exception | 2026-09-17 | Run 35179218050 and its step 6 log |
 | Weekly outcome sweep | PENDING | — | — | ADR-0014 |
 | Contract check | PENDING | — | — | ADR-0018 |
 
@@ -114,7 +115,7 @@ Four spikes have run and their findings are folded into the records. The four de
 
 ## Known unverified
 
-**Boards publish to their APIs at the moment a posting goes live.** ADR-0006's cadence rests on it. [VERIFIED] partially: one run found a Greenhouse posting 0.26 hours old. That cannot separate instant publication from a quiet window. The second run that settles it has not been done. `2026-09-11-endpoint-feasibility-spike.md`.
+**Boards publish to their APIs at the moment a posting goes live.** ADR-0006's cadence rests on it. **Recorded as confirmed 2026-09-11** in ADR-0006's Assumptions, and its Changes row explains why: a posting 0.26 hours old at fetch is positive evidence, and a second run "would tighten the bound and cannot change the verdict". The record outranks this file under ADR-0022. Until 2026-09-17 this entry read "[VERIFIED] partially" and asked for a second run; it predated the record's amendment and was stale. `2026-09-11-endpoint-feasibility-spike.md`, ADR-0006.
 
 **Many ATS platforms expose no publication date.** ADR-0007 asserts it. **Now settled across 16 platforms and it holds, narrowly.** [VERIFIED] a publication date exists on Greenhouse, Lever, Himalayas, Ashby, Workable, SmartRecruiters, Breezy, Pinpoint and BambooHR, and on JazzHR, Freshteam, Zoho and iCIMS only inside per-posting HTML. [VERIFIED] **Manatal exposes no date field of any kind**, across 2 boards and 34 postings, and it holds 8 registry boards. Dover's per-employer board carries none either. Manatal rows can never satisfy Measure A and must use ADR-0007's first-seen fallback. ADR-0007 is unrevised. `2026-09-16-publication-date-across-untested-platforms.md`.
 

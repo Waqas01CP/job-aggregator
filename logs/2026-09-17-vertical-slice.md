@@ -349,6 +349,8 @@ session's.
 
 ### Per board, from the first live run
 
+**Correction, 2026-09-17, by the following session.** This table mixes two runs, so its rows need not sum. The Postings column is from run 1 (ATS total 917, CodeRoad 29). The Dropped and Kept columns are from the run recorded in `data/test/logs-runs/20260916T200345.122061Z.json`, the only run log that survives (ATS total 916, CodeRoad 28, `test_mode` true). CodeRoad lost a posting between those runs. `[VERIFIED]` that run log shows `greenhouse:coderoad` fetched 28, dropped 22 by title, kept 6; the stored `data/test/fetch-all/greenhouse.json` holds 28 CodeRoad rows; and no identity is duplicated across the three stored raw files. The same mix explains why this log says 917 in some places and 916 in others.
+
 | Board | Postings | Dropped | Kept |
 |---|---|---|---|
 | greenhouse:speechify | 361 | 361 | **0** |
