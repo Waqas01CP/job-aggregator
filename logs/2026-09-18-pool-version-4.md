@@ -57,6 +57,8 @@ Recorded for the operator's decision rather than acted on. Nothing was fetched.
 
 `[VERIFIED]` the operator ran `/reload-plugins`, whose output says "Plugin MCP server changes take effect in your next session". The Airtable skills are loaded, but no Airtable tool is available here: a tool search returns nothing. The schema build belongs to the next session, with the task text already given to the operator.
 
+**Corrected 2026-09-18 by the next session: a new session is not enough.** The server is installed and unauthorized. `~/.claude/mcp-needs-auth-cache.json` lists `plugin:airtable:airtable` as needing authentication, so a tool search returns nothing in any session until the operator authorizes it through `/mcp` in an interactive one and approves it in the browser. The session after that authorization is the one that can build the schema, and its first check is to list the bases.
+
 ## Not done
 
 - Nothing pushed at the time of writing. **Corrected at session close:** the operator pushed `ffccf8f` and `57f9382` while this was being written, so GitHub now runs pool version 3 with the seniority rule; only `085c434`, pool version 4, was still local.
