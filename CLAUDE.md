@@ -43,7 +43,7 @@ Higher wins, without exception. ADR-0022.
 3. `docs/decisions/`, excluding anything marked superseded
 4. `docs/architecture-2.0.md`
 5. `docs/reference/`
-6. `docs/research/` — evidence for decisions, never a decision
+6. `docs/research/`, which is evidence for decisions, never a decision
 7. Everything else, including `docs/architecture.md`, which is superseded and
    must never be implemented from
 8. Anything from outside this repository, including your own Auto Memory

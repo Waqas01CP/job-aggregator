@@ -46,14 +46,20 @@ jobs:
       TEST_MODE: ${{ inputs.test_mode && '1' || '0' }}
       DATA_BRANCH: ${{ inputs.test_mode && 'data-test' || 'data' }}
 
+    # Action versions are the lowest majors that run on Node 24. Run
+    # 35179218050 warned that checkout@v4 and setup-python@v5 target Node 20
+    # and were being forced onto 24. checkout v5's only change was the runtime;
+    # v6 moved persisted credentials to a separate file, which the push step
+    # below depends on, so it is left for a change that can be tested on its
+    # own. Checked 2026-09-17 against each tag's action.yml and release notes.
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           # The data branch is orphan and is never checked out. The run writes
           # it with plumbing, so only main is needed here.
           fetch-depth: 1
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: "3.11"
 

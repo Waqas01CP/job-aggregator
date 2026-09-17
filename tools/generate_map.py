@@ -41,7 +41,11 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 MAP_PATH = REPO_ROOT / "MAP.md"
 
-SKIP_DIRS = {".git", ".github", "node_modules", "__pycache__", ".venv", "venv", ".commitmsg"}
+# data/ and raw_responses/ are gitignored working data, never part of the
+# record. A markdown report written under data/ on 2026-09-17 halted this
+# generator, and with it the pre-commit hook, until data/ was listed here.
+SKIP_DIRS = {".git", ".github", "node_modules", "__pycache__", ".venv", "venv", ".commitmsg",
+             "data", "raw_responses"}
 
 # Files this generator walks past. MAP.md is its own output. CHAT_STATE.md
 # is gitignored local scratch: it is not part of the project record, so it

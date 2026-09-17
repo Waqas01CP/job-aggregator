@@ -60,6 +60,16 @@ class TestWorkflow(unittest.TestCase):
         self.assertLess(self.text.index("python -m unittest discover"),
                         self.text.index("python -m src.run"))
 
+    def test_no_action_targets_node_20(self):
+        """Run 35179218050 warned that checkout@v4 and setup-python@v5 target
+        Node 20. Each tag's action.yml was read on 2026-09-17: checkout v5 and
+        setup-python v6 are the first majors declaring node24."""
+        first_node24 = {"actions/checkout": 5, "actions/setup-python": 6}
+        used = re.findall(r"uses:\s*(actions/[\w-]+)@v(\d+)", self.text)
+        self.assertEqual(sorted(name for name, _ in used), sorted(first_node24))
+        for name, major in used:
+            self.assertGreaterEqual(int(major), first_node24[name], name)
+
     def test_exit_1_is_not_labelled_as_could_not_start(self):
         """Run 35179218050 failed at the commit after a full fetch and the
         workflow announced that the run could not start."""

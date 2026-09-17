@@ -6,7 +6,7 @@ status: current
 
 # STATE
 
-**Last verified against `main` at `dcc056a` plus the commit that carries this line, 2026-09-17**, for the Headline, the Blocked section, the propagation entry under Known unverified, the Pipeline rows, and the mutation harness row. Documentation and Tooling rows are carried forward from earlier verifications and were not rechecked.
+**Last verified against `main` at `659bbee` plus the commit that carries this line, 2026-09-17**, for the Headline, the Blocked section, the Known unverified entries dated 2026-09-17, the Pipeline rows, and the Tooling rows for the mutation harness and the run-log reader. Documentation and Tooling rows are carried forward from earlier verifications and were not rechecked.
 
 This file is where to start, not where to stop. It outranks memory: if you believe a row is wrong, read the file the pointer names before claiming a conflict. It does not outrank the code or the data. Where a row disagrees with them, the row is stale; report it and correct it. On 2026-09-17 four stale lines were found here that way.
 
@@ -63,6 +63,7 @@ Four spikes have run and their findings are folded into the records. The four de
 | Virtual environment and dependency pin | DONE | [VERIFIED] `.venv` created, `requirements.txt` pinned at requests 2.34.2, 185 tests run under it | 2026-09-17 | `CLAUDE.md` commands |
 | Working files consolidated under `data/` | DONE | [VERIFIED] repository root holds 7 files and nothing the pipeline writes; branch paths unchanged per ADR-0020 | 2026-09-17 | `2026-09-17-vertical-slice.md` |
 | Mutation harness kept in the repository | DONE | [VERIFIED] a known mutation reported caught, a docstring edit reported survived with exit 1, an anchor occurring 23 times refused before anything ran, and every file byte-identical afterwards. The previous harness and its 79 mutations lived in a scratchpad and are lost | 2026-09-17 | `tools/mutate.py`, `2026-09-17-runner-safe-data-branch.md` |
+| Run-log reader for ADR-0028's Confirmation | DONE | [VERIFIED] 23 tests, 22 mutations with the one survivor fixed, and read correctly from seven real log sources, including the old code's test log on a production branch, which it refused. Has not read a production data branch, because none exists. Proposes no ceiling | 2026-09-17 | `tools/run_log_report.py`, `2026-09-17-run-log-reader-and-speechify.md` |
 | State file staleness gate | DONE | [VERIFIED] blocked a commit staging `tools/` without `STATE.md` | 2026-09-11 | `.githooks/pre-commit` gate 4, ADR-0023 |
 
 ## Pipeline
@@ -90,6 +91,7 @@ Four spikes have run and their findings are folded into the records. The four de
 | Data branch safe on a runner: fixed commit identity, bytes at the git boundary, state restored from the branch before a committing run, test mode on its own `data-test` branch, and the workflow fetching and pushing the branch its mode chose | DONE | [VERIFIED] by tests, mutations, and simulated runs against a local bare repository with the network replaced. **Not pushed, so not yet run on GitHub** | 2026-09-17 | `2026-09-17-runner-safe-data-branch.md` |
 | ADR-0020 applied to the filtered layer and the seen store, with a content guard on every file offered to the branch | DONE | [VERIFIED] the old code pushed 2 Himalayas records in each of `filtered.json` and `seen.json` in simulation; the new code pushes none, keeps them in `data/local/`, and refuses to commit a file holding a record whose source is not publishable | 2026-09-17 | `2026-09-17-runner-safe-data-branch.md` |
 | A run that fails after fetching says so | DONE | [VERIFIED] exit 1 still, with the failing stage named and "the fetch completed" printed; the workflow no longer annotates every exit 1 as "could not start" | 2026-09-17 | `2026-09-17-runner-safe-data-branch.md` |
+| Workflow actions on Node 24: `checkout@v5`, `setup-python@v6` | DONE | [VERIFIED] each tag's `action.yml` declares node24 and a test holds the majors. [BELIEVED] run 35179218050's Node 20 annotation is gone; only a GitHub run shows it | 2026-09-17 | `2026-09-17-run-log-reader-and-speechify.md` |
 | Weekly outcome sweep | PENDING | — | — | ADR-0014 |
 | Contract check | PENDING | — | — | ADR-0018 |
 
@@ -101,7 +103,7 @@ Four spikes have run and their findings are folded into the records. The four de
 
 **The four decisions the spikes raised are answered.** ADR-0028 sets a per-run fetch budget and fetches a posting's detail once ever rather than once per run. ADR-0029 fixes adapter order after the slice at Ashby, Workable, SmartRecruiters, Breezy and Manatal, drops Dover, and declares the registry tiers obsolete. ADR-0026 gained `envelope` and `constructed` and now covers the canonical URL.
 
-**Waiting on the operator, as of 2026-09-17.** Pushing `main`: the scheduled run on GitHub still uses `cd1f290` and will fail at the commit, twice a day, after 36 requests. Pausing the schedule until then is recommended as hygiene: nothing can leak while the identity failure stands, but every run spends its requests for nothing. A manual `test_mode` dispatch is safe only after the push. Whether Himalayas stays in `config/boards.json` meanwhile, given the finding below. The title pool, the experience threshold's value, and the board list (Speechify, CodeRoad) are the operator's, not the chat's.
+**Waiting on the operator, as of 2026-09-17.** Pushing: the scheduled run on GitHub still uses `cd1f290` and will fail at the commit, twice a day. A manual `test_mode` run is safe only on the new code, which can be pushed to a separate branch and run from there before `main` is pushed. Whether Himalayas stays in `config/boards.json` meanwhile, given the finding below. Whether `data/test/` may be moved aside. The title pool, the experience threshold's value, and the board list (Speechify, CodeRoad) are the operator's, not the chat's; the material for them is in `data/reports/title-pool-review-2026-09-17.md`, local only.
 
 **New for the architecture chat, from `2026-09-17-runner-safe-data-branch.md`.** *Himalayas on a runner keeps nothing:* ADR-0020 assumes aggregator history lives on the operator's machine, but the schedule runs on a discarded runner, so every scheduled run is Himalayas' first contact and its kept rows are lost. *ADR-0020's promised hook guard was never added*, and a hook cannot see a `commit-tree` commit anyway. *Seen-store entries were treated as rows* under ADR-0020, the conservative reading. *Exit 1 now has two causes* within the three fixed codes.
 
@@ -140,6 +142,10 @@ Four spikes have run and their findings are folded into the records. The four de
 **The title pool admits 2.1% of postings, and 40 of its 50 terms admitted nothing.** [VERIFIED] 19 rows from 916, seven of them Pakistan-reachable. One concrete gap found: "Forward Deployment Engineer" is dropped while "Senior Forward Deployed Engineer" is kept, because ADR-0021's plural rule cannot reach "Deployment" from `forward deployed`. Widening the pool is the operator's call. `2026-09-17-vertical-slice.md`.
 
 **Lever `createdAt` means published.** Still open. [VERIFIED] not contradicted: across five days both Lever boards produced one new posting, whose `createdAt` postdates the baseline clock, so 0 of 1 newly visible postings predate it. One appearance cannot establish the field's meaning. If Lever enters the slice, twice-daily polling answers this from the pipeline's own data within days. `2026-09-16-second-observation-checks.md`.
+
+**Speechify's shrinking board is closures, not a fault.** [VERIFIED] for 2026-09-11 to 2026-09-16, 1086 to 361: 723 of the 813 lost postings are four whole roles that closed, each posted once per location; the other 90 are location copies of open roles, nearly matched by 87 new copies. [RUN LOG] 191 on 2026-09-17, not explained, since that run's postings were discarded. The first pushed run answers it without an extra request. `2026-09-17-run-log-reader-and-speechify.md`.
+
+**Scheduled runs keep running.** [VERIFIED] from GitHub's documentation: "In a public repository, scheduled workflows are automatically disabled when no repository activity has occurred in 60 days." Whether the pipeline's own data-branch pushes count as activity is not established. `2026-09-17-run-log-reader-and-speechify.md`.
 
 **Postings per run are on the order of one thousand.** ADR-0001:27, inherited by ADR-0003:28. [VERIFIED] false: 11 of the 53 boards return 1646 postings. Median 27 per board, maximum 1086. The 53-board total is unmeasured. `2026-09-15-spike-followup-checks.md`.
 
