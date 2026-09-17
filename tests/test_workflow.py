@@ -42,6 +42,19 @@ class TestWorkflow(unittest.TestCase):
         self.assertRegex(self.text, r"TEST_MODE:\s*\$\{\{\s*inputs\.test_mode\s*&&\s*'1'"
                                     r"\s*\|\|\s*'0'\s*\}\}")
 
+    def test_test_mode_is_scoped_to_the_fetch_step_only(self):
+        """Set at job level, TEST_MODE also reached the test step, and run
+        35236457737 failed seven of its own tests. It must be defined exactly
+        once, inside the Fetch step, after the test step."""
+        lines = self.text.splitlines()
+        defined = [i for i, l in enumerate(lines) if l.strip().startswith("TEST_MODE:")]
+        self.assertEqual(len(defined), 1, "TEST_MODE is defined more than once")
+        fetch_step = next(i for i, l in enumerate(lines) if l.strip() == "- name: Fetch")
+        next_step = next(i for i, l in enumerate(lines)
+                         if i > fetch_step and l.strip().startswith("- name:"))
+        self.assertTrue(fetch_step < defined[0] < next_step,
+                        "TEST_MODE is not set inside the Fetch step")
+
     def test_git_steps_use_the_chosen_branch_and_never_a_literal_one(self):
         self.assertIn('git fetch --no-tags --depth=1 origin '
                       '"refs/heads/$DATA_BRANCH:refs/heads/$DATA_BRANCH"', self.text)

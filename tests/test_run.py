@@ -273,6 +273,11 @@ class TestMain(unittest.TestCase):
     its branches, and no working copies under data/."""
 
     def setUp(self):
+        # main() reads TEST_MODE from the environment. These tests must not
+        # inherit it: run 35236457737 set it for the whole job, so the test
+        # step saw TEST_MODE=1 and seven of these tests failed on GitHub while
+        # passing on every machine without it.
+        self.env_test_mode = os.environ.pop("TEST_MODE", None)
         self.dir = tempfile.mkdtemp()
         self.cwd = os.getcwd()
         os.chdir(self.dir)
@@ -287,6 +292,9 @@ class TestMain(unittest.TestCase):
     def tearDown(self):
         (storage.REPO_ROOT, storage.commit_files, storage.restore_from_branch,
          run_module.load_boards, run_module.HttpClient) = self.real
+        os.environ.pop("TEST_MODE", None)
+        if self.env_test_mode is not None:
+            os.environ["TEST_MODE"] = self.env_test_mode
         os.chdir(self.cwd)
         shutil.rmtree(self.dir, ignore_errors=True)
 
@@ -371,6 +379,23 @@ class TestMain(unittest.TestCase):
         self.assertEqual(self.git("rev-parse", "data")[1], production)
         self.assertIn("greenhouse:1099", self.identities("data-test"))
         self.assertNotIn("greenhouse:1099", self.identities("data"))
+
+    def test_the_environment_variable_selects_test_mode(self):
+        """The workflow selects test mode with TEST_MODE=1, not the flag, and
+        nothing tested that route until run 35236457737."""
+        self.main()
+        _, production = self.git("rev-parse", "data")
+        os.environ["TEST_MODE"] = "1"
+        self.payload = gh_payload(["Data Scientist"], start=99)
+        self.assertEqual(self.main()[0], EXIT_OK)
+        self.assertEqual(self.git("rev-parse", "data")[1], production)
+        self.assertIn("greenhouse:1099", self.identities("data-test"))
+
+    def test_any_other_value_leaves_production_mode(self):
+        os.environ["TEST_MODE"] = "0"
+        self.assertEqual(self.main()[0], EXIT_OK)
+        self.assertEqual(self.git("rev-parse", "--verify", "--quiet", "data")[0], 0)
+        self.assertNotEqual(self.git("rev-parse", "--verify", "--quiet", "data-test")[0], 0)
 
     def test_test_mode_with_no_production_branch_creates_none(self):
         self.assertEqual(self.main("--test-mode")[0], EXIT_OK)

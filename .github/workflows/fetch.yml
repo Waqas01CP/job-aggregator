@@ -42,8 +42,11 @@ jobs:
     # inside it, so sharing the production branch would put test files on
     # production paths. src/storage.py names the same two branches and
     # tests/test_workflow.py holds them in step.
+    #
+    # TEST_MODE is deliberately not set here. At job level the test step saw
+    # it too, and run 35236457737 failed its own tests with TEST_MODE=1. It is
+    # set on the Fetch step only.
     env:
-      TEST_MODE: ${{ inputs.test_mode && '1' || '0' }}
       DATA_BRANCH: ${{ inputs.test_mode && 'data-test' || 'data' }}
 
     # Action versions are the lowest majors that run on Node 24. Run
@@ -87,6 +90,8 @@ jobs:
 
       - name: Fetch
         id: fetch
+        env:
+          TEST_MODE: ${{ inputs.test_mode && '1' || '0' }}
         run: |
           set +e
           python -m src.run

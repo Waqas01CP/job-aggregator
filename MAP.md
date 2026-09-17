@@ -73,6 +73,7 @@ supersedes and superseded-by links, deliberately not duplicated here.
 | `logs/2026-09-15-spike-followup-checks.md` | Spike follow-up. Board volume measured, Speechify age floor examined, Lever createdAt checked against hosted pages, Himalayas newest-first pagination tested. | current |
 | `logs/2026-09-16-publication-date-across-untested-platforms.md` | Discovery spike across the thirteen untested ATS platforms. Whether each exposes a machine-readable endpoint and a publication date, with field names, formats and coverage. | current |
 | `logs/2026-09-16-second-observation-checks.md` | Second-observation checks on three date fields left open by the platform spike. Workday startDate confirmed behaviourally, the iCIMS suspicion withdrawn, Lever createdAt still unsettled. | current |
+| `logs/2026-09-17-first-github-runs.md` | The first manual GitHub runs. The ticked test-mode run failed its own tests because TEST_MODE reached the test step; the unticked run succeeded and created the public data branch. Fix, reproduction, and the Speechify 191 explained. | current |
 | `logs/2026-09-17-run-log-reader-and-speechify.md` | The four follow-ups done without operator input. Workflow actions moved to Node 24, the em-dash count corrected, a run-log reader for ADR-0028 built, and Speechify's shrinkage explained from saved data. | current |
 | `logs/2026-09-17-runner-safe-data-branch.md` | The first GitHub run failed at the commit; five defects behind it fixed, reproduced locally before and after, and a standing verify-do-not-trust rule recorded. | current |
 | `logs/2026-09-17-vertical-slice.md` | The vertical slice built end to end. Config, HTTP module, Greenhouse and Lever adapters, normaliser, deduplicator, filter chain, writers, orchestrator and schedule, plus Himalayas on condition. | current |
@@ -111,4 +112,4 @@ supersedes and superseded-by links, deliberately not duplicated here.
 | `docs/decisions/0028-fetch-budget-and-detail-once.md` | ADR-0028: Per-run fetch budget, and detail fetched once per posting | accepted |
 | `docs/decisions/0029-adapter-order-and-dover.md` | ADR-0029: Adapter order after the slice, and Dover dropped | accepted |
 
-Files listed: 49
+Files listed: 50

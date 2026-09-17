@@ -1,0 +1,22 @@
+[
+ {"label": "run: TEST_MODE in the environment ignored",
+  "path": "src/run.py",
+  "find": "    test_mode = args.test_mode or os.environ.get(\"TEST_MODE\") == \"1\"",
+  "replace": "    test_mode = args.test_mode"},
+ {"label": "run: any TEST_MODE value selects test mode",
+  "path": "src/run.py",
+  "find": "    test_mode = args.test_mode or os.environ.get(\"TEST_MODE\") == \"1\"",
+  "replace": "    test_mode = args.test_mode or bool(os.environ.get(\"TEST_MODE\"))"},
+ {"label": "tests: main() tests inherit TEST_MODE (run with TEST_MODE=1 set)",
+  "path": "tests/test_run.py",
+  "find": "        self.env_test_mode = os.environ.pop(\"TEST_MODE\", None)",
+  "replace": "        self.env_test_mode = os.environ.get(\"TEST_MODE\")"},
+ {"label": "workflow: TEST_MODE also set for the whole job",
+  "path": ".github/workflows/fetch.yml",
+  "find": "    env:\n      DATA_BRANCH: ${{ inputs.test_mode && 'data-test' || 'data' }}",
+  "replace": "    env:\n      TEST_MODE: ${{ inputs.test_mode && '1' || '0' }}\n      DATA_BRANCH: ${{ inputs.test_mode && 'data-test' || 'data' }}"},
+ {"label": "workflow: TEST_MODE missing from the Fetch step",
+  "path": ".github/workflows/fetch.yml",
+  "find": "        env:\n          TEST_MODE: ${{ inputs.test_mode && '1' || '0' }}\n",
+  "replace": ""}
+]
