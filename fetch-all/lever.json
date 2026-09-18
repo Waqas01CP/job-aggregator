@@ -796,5 +796,26 @@
   "url_provenance": "payload",
   "stated_experience": null,
   "expires_at": null
+ },
+ {
+  "identity": "lever:1c8952b4-72f9-44b6-b9ef-b8f652bda87a",
+  "source": "lever",
+  "board_id": "lever:spreetail",
+  "external_id": "1c8952b4-72f9-44b6-b9ef-b8f652bda87a",
+  "employer": "Spreetail",
+  "employer_provenance": "slug",
+  "title": "Senior Director, Retail FP&A",
+  "title_normalised": "Senior Director, Retail FP&A",
+  "location": "Nebraska",
+  "published_at": "2026-09-17T22:02:24.044000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-09-18T03:29:29.064215Z",
+  "ordering_date": "2026-09-17T22:02:24.044000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/spreetail/1c8952b4-72f9-44b6-b9ef-b8f652bda87a",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null
  }
 ]
