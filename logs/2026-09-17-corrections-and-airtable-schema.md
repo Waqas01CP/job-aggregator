@@ -269,6 +269,54 @@ location gap and its real difficulty recorded.
 - **Nothing is pushed.** The brief's last line says "commit, push". The
   standing protocol in this project is that the operator pushes. Stopped at
   the commit and asked.
-- The scheduled run still had not fired.
 - Himalayas storage, the location tag and the aggregator question are held for
   the chat's second brief.
+
+---
+
+# The run landed, and the prediction held
+
+`[VERIFIED]` run 35303384355, `schedule`, created 2026-09-18T03:29:18Z at
+`bceb3d9`, every step succeeded. Three hours and twenty-nine minutes after its
+00:00 slot, the least late of the three scheduled runs. `data` moved from
+`91f7518` to `90553c3`.
+
+**It is the first run on pool version 4 with the seniority rule, and it wrote
+nothing to the public filtered file.**
+
+| | Run 2 | Run 3 |
+|---|---|---|
+| `fetch-all/greenhouse.json` | 766 | 770 |
+| `fetch-all/lever.json` | 38 | 39 |
+| `seen.json` | 804 | 809 |
+| **`filtered.json`** | **24** | **24** |
+
+The run log says why, and it is exactly the mechanism this session recorded:
+
+- fetched 1297, new 505, **chain kept 294**, dropped 938 by title and **65 by
+  seniority**;
+- `written_filtered` 24, of which `written_filtered_local` 24, so **0 rows
+  reached the public file** and all 24 were Himalayas rows written locally;
+- Speechify: fetched 255, **kept 241, new 0**.
+
+So the chain admits 294 rows and the public file holds 24 of an older
+vintage. The handoff expected roughly 241 new rows on this run. The measured
+answer is zero, the reason is that every kept row's identity was already in
+the seen store, and ADR-0030's backfill is the thing that closes the gap.
+This is the prediction being tested by the run rather than argued about.
+
+**The seniority rule's first production run** dropped 65 rows, across Careem,
+CodeRoad, Globalli, Motive, Veeam, Spreetail and Himalayas.
+
+**Himalayas kept 24 roles and lost all of them.** Third run, third first
+contact, 25 of 36 requests again. The run-log report flags it as "every run".
+That is now three observations of ADR-0020's premise failing on a runner, and
+it is the clearest evidence the operator has for that decision.
+
+**Publication lag, three runs:** 11 of 11 Greenhouse and **2 of 2 Lever**
+postings first seen after run 1 are dated after the run that missed them, none
+at or before. Lever's `createdAt` now has a second observation. Still
+consistent, still not proof.
+
+**Requests:** 36 in every run, 9 Greenhouse, 2 Lever, 25 Himalayas. No run
+near the 500 ceiling, 0 retries, 0 failures across all three.
