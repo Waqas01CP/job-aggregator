@@ -817,5 +817,26 @@
   "url_provenance": "payload",
   "stated_experience": null,
   "expires_at": null
+ },
+ {
+  "identity": "lever:bbe684e0-6eeb-41fa-a03b-74ac85fec5a2",
+  "source": "lever",
+  "board_id": "lever:spreetail",
+  "external_id": "bbe684e0-6eeb-41fa-a03b-74ac85fec5a2",
+  "employer": "Spreetail",
+  "employer_provenance": "slug",
+  "title": "Warehouse Area Manager",
+  "title_normalised": "Warehouse Area Manager",
+  "location": "Savannah, GA",
+  "published_at": "2026-09-18T14:05:48.919000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-09-18T16:59:25.277222Z",
+  "ordering_date": "2026-09-18T14:05:48.919000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/spreetail/bbe684e0-6eeb-41fa-a03b-74ac85fec5a2",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null
  }
 ]
