@@ -6,7 +6,7 @@ Format: MADR 4.0.0 with two documented deviations. Numbered in the order conclud
 
 The deviations: an added **Assumptions** section, taken from Tyree and Akerman, holding every belief the decision rests on that is not established, so unmeasured numbers are visible and re-checkable rather than buried in prose. And three authoring rules carried forward from Nygard, which MADR does not specify: Context is written value-neutral with the tensions named, Decision Outcome is written in active voice as a rule, and Consequences are always filled including the negative ones.
 
-Records are written at the moment a decision concludes. An accepted record is never edited; a change is a new record that supersedes it, with links in both directions.
+Records are written at the moment a decision concludes. A record's factual error may be corrected in place with a dated annotation; a change of decision may not. The criteria for which is which are in `ADR-RULES.md` and in the operator's cross-project decision record standard.
 
 **`ADR-RULES.md` governs this corpus** and is read through rather than in sequence. It adds two ranks to the authority order, distinguishes stale from wrong, and states what a seat may correct without asking. **ADR-0042 was reserved for it and is deliberately unused**; the gap between 0041 and 0043 is not a missing file.
 
@@ -21,7 +21,7 @@ Records are written at the moment a decision concludes. An accepted record is ne
 | 0007 | Recency is a view, not an ingest filter | Accepted |
 | 0008 | Title matching by allowlist, blocklist, and unmatched flag | Superseded by 0021 |
 | 0009 | Vertical slice first, adapters incremental | Accepted |
-| 0010 | No relevance scoring, ranking, or model-based screening | Accepted, clause reversed by 0038 |
+| 0010 | No relevance scoring, ranking, or model-based screening | Accepted |
 | 0011 | Public repository, metadata only on the data branch | Accepted |
 | 0012 | No email or search-alert ingestion path | Accepted |
 | 0013 | Three layers, filtered set persisted independently of the display | Accepted, clause reversed by 0030 |
@@ -56,7 +56,7 @@ Records are written at the moment a decision concludes. An accepted record is ne
 | 0042 | *reserved for ADR-RULES, deliberately unused* | n/a |
 | 0043 | Three outcome stores | Accepted |
 | 0044 | The priority star, on named attributes only | Accepted |
-| 0045 | The classification flow | Accepted |
+| 0045 | The classification flow | Accepted, supersedes 0014 |
 | RULES | How records are resolved, amended and retired | Accepted |
 
 ## Pending
@@ -87,7 +87,7 @@ Records 0004 and 0008 were wrongly stamped superseded on 2026-09-09 and correcte
 
 ADR-0008 was then genuinely superseded by ADR-0021 on 2026-09-11, this time by the criteria: more than half its Decision Outcome was replaced. Its Changes table records both events, which is the point of keeping one.
 
-**Changes that are not supersessions are logged in a `## Changes` table at the bottom of the record.** Six records carry one, all dated 2026-09-10, all recording the correction of a wrongly claimed supersession.
+**Changes that are not supersessions are logged in a `## Changes` table at the bottom of the record.** As of 2026-09-18, fifteen Changes rows sit across eleven records.
 
 A record stays under 200 lines, and its Changes table stays under eight rows. Reaching eight rows is itself a supersession trigger: a decision amended eight times is no longer the decision that was made.
 
@@ -95,4 +95,12 @@ A record stays under 200 lines, and its Changes table stays under eight rows. Re
 
 Records 0001 to 0012 were written in Nygard format before the architecture-documentation research pass, then retrofitted to the current format. Their reasoning was not changed in the retrofit; Assumptions and Confirmation sections were added, since neither existed in the original format.
 
-**This index fell fifteen records behind.** It listed through 0029 while the corpus ran to 0044, and the statuses for 0004, 0010, 0013, 0014, 0018, 0019, 0021 and 0023 were reconstructed from session reports rather than from the records themselves. Restored 2026-09-18. **The status column needs verifying against each record's own front matter and Changes table**, because a reconstructed index is exactly the second copy of a fact this project treats as a defect.
+**This index fell fifteen records behind.** It listed through 0029 while the corpus ran to 0044, and eight statuses were reconstructed from session reports rather than from the records. Restored 2026-09-18, then audited by the implementing seat against every record.
+
+Three defects the audit found, all introduced by the reconstruction and all corrected 2026-09-18:
+
+**ADR-0010 was marked "clause reversed by 0038". It is not.** ADR-0038 keeps date ordering and adds views; it reverses nothing. ADR-0010 is the scope floor, so an index suggesting part of it had been overturned was the most consequential wrong cell in the table.
+
+**The preamble contradicted this file's own conventions**, stating that an accepted record is never edited while the sections below describe in-place correction and a Changes table. Corrected to match.
+
+**The Changes-table count was stale**, reading six records dated 2026-09-10 when fifteen rows sit across eleven records.

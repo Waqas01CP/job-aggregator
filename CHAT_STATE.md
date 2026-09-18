@@ -12,7 +12,7 @@ It exists because items raised in a chat and not written down are forgotten the 
 
 **Read this at the start of a new architecture chat**, alongside the behavioural prompt that chat is initialised with. This file carries what was decided and what is waiting. The prompt carries how the chat works, which cannot live in a repository file because it is about the conversation rather than the project.
 
-Brought to final form 2026-09-18, at the close of the first architecture chat.
+Brought to final form 2026-09-18, at the close of the first architecture chat, after verifying against `logs/README.md` rather than against session reports.
 
 ---
 
@@ -60,10 +60,12 @@ Items keep their number forever and move rows rather than being renumbered.
 
 | # | Item | Notes |
 |---|---|---|
-| 61 | Create the Airtable PAT and four repository secrets | **The single largest blocker. Six decided things sit behind it.** Scopes and secret names are in `STATE.md`'s Blocked section |
-| 73 | Read the seat's brief 4 response | The only outstanding input. Covers ADR-RULES' audit, the record index verification, the four Airtable tables, the classification flow, the deferred register and the heredoc mechanism |
-| 63 | Verify the record index against the records themselves | Eight statuses were reconstructed from session reports. Assigned to the seat in brief 4 |
+| 61 | Create the Airtable PAT and **seven** repository secrets | **The single largest blocker. Six decided things sit behind it.** Seven, not four: ADR-0045's sweep reads three classification tables that did not exist when four was specified. `docs/how-to/airtable-token-and-secrets.md` has the scopes and names |
 | 74 | Decide question C | Whether aggregator rows may be written to the private Airtable base. The only route by which Himalayas' kept rows reach the operator, since on a runner they persist nowhere |
+| 78 | The 2026-09-17 Airtable base is stranded | The MCP now reaches a different account. Five tables were built in the reachable base. Decide whether the old base is deleted or left |
+| 79 | `CLAUDE.md` still carries the old eight authority ranks | ADR-RULES adds two and neither record links to the other. A seat reading only `CLAUDE.md` gets an incomplete order |
+| 80 | Verify `STATE.md`'s two commit references | Its verified-against line and its headline are reported to disagree. **Not checked by this chat** |
+| 81 | Himalayas and Banyan Canopy trials end 2026-09-24 | Both need a verdict before that date |
 
 ## Gated
 
@@ -134,13 +136,16 @@ Items keep their number forever and move rows rather than being renumbered.
 | 55 | The vertical slice built | Eleven ATS boards plus Himalayas, live on GitHub |
 | 57 | Per-run fetch budget and detail-once | ADR-0028 |
 | 58 | Provenance enum generalised | ADR-0026 Changes row |
-| 59 | Brief 4 sent | Classification flow, deferred register, ADR-RULES audit |
-| 60 | Airtable base moved to the connected account | Seat rebuilds four tables |
-| 62 | This file committed | Removed from `.gitignore` and from the generator's skip list |
-| 71 | ADR-RULES written | Awaiting the seat's audit |
+| 59 | Brief 4 sent and implemented | ADR-RULES audited, index audited, ADR-0045 written, `docs/deferred/` created, five Airtable tables built and read back, heredoc guard built |
+| 60 | Airtable tables built | **Five**, not four, in the base the MCP reaches |
+| 62 | This file committed | Out of `.gitignore` and out of the generator's skip list |
+| 63 | Record index audited against every record | Three defects found, all mine, all corrected: ADR-0010 wrongly marked as having a reversed clause, a preamble contradicting the file's own conventions, and a stale Changes-table count |
+| 71 | ADR-RULES written and audited | `docs/decisions/ADR-RULES.md` |
 | 72 | Record index restored | Fell fifteen records behind; repaired 2026-09-18 |
+| 73 | Brief 4 response read and verified | Against `logs/README.md`, not against the report of it |
 | 76 | Similarity matching decided against, for now | ADR-0044's deterministic star instead, with its trigger in `docs/deferred/` |
-| 77 | Deletion flow decided | Manual classification, timestamped deletion from the two rejection tables, accepted deleted by hand only |
+| 77 | Deletion flow decided | ADR-0045. Manual classification, timestamped deletion from the two rejection tables, accepted deleted by hand only |
+| 82 | The heredoc trap given a mechanism | `tools/heredoc_guard.py` and a PreToolUse hook. It asks, never denies, and fails open. Half its 16 tests are cases it must not fire on |
 
 ---
 
@@ -164,7 +169,15 @@ A record that reports only what survived is not a record.
 
 **Sharing an Airtable base asserted as a working route** without testing whether the connector surfaces shared bases.
 
-**Letting the record index fall fifteen records behind** while maintaining the rule that a second copy of a fact is a defect.
+**Letting the record index fall fifteen records behind** while maintaining the rule that a second copy of a fact is a defect. Rebuilding it from session reports rather than the records then introduced three further defects, the worst of which marked the scope floor as partly overturned.
+
+**Writing four secrets and four tables into the handoff** from a brief rather than from the repository, after the seat had already recorded seven and five.
+
+---
+
+## One incident worth carrying, not this chat's
+
+A seat reverted two deliberate changes made by the architecture chat rather than flagging them. A later session restored them and recorded the lesson: **reverting another seat's deliberate change is the error, not the caution.** A flag costs a message. An unexplained revert costs the decision, because nobody knows it was ever made.
 
 ---
 
