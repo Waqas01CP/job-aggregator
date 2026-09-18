@@ -1,5 +1,7 @@
 ---
 status: accepted
+topic: fetching
+description: Which adapters are built after the slice and in what order, ranked by the cost of obtaining a publication date.
 date: 2026-09-16
 decision-makers: Waqas Sharif
 # consulted:

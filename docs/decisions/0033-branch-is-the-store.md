@@ -1,5 +1,7 @@
 ---
 status: accepted
+topic: storage
+description: The data branch is the store and local files are working copies, so a committing run restores from the branch before it fetches.
 date: 2026-09-17
 decision-makers: Waqas Sharif
 # consulted:

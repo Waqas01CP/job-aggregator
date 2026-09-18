@@ -1,5 +1,7 @@
 ---
 status: superseded by ADR-0021
+topic: filtering
+description: Superseded by ADR-0021. The original three-way title classification: allowlist, blocklist, and an unmatched bucket that was still shown.
 date: 2026-09-09
 decision-makers: Waqas Sharif
 # consulted:

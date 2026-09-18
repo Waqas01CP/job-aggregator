@@ -1,5 +1,7 @@
 ---
 status: accepted
+topic: fetching
+description: Why job alerts and their emails stay outside the pipeline, and what was considered before that was settled.
 date: 2026-09-09
 decision-makers: Waqas Sharif
 # consulted:

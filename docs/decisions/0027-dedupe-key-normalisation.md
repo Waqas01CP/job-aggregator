@@ -1,5 +1,7 @@
 ---
 status: accepted
+topic: filtering
+description: The deduplication key normalises the title first, configured per source against measured evidence.
 date: 2026-09-15
 decision-makers: Waqas Sharif
 # consulted:

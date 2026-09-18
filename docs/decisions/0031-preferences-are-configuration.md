@@ -1,5 +1,7 @@
 ---
 status: accepted
+topic: filtering
+description: The title pool, seniority list, role families and location targets are versioned configuration, and no module hard-codes a preference.
 date: 2026-09-17
 decision-makers: Waqas Sharif
 # consulted:

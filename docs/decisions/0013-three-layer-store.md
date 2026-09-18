@@ -1,5 +1,7 @@
 ---
 status: accepted
+topic: storage
+description: The filtered set is persisted in its own file on the data branch and Airtable is a projection of that file. Why the display is never authoritative.
 date: 2026-09-09
 decision-makers: Waqas Sharif
 # consulted:

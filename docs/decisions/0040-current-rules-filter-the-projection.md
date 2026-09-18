@@ -1,5 +1,7 @@
 ---
 status: accepted
+topic: display
+description: The current rules filter the projection and never the store. The half of the append-only problem that removes rows.
 date: 2026-09-17
 decision-makers: Waqas Sharif
 # consulted:

@@ -1,5 +1,7 @@
 ---
 status: accepted
+topic: fetching
+description: A per-run request ceiling, and a posting's detail fetched once ever rather than once per run.
 date: 2026-09-16
 decision-makers: Waqas Sharif
 # consulted:

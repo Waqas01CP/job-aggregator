@@ -1,5 +1,7 @@
 ---
 status: accepted
+topic: fetching
+description: A vertical slice ships before more adapters, what confirms it, and what it deliberately defers.
 date: 2026-09-09
 decision-makers: Waqas Sharif
 # consulted:

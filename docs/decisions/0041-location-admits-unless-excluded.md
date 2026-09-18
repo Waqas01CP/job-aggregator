@@ -1,5 +1,7 @@
 ---
 status: accepted
+topic: filtering
+description: Location admits on any signal or on none and drops only on an explicit exclusion; keywords tag reachability and never reject.
 date: 2026-09-17
 decision-makers: Waqas Sharif
 # consulted:

@@ -1,5 +1,7 @@
 ---
 status: accepted
+topic: fetching
+description: A board's complete output is fetched and filtered in code rather than queried at the source. Why nothing is asked of the board but its list.
 date: 2026-09-09
 decision-makers: Waqas Sharif
 # consulted:

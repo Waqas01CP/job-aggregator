@@ -1,5 +1,7 @@
 ---
 status: accepted
+topic: practice
+description: Which document wins when two disagree, as a fixed precedence by document type.
 date: 2026-09-11
 decision-makers: Waqas Sharif
 # consulted:

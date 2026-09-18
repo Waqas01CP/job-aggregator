@@ -1,5 +1,7 @@
 ---
 status: accepted
+topic: storage
+description: Every fetched posting is stored raw and permanently, and filtering is a separate pass over it. Why a role the filter misses is recoverable rather than lost.
 date: 2026-09-09
 decision-makers: Waqas Sharif
 # consulted:

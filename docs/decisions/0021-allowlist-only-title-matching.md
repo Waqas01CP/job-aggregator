@@ -1,5 +1,7 @@
 ---
 status: accepted
+topic: filtering
+description: Admission is allowlist-only with normalisation, and everything unmatched is dropped and logged. The matching rules themselves.
 date: 2026-09-11
 decision-makers: Waqas Sharif
 # consulted:

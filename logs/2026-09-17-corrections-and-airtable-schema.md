@@ -450,10 +450,41 @@ restriction field is measured instead.
 **The 36 requests are what a run spends, not a limit.** Every place that framed
 it as a cost against Himalayas is corrected.
 
+## Part 1 built, after the operator chose
+
+He chose both options, grouping and descriptions, and separately settled the
+push question: push when the brief asks for it. This brief asks.
+
+**All 41 records carry `topic` and `description`.** The topic vocabulary is
+six words, fixed in the generator, in the order the pipeline runs: fetching,
+filtering, storage, display, measurement, practice. The description says what
+question the record answers, because that is how a reader arrives, rather than
+restating the decision, which the title already does.
+
+**`MAP.md`'s decision table is grouped under six headings** instead of being a
+flat list of 41 titles.
+
+**The vocabulary cannot drift, because adding a topic outside the six fails.**
+`[VERIFIED]` by the case built to defeat it: one record's `topic` line was
+deleted and the map check exited 1 naming the file and listing the six valid
+topics, which the pre-commit hook treats as a failure other than staleness and
+blocks. Restored, and the check exits 0 again.
+
+Three descriptions were rewritten after reading the generated output, because
+they restated their own titles and added nothing: ADR-0010, ADR-0011 and
+ADR-0012.
+
+**What was deliberately not done.** `CLAUDE.md` did not grow. The brief warned
+that a longer instruction file is the obvious answer and probably the wrong
+one, and nothing here needed it: the pointer to `MAP.md` was already
+strengthened earlier in this session, and the map now does the routing.
+
+**The adjacent finding, not acted on.** The reading order's size risk is not
+`MAP.md` at 13.1KB. It is `STATE.md` at 36.6KB, the largest file a session
+reads to start and the only hand-written one. Raised, not solved.
+
 ## Still not done
 
-- **Nothing pushed.** Two briefs have now ended "push"; the standing protocol
-  is that the operator pushes. Asked again rather than assumed.
-- Part 1 is proposed, not implemented.
+- Part 1 of the brief is now built; nothing else from it is outstanding.
 - ADR-0040's projection filter, ADR-0041's structured half, and every unread
   field in Part 3 are decisions and measurements, not code.

@@ -1,5 +1,7 @@
 ---
 status: accepted
+topic: measurement
+description: A scheduled fingerprint of the fields each adapter reads, so a broken adapter is distinguishable from a quiet market.
 date: 2026-09-10
 decision-makers: Waqas Sharif
 # consulted:

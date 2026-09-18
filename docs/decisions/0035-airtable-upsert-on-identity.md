@@ -1,5 +1,7 @@
 ---
 status: accepted
+topic: display
+description: The projection upserts on Identity so a retried write creates no duplicates, and writes only pipeline-owned fields.
 date: 2026-09-17
 decision-makers: Waqas Sharif
 # consulted:

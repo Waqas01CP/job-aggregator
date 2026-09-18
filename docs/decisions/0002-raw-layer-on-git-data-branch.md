@@ -1,5 +1,7 @@
 ---
 status: accepted
+topic: storage
+description: The raw layer lives on a dedicated git branch in this repository. Why there is no database.
 date: 2026-09-09
 decision-makers: Waqas Sharif
 # consulted:

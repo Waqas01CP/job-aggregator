@@ -120,6 +120,20 @@ def markdown_files():
         yield path
 
 
+# Decision topics, in the order the pipeline runs, so the map reads as a
+# path through the system rather than as an alphabet. Adding one here is the
+# only way to add one: a record naming a topic that is not here fails the
+# gate, which is what stops the vocabulary drifting into forty topics.
+TOPICS = {
+    "fetching": "Fetching, sources and adapters",
+    "filtering": "Filtering, matching and preferences",
+    "storage": "Storage and the data branch",
+    "display": "The display and the projection",
+    "measurement": "Measurement and evidence",
+    "practice": "How this repository is worked",
+}
+
+
 def describe(path):
     text = path.read_text(encoding="utf-8")
     rel = path.relative_to(REPO_ROOT).as_posix()
@@ -132,10 +146,31 @@ def describe(path):
         status = fm.get("status")
         if not status:
             raise MapError(f"{rel}: decision record has no status in frontmatter")
+        # A record's title says what was decided. Its description says what
+        # question it answers, which is how a reader arrives: by topic, not
+        # by decision. Both are required, so a new record cannot be added
+        # without saying where it belongs and what it settles.
+        topic = fm.get("topic")
+        if not topic:
+            raise MapError(
+                f"{rel}: decision record has no topic in frontmatter. "
+                f"One of {sorted(TOPICS)}."
+            )
+        if topic not in TOPICS:
+            raise MapError(
+                f"{rel}: topic '{topic}' is not one of {sorted(TOPICS)}"
+            )
+        description = fm.get("description")
+        if not description:
+            raise MapError(
+                f"{rel}: decision record has no description in frontmatter. "
+                f"One sentence: what question does this record answer?"
+            )
         return {
             "path": rel,
             "type": "decision",
-            "description": title,
+            "topic": topic,
+            "description": f"**{title}.** {description}",
             "status": status,
         }
 
@@ -212,6 +247,29 @@ def render(entries):
             continue
         lines.append(f"## {file_type}")
         lines.append("")
+        if file_type == "decision":
+            # Grouped by topic. A flat list of forty-one titles is scanned by
+            # whoever already knows which record they want, which is not the
+            # reader who needs it.
+            lines.append(
+                "Grouped by topic, in the order the pipeline runs. A record "
+                "appears under exactly one topic."
+            )
+            lines.append("")
+            for topic, heading in TOPICS.items():
+                in_topic = [r for r in rows if r.get("topic") == topic]
+                if not in_topic:
+                    continue
+                lines.append(f"### {heading}")
+                lines.append("")
+                lines.append("| File | Holds | Status |")
+                lines.append("| --- | --- | --- |")
+                for row in in_topic:
+                    lines.append(
+                        f"| `{row['path']}` | {row['description']} | {row['status']} |"
+                    )
+                lines.append("")
+            continue
         lines.append("| File | Holds | Status |")
         lines.append("| --- | --- | --- |")
         for row in rows:

@@ -1,5 +1,7 @@
 ---
 status: accepted
+topic: storage
+description: Raw storage is routed by source class, so an aggregator's rows are written locally and never published.
 date: 2026-09-10
 decision-makers: Waqas Sharif
 # consulted:

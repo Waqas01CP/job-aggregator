@@ -1,5 +1,7 @@
 ---
 status: accepted
+topic: fetching
+description: The pipeline fetches twice a day, and the propagation assumption that cadence rests on.
 date: 2026-09-09
 decision-makers: Waqas Sharif
 # consulted:

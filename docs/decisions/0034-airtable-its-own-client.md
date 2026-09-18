@@ -1,5 +1,7 @@
 ---
 status: accepted
+topic: display
+description: Airtable gets its own client, a scoped exception to the one-HTTP-module rule, with retry and backoff kept shared.
 date: 2026-09-17
 decision-makers: Waqas Sharif
 # consulted:

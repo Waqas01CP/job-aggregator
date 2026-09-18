@@ -1,5 +1,7 @@
 ---
 status: accepted
+topic: filtering
+description: Matching is on titles only, against a versioned pool of terms. Why descriptions are not read yet.
 date: 2026-09-09
 decision-makers: Waqas Sharif
 # consulted:

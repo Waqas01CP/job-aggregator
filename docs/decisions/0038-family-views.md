@@ -1,5 +1,7 @@
 ---
 status: accepted
+topic: filtering
+description: Role families are a label derived from the matched term, with one date-ordered view each, and the boundary that keeps it from becoming a ranking.
 date: 2026-09-17
 decision-makers: Waqas Sharif
 # consulted:

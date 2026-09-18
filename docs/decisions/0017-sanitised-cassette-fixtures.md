@@ -1,5 +1,7 @@
 ---
 status: accepted
+topic: practice
+description: Adapter tests run against committed real responses with every description field stripped before commit.
 date: 2026-09-10
 decision-makers: Waqas Sharif
 # consulted:

@@ -1,5 +1,7 @@
 ---
 status: accepted
+topic: display
+description: A weekly sweep reads outcomes, persists them, then deletes the rows, and the four-status taxonomy the operator marks rows with.
 date: 2026-09-09
 decision-makers: Waqas Sharif
 # consulted:

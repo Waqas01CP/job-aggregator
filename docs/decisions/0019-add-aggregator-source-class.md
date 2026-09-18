@@ -1,5 +1,7 @@
 ---
 status: accepted
+topic: fetching
+description: Aggregator feeds become a second source class beside employer boards, added one at a time on a stated condition.
 date: 2026-09-10
 decision-makers: Waqas Sharif
 # consulted:

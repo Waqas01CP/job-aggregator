@@ -1,5 +1,7 @@
 ---
 status: accepted
+topic: display
+description: Airtable's free plan is the display layer, written by batched calls and never read back. What the operator actually opens.
 date: 2026-09-09
 decision-makers: Waqas Sharif
 # consulted:

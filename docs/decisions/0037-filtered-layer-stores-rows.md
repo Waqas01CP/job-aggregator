@@ -1,5 +1,7 @@
 ---
 status: accepted
+topic: storage
+description: The filtered layer stores every kept row and the projection does the grouping, so no interpretation is frozen into the store.
 date: 2026-09-17
 decision-makers: Waqas Sharif
 # consulted:

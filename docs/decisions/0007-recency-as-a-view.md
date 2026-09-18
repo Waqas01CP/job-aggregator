@@ -1,5 +1,7 @@
 ---
 status: accepted
+topic: filtering
+description: Everything is ingested and recency is applied when ordering the display, never when deciding what to keep. Why an old posting is still stored.
 date: 2026-09-09
 decision-makers: Waqas Sharif
 # consulted:

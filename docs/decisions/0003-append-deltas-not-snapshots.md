@@ -1,5 +1,7 @@
 ---
 status: accepted
+topic: storage
+description: Only records never seen before are appended, and nothing is ever rewritten. Why a run that changes nothing produces an empty diff.
 date: 2026-09-09
 decision-makers: Waqas Sharif
 # consulted:

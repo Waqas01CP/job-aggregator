@@ -1,5 +1,7 @@
 ---
 status: accepted
+topic: filtering
+description: The seniority word list, running after the title rule, and the clause of ADR-0021 it reverses.
 date: 2026-09-17
 decision-makers: Waqas Sharif
 # consulted:

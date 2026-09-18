@@ -1,5 +1,7 @@
 ---
 status: accepted
+topic: practice
+description: The artifact set a session reads to start, and the order it reads them in.
 date: 2026-09-11
 decision-makers: Waqas Sharif
 # consulted:

@@ -90,48 +90,77 @@ supersedes and superseded-by links, deliberately not duplicated here.
 
 ## decision
 
+Grouped by topic, in the order the pipeline runs. A record appears under exactly one topic.
+
+### Fetching, sources and adapters
+
 | File | Holds | Status |
 | --- | --- | --- |
-| `docs/decisions/0001-two-layer-store.md` | ADR-0001: Two-layer store, raw and filtered | accepted |
-| `docs/decisions/0002-raw-layer-on-git-data-branch.md` | ADR-0002: Raw layer on a git data branch, not a hosted database | accepted |
-| `docs/decisions/0003-append-deltas-not-snapshots.md` | ADR-0003: Append deltas, not snapshots | accepted |
-| `docs/decisions/0004-airtable-as-display-layer.md` | ADR-0004: Airtable as the filtered display layer | accepted |
-| `docs/decisions/0005-fetch-complete-board-output.md` | ADR-0005: Fetch complete board output, filter locally | accepted |
-| `docs/decisions/0006-twice-daily-fetch-cadence.md` | ADR-0006: Twice-daily fetch cadence | accepted |
-| `docs/decisions/0007-recency-as-a-view.md` | ADR-0007: Recency is a view, not an ingest filter | accepted |
-| `docs/decisions/0008-title-matching-strategy.md` | ADR-0008: Title matching by allowlist, blocklist, and unmatched flag | superseded by ADR-0021 |
-| `docs/decisions/0009-vertical-slice-first.md` | ADR-0009: Vertical slice first, adapters incremental | accepted |
-| `docs/decisions/0010-no-relevance-scoring.md` | ADR-0010: No relevance scoring, ranking, or model-based screening | accepted |
-| `docs/decisions/0011-public-repository-metadata-only.md` | ADR-0011: Public repository, metadata only on the data branch | accepted |
-| `docs/decisions/0012-no-email-alert-ingestion.md` | ADR-0012: No email or search-alert ingestion path | accepted |
-| `docs/decisions/0013-three-layer-store.md` | ADR-0013: Three layers, with the filtered set persisted independently of the display | accepted |
-| `docs/decisions/0014-weekly-status-sweep.md` | ADR-0014: Weekly status sweep, with a four-status outcome taxonomy | accepted |
-| `docs/decisions/0015-two-measures-and-archive-protocol.md` | ADR-0015: Two measures, and the archive protocol | accepted |
-| `docs/decisions/0016-title-only-versioned-pool.md` | ADR-0016: Title-only matching against a versioned title pool | accepted |
-| `docs/decisions/0017-sanitised-cassette-fixtures.md` | ADR-0017: Sanitised cassettes as adapter test fixtures | accepted |
-| `docs/decisions/0018-scheduled-contract-check.md` | ADR-0018: Scheduled contract check against live boards | accepted |
-| `docs/decisions/0019-add-aggregator-source-class.md` | ADR-0019: Add aggregator feeds as a second source class | accepted |
-| `docs/decisions/0020-route-raw-storage-by-source-class.md` | ADR-0020: Route raw storage by source class | accepted |
-| `docs/decisions/0021-allowlist-only-title-matching.md` | ADR-0021: Allowlist-only title matching, with normalisation | accepted |
-| `docs/decisions/0022-document-authority-order.md` | ADR-0022: Document authority order | accepted |
-| `docs/decisions/0023-context-artifact-set.md` | ADR-0023: Context artifact set and onboarding order | accepted |
-| `docs/decisions/0024-session-log-format.md` | ADR-0024: Session log format | accepted |
-| `docs/decisions/0025-auto-memory-not-authoritative.md` | ADR-0025: Auto Memory is not authoritative | accepted |
-| `docs/decisions/0026-employer-provenance.md` | ADR-0026: Employer provenance where a payload does not carry it | accepted |
-| `docs/decisions/0027-dedupe-key-normalisation.md` | ADR-0027: Deduplication key normalisation, configured per source | accepted |
-| `docs/decisions/0028-fetch-budget-and-detail-once.md` | ADR-0028: Per-run fetch budget, and detail fetched once per posting | accepted |
-| `docs/decisions/0029-adapter-order-and-dover.md` | ADR-0029: Adapter order after the slice, and Dover dropped | accepted |
-| `docs/decisions/0030-backfill-on-rule-change.md` | ADR-0030: A rule change backfills the filtered layer | accepted |
-| `docs/decisions/0031-preferences-are-configuration.md` | ADR-0031: Personal preferences are configuration, not code | accepted |
-| `docs/decisions/0032-seniority-rule.md` | ADR-0032: The seniority rule, and the clause of ADR-0021 it reverses | accepted |
-| `docs/decisions/0033-branch-is-the-store.md` | ADR-0033: The data branch is the store, local files are working copies | accepted |
-| `docs/decisions/0034-airtable-its-own-client.md` | ADR-0034: Airtable gets its own client, as a scoped exception | accepted |
-| `docs/decisions/0035-airtable-upsert-on-identity.md` | ADR-0035: The projection upserts on Identity | accepted |
-| `docs/decisions/0036-contract-check-reports-through-the-run-log.md` | ADR-0036: The contract check reports through the run log, not a failed run | accepted |
-| `docs/decisions/0037-filtered-layer-stores-rows.md` | ADR-0037: The filtered layer stores rows, the projection groups them | accepted |
-| `docs/decisions/0038-family-views.md` | ADR-0038: Role families are views, not a ranking | accepted |
-| `docs/decisions/0039-aggregator-condition-three-components.md` | ADR-0039: The aggregator condition is the three components | accepted |
-| `docs/decisions/0040-current-rules-filter-the-projection.md` | ADR-0040: The current rules filter the projection, never the store | accepted |
-| `docs/decisions/0041-location-admits-unless-excluded.md` | ADR-0041: Location admits unless a source excludes, and keywords only tag | accepted |
+| `docs/decisions/0005-fetch-complete-board-output.md` | **ADR-0005: Fetch complete board output, filter locally.** A board's complete output is fetched and filtered in code rather than queried at the source. Why nothing is asked of the board but its list. | accepted |
+| `docs/decisions/0006-twice-daily-fetch-cadence.md` | **ADR-0006: Twice-daily fetch cadence.** The pipeline fetches twice a day, and the propagation assumption that cadence rests on. | accepted |
+| `docs/decisions/0009-vertical-slice-first.md` | **ADR-0009: Vertical slice first, adapters incremental.** A vertical slice ships before more adapters, what confirms it, and what it deliberately defers. | accepted |
+| `docs/decisions/0012-no-email-alert-ingestion.md` | **ADR-0012: No email or search-alert ingestion path.** Why job alerts and their emails stay outside the pipeline, and what was considered before that was settled. | accepted |
+| `docs/decisions/0019-add-aggregator-source-class.md` | **ADR-0019: Add aggregator feeds as a second source class.** Aggregator feeds become a second source class beside employer boards, added one at a time on a stated condition. | accepted |
+| `docs/decisions/0026-employer-provenance.md` | **ADR-0026: Employer provenance where a payload does not carry it.** Where the employer name comes from when a payload does not carry one, and how that provenance is recorded on the row. | accepted |
+| `docs/decisions/0028-fetch-budget-and-detail-once.md` | **ADR-0028: Per-run fetch budget, and detail fetched once per posting.** A per-run request ceiling, and a posting's detail fetched once ever rather than once per run. | accepted |
+| `docs/decisions/0029-adapter-order-and-dover.md` | **ADR-0029: Adapter order after the slice, and Dover dropped.** Which adapters are built after the slice and in what order, ranked by the cost of obtaining a publication date. | accepted |
+| `docs/decisions/0039-aggregator-condition-three-components.md` | **ADR-0039: The aggregator condition is the three components.** Which of ADR-0019's two contradictory conditions governs when a source is added, and the rule the next aggregator faces. | accepted |
+
+### Filtering, matching and preferences
+
+| File | Holds | Status |
+| --- | --- | --- |
+| `docs/decisions/0007-recency-as-a-view.md` | **ADR-0007: Recency is a view, not an ingest filter.** Everything is ingested and recency is applied when ordering the display, never when deciding what to keep. Why an old posting is still stored. | accepted |
+| `docs/decisions/0008-title-matching-strategy.md` | **ADR-0008: Title matching by allowlist, blocklist, and unmatched flag.** Superseded by ADR-0021. The original three-way title classification: allowlist, blocklist, and an unmatched bucket that was still shown. | superseded by ADR-0021 |
+| `docs/decisions/0010-no-relevance-scoring.md` | **ADR-0010: No relevance scoring, ranking, or model-based screening.** Every verdict names a deterministic rule a person can read. The scope floor the whole project rests on, and the boundary any ranking proposal has to cross. | accepted |
+| `docs/decisions/0016-title-only-versioned-pool.md` | **ADR-0016: Title-only matching against a versioned title pool.** Matching is on titles only, against a versioned pool of terms. Why descriptions are not read yet. | accepted |
+| `docs/decisions/0021-allowlist-only-title-matching.md` | **ADR-0021: Allowlist-only title matching, with normalisation.** Admission is allowlist-only with normalisation, and everything unmatched is dropped and logged. The matching rules themselves. | accepted |
+| `docs/decisions/0027-dedupe-key-normalisation.md` | **ADR-0027: Deduplication key normalisation, configured per source.** The deduplication key normalises the title first, configured per source against measured evidence. | accepted |
+| `docs/decisions/0031-preferences-are-configuration.md` | **ADR-0031: Personal preferences are configuration, not code.** The title pool, seniority list, role families and location targets are versioned configuration, and no module hard-codes a preference. | accepted |
+| `docs/decisions/0032-seniority-rule.md` | **ADR-0032: The seniority rule, and the clause of ADR-0021 it reverses.** The seniority word list, running after the title rule, and the clause of ADR-0021 it reverses. | accepted |
+| `docs/decisions/0038-family-views.md` | **ADR-0038: Role families are views, not a ranking.** Role families are a label derived from the matched term, with one date-ordered view each, and the boundary that keeps it from becoming a ranking. | accepted |
+| `docs/decisions/0041-location-admits-unless-excluded.md` | **ADR-0041: Location admits unless a source excludes, and keywords only tag.** Location admits on any signal or on none and drops only on an explicit exclusion; keywords tag reachability and never reject. | accepted |
+
+### Storage and the data branch
+
+| File | Holds | Status |
+| --- | --- | --- |
+| `docs/decisions/0001-two-layer-store.md` | **ADR-0001: Two-layer store, raw and filtered.** Every fetched posting is stored raw and permanently, and filtering is a separate pass over it. Why a role the filter misses is recoverable rather than lost. | accepted |
+| `docs/decisions/0002-raw-layer-on-git-data-branch.md` | **ADR-0002: Raw layer on a git data branch, not a hosted database.** The raw layer lives on a dedicated git branch in this repository. Why there is no database. | accepted |
+| `docs/decisions/0003-append-deltas-not-snapshots.md` | **ADR-0003: Append deltas, not snapshots.** Only records never seen before are appended, and nothing is ever rewritten. Why a run that changes nothing produces an empty diff. | accepted |
+| `docs/decisions/0011-public-repository-metadata-only.md` | **ADR-0011: Public repository, metadata only on the data branch.** What may be stored on a public branch, by content class: identifying and locating metadata yes, description text never. | accepted |
+| `docs/decisions/0013-three-layer-store.md` | **ADR-0013: Three layers, with the filtered set persisted independently of the display.** The filtered set is persisted in its own file on the data branch and Airtable is a projection of that file. Why the display is never authoritative. | accepted |
+| `docs/decisions/0020-route-raw-storage-by-source-class.md` | **ADR-0020: Route raw storage by source class.** Raw storage is routed by source class, so an aggregator's rows are written locally and never published. | accepted |
+| `docs/decisions/0033-branch-is-the-store.md` | **ADR-0033: The data branch is the store, local files are working copies.** The data branch is the store and local files are working copies, so a committing run restores from the branch before it fetches. | accepted |
+| `docs/decisions/0037-filtered-layer-stores-rows.md` | **ADR-0037: The filtered layer stores rows, the projection groups them.** The filtered layer stores every kept row and the projection does the grouping, so no interpretation is frozen into the store. | accepted |
+
+### The display and the projection
+
+| File | Holds | Status |
+| --- | --- | --- |
+| `docs/decisions/0004-airtable-as-display-layer.md` | **ADR-0004: Airtable as the filtered display layer.** Airtable's free plan is the display layer, written by batched calls and never read back. What the operator actually opens. | accepted |
+| `docs/decisions/0014-weekly-status-sweep.md` | **ADR-0014: Weekly status sweep, with a four-status outcome taxonomy.** A weekly sweep reads outcomes, persists them, then deletes the rows, and the four-status taxonomy the operator marks rows with. | accepted |
+| `docs/decisions/0030-backfill-on-rule-change.md` | **ADR-0030: A rule change backfills the filtered layer.** When the filter rules widen, a backfill appends the rows they now admit. The half of the append-only problem that adds rows. | accepted |
+| `docs/decisions/0034-airtable-its-own-client.md` | **ADR-0034: Airtable gets its own client, as a scoped exception.** Airtable gets its own client, a scoped exception to the one-HTTP-module rule, with retry and backoff kept shared. | accepted |
+| `docs/decisions/0035-airtable-upsert-on-identity.md` | **ADR-0035: The projection upserts on Identity.** The projection upserts on Identity so a retried write creates no duplicates, and writes only pipeline-owned fields. | accepted |
+| `docs/decisions/0040-current-rules-filter-the-projection.md` | **ADR-0040: The current rules filter the projection, never the store.** The current rules filter the projection and never the store. The half of the append-only problem that removes rows. | accepted |
+
+### Measurement and evidence
+
+| File | Holds | Status |
+| --- | --- | --- |
+| `docs/decisions/0015-two-measures-and-archive-protocol.md` | **ADR-0015: Two measures, and the archive protocol.** Two measures, freshness at discovery and outcome, with only the pipeline-controlled one binding. When the assessment window opens. | accepted |
+| `docs/decisions/0018-scheduled-contract-check.md` | **ADR-0018: Scheduled contract check against live boards.** A scheduled fingerprint of the fields each adapter reads, so a broken adapter is distinguishable from a quiet market. | accepted |
+| `docs/decisions/0036-contract-check-reports-through-the-run-log.md` | **ADR-0036: The contract check reports through the run log, not a failed run.** The contract check reports through the run log rather than by failing, so a contract change and a crashed check stay distinguishable. | accepted |
+
+### How this repository is worked
+
+| File | Holds | Status |
+| --- | --- | --- |
+| `docs/decisions/0017-sanitised-cassette-fixtures.md` | **ADR-0017: Sanitised cassettes as adapter test fixtures.** Adapter tests run against committed real responses with every description field stripped before commit. | accepted |
+| `docs/decisions/0022-document-authority-order.md` | **ADR-0022: Document authority order.** Which document wins when two disagree, as a fixed precedence by document type. | accepted |
+| `docs/decisions/0023-context-artifact-set.md` | **ADR-0023: Context artifact set and onboarding order.** The artifact set a session reads to start, and the order it reads them in. | accepted |
+| `docs/decisions/0024-session-log-format.md` | **ADR-0024: Session log format.** What a session log must contain: tagged claims, evidence behind each one, and what was not done. | accepted |
+| `docs/decisions/0025-auto-memory-not-authoritative.md` | **ADR-0025: Auto Memory is not authoritative.** Auto Memory ranks below every document in this repository and nothing is designed around it. | accepted |
 
 Files listed: 72

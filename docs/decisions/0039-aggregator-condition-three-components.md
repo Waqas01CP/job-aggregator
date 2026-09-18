@@ -1,5 +1,7 @@
 ---
 status: accepted
+topic: fetching
+description: Which of ADR-0019's two contradictory conditions governs when a source is added, and the rule the next aggregator faces.
 date: 2026-09-17
 decision-makers: Waqas Sharif
 # consulted:

@@ -1,5 +1,7 @@
 ---
 status: accepted
+topic: measurement
+description: Two measures, freshness at discovery and outcome, with only the pipeline-controlled one binding. When the assessment window opens.
 date: 2026-09-09
 decision-makers: Waqas Sharif
 # consulted:

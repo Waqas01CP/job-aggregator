@@ -1,5 +1,7 @@
 ---
 status: accepted
+topic: fetching
+description: Where the employer name comes from when a payload does not carry one, and how that provenance is recorded on the row.
 date: 2026-09-11
 decision-makers: Waqas Sharif
 # consulted:

@@ -1,5 +1,7 @@
 ---
 status: accepted
+topic: practice
+description: Auto Memory ranks below every document in this repository and nothing is designed around it.
 date: 2026-09-11
 decision-makers: Waqas Sharif
 # consulted:

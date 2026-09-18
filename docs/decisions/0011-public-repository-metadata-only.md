@@ -1,5 +1,7 @@
 ---
 status: accepted
+topic: storage
+description: What may be stored on a public branch, by content class: identifying and locating metadata yes, description text never.
 date: 2026-09-09
 decision-makers: Waqas Sharif
 # consulted:

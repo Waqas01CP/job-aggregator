@@ -1,5 +1,7 @@
 ---
 status: accepted
+topic: display
+description: When the filter rules widen, a backfill appends the rows they now admit. The half of the append-only problem that adds rows.
 date: 2026-09-17
 decision-makers: Waqas Sharif
 # consulted:

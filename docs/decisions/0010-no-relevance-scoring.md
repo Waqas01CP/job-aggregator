@@ -1,5 +1,7 @@
 ---
 status: accepted
+topic: filtering
+description: Every verdict names a deterministic rule a person can read. The scope floor the whole project rests on, and the boundary any ranking proposal has to cross.
 date: 2026-09-09
 decision-makers: Waqas Sharif
 # consulted:

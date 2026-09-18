@@ -1,5 +1,7 @@
 ---
 status: accepted
+topic: practice
+description: What a session log must contain: tagged claims, evidence behind each one, and what was not done.
 date: 2026-09-11
 decision-makers: Waqas Sharif
 # consulted:

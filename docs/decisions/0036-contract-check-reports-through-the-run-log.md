@@ -1,5 +1,7 @@
 ---
 status: accepted
+topic: measurement
+description: The contract check reports through the run log rather than by failing, so a contract change and a crashed check stay distinguishable.
 date: 2026-09-17
 decision-makers: Waqas Sharif
 # consulted:
