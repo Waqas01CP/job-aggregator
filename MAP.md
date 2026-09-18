@@ -54,6 +54,7 @@ supersedes and superseded-by links, deliberately not duplicated here.
 | `docs/decisions/README.md` | Every architecture decision made on this project, one file per decision, with the reasoning that produced it and the conditions that would show it was wrong. | current |
 | `docs/reference/airtable-schema.md` | The Airtable display's tables and fields as actually built, the ADR-0014 choices they carry, and the two things the Airtable MCP cannot do. | current |
 | `docs/reference/annotation-vendors.md` | The annotation and data-labelling vendors whose postings are dropped, why the list exists, what it is sourced from, and how thin that evidence is. | current |
+| `docs/reference/completed.md` | Every completed task, with the evidence that proved it and the log or record that carries the proof. Split out of STATE.md so a session reads what is unsettled first. | current |
 | `docs/reference/platform-fields.md` | Every field each ATS platform and aggregator returns, with its type, how often it is populated, and whether the pipeline reads it. The inventory that makes "use everything that is fetched" checkable. | current |
 | `docs/reference/seniority-exclusions.md` | The senior-level title words that drop a posting the title pool admitted, the levels deliberately left in, and the evidence behind the numbered levels. | current |
 | `docs/reference/title-pool.md` | The 79 title terms a posting must match, grouped into the operator's four role families in order of precedence to be admitted, plus the normalisation and matching rules applied to both sides. | current |
@@ -165,4 +166,4 @@ Grouped by topic, in the order the pipeline runs. A record appears under exactly
 | `docs/decisions/0024-session-log-format.md` | **ADR-0024: Session log format.** What a session log must contain: tagged claims, evidence behind each one, and what was not done. | accepted |
 | `docs/decisions/0025-auto-memory-not-authoritative.md` | **ADR-0025: Auto Memory is not authoritative.** Auto Memory ranks below every document in this repository and nothing is designed around it. | accepted |
 
-Files listed: 74
+Files listed: 75

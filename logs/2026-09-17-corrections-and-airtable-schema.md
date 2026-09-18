@@ -623,7 +623,9 @@ a seam.
 | Known unverified | 7,485 |
 
 **The seam is status, not pipeline stage.** Of 69 table rows, **57 are DONE,
-and those 57 are 17.5KB, 45% of the file.** A DONE row is finished history:
+and those 57 are 17.5KB, 45% of the file.** *(That count was taken before this
+round added three DONE rows of its own. At the split it was 60 of 69 and
+18.7KB.)* A DONE row is finished history:
 the file's own rule is that it is never deleted, so the file grows
 monotonically with completed work. A session reads all of it at start and acts
 on almost none of it.
@@ -642,9 +644,29 @@ would gain a file.
 
 The file is 42KB as this log is written, having grown 3KB in this round alone.
 
+## Part 5 built, after the operator chose
+
+He chose the status seam. `STATE.md` now holds what is unsettled and
+`docs/reference/completed.md` holds what is finished.
+
+`[VERIFIED]` nothing was lost in the move. Every table row from the file
+before the split appears in exactly one of the two after it, compared as
+sorted lists of whole lines: 69 rows before, 9 plus 60 after, and the sets are
+equal. Rows moved verbatim, because a rule that says a DONE row is never
+deleted is only honoured if the bytes survive.
+
+    STATE.md      42,036 bytes  ->  23,560
+    completed.md        0       ->  20,544
+
+`STATE.md`'s maintenance rule now says where a row goes when it becomes DONE,
+and ADR-0023 carries a Changes row: its artifact set gains a file, its reading
+order does not change, since the four files a session starts with are the same
+and the completed rows are read on demand like `MAP.md`. The record's own
+point stands, that this is the artifact most able to lie. The split makes the
+part that can lie smaller.
+
 ## Not done
 
 - ADR-0043's three stores and ADR-0044's star have no writer, because the
   sweep and the projection are blocked behind the token.
 - ADR-0038's views remain unbuilt; only the label they need now exists.
-- Part 5 is proposed, not built.
