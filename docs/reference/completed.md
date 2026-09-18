@@ -28,6 +28,7 @@ supersede the row with a new one rather than editing the old.
 
 | Task | Status | Evidence | Date | Proof |
 |---|---|---|---|---|
+| Airtable rebuilt in the base the MCP now reaches: five tables. **Supersedes the 2026-09-17 row below**, whose base is stranded on another account | DONE | [VERIFIED] every schema read back after building: `Jobs` and `Jobs test` at 11 fields, and `rejected-not-a-fit`, `rejected-poor-filtering` and `accepted` at 12, each with a `createdTime` clock. The default table's 3 empty records were listed before it was deleted. Two fields left the main table because ADR-0045 puts the reason where the row lands. A fourth MCP limit found: a `createdTime` field's display format cannot be set | 2026-09-18 | `docs/reference/airtable-schema.md`, ADR-0045 |
 | Architecture document, arc42, twelve sections | DONE | [VERIFIED] | 2026-09-10 | `docs/architecture-2.0.md` |
 | Rejected architecture bannered, not deleted | DONE | [VERIFIED] | 2026-09-10 | `docs/architecture.md` |
 | Decision records, MADR 4.0.0 plus Assumptions | DONE | [VERIFIED] counted 2026-09-17 | 2026-09-17 | 29 records in `docs/decisions/` |

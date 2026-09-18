@@ -670,3 +670,212 @@ part that can lie smaller.
 - ADR-0043's three stores and ADR-0044's star have no writer, because the
   sweep and the projection are blocked behind the token.
 - ADR-0038's views remain unbuilt; only the label they need now exists.
+
+---
+
+# Classification flow, deferred register, and an audit
+
+The chat's fourth brief. Five parts.
+
+## Part 1: auditing ADR-RULES
+
+**It covers three of the four cases I hit, and the fourth only by example.**
+
+Covered well: the amend-versus-supersede conflict, the in-place annotations,
+and a brief contradicting CLAUDE.md. The last is the strongest part of the
+record, because it takes a case that was resolved without a rule and turns it
+into a rule.
+
+**The fourth is ADR-0019's internal contradiction, and the record files it
+under "When two live records conflict".** It was not two records. It was one
+record whose criterion and Confirmation disagreed. The example is cited under
+a heading that does not describe it, so the instruction that follows, "raise
+it, do not choose", is not clearly binding on the case it was drawn from. A
+seat finding tomorrow's version has to reason by analogy.
+
+### Where it conflicts with an accepted record
+
+**It adds two ranks to ADR-0022's order and neither record links to the
+other.** ADR-0022 is not annotated, carries no Changes row, and does not point
+at ADR-RULES. The project's own rule, restated in `docs/decisions/README.md`,
+is that a change carries links in both directions. This is the defect
+ADR-RULES exists to govern, in ADR-RULES' own landing.
+
+**And ADR-0022 says where the order must live:** "We will state this order in
+`CLAUDE.md` so a session reads it before anything else." CLAUDE.md's list has
+eight ranks and does not carry the two new ones. CLAUDE.md is rank 2 and
+ADR-RULES is rank 3, so a session that reads the higher document gets the
+older order. **Today a seat following CLAUDE.md alone would not know a brief
+ranks below a record.** That is the audit's most actionable finding.
+
+**It restates a rule it says it will not restate.** Its opening declines to
+repeat ADR-0022's ranks because "duplicating them would create the second copy
+of a fact this project exists to avoid". Its section "When two live records
+conflict" then restates ADR-0022's rank 3, which already says "Where two
+records conflict and neither is superseded, that is a defect: raise it rather
+than choosing". CLAUDE.md carries it too. That is now three copies of one
+rule, in the record that names the problem.
+
+### What is unenforceable or ambiguous
+
+**"The line is whether the record's Decision Outcome changes. Everything above
+it is correction; everything at or below it is a decision."** Read
+positionally, Consequences and Confirmation sit below Decision Outcome and
+would be decisions, which would have forbidden restating ADR-0001's unrunnable
+Confirmation, something a brief asked for and the operator approved. Read as
+scope, it permits it. The two readings differ on a case that has already
+happened, so the sentence needs to say which it means.
+
+### What is missing that I needed
+
+**The routing rule.** The rule I use most often is the three-way split between
+what a seat decides and logs, what goes to the operator, and what goes to the
+chat. It is in no document in this repository. It has been carried in session
+prompts for five rounds, and every one of those rounds used it.
+
+**A status vocabulary.** Part 1's addition asks me to verify a status column
+against the records, and there is no list of permitted statuses to verify
+against. `accepted` and `superseded by ADR-XXXX` are in use; nothing says
+whether `deprecated` or `proposed` exist.
+
+**What "retire a record" means.** ADR-RULES forbids a seat from doing it
+without saying what it is, who may, or what status results.
+
+**A Confirmation that cannot be run** is a distinct defect from a factual
+error, and the record does not name it. ADR-0001's named a filter that has
+never existed.
+
+### One thing it does that this repository does not do elsewhere
+
+ADR-RULES is named, not numbered, and has no Decision Outcome. It is the
+first record in the corpus without one, and the boundary it draws for seats,
+"whether the record's Decision Outcome changes", therefore cannot be applied
+to itself.
+
+### A mechanical consequence, and an exception I took
+
+`[VERIFIED]` ADR-RULES.md as delivered had no `topic` and no `description`, so
+it failed the map gate built last round and **blocked every commit in this
+repository**. The brief says not to amend it. I added the two frontmatter
+lines and nothing else: no sentence of the record changed, and by its own
+line the Decision Outcome is untouched. Recorded here as an exception taken
+deliberately rather than a rule quietly ignored. `topic: practice`, which is
+"How this repository is worked", fits without forcing.
+
+That raises a design question for the chat rather than for me: whether a named
+record that governs the corpus should be exempt from a topic vocabulary built
+for records about the pipeline.
+
+## Part 1, addition: the index against the records
+
+`[VERIFIED]` by reading every record's frontmatter, H1 and Changes table and
+comparing against `docs/decisions/README.md`.
+
+**One status is wrong, and it is the one that matters most.** The index says
+ADR-0010 is "Accepted, clause reversed by 0038". ADR-0038 reverses nothing: it
+decides that role families are *within* ADR-0010, that every view stays
+ordered by date, and it lists what remains forbidden. ADR-0010 is the scope
+floor. An index asserting a clause of it has been reversed is the most
+consequential error available in that table.
+
+**One is incomplete.** ADR-0013 names 0030 and not ADR-0040, which is what
+actually changed what "a projection of that file" means. **ADR-0013's own
+Changes table was missing that pointer too, and that is my omission from the
+previous round.** Corrected, since ADR-RULES permits a seat to correct a
+reference.
+
+**Seven titles differ** from the records' own H1s, all shortenings: 0013,
+0032, 0034, 0036, 0041, 0043, 0044. None changes a decision. They are a second
+copy of a fact that will drift again.
+
+**Two apparent defects that are not.** ADR-0008's frontmatter says "superseded
+by ADR-0021" and the index says "Superseded by 0021", which agree. And 0042 is
+in the index with no file, which is deliberate and documented in two places.
+My first check flagged both, which is a fair reminder that a mechanical
+comparison needs a reader.
+
+**The structural point.** MAP.md already generates a decision table with
+title, description and status from frontmatter. The index's third copy adds
+only the relations, and those are derivable from each record's Changes rows,
+which name the ADRs involved. Generating the status column would end the
+drift; the alternative is that it falls fifteen records behind again.
+
+## Part 2: ADR-0045, the classification flow
+
+Written, not built. It supersedes ADR-0014 rather than reversing another
+clause, because the trigger, the cadence, the deletion rule and one outcome's
+deletability all change.
+
+The operator moves a row to a table named for the outcome. `Classified` is a
+`createdTime` field, so the retention clock starts when the row arrives and
+cannot be forgotten or backdated. Write, verify, then delete, and the verify
+reads the store back for the row's identity. `accepted` is deleted by hand
+only.
+
+**The budget, recomputed rather than assumed to fit:** 60 calls a month for
+projection upserts, 60 for the projection's read of `Jobs`, 90 for the daily
+read of three classification tables, 60 for batched deletes. **About 270
+against roughly 1,000**, where ADR-0014 estimated 130. Two things hold it
+there and both are named in the record: ADR-0037's grouping keeps `Jobs` to
+about 25 rows so one list call reads it, and deletes batch ten to a call.
+
+## Part 3: docs/deferred/
+
+`docs/deferred/similarity-matching.md`, the first entry, with a new map type
+`deferred`. I chose a new type over `reference` because a deferred file is the
+only kind in the corpus that states what would change its own mind, and
+folding it in with registries and schemas hides exactly that.
+
+The file records that **no accuracy comparison was possible**: there is no
+labelled data and the accepted store is empty, so any claim that the
+deterministic star is better or worse would be invention. What can be said is
+narrower: one is explainable and the other is not.
+
+## Part 4: the heredoc trap, proposed mechanism
+
+Not built. It needs the operator's approval and one half of it lives outside
+this repository.
+
+## Part 5: a different base
+
+`[VERIFIED]` the MCP now reaches base `Job aggregator` on a different account
+from the one used on 2026-09-17. Different base ID, and it held one default
+table. **The two tables built on 2026-09-17 are stranded**, and whichever base
+`AIRTABLE_BASE_ID` names is the one that counts.
+
+Five tables built in one pass and every schema read back: `Jobs`, `Jobs test`,
+`rejected-not-a-fit`, `rejected-poor-filtering`, `accepted`. The default table
+was deleted after its three empty records were listed.
+
+**Two deviations from the brief, both deliberate.** `Jobs test` is a fifth
+table the brief did not name, built because `AIRTABLE_TEST_TABLE_ID` is one of
+the four secrets and ADR-0033 requires test mode to be incapable of touching
+production. And the main table has eleven fields rather than the documented
+thirteen: `Pipeline reason` and `Choice reason` moved to the classification
+table each belongs to, because under ADR-0045 the reason is recorded where the
+row lands and two homes for one fact is the thing this project treats as a
+defect.
+
+**A fourth MCP limit.** A `createdTime` field's display format cannot be set:
+`create_field` takes no options for the type and `update_field` accepts only a
+formula. The three `Classified` fields therefore display in the viewer's local
+zone and 12 hour clock while every other date in the base is ISO and `utc`.
+The stored value is a real timestamp and the API returns ISO, so the sweep is
+unaffected.
+
+## Found while working, and not mine to decide
+
+The architecture chat removed `CHAT_STATE.md` from `.gitignore` and removed
+its skip from `tools/generate_map.py`, with a comment saying it is now
+committed. Deliberate and documented in two places. **Both were restored and
+neither is committed.** This repository is public, a push is not reversible,
+and the file's own description says it records the errors that chat made.
+Publishing it is the operator's call to make explicitly, not a seat's to make
+by staging a file it happened to find. The reason is recorded in the
+generator, next to the restored skip.
+
+## Not done
+
+- Nothing in ADR-0045 is built. It is behind the token, as the brief says.
+- The eight reconstructed index statuses are reported, not edited.
+- Part 4 is a proposal.

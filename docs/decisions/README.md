@@ -8,43 +8,62 @@ The deviations: an added **Assumptions** section, taken from Tyree and Akerman, 
 
 Records are written at the moment a decision concludes. An accepted record is never edited; a change is a new record that supersedes it, with links in both directions.
 
+**`ADR-RULES.md` governs this corpus** and is read through rather than in sequence. It adds two ranks to the authority order, distinguishes stale from wrong, and states what a seat may correct without asking. **ADR-0042 was reserved for it and is deliberately unused**; the gap between 0041 and 0043 is not a missing file.
+
 | ID | Title | Status |
 |----|-------|--------|
 | 0001 | Two-layer store, raw and filtered | Accepted, extended by 0027 |
 | 0002 | Raw layer on a git data branch, not a hosted database | Accepted |
 | 0003 | Append deltas, not snapshots | Accepted |
-| 0004 | Airtable as the filtered display layer | Accepted, one clause reversed by 0014 |
+| 0004 | Airtable as the filtered display layer | Accepted, clauses reversed by 0014, 0034, 0035 |
 | 0005 | Fetch complete board output, filter locally | Accepted |
 | 0006 | Twice-daily fetch cadence | Accepted |
 | 0007 | Recency is a view, not an ingest filter | Accepted |
 | 0008 | Title matching by allowlist, blocklist, and unmatched flag | Superseded by 0021 |
 | 0009 | Vertical slice first, adapters incremental | Accepted |
-| 0010 | No relevance scoring, ranking, or model-based screening | Accepted |
+| 0010 | No relevance scoring, ranking, or model-based screening | Accepted, clause reversed by 0038 |
 | 0011 | Public repository, metadata only on the data branch | Accepted |
 | 0012 | No email or search-alert ingestion path | Accepted |
-| 0013 | Three layers, filtered set persisted independently of the display | Accepted |
-| 0014 | Weekly status sweep, with a four-status outcome taxonomy | Accepted |
+| 0013 | Three layers, filtered set persisted independently of the display | Accepted, clause reversed by 0030 |
+| 0014 | Weekly status sweep, with a four-status outcome taxonomy | Superseded by 0045 |
 | 0015 | Two measures, and the archive protocol | Accepted |
 | 0016 | Title-only matching against a versioned title pool | Accepted, one clause reversed by 0021 |
 | 0017 | Sanitised cassettes as adapter test fixtures | Accepted |
-| 0018 | Scheduled contract check against live boards | Accepted |
-| 0019 | Add aggregator feeds as a second source class | Accepted, one clause reversed by 0026 |
+| 0018 | Scheduled contract check against live boards | Accepted, clause reversed by 0036 |
+| 0019 | Add aggregator feeds as a second source class | Accepted, clauses reversed by 0026 and 0039 |
 | 0020 | Route raw storage by source class | Accepted |
-| 0021 | Allowlist-only title matching, with normalisation | Accepted |
+| 0021 | Allowlist-only title matching, with normalisation | Accepted, clause reversed by 0032 |
 | 0022 | Document authority order | Accepted |
-| 0023 | Context artifact set and onboarding order | Accepted |
+| 0023 | Context artifact set and onboarding order | Accepted, artifact set extended |
 | 0024 | Session log format | Accepted |
 | 0025 | Auto Memory is not authoritative | Accepted |
 | 0026 | Employer provenance where a payload does not carry it | Accepted |
 | 0027 | Deduplication key normalisation, configured per source | Accepted |
 | 0028 | Per-run fetch budget, and detail fetched once per posting | Accepted |
 | 0029 | Adapter order after the slice, and Dover dropped | Accepted |
+| 0030 | A rule change backfills the filtered layer | Accepted |
+| 0031 | Personal preferences are configuration, not code | Accepted |
+| 0032 | The seniority rule | Accepted |
+| 0033 | The data branch is the store, local files are working copies | Accepted |
+| 0034 | Airtable gets its own client | Accepted |
+| 0035 | The projection upserts on Identity | Accepted |
+| 0036 | The contract check reports through the run log | Accepted |
+| 0037 | The filtered layer stores rows, the projection groups them | Accepted |
+| 0038 | Role families are views, not a ranking | Accepted |
+| 0039 | The aggregator condition is the three components | Accepted |
+| 0040 | The current rules filter the projection, never the store | Accepted |
+| 0041 | Location admits unless a source excludes | Accepted |
+| 0042 | *reserved for ADR-RULES, deliberately unused* | n/a |
+| 0043 | Three outcome stores | Accepted |
+| 0044 | The priority star, on named attributes only | Accepted |
+| 0045 | The classification flow | Accepted |
+| RULES | How records are resolved, amended and retired | Accepted |
 
 ## Pending
 
 Decisions identified but not concluded.
 
-- Platform adapter order after the vertical slice. **Closed by ADR-0029.**
+- Whether aggregator rows may be written to the private Airtable base. The one route by which Himalayas' kept rows reach the operator, since on a runner they persist nowhere.
 - Reuse boundary against the LinkedIn pipeline in fyp-career-guidance: which components are adopted, which are deliberately not.
 - Description matching, deferred by ADR-0016 until field coverage per platform is known.
 - Deduplication across source classes, and the employer alias map ADR-0019 makes necessary.
@@ -54,6 +73,7 @@ Decisions identified but not concluded.
 - A second private repository for aggregator data, deferred by ADR-0020.
 - Which skills the project needs, and whether the session log becomes a skill with dynamic context injection.
 - Whether an AGENTS.md symlink is added for Antigravity. Claude Code reads CLAUDE.md only, with no fallback, so CLAUDE.md is the real file either way.
+- Every unread field in `docs/reference/platform-fields.md`, each needing its own decision about what it means and what its absence means.
 
 ## Reading these records
 
@@ -75,4 +95,4 @@ A record stays under 200 lines, and its Changes table stays under eight rows. Re
 
 Records 0001 to 0012 were written in Nygard format before the architecture-documentation research pass, then retrofitted to the current format. Their reasoning was not changed in the retrofit; Assumptions and Confirmation sections were added, since neither existed in the original format.
 
-To be re-examined once the implementation-flow research pass is complete.
+**This index fell fifteen records behind.** It listed through 0029 while the corpus ran to 0044, and the statuses for 0004, 0010, 0013, 0014, 0018, 0019, 0021 and 0023 were reconstructed from session reports rather than from the records themselves. Restored 2026-09-18. **The status column needs verifying against each record's own front matter and Changes table**, because a reconstructed index is exactly the second copy of a fact this project treats as a defect.

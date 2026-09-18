@@ -18,6 +18,10 @@ as it is. `reference` is what things are, opened while working.
 `research` is a dated snapshot of what was found, valid as a record
 of that moment even once its findings go stale. `log` is what one
 session did, append-only, chained backwards through the index.
+`deferred` is a decision not to do something yet, carrying the
+trigger that would make it worth revisiting. It is not a decision
+record: it decides nothing, and it is the one type that states what
+would change its own mind.
 
 Relations between decision records live inside those records as
 supersedes and superseded-by links, deliberately not duplicated here.
@@ -52,7 +56,7 @@ supersedes and superseded-by links, deliberately not duplicated here.
 | File | Holds | Status |
 | --- | --- | --- |
 | `docs/decisions/README.md` | Every architecture decision made on this project, one file per decision, with the reasoning that produced it and the conditions that would show it was wrong. | current |
-| `docs/reference/airtable-schema.md` | The Airtable display's tables and fields as actually built, the ADR-0014 choices they carry, and the two things the Airtable MCP cannot do. | current |
+| `docs/reference/airtable-schema.md` | The Airtable display's five tables and their fields as actually built, the ADR-0014 choices they carry, and the four things the Airtable MCP cannot do. | current |
 | `docs/reference/annotation-vendors.md` | The annotation and data-labelling vendors whose postings are dropped, why the list exists, what it is sourced from, and how thin that evidence is. | current |
 | `docs/reference/completed.md` | Every completed task, with the evidence that proved it and the log or record that carries the proof. Split out of STATE.md so a session reads what is unsettled first. | current |
 | `docs/reference/platform-fields.md` | Every field each ATS platform and aggregator returns, with its type, how often it is populated, and whether the pipeline reads it. The inventory that makes "use everything that is fetched" checkable. | current |
@@ -140,13 +144,14 @@ Grouped by topic, in the order the pipeline runs. A record appears under exactly
 | File | Holds | Status |
 | --- | --- | --- |
 | `docs/decisions/0004-airtable-as-display-layer.md` | **ADR-0004: Airtable as the filtered display layer.** Airtable's free plan is the display layer, written by batched calls and never read back. What the operator actually opens. | accepted |
-| `docs/decisions/0014-weekly-status-sweep.md` | **ADR-0014: Weekly status sweep, with a four-status outcome taxonomy.** A weekly sweep reads outcomes, persists them, then deletes the rows, and the four-status taxonomy the operator marks rows with. | accepted |
+| `docs/decisions/0014-weekly-status-sweep.md` | **ADR-0014: Weekly status sweep, with a four-status outcome taxonomy.** A weekly sweep reads outcomes, persists them, then deletes the rows, and the four-status taxonomy the operator marks rows with. | superseded by ADR-0045 |
 | `docs/decisions/0030-backfill-on-rule-change.md` | **ADR-0030: A rule change backfills the filtered layer.** When the filter rules widen, a backfill appends the rows they now admit. The half of the append-only problem that adds rows. | accepted |
 | `docs/decisions/0034-airtable-its-own-client.md` | **ADR-0034: Airtable gets its own client, as a scoped exception.** Airtable gets its own client, a scoped exception to the one-HTTP-module rule, with retry and backoff kept shared. | accepted |
 | `docs/decisions/0035-airtable-upsert-on-identity.md` | **ADR-0035: The projection upserts on Identity.** The projection upserts on Identity so a retried write creates no duplicates, and writes only pipeline-owned fields. | accepted |
 | `docs/decisions/0040-current-rules-filter-the-projection.md` | **ADR-0040: The current rules filter the projection, never the store.** The current rules filter the projection and never the store. The half of the append-only problem that removes rows. | accepted |
 | `docs/decisions/0043-three-outcome-stores.md` | **ADR-0043: Three outcome stores, and what each is for.** Three append-only outcome corpora, one per kind of outcome, and what each one is allowed to feed back into. Reverses ADR-0014's single-file clause. | accepted |
 | `docs/decisions/0044-priority-star.md` | **ADR-0044: The priority star, and the line it must not cross.** A posting is starred when it shares one of three named attributes with an accepted role. The deterministic answer to "show me more like this", and the line it must not cross. | accepted |
+| `docs/decisions/0045-classification-flow.md` | **ADR-0045: The classification flow.** The operator classifies by moving a row to one of three tables; the sweep writes it to its store, verifies the write, then deletes. Supersedes ADR-0014's sweep. Accepted is never deleted automatically. | accepted |
 
 ### Measurement and evidence
 
@@ -165,5 +170,12 @@ Grouped by topic, in the order the pipeline runs. A record appears under exactly
 | `docs/decisions/0023-context-artifact-set.md` | **ADR-0023: Context artifact set and onboarding order.** The artifact set a session reads to start, and the order it reads them in. | accepted |
 | `docs/decisions/0024-session-log-format.md` | **ADR-0024: Session log format.** What a session log must contain: tagged claims, evidence behind each one, and what was not done. | accepted |
 | `docs/decisions/0025-auto-memory-not-authoritative.md` | **ADR-0025: Auto Memory is not authoritative.** Auto Memory ranks below every document in this repository and nothing is designed around it. | accepted |
+| `docs/decisions/ADR-RULES.md` | **ADR-RULES: how records are resolved, amended and retired.** How records are resolved, amended and retired. Two ranks the authority order lacks, the difference between stale and wrong, and what a seat may correct without asking. Read through, not in sequence. | accepted |
 
-Files listed: 75
+## deferred
+
+| File | Holds | Status |
+| --- | --- | --- |
+| `docs/deferred/similarity-matching.md` | Ranking postings by similarity to accepted roles. Deferred because ADR-0010 forbids it and the deterministic star was built instead; revisit when the accepted store holds fifty rows or when the operator stops reading every row. | current |
+
+Files listed: 78

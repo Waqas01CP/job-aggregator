@@ -62,6 +62,7 @@ Delete a row from Airtable by hand and confirm it is still present in the filter
 | Date | Change | Reason |
 |---|---|---|
 | 2026-09-17 | The projection copies the filtered file, and a rule change backfills the file first | ADR-0030. Copying the file as it stands is what 'a projection of that file' means, and it is accurate only if the file tracks the rules in force. Re-applying the chain at projection time was rejected because it would make the filtered file a log rather than the thing the display reads |
+| 2026-09-18 | The projection applies the current chain rather than copying the file as it stands | ADR-0040. "A projection of that file" was read as a straight copy, which would show rows the current rules reject: measured, 11 of the 24 rows in `filtered.json`. Added late: this pointer was missing when ADR-0040 was written, which left this record's own Changes table silent about the record that changed it |
 
 ## More Information
 

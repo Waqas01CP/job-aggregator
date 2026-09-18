@@ -53,6 +53,13 @@ SKIP_DIRS = {".git", ".github", "node_modules", "__pycache__", ".venv", "venv", 
 # The generator does not read .gitignore, so anything ignored and ending
 # in .md has to be named here or it will halt the run demanding
 # frontmatter it should never have.
+#
+# 2026-09-18: the architecture chat removed this skip and the matching
+# .gitignore line, to start tracking CHAT_STATE.md. Both are restored for
+# now and neither is committed. The repository is public and a push is not
+# reversible, so publishing the chat's own ledger, which the file says
+# records the errors that chat made, is the operator's call to make
+# explicitly rather than a seat's to make by staging a file it found.
 SKIP_FILES = {"MAP.md", "MAP.generated.md", "CHAT_STATE.md"}
 
 DECISIONS_DIR = REPO_ROOT / "docs" / "decisions"
@@ -60,7 +67,7 @@ DECISIONS_DIR = REPO_ROOT / "docs" / "decisions"
 FRONTMATTER_RE = re.compile(r"\A---\r?\n(.*?)\r?\n---\r?\n", re.DOTALL)
 H1_RE = re.compile(r"^#\s+(.+?)\s*$", re.MULTILINE)
 
-VALID_TYPES = {"instruction", "state", "explanation", "reference", "how-to", "decision", "research", "log", "entry"}
+VALID_TYPES = {"instruction", "state", "explanation", "reference", "how-to", "decision", "research", "log", "entry", "deferred"}
 
 
 class MapError(Exception):
@@ -234,13 +241,17 @@ def render(entries):
         "`research` is a dated snapshot of what was found, valid as a record",
         "of that moment even once its findings go stale. `log` is what one",
         "session did, append-only, chained backwards through the index.",
+        "`deferred` is a decision not to do something yet, carrying the",
+        "trigger that would make it worth revisiting. It is not a decision",
+        "record: it decides nothing, and it is the one type that states what",
+        "would change its own mind.",
         "",
         "Relations between decision records live inside those records as",
         "supersedes and superseded-by links, deliberately not duplicated here.",
         "",
     ]
 
-    order = ["entry", "instruction", "state", "explanation", "how-to", "reference", "research", "log", "decision"]
+    order = ["entry", "instruction", "state", "explanation", "how-to", "reference", "research", "log", "decision", "deferred"]
     for file_type in order:
         rows = by_type.pop(file_type, [])
         if not rows:
