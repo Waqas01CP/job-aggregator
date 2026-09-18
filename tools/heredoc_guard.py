@@ -1,31 +1,30 @@
 """PreToolUse guard for the one shell shape that keeps corrupting files here.
 
 Reads a Claude Code hook payload on stdin and prints a JSON decision. It asks
-for confirmation, never denies, and only for the narrow case that has actually
-failed five times in this repository's logs.
+for confirmation, never denies, and only when a heredoc writes to a file that
+lives in this repository.
 
 **The failure.** Content written into a file through a bash heredoc loses a
-level of backslash escaping on the way. A Python string written as "\\n"
+level of escaping on the way. A Python string written as a backslash-n
 arrives in the file as a real newline, and the file stops parsing. It has
-happened to src/filters.py twice and to test and scratch files three more
-times, each caught by the test suite a minute later.
+broken src/filters.py twice and test and scratch files three more times.
 
-**Why not block every heredoc.** Most heredocs here are analysis that prints a
-number and exits: they carry regexes full of backslashes, run correctly, and
-are the normal way to ask a question of the data. Blocking those would make
-the guard something to work around, which is how a gate stops being a gate.
+**Why this does NOT test for a backslash, which was the first design.**
+Measured on 2026-09-18: the escape is converted before the hook sees the
+command. A guard that looked for a backslash asked on the text as typed and
+allowed the text it actually received, so it fired on surviving backslashes,
+which are regex patterns and harmless, and stayed silent on converted ones,
+which are the failure. It was precisely backwards, and only running it proved
+that.
 
-**Why not leave it to the rule.** A rule restated after each of five failures
-is a rule that does not work.
+**So the trigger is the destination, which the conversion cannot hide.** A
+heredoc writing to a path in this repository asks; a heredoc writing to the
+scratchpad, a temporary directory or data/ runs untouched, and a heredoc that
+only reads and prints runs untouched. That keeps every analysis command free,
+which is most of them, and catches every command that can damage a tracked
+file.
 
-**So the discriminator is the file write, not the backslash.** Both together
-ask; either alone runs untouched:
-
-    backslash + writes a file   ->  ask, and suggest the Edit or Write tool
-    backslash, reads only       ->  allow
-    writes a file, no backslash ->  allow
-
-Exit code is always 0. A guard that fails closed on its own bug would block
+Exit code is always 0. A guard that failed closed on its own bug would block
 work for a reason nobody could see.
 """
 import json
@@ -73,28 +72,52 @@ def heredoc_bodies(command):
     return bodies
 
 
+# Paths a heredoc may write to freely: scratch space and the pipeline's own
+# gitignored output. Nothing here is tracked, so nothing here can be corrupted
+# in a way that survives.
+_SEP = "[" + chr(92) + chr(92) + "/]"      # a path separator, either slash
+SAFE_PATH = re.compile(
+    "(temp" + _SEP + "claude|scratchpad|" + _SEP + "tmp" + _SEP +
+    "|(^|" + _SEP + ")data" + _SEP + ")",
+    re.IGNORECASE)
+
+
+def written_paths(body, opener_line):
+    """Every file path this heredoc appears to write to."""
+    paths = []
+    for pattern in WRITES:
+        for match in pattern.finditer(body):
+            quoted = re.search(r"['\"]([^'\"]+)['\"]", match.group(0))
+            if quoted:
+                paths.append(quoted.group(1))
+            else:
+                paths.append("")
+    for match in REDIRECTS.finditer(opener_line):
+        paths.append(match.group(0).lstrip("> ").strip())
+    return paths
+
+
 def verdict(command):
     """(should_ask, reason). Reason is None when nothing is suspicious."""
     for opener_line, body in heredoc_bodies(command):
-        if "\\" not in body:
+        paths = written_paths(body, opener_line)
+        if not paths:
             continue
-        writes = [p.pattern for p in WRITES if p.search(body)]
-        redirected = bool(REDIRECTS.search(opener_line))
-        if not writes and not redirected:
+        risky = [p for p in paths if not SAFE_PATH.search(p)]
+        if not risky:
             continue
-        how = "a shell redirect" if redirected and not writes else "a file write"
-        return True, (
-            "This heredoc contains a backslash and performs %s.\n"
-            "That exact shape has corrupted a file five times in this "
-            "repository: a backslash escape loses a level on the way through "
-            "the heredoc, so \\n arrives as a real newline and the file stops "
-            "parsing.\n"
-            "The Write and Edit tools do not have this problem. Use one of "
-            "them for file content, or build the text in code with chr(92) "
-            "and chr(10).\n"
-            "Continue only if the backslashes here are genuinely intended to "
-            "survive as written." % how
-        )
+        return True, chr(10).join((
+            "This heredoc writes to %s, which is inside the repository."
+            % (risky[0] or "a file"),
+            "Content written through a heredoc loses a level of escaping: a "
+            "backslash-n becomes a real newline and the file stops parsing. "
+            "That has happened six times here, twice to src/filters.py, and "
+            "once inside the guard that was being written to prevent it.",
+            "The conversion happens before this guard can see the command, so "
+            "it cannot check the content, only the destination.",
+            "Use the Write or Edit tool for file content, or build the text in "
+            "code with chr(92) and chr(10). Continue only if this heredoc "
+            "contains no escape sequences at all."))
     return False, None
 
 

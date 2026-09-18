@@ -80,6 +80,12 @@ Bad, because it cannot name the field, and it makes a contract change indistingu
 Good, because it is durable and diffable.
 Bad, because it is a second artifact with its own format when the run log already exists and is already read by a tool.
 
+## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-09-18 | Cadence decided: daily | The operator's choice from the costed options. About 90 requests a month now and about 240 after ADR-0029's five adapters, against a per-run ceiling of 500 that no run has come within 90% of. A contract change is noticed within a day. This record decided the channel and left the cadence open; it is now closed. The check itself is still unbuilt |
+
 ## More Information
 
 Answers question D of the 2026-09-17 architecture brief. ADR-0018 carries a Changes row pointing here.

@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src import storage
 from src.filters import TitleMatcher
 from src.normalise import Row
-from tools.backfill import BackfillError, backfill, gap, load_rows
+from src.backfill import BackfillError, backfill, gap, load_rows
 
 NOW = "2026-09-18T12:00:00.000000Z"
 MATCHER = TitleMatcher()

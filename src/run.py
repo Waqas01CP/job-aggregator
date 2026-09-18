@@ -32,6 +32,7 @@ from datetime import datetime, timezone
 
 from . import storage
 from .adapters import greenhouse, himalayas, lever
+from .backfill import backfill
 from .config import ConfigError, is_publishable, load_boards
 from .dedupe import counts as dedupe_counts
 from .dedupe import group, split_new
@@ -185,6 +186,26 @@ class Run:
             self.paths["filtered"],
             [r.as_record() for r in new_kept if is_publishable(r.source)]) + filtered_local
 
+        # ADR-0030: the filtered layer must track the rules in force, and the
+        # only place that can be guaranteed is inside the run that writes it.
+        # A rule change otherwise needs someone to remember, and forgetting is
+        # invisible: no later run offers those postings again.
+        #
+        # It runs after the normal write, so at the end of every run the
+        # layer matches the rules. It appends nothing when there is no gap,
+        # which is the usual case, and costs one pass over the raw layer.
+        #
+        # **Counted separately, and that separation is the point.** If the
+        # normal write path broke, this would quietly write the same rows and
+        # the run would look healthy. A run whose `written_filtered` is 0
+        # while `backfilled` is 8 is a defect wearing a working run's clothes,
+        # and only two numbers make it visible.
+        #
+        # `self.paths` already carries the run's mode, so a test run backfills
+        # data/test/ and can never heal production. That is asserted by a test,
+        # because inheriting it silently is exactly how it would stop being true.
+        backfilled = backfill(self.paths, iso(self.now), matcher=self.matcher)
+
         for row in all_rows:
             seen.record(row)
             seen.mark_seen(row.identity, iso(self.now))
@@ -212,6 +233,9 @@ class Run:
                 "kept": len(kept_rows),
                 "written_raw": raw_written,
                 "written_filtered": filtered_written,
+                "backfilled": backfilled["written_public"] + backfilled["written_local"],
+                "backfilled_public": backfilled["written_public"],
+                "backfilled_local": backfilled["written_local"],
                 "written_filtered_local": filtered_local,
                 "drops": drop_counts(drops),
                 "dedupe": dedupe_counts(group(all_rows)),
@@ -240,6 +264,12 @@ def summarise(run_log):
     lines.append("  totals: fetched %d, new %d, kept %d, raw %s, filtered %d (%d of them local only)"
                  % (t["fetched"], t["new"], t["kept"], t["written_raw"],
                     t["written_filtered"], t["written_filtered_local"]))
+    # Its own line, never folded into the filtered count. A run writing 0 of
+    # its own while the backfill writes 8 is a broken write path, and one
+    # combined number would read as a healthy run.
+    lines.append("  backfilled: %d (%d publishable, %d local only). ADR-0030"
+                 % (t.get("backfilled", 0), t.get("backfilled_public", 0),
+                    t.get("backfilled_local", 0)))
     lines.append("  drops by rule: %s" % t["drops"])
     lines.append("  dedupe: %s" % t["dedupe"])
     r = run_log["requests"]

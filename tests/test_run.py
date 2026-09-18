@@ -231,6 +231,86 @@ class TestSourceRouting(RunHarness):
         self.assertTrue(row["published_meaning_unconfirmed"])
 
 
+class TestTheBackfillInsideARun(RunHarness):
+    """ADR-0030, wired into the run on 2026-09-18 so the filtered layer tracks
+    the rules without anyone remembering after a pool change.
+
+    The audit before wiring it found two ways it could do harm. Both are
+    tested here, because both are silent failures."""
+
+    def test_a_run_heals_a_gap_the_normal_write_path_cannot(self):
+        """The situation the backfill exists for: the posting is in the raw
+        layer and in the seen store, so no run will ever offer it again, and
+        the rules now admit it."""
+        payload = gh_payload(["AI Engineer"])
+        Run([GH], client_for({"careem": payload}), now=NOW, matcher=MATCHER).execute()
+        self.assertEqual(len(storage.read_records("data/filtered.json")), 1)
+
+        # Delete the row from the filtered layer, leaving raw and seen intact.
+        # That is exactly the shape a widened pool produces.
+        storage.write_atomic("data/filtered.json", storage.dumps([]))
+
+        log = Run([GH], client_for({"careem": payload}), now=NOW,
+                  matcher=MATCHER).execute()
+        self.assertEqual(len(storage.read_records("data/filtered.json")), 1,
+                         "the run did not heal the gap")
+        self.assertEqual(log["totals"]["backfilled"], 1)
+        self.assertEqual(log["totals"]["written_filtered"], 0,
+                         "the row came from the backfill, not the normal path")
+
+    def test_the_backfill_count_is_reported_apart_from_the_run_s_own_writes(self):
+        """The first audit finding. If these were one number, a broken write
+        path would read as a healthy run: the backfill would quietly write the
+        same rows and nothing would say so."""
+        payload = gh_payload(["AI Engineer"])
+        log = Run([GH], client_for({"careem": payload}), now=NOW,
+                  matcher=MATCHER).execute()
+        totals = log["totals"]
+        for key in ("backfilled", "backfilled_public", "backfilled_local"):
+            self.assertIn(key, totals)
+        # A first run writes through the normal path, so the backfill finds
+        # nothing. That is the healthy shape and it must be distinguishable.
+        self.assertEqual(totals["written_filtered"], 1)
+        self.assertEqual(totals["backfilled"], 0)
+        self.assertIn("backfilled:", summarise(log))
+
+    def test_a_test_run_backfills_test_paths_and_never_production(self):
+        """The second audit finding, and the more dangerous one. The backfill
+        inherits the run's paths; if it ever read the production layout while
+        in test mode it would heal, or corrupt, production from a test."""
+        payload = gh_payload(["AI Engineer"])
+        Run([GH], client_for({"careem": payload}), now=NOW, matcher=MATCHER).execute()
+        production = read_text("data/filtered.json")
+
+        # A gap in production that only a backfill could close.
+        storage.write_atomic("data/filtered.json", storage.dumps([]))
+
+        Run([GH], client_for({"careem": gh_payload(["AI Engineer"], start=77)}),
+            now=NOW, test_mode=True, matcher=MATCHER).execute()
+
+        self.assertEqual(read_text("data/filtered.json"),
+                         storage.dumps([]),
+                         "a test run's backfill reached production")
+        self.assertNotEqual(read_text("data/filtered.json"), production)
+        self.assertTrue(os.path.exists("data/test/filtered.json"))
+
+    def test_an_aggregator_row_is_never_backfilled_into_the_public_file(self):
+        """ADR-0020 through the run's own backfill, not the tool's."""
+        client = client_for({"careem": gh_payload(["AI Engineer"])})
+        Run([GH], client, now=NOW, matcher=MATCHER).execute()
+        storage.write_atomic("data/filtered.json", storage.dumps([]))
+        storage.write_atomic("data/fetch-all-local/himalayas.json", storage.dumps(
+            [dict(storage.read_records("data/fetch-all/greenhouse.json")[0],
+                  identity="himalayas:1", source="himalayas",
+                  board_id="himalayas:browse")]))
+
+        log = Run([GH], client_for({"careem": gh_payload(["AI Engineer"])}),
+                  now=NOW, matcher=MATCHER).execute()
+        public = [r["source"] for r in storage.read_records("data/filtered.json")]
+        self.assertNotIn("himalayas", public)
+        self.assertEqual(log["totals"]["backfilled_local"], 1)
+
+
 class TestTestMode(RunHarness):
     def test_test_mode_leaves_production_files_untouched(self):
         """The brief's check."""

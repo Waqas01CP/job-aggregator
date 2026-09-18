@@ -950,3 +950,98 @@ budget already at 27% of the allowance and breaks silently on a rename.
 - The hook is written but not live in this session: `.claude/` did not exist
   when the session started, so the settings watcher is not watching it. It
   needs `/hooks` opened once, or a restart.
+
+---
+
+# The operator's decisions, and a guard proved backwards
+
+## The canary first, at the operator's instruction
+
+He reordered the work: seed the display before building the writer, so that
+if rows never appear the fault is caught early rather than after a build.
+Correct, and it paid immediately.
+
+`[VERIFIED]` both tables held 0 records. Ten grouped rows were written to
+`Jobs test`, never to `Jobs`. The schema survived real data: dates round-trip,
+a 49-character multi-location string stores intact, and the `Matched term`
+values are the pool terms the chain actually assigned.
+
+`Jobs` stays empty on purpose. The writer fills it, and ADR-0009's
+Confirmation needs the pipeline rather than a hand-filled snapshot.
+
+**One expectation corrected for him.** Creating the token started nothing. No
+code in this repository writes to Airtable, so the tables stay empty however
+long he waits. The token unblocked the building of the writer, not the writing
+of rows.
+
+**Also found:** the `To review` view already existed. The filter was missing
+because "is empty" is an operator, not a value in the choice list, and it
+needs no data to be set.
+
+## The backfill inside every run, audited before wiring
+
+He approved it and asked for an audit first. The audit found two ways it could
+do harm, and both are now guarded by tests and mutations rather than by care.
+
+**A broken write path would hide behind it.** If the run's normal write failed,
+the backfill would quietly write the same rows and the run would look healthy.
+So its count is reported apart from the run's own: a run whose
+`written_filtered` is 0 while `backfilled` is 8 is a defect wearing a working
+run's clothes, and only two numbers make it visible.
+
+**A test run could heal production.** The backfill inherits `self.paths`, which
+carries the run's mode. That is asserted by a test, because inheriting it
+silently is exactly how it would stop being true.
+
+The logic moved to `src/backfill.py`, since `src` must not import from
+`tools`; `tools/backfill.py` is now a wrapper for clones. 383 tests, 4
+mutations on the integration, all caught.
+
+## The heredoc guard was backwards, and running it proved it
+
+`[VERIFIED]` and this is the finding of the round.
+
+The guard asked when a heredoc carried a backslash and wrote a file. Fed the
+command as typed it asks; fed the command as the hook actually receives it, it
+allows. **The escape is converted before the hook sees it.** So the guard fired
+on surviving backslashes, which are regex patterns and harmless, and stayed
+silent on converted ones, which are the failure. Precisely backwards.
+
+Measured directly: a probe writing `backslash-n` produced a real newline in
+the file, with no backslash left in the command; a probe carrying `backslash-d`
+in a regex survived intact and worked. One escape is converted, the other is
+not, and the dangerous one is the converted one.
+
+**The trigger is now the destination, which the conversion cannot hide.** A
+heredoc writing into the repository asks; one writing to the scratchpad, a
+temporary directory or `data/` runs untouched; one that only reads and prints
+runs untouched.
+
+**The trap fired a sixth time while the fix was being written**, inside the
+guard's own reason string, and was repaired with the Edit tool. That is either
+the strongest argument for the mechanism or the strongest argument that no
+mechanism inside this shell can be trusted with content. The test file keeps
+the backwards case permanently, because without it the backslash trigger looks
+obviously correct and someone will restore it.
+
+**The hook is still not live in this session.** Both probes ran without
+asking, including one carrying a surviving backslash and a write, which the
+old guard should have caught. `.claude/` did not exist at session start, so
+the settings watcher is not watching it.
+
+## Decisions recorded
+
+Retention became two clocks, 3 days to write and 14 to delete, in
+`docs/reference/retention.md` with ADR-0045 annotated in two places and its
+30-day assumption corrected. The contract check's cadence is daily, recorded
+in ADR-0036's Changes. Rozee.pk is deferred in `docs/deferred/rozee-pk.md`
+with the operator's own reasoning: more sources first, and Manatal may cover
+the same employers through an API, in which case the file closes rather than
+being actioned.
+
+## Not done
+
+- The writer. It is unblocked and is the next work.
+- Nothing was committed to `docs/decisions/README.md` or `CHAT_STATE.md`, both
+  of which the architecture chat has edited.
+

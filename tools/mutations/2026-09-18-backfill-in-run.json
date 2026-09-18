@@ -1,0 +1,26 @@
+[
+ {
+  "label": "run: the backfill is not called at all, so a widened pool never heals",
+  "path": "src/run.py",
+  "find": "        backfilled = backfill(self.paths, iso(self.now), matcher=self.matcher)",
+  "replace": "        backfilled = {\"written_public\": 0, \"written_local\": 0}"
+ },
+ {
+  "label": "run: the backfill count is folded into the filtered count, hiding a broken write path",
+  "path": "src/run.py",
+  "find": "                \"backfilled\": backfilled[\"written_public\"] + backfilled[\"written_local\"],",
+  "replace": "                \"backfilled\": 0,"
+ },
+ {
+  "label": "run: the backfill uses production paths regardless of test mode",
+  "path": "src/run.py",
+  "find": "        backfilled = backfill(self.paths, iso(self.now), matcher=self.matcher)",
+  "replace": "        backfilled = backfill(storage.layout(False), iso(self.now), matcher=self.matcher)"
+ },
+ {
+  "label": "run: the backfill runs before the normal write, so a fresh row is written twice",
+  "path": "src/run.py",
+  "find": "    lines.append(\"  backfilled: %d (%d publishable, %d local only). ADR-0030\"",
+  "replace": "    lines.append(\"  nothing to report here \" + \"%d%d%d\" % (0, 0, 0) + \"%s%s\"[0:0]"
+ }
+]

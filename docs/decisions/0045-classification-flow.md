@@ -31,7 +31,7 @@ That changes enough of ADR-0014's Decision Outcome that this is a supersession r
 
 - The operator will move rows rather than set statuses. **Not established.** No row has been classified, because the display has never received one.
 - Classified volume is small, on the order of tens a week. **Sourced** from 25 display rows after grouping; not measured.
-- A retention period of 30 days is long enough to notice a cluster by eye. **Assumed, not measured**, and it is the operator's number: it lives in configuration under ADR-0031, not in code.
+- A retention period is long enough to notice a cluster by eye. **Assumed, not measured**, and it is the operator's number: it lives in configuration under ADR-0031, not in code. *(Annotated 2026-09-18: this read "30 days". The operator set two periods instead, 3 days to write to the store and 14 to delete from Airtable, and they are in `docs/reference/retention.md`. See Changes.)*
 - Airtable's delete endpoint accepts up to 10 records per call, as its create endpoint does. **Sourced** from Airtable's documentation, not exercised.
 
 ## Considered Options
@@ -48,7 +48,7 @@ Chosen option: "classification by moving a row".
 
 **The clock starts when the row arrives in the classification table.** Each classification table carries a `Classified` field of type `createdTime`, set by Airtable when the record is created there. It is not the posting's publication date, not its first-seen date, and not when it was surfaced. It cannot be forgotten or mis-set, because nothing sets it by hand.
 
-**The two rejection tables auto-delete after the retention period**, measured from `Classified`. `accepted` does not.
+**The two rejection tables auto-delete after the retention period**, measured from `Classified`. `accepted` does not. *(Annotated 2026-09-18: one period became two. The store write happens at 3 days and the delete at 14, so a row is durable long before it stops being visible. The ordering invariant below is unchanged and the gap it guards is now eleven days wide rather than seconds. See Changes.)*
 
 **Write, verify, then delete. Never the reverse.** For each row past its retention:
 
@@ -113,6 +113,12 @@ Bad, because the operator must remember which of four statuses means what, a mis
 
 Good, because it needs no new tables and no moves.
 Bad, because a view is a filter over a status, so it keeps every problem of the status field and adds a layer that looks like structure but is not. Deleting from a view deletes from the table.
+
+## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-09-18 | One retention period becomes two clocks: write to the store at 3 days, delete from Airtable at 14 | The operator's decision, which outranks this record under ADR-0022. The ordering invariant is untouched and is strengthened: write, verify, then delete, with the gap between write and delete widened from seconds to eleven days. A row is durable from day 3 and visible until day 14, so a sweep that fails for a week loses nothing and a cluster of one reason is still on screen to be noticed. He prefers 7 days for the delete and chose 14 as a starting value, because nothing in this path has run yet. Both numbers are configuration in `docs/reference/retention.md`, not constants |
 
 ## More Information
 
