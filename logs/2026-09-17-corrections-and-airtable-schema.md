@@ -320,3 +320,140 @@ consistent, still not proof.
 
 **Requests:** 36 in every run, 9 Greenhouse, 2 Lever, 25 Himalayas. No run
 near the 500 ceiling, 0 retries, 0 failures across all three.
+
+---
+
+# Navigation, storage, and an architecture audit
+
+The chat's second brief: five parts and two corrections to earlier framing.
+
+## Part 5, the ADR-0031 audit, run for the first time
+
+**The letter of the Confirmation finds nothing.** `[VERIFIED]` 112 preference
+values checked against all 19 shipped modules: 19 hits, every one in a comment
+or a docstring. No pool term, seniority word, vendor name or family name is
+used as a value anywhere in `src/` or `tools/`.
+
+**The audit was extended to employer names**, which ADR-0031's own wording does
+not cover and which matter more: an employer named in a module is a board the
+pipeline cannot stop polling without a code change. `[VERIFIED]` **no employer
+name appears in any module.** The case that could easily have gone wrong is
+ADR-0027's per-source title normalisation, and it did not: `config/boards.json`
+names a normaliser, `strip_location_suffix`, and the function itself is generic,
+removing a trailing suffix that equals the posting's own location field. The
+word "speechify" appears once in `src/`, in a comment explaining a measurement.
+
+**Two violations were found on a stricter reading and fixed.** The method
+`TitleMatcher.senior_word` is named after the list's current contents rather
+than its function. Renamed to `excluded_word`; the tree is now clean.
+
+**The Confirmation is now a tool**, `tools/preference_audit.py`, with 14 tests.
+Every test that matters plants a violation the shipped tree does not have: a
+pool term in a list literal, an employer in a condition, seniority words in a
+tuple. Two cases prove the distinction the audit rests on. The same term in a
+docstring is allowed and in a data string is not, which is why docstrings are
+found with `ast` rather than by looking for triple quotes; and `llm` must not
+match "llmodule", which is ADR-0021's boundary rule applied to source code.
+
+**One defect in my own work**, found by my own test: `load_families` leaked
+`FileNotFoundError` instead of raising `AuditError`, so a missing pool file
+would have crashed the audit rather than reporting it. Fixed.
+
+## Part 3, the field inventory
+
+`docs/reference/platform-fields.md`, measured from the 84 saved responses
+rather than from adapter docstrings. A field counts as read only if the adapter
+names it, so a field the documentation mentions and the code ignores counts as
+unread.
+
+**The brief's premise needed correcting.** It said nothing records that
+`locationRestrictions` exists "or that the pipeline ignores it". The pipeline
+does not ignore it: `src/adapters/himalayas.py` reads it and joins the first
+three entries into the `location` string.
+
+**And my own first reaction to that was wrong too.** I assumed the cut at three
+was lossy. `[VERIFIED]` across 91 unique postings the lists have median length
+1 and 90th percentile 2, and **only 2 of 74 exceed three entries**. The
+truncation costs almost nothing. The measurement was worth making precisely
+because both the brief and I had guessed.
+
+**The field that is actually ignored is a better one.** Himalayas returns
+`seniority` on 100% of postings, as `["Mid-level", "Senior"]`, and nothing reads
+it. ADR-0032 infers seniority from title words on the one source that states it.
+`timezoneRestrictions` is also 100% and also unread.
+
+Other unread fields worth naming: Lever's `workplaceType` and `country`, both
+100%; Greenhouse's `metadata` at 37.4%, which is the weak experience lead; and,
+for platforms not yet adapted, **SmartRecruiters' `experienceLevel` at 100% and
+Zoho Recruit's `Work_Experience` reading "1-3 years"**. Those two are the only
+measured sources of the field the stated-experience rule has never had.
+
+## Part 2, ADR-0040, and Part 4, ADR-0041
+
+**ADR-0040: the current rules filter the projection, never the store.**
+ADR-0030 handled widening; this handles contraction. `[VERIFIED]` 11 of the 24
+rows in `filtered.json` are rejected by the current chain, so projecting the
+file as-is would show the operator eleven roles he has decided against.
+ADR-0030's clause "the projection then copies the file as it stands" is amended
+inline and in its Changes.
+
+**One consequence the brief did not name, and it destroys data if wrong.** An
+upsert-based sweep that removes rows which have fallen out would delete rows the
+operator has already marked `applied`, which is the record of an application.
+The record therefore removes only rows whose `Status` is empty, and its
+Confirmation is the case built to defeat it: mark one of the eleven `applied`,
+run the sweep, and it must still be there.
+
+**ADR-0041: location admits unless a source excludes.** Records the deferral,
+which had none, and the rule replacing it. `[VERIFIED]` on the saved Himalayas
+corpus the structured half would drop 74 and admit 17, and none of the 74 lists
+names Pakistan. On every ATS board in the slice it drops nothing, because none
+exposes an eligibility field. The text half, "US only", waits on description
+filtering and is recorded in full so it is implemented to this rule rather than
+designed again.
+
+Its Confirmation is the existing case set, which is the case built to defeat it:
+"Karachi, Punjab, Pakistan" with its wrong province must stay admitted. A rule
+that drops it has become the matcher this record rejects.
+
+## Part 1, navigation: investigated, proposed, not built
+
+`[VERIFIED]` how routing actually works today, by reading the generator and the
+generated file rather than assuming.
+
+- **Decision rows in `MAP.md` carry only the record's H1 title.**
+  `tools/generate_map.py` takes a description from frontmatter for other types
+  and falls back to the first heading for decision records, which have no
+  `description` field. Forty-one records are therefore a flat list of forty-one
+  titles, ordered by number.
+- **The titles are good.** Most state the decision as a sentence. The failure is
+  not identifying a record once seen; it is knowing which of forty-one to look
+  at when the question arrives by topic rather than by decision.
+- **Grep does not route here.** Records cross-reference each other heavily, so
+  a topic word returns roughly half the corpus: "Airtable" appears in 19 of 41
+  files, "title" in 18, "log" in 27.
+- **The reading order's real growth risk is not `MAP.md`.** Measured:
+  `CLAUDE.md` 11.5KB, `MAP.md` 13.1KB, `logs/README.md` 10.4KB, and **`STATE.md`
+  36.6KB**, which is both the largest and the only hand-written one.
+
+Proposal, and the route: this is configuration and a generator change, so it
+needs the operator's approval and not the chat's. Put to him, not yet built.
+
+## Also
+
+**Himalayas stays.** ADR-0019 gains a Changes row and ADR-0039 an annotation.
+Both halves of the old argument are withdrawn in writing: the request spend was
+never a constraint, since ADR-0028's ceiling is 500 and the maximum observed is
+36, and the worthlessness judgement rested on a different corpus. Its own
+restriction field is measured instead.
+
+**The 36 requests are what a run spends, not a limit.** Every place that framed
+it as a cost against Himalayas is corrected.
+
+## Still not done
+
+- **Nothing pushed.** Two briefs have now ended "push"; the standing protocol
+  is that the operator pushes. Asked again rather than assumed.
+- Part 1 is proposed, not implemented.
+- ADR-0040's projection filter, ADR-0041's structured half, and every unread
+  field in Part 3 are decisions and measurements, not code.

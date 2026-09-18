@@ -109,6 +109,7 @@ One clause is reversed by ADR-0026: employer read from the payload in every case
 
 | Date | Change | Reason |
 |---|---|---|
+| 2026-09-17 | Himalayas stays, and its condition is settled by ADR-0039 | The condition's two statements contradicted each other; the three named components govern and Himalayas touched none of them. The separate question of whether it earns its place is also closed: the request spend was never a constraint, since ADR-0028's ceiling is 500 and no run has exceeded 36, and the judgement that its worldwide-remote rows were worthless rested on a different corpus and is withdrawn. Its `locationRestrictions` field is measured instead, in `docs/reference/platform-fields.md` |
 | 2026-09-11 | The employer-from-payload clause is reversed by ADR-0026 | The endpoint spike enumerated all 18 keys across 48 Lever postings and found none containing compan, employ or org. The rule assumed every payload names its employer; two of three platforms measured do |
 | 2026-09-17 | The condition is the three components; the Confirmation's narrower sentence is an error | ADR-0039. The criterion names the shared HTTP module, the normaliser's row shape and the filter chain. 'A diff touching only a config entry and a new adapter file' is shorthand that came out narrower than the thing it summarised, and the real diff satisfied the criterion while failing the shorthand. Himalayas passes on the criterion. Whether it stays on the schedule is a separate and open question, on cost and visibility grounds |
 

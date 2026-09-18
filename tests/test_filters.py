@@ -378,12 +378,12 @@ class TestSeniority(unittest.TestCase):
         for title in ("Staffing AI Engineer", "Headless AI Engineer",
                       "AI Engineer, Leadership Programme", "AI Engineer, Directory Services",
                       "AI Engineer, Seniority Models", "AI Engineer, Chiefly Remote"):
-            self.assertIsNone(MATCHER.senior_word(title), title)
-        self.assertEqual(MATCHER.senior_word("AI Team Leads"), "lead")
+            self.assertIsNone(MATCHER.excluded_word(title), title)
+        self.assertEqual(MATCHER.excluded_word("AI Team Leads"), "lead")
 
     def test_uk_and_i_is_not_a_level(self):
         """A naive level match read "UK&I" as level I in the evidence check."""
-        self.assertIsNone(MATCHER.senior_word("AI Engineer, UK&I"))
+        self.assertIsNone(MATCHER.excluded_word("AI Engineer, UK&I"))
 
     def test_an_unadmitted_senior_title_is_a_title_drop(self):
         """Seniority runs after the title rule, so the drop log keeps recording

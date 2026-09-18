@@ -187,7 +187,7 @@ class TitleMatcher:
                 return term
         return None
 
-    def senior_word(self, title):
+    def excluded_word(self, title):
         """The first excluded senior-level word in the title, or None."""
         folded = fold(title)
         for word, pattern in self.seniority_patterns:
@@ -254,7 +254,7 @@ def rule_title(row, matcher=None, **kw):
 def rule_seniority(row, matcher=None, **kw):
     """Drop an admitted posting whose title carries a senior-level word.
     Decided by the operator on 2026-09-17; see the module docstring."""
-    word = matcher.senior_word(row.title_normalised)
+    word = matcher.excluded_word(row.title_normalised)
     if word is not None:
         return Verdict(False, "seniority", "senior-level word %r in title" % word)
     return Verdict(True)

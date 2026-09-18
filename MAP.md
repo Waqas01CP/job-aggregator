@@ -54,6 +54,7 @@ supersedes and superseded-by links, deliberately not duplicated here.
 | `docs/decisions/README.md` | Every architecture decision made on this project, one file per decision, with the reasoning that produced it and the conditions that would show it was wrong. | current |
 | `docs/reference/airtable-schema.md` | The Airtable display's tables and fields as actually built, the ADR-0014 choices they carry, and the two things the Airtable MCP cannot do. | current |
 | `docs/reference/annotation-vendors.md` | The annotation and data-labelling vendors whose postings are dropped, why the list exists, what it is sourced from, and how thin that evidence is. | current |
+| `docs/reference/platform-fields.md` | Every field each ATS platform and aggregator returns, with its type, how often it is populated, and whether the pipeline reads it. The inventory that makes "use everything that is fetched" checkable. | current |
 | `docs/reference/seniority-exclusions.md` | The senior-level title words that drop a posting the title pool admitted, the levels deliberately left in, and the evidence behind the numbered levels. | current |
 | `docs/reference/title-pool.md` | The 79 title terms a posting must match, grouped into the operator's four role families in order of precedence to be admitted, plus the normalisation and matching rules applied to both sides. | current |
 | `docs/research/README.md` | Dated snapshots of what was found and when. Numbered by the order the pass was run, so a later reader knows what was known at each point. | current |
@@ -130,5 +131,7 @@ supersedes and superseded-by links, deliberately not duplicated here.
 | `docs/decisions/0037-filtered-layer-stores-rows.md` | ADR-0037: The filtered layer stores rows, the projection groups them | accepted |
 | `docs/decisions/0038-family-views.md` | ADR-0038: Role families are views, not a ranking | accepted |
 | `docs/decisions/0039-aggregator-condition-three-components.md` | ADR-0039: The aggregator condition is the three components | accepted |
+| `docs/decisions/0040-current-rules-filter-the-projection.md` | ADR-0040: The current rules filter the projection, never the store | accepted |
+| `docs/decisions/0041-location-admits-unless-excluded.md` | ADR-0041: Location admits unless a source excludes, and keywords only tag | accepted |
 
-Files listed: 69
+Files listed: 72

@@ -50,7 +50,7 @@ This is not specific to pool version 4. Every future pool change, seniority chan
 
 Chosen option: "backfill on rule change".
 
-**When the filter rules change, a backfill pass re-runs the current chain over the raw layer and appends to `filtered.json` every row the rules now admit that the file does not already hold.** The projection then copies the file as it stands, per ADR-0013, and is accurate.
+**When the filter rules change, a backfill pass re-runs the current chain over the raw layer and appends to `filtered.json` every row the rules now admit that the file does not already hold.** The projection then copies the file as it stands, per ADR-0013, and is accurate. *(Annotated 2026-09-17: **amended by ADR-0040.** The projection does not copy the file as it stands; it reads the file and applies the current chain, so rows admitted under rules that have since contracted are hidden rather than displayed. This record handled widening only. See Changes.)*
 
 **This does not violate ADR-0003.** That record says "We will append only records absent from the raw layer. We will never rewrite an existing record and never write a full snapshot." A backfill appends records absent from the file and rewrites nothing. It is the same operation a run performs, differing only in what triggered it.
 
@@ -87,6 +87,12 @@ Bad, because `filtered.json` stops being the thing the display reads and becomes
 
 Good, because it is what exists today and needs no code.
 Bad, because measured today it shows 24 rows of which 11 are wrong under the current rules, and omits 257 that are right.
+
+## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-09-17 | "The projection then copies the file as it stands" becomes "the projection reads the file and applies the current chain" | ADR-0040. This record handled widening and left contraction. Rows admitted under older rules stay in the file, correctly, and projecting the file as-is would put them in the display: measured, 11 of the 24 rows in `filtered.json` are rejected by the current chain. Filtering at the projection keeps the store append-only and complete while the display shows only what current rules admit. The backfill is unaffected, and the two halves now work together |
 
 ## More Information
 

@@ -48,7 +48,9 @@ Chosen option: "the three components govern".
 
 **Evaluated against the real diff, Himalayas passes.** It touched none of the three components. Changes to `src/config.py`, `src/run.py` and `src/storage.py` are the model absorbing a new capability, which is the outcome the criterion calls "the model working".
 
-**This settles the condition and not the source.** Whether Himalayas stays on the schedule is a separate and open question, on entirely different grounds: on a discarded runner its rows persist nowhere, and it costs 25 of every run's 36 requests while showing the operator nothing. That decision is the operator's and is not made here.
+**This settles the condition and not the source.** Whether Himalayas stays on the schedule is a separate question, on entirely different grounds: on a discarded runner its rows persist nowhere. That decision is the operator's and is not made here.
+
+*(Annotated 2026-09-17, the same day: **Himalayas stays.** This paragraph originally added "and it costs 25 of every run's 36 requests while showing the operator nothing". Both halves are withdrawn. The request count is what a run spends, not a limit: ADR-0028's ceiling is 500 and no run has exceeded 36, which is 7.2% of it, so nothing is constrained and the spend was never an argument. And the judgement that its worldwide-remote rows were worthless rested on a different corpus. Its own `locationRestrictions` field is the measurement that settles reachability, and on the saved corpus it excludes Pakistan on 74 of 91 postings and leaves 17 unstated. See ADR-0041 and `docs/reference/platform-fields.md`.)*
 
 **The rule for the next aggregator:** a new source may add configuration, an adapter, an orchestrator capability it is the first to need, and a storage path. It may not change how every other source fetches, what shape a row has, or how a row is judged.
 
@@ -84,4 +86,4 @@ Bad, because it is the same evaluation with a redrawn boundary, which decides by
 
 Resolves the contradiction in ADR-0019 lines 55 and 83, which carries a Changes row pointing here.
 
-The open question of whether Himalayas stays on the schedule is recorded in `STATE.md` and is the operator's.
+Whether Himalayas stays on the schedule was open when this record was written and was closed the same day: it stays. See the annotation above and ADR-0019's Changes.
