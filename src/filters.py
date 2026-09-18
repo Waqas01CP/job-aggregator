@@ -48,10 +48,7 @@ from .normalise import fold
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TITLE_POOL_PATH = os.path.join(REPO_ROOT, "docs", "reference", "title-pool.md")
 SENIORITY_PATH = os.path.join(REPO_ROOT, "docs", "reference", "seniority-exclusions.md")
-
-# Sourced from docs/reference/title-pool.md, "Known behaviour, accepted
-# deliberately". PROVISIONAL: no decision record carries this list.
-ANNOTATION_VENDORS = ("welo data", "welocalize", "innodata")
+VENDORS_PATH = os.path.join(REPO_ROOT, "docs", "reference", "annotation-vendors.md")
 
 VERDICT_KEEP = "keep"
 
@@ -125,6 +122,40 @@ def load_seniority_words(path=None):
     if not words:
         raise FilterError("seniority exclusions list no words")
     return words
+
+
+def load_annotation_vendors(path=None):
+    """The annotation vendors, from their own reference file.
+
+    ADR-0031: a preference is configuration, never a constant in a module.
+    This list was a tuple here, marked provisional in a comment, until
+    2026-09-17.
+
+    Only the section headed "Vendors" is read. The rest of that file quotes
+    file paths and a symbol name in backticks, and a loader that read the
+    whole document would silently turn `src/filters.py` into a vendor and
+    drop every employer whose name contained it, which is none of them, which
+    is exactly how a defect like that survives."""
+    path = path or VENDORS_PATH
+    try:
+        with open(path, encoding="utf-8") as f:
+            text = f.read()
+    except FileNotFoundError:
+        raise FilterError("annotation vendors not found at %s" % path)
+    start = text.find("## Vendors")
+    if start == -1:
+        raise FilterError("annotation vendors have no '## Vendors' section")
+    end = text.find("\n## ", start + 1)
+    section = text[start:end if end != -1 else len(text)]
+    names = [n for n in (fold(t) for t in re.findall(r"`([^`]+)`", section)) if n]
+    if not names:
+        raise FilterError("annotation vendors list no names")
+    return names
+
+
+# Loaded once, at import, so a missing or malformed preference file stops the
+# program rather than quietly filtering nothing.
+ANNOTATION_VENDORS = tuple(load_annotation_vendors())
 
 
 def compile_terms(terms):

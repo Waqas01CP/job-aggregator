@@ -55,6 +55,12 @@ Delete a row from Airtable by hand and confirm it is still present in the filter
 
 ## Pros and Cons of the Options
 
+## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-09-17 | The projection copies the filtered file, and a rule change backfills the file first | ADR-0030. Copying the file as it stands is what 'a projection of that file' means, and it is accurate only if the file tracks the rules in force. Re-applying the chain at projection time was rejected because it would make the filtered file a log rather than the thing the display reads |
+
 ## More Information
 
 Extends ADR-0001. Related to ADR-0014, which defines how outcomes set in the display return to the data branch.

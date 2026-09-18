@@ -1,0 +1,26 @@
+[
+ {
+  "label": "vendors: the loader reads the whole file, not just its section",
+  "path": "src/filters.py",
+  "find": "    start = text.find(\"## Vendors\")\n    if start == -1:\n        raise FilterError(\"annotation vendors have no '## Vendors' section\")\n    end = text.find(\"\\n## \", start + 1)\n    section = text[start:end if end != -1 else len(text)]",
+  "replace": "    section = text"
+ },
+ {
+  "label": "vendors: a missing file yields an empty list instead of failing",
+  "path": "src/filters.py",
+  "find": "    except FileNotFoundError:\n        raise FilterError(\"annotation vendors not found at %s\" % path)",
+  "replace": "    except FileNotFoundError:\n        return []"
+ },
+ {
+  "label": "vendors: an empty list is accepted",
+  "path": "src/filters.py",
+  "find": "    if not names:\n        raise FilterError(\"annotation vendors list no names\")\n    return names",
+  "replace": "    return names"
+ },
+ {
+  "label": "vendors: innodata dropped from the file",
+  "path": "docs/reference/annotation-vendors.md",
+  "find": " · `innodata`",
+  "replace": ""
+ }
+]

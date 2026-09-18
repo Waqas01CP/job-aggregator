@@ -3,7 +3,7 @@
 #
 #   git config core.hooksPath .githooks
 #
-# Five checks, every one of which must be able to fail. Prove each by
+# Six checks, every one of which must be able to fail. Prove each by
 # giving it the case built to defeat it before trusting it. A gate nobody
 # has seen fire is indistinguishable from an absent one, and worse,
 # because it is trusted.
@@ -168,5 +168,36 @@ case "$map_status" in
        Its output is above. Fix that, do not regenerate blindly."
     ;;
 esac
+
+# ---------------------------------------------------------------------
+# 6. Nothing the pipeline writes belongs on a code branch. ADR-0020.
+#
+# ADR-0020 promised "a guard rejecting an aggregator-sourced file from a
+# commit", and for two weeks there was none. The guard that matters most
+# could never be a hook: the data branch's commits are built with
+# git commit-tree, which runs no hooks at all. That one lives in the
+# run's commit step and reads every record's source.
+#
+# This gate covers the other failure mode, which a hook can see: a
+# working file staged onto a code branch by hand. .gitignore excludes
+# data/, so reaching here takes an explicit "git add -f", which is
+# exactly the act that needs stopping. An aggregator's rows staged this
+# way would be published against the terms ADR-0020 exists to honour,
+# and the raw layer would be committed twice in two different shapes.
+# ---------------------------------------------------------------------
+
+for file in $staged; do
+  case "$file" in
+    data/*)
+      fail "a pipeline working file is staged: $file
+       ADR-0020 and ADR-0033: data/ holds working copies. The store is
+       the orphan data branch, written by the run itself. Aggregator
+       rows under data/local/ and data/fetch-all-local/ must never be
+       published at all.
+       If you reached here with 'git add -f', that is the act this gate
+       exists to stop. Unstage it: git restore --staged $file"
+      ;;
+  esac
+done
 
 exit 0

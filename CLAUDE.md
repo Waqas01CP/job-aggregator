@@ -26,8 +26,11 @@ documented file set.
 3. **`logs/README.md`.** What prior sessions did. When you need more, read the
    most recent relevant log; it references the one before it; chain backwards
    only as far as you need and stop when you have enough.
-4. **`MAP.md`**, on demand. Every documented file, what it holds, what kind of
-   answer it gives.
+4. **`MAP.md`**. **The navigation index for every documented file in this
+   repository.** It names each one, what it holds, and what kind of answer it
+   gives. **Read it before searching the tree.** Grepping for a file whose
+   purpose this index already states is the slowest way to find anything here,
+   and it is what every session that skipped this line has done.
 
 Then the brief for your task.
 
@@ -84,6 +87,12 @@ adapter serving nine boards.
 **All fetch behaviour lives in one shared HTTP module.** Retry, backoff, budget
 counting, circuit breaking. An adapter parses and nothing else. Copying retry
 logic into an adapter is the specific failure this rule prevents.
+
+**Writing to a display service is not fetch behaviour.** ADR-0034 gives
+Airtable its own client: different verb, authentication, budget, rate limit
+and failure semantics. Retry, backoff and circuit breaking stay shared, as
+utilities both import, because that is what the rule above is protecting.
+Fetching a job board has no exception and never gets one.
 
 **Read only the fields consumed.** Ignore everything else, so a board adding a
 field never breaks anything.

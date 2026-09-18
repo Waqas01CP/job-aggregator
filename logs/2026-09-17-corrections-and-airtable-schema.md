@@ -145,10 +145,130 @@ About 11 MCP calls were used, one of which was the rejected 422.
   look like stale text and are open questions with the chat.
 - **Trusting `ping`.** It proves the server runs, not that it is authorized.
 
-## Not done
+## Not done, as of 22:20Z
 
 - Nothing pushed. The operator pushed `1bcea92` himself mid-session.
 - The scheduled run had not fired by 22:20Z. Expected between about 03:00 and
   04:30Z from the two previous runs' lateness.
 - No Himalayas fetch, no decision record written or edited, no "To review"
   view, which the MCP cannot create.
+
+---
+
+# The architecture chat's brief, worked through
+
+The operator relayed a twelve-part brief from the architecture chat, stating
+that none of it required his input. Everything below is that work.
+
+## Ten records written
+
+| Record | Decides |
+|---|---|
+| ADR-0030 | A rule change backfills the filtered layer. Answers questions I and J together |
+| ADR-0031 | Personal preferences are configuration, not code |
+| ADR-0032 | The seniority rule, and the clause of ADR-0021 it reverses |
+| ADR-0033 | The data branch is the store, local files are working copies. Answers question 5 |
+| ADR-0034 | Airtable gets its own client, as a scoped exception. Answers question A |
+| ADR-0035 | The projection upserts on Identity. Answers question B |
+| ADR-0036 | The contract check reports through the run log. Answers question D with a no |
+| ADR-0037 | The filtered layer stores rows, the projection groups them. Answers question G |
+| ADR-0038 | Role families are views, not a ranking. Answers question F |
+| ADR-0039 | The aggregator condition is the three components. Resolves ADR-0019 |
+
+## Fifteen Changes rows, and four in-place annotations
+
+**A structural decision, made and worth stating.** The brief said "amend" for
+nine records. CLAUDE.md says: "Never edit an accepted record to change a
+decision. Write a new record that supersedes it, and link both directions. A
+factual error may be corrected in place with a dated annotation." Those two
+cannot both be followed literally.
+
+They were split by kind. Where the change is a **decision**, a new record
+carries it and the old one gains a Changes row pointing forward: ADR-0004 to
+ADR-0034 and ADR-0035, ADR-0010 to ADR-0038, ADR-0013 to ADR-0030, ADR-0018 to
+ADR-0036, ADR-0019 to ADR-0039, ADR-0021 to ADR-0032. Where the change is a
+**factual error in the record**, it is annotated in place with the date, as
+the rule allows: ADR-0001's unrunnable Confirmation, ADR-0011's enumeration,
+ADR-0019's contradictory Confirmation sentence, ADR-0021's no-blocklist
+clause. ADR-0015 took two Changes rows, go-live and the backfill exclusion, as
+the brief specified.
+
+Fifteen rows across eleven records, applied by a script so the table structure
+stayed uniform rather than being retyped eleven times.
+
+## Corrections to the brief itself
+
+**ADR-0021's Confirmation is not invalidated.** `[VERIFIED]` by running its
+eight-case set through the current chain. Every case produces the verdict the
+record requires. "Software Engineer II" is still not admitted: the pool now
+matches it and the seniority rule drops it, so the **verdict** holds and only
+the **mechanism** changed. The case set is therefore re-run and kept, not
+replaced, and ADR-0032 records the table. The run also confirms
+"Non-AI Systems Analyst" is admitted by `ai system`, which ADR-0021 itself
+named as the one to watch, so it is a live false positive rather than a
+theoretical one.
+
+**ADR-0023 was already done.** The brief asked for the "neither is a gate yet"
+correction. It is at line 76 with a dated annotation and a Changes row, both
+added on 2026-09-17 by an earlier session. Nothing to do.
+
+## The annotation-vendor list became configuration, not just a file
+
+The brief asked for `docs/reference/annotation-vendors.md`. Writing only the
+file would have left `ANNOTATION_VENDORS = ("welo data", "welocalize",
+"innodata")` in `src/filters.py`, contradicting ADR-0031 the moment it was
+written. So the list moved: a `load_annotation_vendors()` loader reading the
+file's Vendors section only, and the constant now loads at import.
+
+The three names are unchanged, so no filtering behaviour changed.
+
+`[VERIFIED]` 311 tests pass, 3 new. **Four mutations, all caught**: the loader
+reading the whole file instead of its section, a missing file returning empty
+instead of raising, an empty list accepted, and a vendor removed from the
+file. The section-scoping mutation matters because the file quotes
+`src/filters.py` and a tool path in backticks outside that section, and a
+whole-file loader would have turned them into vendor names.
+
+**The test count is now genuinely 311**, which is what the previous session's
+log claimed before this session corrected it to 308. Coincidence, and recorded
+so nobody later reads the correction as wrong.
+
+## Gate 6 in the pre-commit hook, proven to fire
+
+ADR-0020 promised "a guard rejecting an aggregator-sourced file from a commit"
+and none existed. The guard that matters lives in the run's commit step,
+because the data branch's commits use `git commit-tree`, which runs no hooks.
+Gate 6 covers the other failure mode, which a hook can see: a `data/` path
+staged onto a code branch by hand.
+
+`[VERIFIED]` by the case built to defeat it. `.gitignore` excludes `data/`, so
+the gate is only reachable through `git add -f`, which is exactly what was
+done:
+
+    git add -f data/gate6-proof.json
+    git commit -m "this must never be created"
+    COMMIT BLOCKED: a pipeline working file is staged: data/gate6-proof.json
+
+HEAD was unchanged afterwards and the file was removed. A gate nobody has seen
+fire is indistinguishable from an absent one.
+
+## Also
+
+`CLAUDE.md`'s pointer to `MAP.md` now states that it is the navigation index
+for every documented file and is read before searching the tree. Its shared
+HTTP module rule now names ADR-0034's exception, because a rule with an
+undocumented exception is worse than either.
+
+`docs/architecture-2.0.md` line 302 gave exit 1 one cause; it now gives two
+and says the run names which. Its filter-chain listing named a location filter
+that has never existed; it now lists the chain the code runs, with the
+location gap and its real difficulty recorded.
+
+## Still not done
+
+- **Nothing is pushed.** The brief's last line says "commit, push". The
+  standing protocol in this project is that the operator pushes. Stopped at
+  the commit and asked.
+- The scheduled run still had not fired.
+- Himalayas storage, the location tag and the aggregator question are held for
+  the chat's second brief.

@@ -53,6 +53,7 @@ supersedes and superseded-by links, deliberately not duplicated here.
 | --- | --- | --- |
 | `docs/decisions/README.md` | Every architecture decision made on this project, one file per decision, with the reasoning that produced it and the conditions that would show it was wrong. | current |
 | `docs/reference/airtable-schema.md` | The Airtable display's tables and fields as actually built, the ADR-0014 choices they carry, and the two things the Airtable MCP cannot do. | current |
+| `docs/reference/annotation-vendors.md` | The annotation and data-labelling vendors whose postings are dropped, why the list exists, what it is sourced from, and how thin that evidence is. | current |
 | `docs/reference/seniority-exclusions.md` | The senior-level title words that drop a posting the title pool admitted, the levels deliberately left in, and the evidence behind the numbered levels. | current |
 | `docs/reference/title-pool.md` | The 79 title terms a posting must match, grouped into the operator's four role families in order of precedence to be admitted, plus the normalisation and matching rules applied to both sides. | current |
 | `docs/research/README.md` | Dated snapshots of what was found and when. Numbered by the order the pass was run, so a later reader knows what was known at each point. | current |
@@ -119,5 +120,15 @@ supersedes and superseded-by links, deliberately not duplicated here.
 | `docs/decisions/0027-dedupe-key-normalisation.md` | ADR-0027: Deduplication key normalisation, configured per source | accepted |
 | `docs/decisions/0028-fetch-budget-and-detail-once.md` | ADR-0028: Per-run fetch budget, and detail fetched once per posting | accepted |
 | `docs/decisions/0029-adapter-order-and-dover.md` | ADR-0029: Adapter order after the slice, and Dover dropped | accepted |
+| `docs/decisions/0030-backfill-on-rule-change.md` | ADR-0030: A rule change backfills the filtered layer | accepted |
+| `docs/decisions/0031-preferences-are-configuration.md` | ADR-0031: Personal preferences are configuration, not code | accepted |
+| `docs/decisions/0032-seniority-rule.md` | ADR-0032: The seniority rule, and the clause of ADR-0021 it reverses | accepted |
+| `docs/decisions/0033-branch-is-the-store.md` | ADR-0033: The data branch is the store, local files are working copies | accepted |
+| `docs/decisions/0034-airtable-its-own-client.md` | ADR-0034: Airtable gets its own client, as a scoped exception | accepted |
+| `docs/decisions/0035-airtable-upsert-on-identity.md` | ADR-0035: The projection upserts on Identity | accepted |
+| `docs/decisions/0036-contract-check-reports-through-the-run-log.md` | ADR-0036: The contract check reports through the run log, not a failed run | accepted |
+| `docs/decisions/0037-filtered-layer-stores-rows.md` | ADR-0037: The filtered layer stores rows, the projection groups them | accepted |
+| `docs/decisions/0038-family-views.md` | ADR-0038: Role families are views, not a ranking | accepted |
+| `docs/decisions/0039-aggregator-condition-three-components.md` | ADR-0039: The aggregator condition is the three components | accepted |
 
-Files listed: 58
+Files listed: 69

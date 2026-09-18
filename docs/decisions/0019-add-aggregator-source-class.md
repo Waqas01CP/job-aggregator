@@ -82,6 +82,8 @@ The first run including an aggregator reports, per source: rows fetched, publica
 
 The Himalayas condition is confirmed by inspecting the diff that adds it. A diff touching only a config entry and a new adapter file passes. A diff touching the shared HTTP module, the normaliser, or the filter chain fails, and Himalayas leaves the slice.
 
+*(Annotated 2026-09-17: the first sentence of this test is an error and contradicts the criterion this record states above, which names three components. It is shorthand that came out narrower than the thing it was summarising, and the real diff satisfied the criterion while failing the shorthand. **The three components govern.** ADR-0039 settles it and states the rule for the next aggregator. See Changes.)*
+
 ## Pros and Cons of the Options
 
 ### Registry only
@@ -108,3 +110,5 @@ One clause is reversed by ADR-0026: employer read from the payload in every case
 | Date | Change | Reason |
 |---|---|---|
 | 2026-09-11 | The employer-from-payload clause is reversed by ADR-0026 | The endpoint spike enumerated all 18 keys across 48 Lever postings and found none containing compan, employ or org. The rule assumed every payload names its employer; two of three platforms measured do |
+| 2026-09-17 | The condition is the three components; the Confirmation's narrower sentence is an error | ADR-0039. The criterion names the shared HTTP module, the normaliser's row shape and the filter chain. 'A diff touching only a config entry and a new adapter file' is shorthand that came out narrower than the thing it summarised, and the real diff satisfied the criterion while failing the shorthand. Himalayas passes on the criterion. Whether it stays on the schedule is a separate and open question, on cost and visibility grounds |
+

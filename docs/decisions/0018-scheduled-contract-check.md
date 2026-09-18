@@ -87,6 +87,8 @@ Bad, because it requires the provider to participate. Not applicable.
 | Date | Change | Reason |
 |---|---|---|
 | 2026-09-15 | `updated_at` must not be used to detect that a posting changed | It is stamped in bulk, not on edit. Greenhouse rewrote it across roughly 265 Speechify postings on each of four dates, drawing evenly from every publication month, and 16 of 21 Careem postings share one exact second. The fingerprint comparison in this record is unaffected, because it compares the response shape rather than any posting's timestamp. But no mechanism may treat that field as a change signal |
+| 2026-09-17 | The loud report is the run log, not a failed run | ADR-0036, answering question D with a no. A failed workflow run reports that a run failed, so a contract change and a crashed check become the same signal, which reintroduces one level up the ambiguity this record exists to remove. The check succeeds and names each changed field in its run log, and becomes an Airtable row once the writer exists |
+
 
 ## More Information
 

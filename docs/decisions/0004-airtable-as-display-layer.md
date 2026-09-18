@@ -68,3 +68,6 @@ The reversed clause and why: the no-read rule made ADR-0015's Measure A unmeasur
 | Date | Change | Reason |
 |---|---|---|
 | 2026-09-10 | Status was `superseded by ADR-0014`, now `accepted` with the reversed clause named | ADR-0014 reverses one clause, not the decision. Marking the whole record superseded retired the Airtable choice, which is still in force and is depended on by ADR-0013 and the architecture document |
+| 2026-09-17 | Batched creates become upserts matched on Identity | ADR-0035. Plain creates are not idempotent, so a retry after an unknown outcome duplicates rows the operator cannot distinguish from real second postings. 'We will perform no reads' is unaffected: an upsert matches server-side and the pipeline still learns nothing from Airtable |
+| 2026-09-17 | The writer becomes a separate client rather than part of the shared fetch module | ADR-0034. Airtable's writes differ from board fetches in verb, authentication, budget, rate limit and failure semantics. Retry, backoff and circuit breaking become shared utilities both import, which is what CLAUDE.md's rule actually protects |
+

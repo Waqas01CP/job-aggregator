@@ -54,6 +54,8 @@ Two write paths exist instead of one.
 
 Within the first week of live running, re-run the location filter over the raw layer with a deliberately broken match rule and confirm the drop set is enumerable and matches the count in the run log.
 
+*(Annotated 2026-09-17: unrunnable as written. No location filter exists in the pipeline, and the architecture document's filter-chain listing names one that the code does not implement. The intent, that a filter's drop set is enumerable from the raw layer and agrees with the run log, is preserved by restating it against a rule that does exist. **Restated:** within the first week of live running, re-run the **title** filter over the raw layer with a deliberately broken match rule, and confirm the drop set is enumerable and matches the `title` count in the run log. The original sentence is kept above because a location filter may yet be built. See Changes.)*
+
 ## Pros and Cons of the Options
 
 ## More Information
@@ -67,3 +69,5 @@ Extended by ADR-0027, which normalises the title before the deduplication key is
 | Date | Change | Reason |
 |---|---|---|
 | 2026-09-15 | The one-thousand-postings-per-run assumption is falsified | Eleven of 53 boards returned 1646 postings. Median 27, mean 149.6, maximum 1086, with three boards holding 89.7% of volume. The original figure rested on "roughly twenty open roles per board," which was invented rather than estimated, and the distribution is nothing like uniform. Extrapolation to 53 boards gives 2780, 3998 or 7931 depending on the assumption used, and the 11 measured boards are not a random sample |
+| 2026-09-17 | The Confirmation is unrunnable and is restated in place | It names a location filter. No location filter exists in the pipeline and none is recorded as deferred. The restatement uses the title rule, which does exist, and preserves the intent: a drop set enumerable from the raw layer that agrees with the run log. The original sentence is kept because a location filter may yet be built |
+

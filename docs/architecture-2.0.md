@@ -192,7 +192,9 @@ flowchart LR
 
 **Deduplicator.** Employer plus title plus publication date, with the title normalised first per ADR-0027. Normalisation is configured per source, not globally: Speechify puts the location inside the title, turning 8 jobs into 1086 postings, and that is Speechify's convention rather than Greenhouse's. Must also work across source classes, since Arbeitnow indexes Greenhouse and SmartRecruiters, so the same posting can arrive twice. That requires an employer alias map, since an aggregator's employer string will differ from the employer's own, and ADR-0026 means some employers arrive as slugs rather than names.
 
-**Filter chain.** Ordered cheapest disqualifier first: expiry, location, stated experience, annotation vendors, then title classification. Each drop records its rule.
+**Filter chain.** Ordered cheapest disqualifier first: expiry, stated experience, annotation vendors, title classification, then seniority. Each drop records its rule.
+
+*(Corrected 2026-09-17. This line listed **location** between expiry and experience. No location filter exists in the code and none ever has; the deferral is recorded nowhere, which is why ADR-0001's Confirmation still named a filter that could not be run. It is removed from the listing rather than left as a description of something imaginary, and ADR-0001 carries the restated Confirmation. **Stated experience is built and disabled**: no record names a threshold, no slice platform returns the field, and the operator deferred the rule until filtering reads descriptions. **Seniority is new** and runs last, after the title rule, per ADR-0032. Building a location filter remains open; the real difficulty is that stored location text varies by board, reading "Karachi, Pakistan", "Karachi, Sindh, Pakistan", "Pakistan - Karachi", "Karachi", and semicolon-separated lists.)*
 
 **Writers.** Raw and filtered append deltas only. The Airtable writer batches ten records per call and performs no reads.
 
@@ -299,7 +301,7 @@ Fetch one response per platform. Fingerprint the fields each adapter consumes: p
 
 **Circuit breaker.** On consecutive failures, never cumulative, reset on any success.
 
-**Exit codes.** 0 finished, 1 could not start, 2 stopped deliberately and resumable. The orchestrator treats 2 as non-fatal.
+**Exit codes.** 0 finished, 1 failed, 2 stopped deliberately and resumable. The orchestrator treats 2 as non-fatal. **Exit 1 has two causes and the run's own output says which:** a run that could not start, and a run that fetched but could not store the result. Run 35179218050 was the second kind, was reported as the first, and cost a session to diagnose. *(Corrected 2026-09-17: this line read "1 could not start", which was true when there was one cause. The three codes are fixed by CLAUDE.md on the operator's instruction, so the second cause lives under 1 rather than becoming a fourth code.)*
 
 **Atomic writes.** Write to a temporary file, then rename. Write before delete when moving data between stores.
 

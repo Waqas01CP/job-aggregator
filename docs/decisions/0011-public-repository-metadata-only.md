@@ -37,7 +37,7 @@ The realistic risk is not litigation but a hosting provider honouring a notice a
 
 Chosen option: "public repository, metadata only on the data branch".
 
-We will make the repository public. We will store on the data branch only employer, title, location, ATS platform, publication date, first-seen date, stated experience, canonical URL, and the filter verdict with its reason. We will write job description text, including snippets, only to the Airtable display layer. We will state in the README what the repository stores, what it does not, and a contact address, rather than adding a separate takedown document.
+We will make the repository public. We will store on the data branch only employer, title, location, ATS platform, publication date, first-seen date, stated experience, canonical URL, and the filter verdict with its reason. *(Annotated 2026-09-17: this enumeration is illustrative, not a schema, and reading it as one has made it look wrong repeatedly. **What this record governs is the content class: identifying and locating metadata yes, description text no.** The row shape is stated by the code, in `Row` in the normaliser, and a hand-maintained list here is a second copy of a fact the code already holds. The stored row has carried identity, source, board_id, external_id, employer_provenance, url_provenance, title_normalised, published_field, ordering_date, ordering_date_source, published_meaning_unconfirmed and expires_at since ADR-0007, ADR-0026 and ADR-0027, none of which is description text and none of which changes this decision. See Changes.)* We will write job description text, including snippets, only to the Airtable display layer. We will state in the README what the repository stores, what it does not, and a contact address, rather than adding a separate takedown document.
 
 ### Consequences
 
@@ -56,5 +56,11 @@ Adding description matching later would require revisiting this decision.
 Inspect the data branch after the first month and confirm no file contains description text. The pre-commit guard, once present, is the standing check.
 
 ## Pros and Cons of the Options
+
+## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-09-17 | The field enumeration is marked illustrative, not a schema | It was read as a schema and was eight fields out of date, every one of them required by ADR-0007, ADR-0026 or ADR-0027. What this record governs is the content class: identifying and locating metadata yes, description text no. The row shape is stated by the code, and a hand-maintained list here is a second copy of it |
 
 ## More Information

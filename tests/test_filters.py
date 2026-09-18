@@ -16,9 +16,9 @@ from src.adapters.base import Posting
 from src.config import Board
 from src.filters import (ANNOTATION_VENDORS, FilterError, TitleMatcher,
                          apply_chain, compile_terms, drop_counts,
-                         load_seniority_words, load_title_pool,
-                         rule_annotation_vendor, rule_experience, rule_expiry,
-                         rule_seniority)
+                         load_annotation_vendors, load_seniority_words,
+                         load_title_pool, rule_annotation_vendor,
+                         rule_experience, rule_expiry, rule_seniority)
 from src.normalise import normalise
 
 NOW = datetime(2026, 9, 16, 12, 0, tzinfo=timezone.utc)
@@ -428,6 +428,40 @@ class TestSeniority(unittest.TestCase):
             try:
                 with self.assertRaises(FilterError):
                     load_seniority_words(path)
+            finally:
+                os.unlink(path)
+
+
+class TestAnnotationVendorFile(unittest.TestCase):
+    """ADR-0031: the vendor list is configuration, not a constant. It was a
+    tuple in src/filters.py until 2026-09-17."""
+
+    def test_the_names_are_read_from_their_section_only(self):
+        """The file quotes `src/filters.py`, `ANNOTATION_VENDORS` and a tool
+        path in backticks outside the Vendors section. Reading the whole
+        document would turn each of those into a vendor name."""
+        names = load_annotation_vendors()
+        self.assertEqual(names, ["welo data", "welocalize", "innodata"])
+        for not_a_vendor in ("src filters py", "annotation vendors",
+                             "tools title pool report py dropped"):
+            self.assertNotIn(not_a_vendor, names)
+
+    def test_the_loaded_list_is_what_the_chain_uses(self):
+        self.assertEqual(tuple(load_annotation_vendors()), ANNOTATION_VENDORS)
+        self.assertFalse(rule_annotation_vendor(row(employer="Welocalize"),
+                                                ANNOTATION_VENDORS).keep)
+
+    def test_a_missing_or_empty_vendor_list_stops_the_run_starting(self):
+        import tempfile
+        with self.assertRaises(FilterError):
+            load_annotation_vendors(os.path.join(tempfile.gettempdir(), "no-such-file.md"))
+        for text in ("# nothing here\n", "## Vendors\n\nnone listed\n\n## Next\n`innodata`\n"):
+            fd, path = tempfile.mkstemp(suffix=".md")
+            with os.fdopen(fd, "w", encoding="utf-8") as f:
+                f.write(text)
+            try:
+                with self.assertRaises(FilterError):
+                    load_annotation_vendors(path)
             finally:
                 os.unlink(path)
 
