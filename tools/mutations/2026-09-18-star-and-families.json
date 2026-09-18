@@ -1,0 +1,44 @@
+[
+ {
+  "label": "star: a row stars itself, so re-projecting the accepted store stars everything",
+  "path": "src/star.py",
+  "find": "        if other.identity == row.identity:\n            continue",
+  "replace": "        if False:\n            continue"
+ },
+ {
+  "label": "star: a missing employer matches another missing employer",
+  "path": "src/star.py",
+  "find": "            if value is not None and value == theirs.get(attribute):",
+  "replace": "            if value == theirs.get(attribute):"
+ },
+ {
+  "label": "star: role family dropped from the named attributes",
+  "path": "src/star.py",
+  "find": "ATTRIBUTES = (\"employer\", \"matched term\", \"role family\")",
+  "replace": "ATTRIBUTES = (\"employer\", \"matched term\")"
+ },
+ {
+  "label": "star: employer compared unfolded, so CAREEM and careem differ",
+  "path": "src/star.py",
+  "find": "        \"employer\": fold(row.employer) if row.employer else None,",
+  "replace": "        \"employer\": row.employer if row.employer else None,"
+ },
+ {
+  "label": "star: reasons returned unsorted, so two runs can disagree",
+  "path": "src/star.py",
+  "find": "    reasons.sort(key=lambda r: (ATTRIBUTES.index(r[\"attribute\"]),\n                                r[\"accepted_identity\"]))",
+  "replace": "    pass"
+ },
+ {
+  "label": "families: a term outside a heading is silently given the last family",
+  "path": "src/filters.py",
+  "find": "            if current is None:\n                raise FilterError(\n                    \"term %r appears in the Terms section before any family \"\n                    \"heading. Every term belongs to exactly one family.\" % folded)",
+  "replace": "            if current is None:\n                current = \"unknown\""
+ },
+ {
+  "label": "families: the heading pattern misses numbered headings",
+  "path": "src/filters.py",
+  "find": "        heading = re.match(r\"###\\s*\\d+\\.\\s*(.+?)\\s*$\", line)",
+  "replace": "        heading = re.match(r\"####\\s*\\d+\\.\\s*(.+?)\\s*$\", line)"
+ }
+]

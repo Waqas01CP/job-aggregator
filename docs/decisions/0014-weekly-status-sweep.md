@@ -93,3 +93,4 @@ That clause was an error: it made ADR-0015's Measure A unmeasurable, because the
 | Date | Change | Reason |
 |---|---|---|
 | 2026-09-10 | Said it superseded ADR-0004, now says it reverses one clause of it | ADR-0004's other decisions still hold. Claiming supersession would have sent a reader away from a live record |
+| 2026-09-18 | "Not one file per status" is reversed: outcomes go to three stores | ADR-0043. The three outcome classes are read by different consumers for different purposes, and the defect log is the one a person reads while deciding what to fix. The invariant this clause protected, that a row has exactly one outcome, is preserved by exclusive routing and is now a checkable property rather than a property of the file layout. The four statuses, their reasons and the write-before-delete rule are unchanged, and `expired_before_review` gets no store because nothing would read it |

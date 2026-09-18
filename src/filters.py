@@ -101,6 +101,57 @@ def load_title_pool(path=None):
     return terms, exempt
 
 
+def load_term_families(path=None):
+    """Map each pool term to the role family whose heading it sits under.
+
+    ADR-0038 needs the label and `load_title_pool` discards it: that loader
+    reads the whole Terms section and flattens the four `### N. Name`
+    headings away, because admission never depended on them. Only the credit
+    order did.
+
+    The family is derived, never stored on a row. A term moved to another
+    family changes the label on the next projection, which is a
+    re-derivation, not a rewrite of an append-only file."""
+    path = path or TITLE_POOL_PATH
+    try:
+        with open(path, encoding="utf-8") as f:
+            text = f.read()
+    except FileNotFoundError:
+        raise FilterError("title pool not found at %s" % path)
+    start = text.find("## Terms")
+    if start == -1:
+        raise FilterError("title pool has no '## Terms' section")
+    end = text.find("## Known behaviour", start)
+    section = text[start:end if end != -1 else len(text)]
+
+    # A pool with no family headings at all is a pool without families, which
+    # a candidate file being previewed against real postings legitimately is.
+    # A pool that has headings and also a term outside them is a structural
+    # defect, and that one raises. The distinction matters: the first is a
+    # smaller document, the second is a term nobody can name a family for.
+    has_headings = bool(re.search(r"^###\s*\d+\.", section, re.MULTILINE))
+    if not has_headings:
+        return {}
+
+    families = {}
+    current = None
+    for line in section.splitlines():
+        heading = re.match(r"###\s*\d+\.\s*(.+?)\s*$", line)
+        if heading:
+            current = heading.group(1).strip()
+            continue
+        for term in re.findall(r"`([^`]+)`", line):
+            folded = fold(term)
+            if not folded:
+                continue
+            if current is None:
+                raise FilterError(
+                    "term %r appears in the Terms section before any family "
+                    "heading. Every term belongs to exactly one family." % folded)
+            families.setdefault(folded, current)
+    return families
+
+
 def load_seniority_words(path=None):
     """Read the excluded senior-level words from their versioned file.
 
@@ -177,6 +228,7 @@ class TitleMatcher:
         self.patterns = compile_terms(self.terms)
         self.seniority_words = load_seniority_words(seniority_path)
         self.seniority_patterns = compile_terms(self.seniority_words)
+        self.term_families = load_term_families(path)
 
     def match(self, title):
         """The first term that matches, or None. Returning the term is the
@@ -186,6 +238,15 @@ class TitleMatcher:
             if pattern.search(folded):
                 return term
         return None
+
+    def family_of(self, term):
+        """The role family a term belongs to, or None for no term.
+
+        ADR-0038: a lookup, never a judgement. Nothing here reads a title, a
+        description or anything but the term the title rule already named."""
+        if not term:
+            return None
+        return self.term_families.get(term)
 
     def excluded_word(self, title):
         """The first excluded senior-level word in the title, or None."""

@@ -488,3 +488,163 @@ reads to start and the only hand-written one. Raised, not solved.
 - Part 1 of the brief is now built; nothing else from it is outstanding.
 - ADR-0040's projection filter, ADR-0041's structured half, and every unread
   field in Part 3 are decisions and measurements, not code.
+
+---
+
+# Outcome stores, the backfill, and the PAT
+
+The chat's third brief. Five parts, three of them code.
+
+## Part 1: ADR-0030's backfill, built
+
+`tools/backfill.py`. It reads the raw layer, applies the current chain, and
+appends what the filtered layer lacks, through `storage.append_delta` and
+split by `is_publishable`. That is the run's own writer and the run's own
+ADR-0020 split, not a second path with its own rules. The only thing it does
+differently is skip the seen-store check, which is the entire point.
+
+`[VERIFIED]` against a copy of the data branch at `90553c3`:
+
+    backfill: 257 row(s) ... are absent from the filtered layer
+    backfill: appended 257 publishable and 0 aggregator row(s).
+    backfill: the gap is closed.
+
+`filtered.json` went from 24 rows to 281. A second pass appended nothing and
+left the file byte-identical. The 257 matches the number measured
+independently two rounds ago, before the tool existed.
+
+**The Confirmation was proved able to fail**, which the brief asked for
+specifically. Withholding one identity, the backfill appended 256 and
+reported itself complete, because it could not see the withheld row. The
+check, run without the same blindfold, reported exactly one row absent and
+exited 2. Both halves matter: the pass believing itself done is what makes an
+independent check necessary.
+
+14 tests, 6 mutations, all caught. The mutations include removing ADR-0020's
+split so everything is written to the public file, ignoring the local
+filtered file when computing the gap, never reading the aggregator raw
+directory, and silently skipping a record the code cannot read, which would
+look exactly like a closed gap.
+
+**One deviation from ADR-0030's Confirmation**, recorded in its Changes: the
+count is printed and logged here rather than written to a run log. A backfill
+is not a run, and a foreign file in `logs-runs/` would be read by
+`tools/run_log_report.py` as one.
+
+## Part 2: ADR-0043, three outcome stores
+
+Recorded, not built, because the sweep that writes them is blocked behind the
+token (Part 4).
+
+**It reverses a clause of ADR-0014**, which says outcomes go in "one file with
+a status discriminator, not one file per status, so a row has exactly one
+outcome". The three corpora have different readers: `rejected_not_a_fit` is
+read by a person deciding what to stop admitting, `rejected_poor_filtering` is
+the filter's defect log, and `accepted` is read by code on every projection.
+"Every role he turned down" should be a file, not a query.
+
+**The invariant that clause protected is kept.** Routing is exclusive and the
+property is now checkable: no identity may appear in two stores, and the
+Confirmation says to hand-write one into two and confirm the check reports it,
+because three files that never overlap by construction would pass whatever the
+routing did.
+
+`expired_before_review` gets no store. It measures the cost of the operator's
+absences, which ADR-0014 already says, and nothing would read it as a corpus.
+
+**Two boundaries recorded.** ADR-0020 applies to all three stores, so each
+splits public from local exactly as the filtered layer does; a new store is a
+new way to publish an aggregator's rows. And no rule changes itself from these
+corpora: a tool may report that eleven rejected rows were all admitted by
+`ai ops`, and only the operator removes the term.
+
+## Part 3: the priority star, and where the line went
+
+`src/star.py`. A posting is starred when it shares **employer**, **matched
+term** or **role family** with a row in the accepted store. Every star names
+the attribute, the value and the accepted row, so it can be read aloud as
+"starred because employer matches accepted row N", which is ADR-0010's own
+test.
+
+**The test that matters is the negative one.** A posting a similarity model
+would obviously star, sharing none of the three attributes, must not be
+starred: "Machine Learning Engineer at Motive" accepted, "Backend Engineer at
+Veeam" offered. If that ever starts starring, something is comparing text.
+
+14 tests, 7 mutations, all caught. The line is recorded in ADR-0044 in the
+terms it has to be enforced in: no score, no distance, no embedding, and **no
+ranking of stars**, because a count used as an order is a score wearing a
+different hat.
+
+**Role family needed something that did not exist.** `load_title_pool` reads
+the pool's four `### N.` headings and discards them, so no family label could
+reach a row. `load_term_families` now maps all 79 terms to their heading, 7
+agentic, 43 LLM and applied, 12 traditional, 17 software. That also delivers
+the label ADR-0038 has been waiting on.
+
+**A regression I caused and caught.** Adding the family load to
+`TitleMatcher.__init__` broke `tools/title_pool_report.py --pool CANDIDATE`,
+because a candidate pool file has terms and no family headings. The fix
+distinguishes two cases rather than becoming tolerant: a pool with no headings
+at all has no families, which is what a candidate file legitimately is; a pool
+with headings and a term above them raises, because that is a term nobody can
+name a family for.
+
+**Also my own, and the rule I keep breaking.** A `"\\n"` inside a bash heredoc
+became a real newline and broke `src/filters.py`. That is the fifth time this
+trap has been recorded in these logs. The repair went through the Edit tool,
+which is what the rule says to do in the first place.
+
+## Part 4: the PAT, named as a blocker
+
+`STATE.md` now carries it as a blocker rather than as an item in a list of
+things not yet built, which is what the brief asked for and what the previous
+addendum got wrong.
+
+The Airtable writer row reads BLOCKED, the sweep row reads BLOCKED behind it,
+and the Blocked section names the token's three scopes and the four secret
+names. It also says why the MCP authorisation does not substitute: that is a
+session's OAuth, and the pipeline never touches it.
+
+Everything else the writer needs now exists: the schema, ADR-0034's client
+decision, ADR-0035's upsert key, ADR-0040's projection filter, and ADR-0043's
+outcome stores behind it.
+
+## Part 5: STATE.md, investigated
+
+`[VERIFIED]` by measuring the file section by section rather than guessing at
+a seam.
+
+| Section | Bytes |
+|---|---|
+| Preamble, how-to, headline | 4,208 |
+| Documentation, Tooling, Pipeline tables | 20,572 |
+| Blocked, and on whom | 6,682 |
+| Known unverified | 7,485 |
+
+**The seam is status, not pipeline stage.** Of 69 table rows, **57 are DONE,
+and those 57 are 17.5KB, 45% of the file.** A DONE row is finished history:
+the file's own rule is that it is never deleted, so the file grows
+monotonically with completed work. A session reads all of it at start and acts
+on almost none of it.
+
+What a session actually needs at start is the headline, what is blocked and on
+whom, what is unverified, and the nine rows that are not DONE. Splitting by
+pipeline stage would cut across all four of those; splitting generated from
+hand-written yields nothing, because none of it is generable, which is
+precisely why ADR-0023 calls this the artifact most able to lie.
+
+Proposed and not built: it is the operator's call. It does not change the
+reading order, since the four files stay and the history is read on demand
+like `MAP.md`, and it does not change the authority order, since both halves
+are the same type. It would need a Changes row on ADR-0023, whose artifact set
+would gain a file.
+
+The file is 42KB as this log is written, having grown 3KB in this round alone.
+
+## Not done
+
+- ADR-0043's three stores and ADR-0044's star have no writer, because the
+  sweep and the projection are blocked behind the token.
+- ADR-0038's views remain unbuilt; only the label they need now exists.
+- Part 5 is proposed, not built.

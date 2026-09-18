@@ -144,6 +144,8 @@ Grouped by topic, in the order the pipeline runs. A record appears under exactly
 | `docs/decisions/0034-airtable-its-own-client.md` | **ADR-0034: Airtable gets its own client, as a scoped exception.** Airtable gets its own client, a scoped exception to the one-HTTP-module rule, with retry and backoff kept shared. | accepted |
 | `docs/decisions/0035-airtable-upsert-on-identity.md` | **ADR-0035: The projection upserts on Identity.** The projection upserts on Identity so a retried write creates no duplicates, and writes only pipeline-owned fields. | accepted |
 | `docs/decisions/0040-current-rules-filter-the-projection.md` | **ADR-0040: The current rules filter the projection, never the store.** The current rules filter the projection and never the store. The half of the append-only problem that removes rows. | accepted |
+| `docs/decisions/0043-three-outcome-stores.md` | **ADR-0043: Three outcome stores, and what each is for.** Three append-only outcome corpora, one per kind of outcome, and what each one is allowed to feed back into. Reverses ADR-0014's single-file clause. | accepted |
+| `docs/decisions/0044-priority-star.md` | **ADR-0044: The priority star, and the line it must not cross.** A posting is starred when it shares one of three named attributes with an accepted role. The deterministic answer to "show me more like this", and the line it must not cross. | accepted |
 
 ### Measurement and evidence
 
@@ -163,4 +165,4 @@ Grouped by topic, in the order the pipeline runs. A record appears under exactly
 | `docs/decisions/0024-session-log-format.md` | **ADR-0024: Session log format.** What a session log must contain: tagged claims, evidence behind each one, and what was not done. | accepted |
 | `docs/decisions/0025-auto-memory-not-authoritative.md` | **ADR-0025: Auto Memory is not authoritative.** Auto Memory ranks below every document in this repository and nothing is designed around it. | accepted |
 
-Files listed: 72
+Files listed: 74

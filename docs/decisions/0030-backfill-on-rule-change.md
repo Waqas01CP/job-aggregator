@@ -95,6 +95,7 @@ Bad, because measured today it shows 24 rows of which 11 are wrong under the cur
 | Date | Change | Reason |
 |---|---|---|
 | 2026-09-17 | "The projection then copies the file as it stands" becomes "the projection reads the file and applies the current chain" | ADR-0040. This record handled widening and left contraction. Rows admitted under older rules stay in the file, correctly, and projecting the file as-is would put them in the display: measured, 11 of the 24 rows in `filtered.json` are rejected by the current chain. Filtering at the projection keeps the store append-only and complete while the display shows only what current rules admit. The backfill is unaffected, and the two halves now work together |
+| 2026-09-18 | The backfill is built, as `tools/backfill.py` | Run against the data branch at `90553c3` it appended 257 rows, taking `filtered.json` from 24 to 281, and a second pass wrote nothing. It uses `storage.append_delta` and splits by `is_publishable`, so it is the run's own writer and the run's own ADR-0020 split rather than a second path. **One deviation from this record's Confirmation:** the count is printed by the tool and recorded in the session log, not written to a run log, because a backfill is not a run and a foreign file in `logs-runs/` would be read by `tools/run_log_report.py` as one |
 
 ## More Information
 

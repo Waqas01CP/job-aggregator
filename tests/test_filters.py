@@ -432,6 +432,64 @@ class TestSeniority(unittest.TestCase):
                 os.unlink(path)
 
 
+class TestTermFamilies(unittest.TestCase):
+    """ADR-0038's label. The pool's four headings were read and discarded by
+    load_title_pool, so no family reached a row until 2026-09-18."""
+
+    def test_every_shipped_term_belongs_to_exactly_one_family(self):
+        """The check that protects the real pool. A term added outside a
+        heading, or a heading renamed, shows up here."""
+        from src.filters import load_term_families
+        terms, _ = load_title_pool()
+        families = load_term_families()
+        self.assertEqual(len(families), len(terms))
+        self.assertEqual(sorted(families), sorted(set(terms)))
+        self.assertEqual(sorted(set(families.values())),
+                         ["Agentic AI", "LLM and applied AI",
+                          "Software engineering", "Traditional AI and ML"])
+
+    def test_the_family_is_the_heading_the_term_sits_under(self):
+        from src.filters import load_term_families
+        families = load_term_families()
+        self.assertEqual(families["agentic"], "Agentic AI")
+        self.assertEqual(families["software engineer"], "Software engineering")
+        self.assertEqual(families["mlops"], "Traditional AI and ML")
+
+    def test_a_pool_without_headings_has_no_families_rather_than_failing(self):
+        """A candidate pool previewed against real postings is a smaller
+        document with no headings. That is not a defect."""
+        from src.filters import load_term_families
+        import tempfile
+        fd, path = tempfile.mkstemp(suffix=".md")
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            f.write("## Terms\n\n`ai engineer`\n\n## Known behaviour\n")
+        try:
+            self.assertEqual(load_term_families(path), {})
+        finally:
+            os.unlink(path)
+
+    def test_a_term_outside_a_heading_is_a_defect_and_raises(self):
+        """Headings present and a term above them means a term nobody can
+        name a family for, which is different from a pool with no families."""
+        from src.filters import load_term_families
+        import tempfile
+        fd, path = tempfile.mkstemp(suffix=".md")
+        with os.fdopen(fd, "w", encoding="utf-8") as f:
+            f.write("## Terms\n\n`orphan term`\n\n### 1. Agentic AI\n\n"
+                    "`ai agent`\n\n## Known behaviour\n")
+        try:
+            with self.assertRaises(FilterError):
+                load_term_families(path)
+        finally:
+            os.unlink(path)
+
+    def test_the_matcher_reports_a_family_for_a_matched_title(self):
+        self.assertEqual(MATCHER.family_of(MATCHER.match("Agentic Systems Engineer")),
+                         "Agentic AI")
+        self.assertIsNone(MATCHER.family_of(None))
+        self.assertIsNone(MATCHER.family_of("not a pool term"))
+
+
 class TestAnnotationVendorFile(unittest.TestCase):
     """ADR-0031: the vendor list is configuration, not a constant. It was a
     tuple in src/filters.py until 2026-09-17."""
