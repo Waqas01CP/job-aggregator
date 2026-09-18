@@ -42,6 +42,7 @@ supersedes and superseded-by links, deliberately not duplicated here.
 
 | File | Holds | Status |
 | --- | --- | --- |
+| `CHAT_STATE.md` | The architecture chat's ledger. What was raised, what is waiting and on what, and the errors this chat made. Read at the start of a new architecture chat. | current |
 | `STATE.md` | What exists right now, what is blocked and on whom, and where the proof is. Where to start, then checked against the code and data. | current |
 
 ## explanation
@@ -50,6 +51,12 @@ supersedes and superseded-by links, deliberately not duplicated here.
 | --- | --- | --- |
 | `docs/architecture-2.0.md` | The architecture of the pipeline. arc42, twelve sections. Read to understand why the system is shaped as it is. | current |
 | `docs/architecture.md` | SUPERSEDED. A rejected design, kept as the record of what was turned down and why. Never implement from this file. | superseded |
+
+## how-to
+
+| File | Holds | Status |
+| --- | --- | --- |
+| `docs/how-to/airtable-token-and-secrets.md` | The operator's steps to create the Airtable personal access token and the repository secrets that unblock the writer, the sweep and everything behind them. | current |
 
 ## reference
 
@@ -178,4 +185,4 @@ Grouped by topic, in the order the pipeline runs. A record appears under exactly
 | --- | --- | --- |
 | `docs/deferred/similarity-matching.md` | Ranking postings by similarity to accepted roles. Deferred because ADR-0010 forbids it and the deterministic star was built instead; revisit when the accepted store holds fifty rows or when the operator stops reading every row. | current |
 
-Files listed: 78
+Files listed: 80

@@ -874,8 +874,79 @@ Publishing it is the operator's call to make explicitly, not a seat's to make
 by staging a file it happened to find. The reason is recorded in the
 generator, next to the restored skip.
 
+---
+
+# Three corrections from the operator
+
+## I reverted someone else's change instead of flagging it
+
+**The error.** The architecture chat removed `CHAT_STATE.md` from
+`.gitignore` and removed its skip from `tools/generate_map.py`, with a comment
+saying it is now committed. I restored both and held the file back for the
+operator's word.
+
+**Why that was wrong.** The file had been altered by someone else, deliberately,
+in two places, with a comment explaining the intent. Deciding whether to publish
+it was theirs and the operator's, and they had decided. The correct step was to
+flag it and let him overrule if he disagreed. Reverting made a decision by
+undoing one, which is the more damaging direction: a flag costs a message, an
+unexplained revert costs the decision itself.
+
+Both changes are restored to the chat's versions and `CHAT_STATE.md` is
+committed. `MAP.md` lists it, 80 files.
+
+**`[VERIFIED]` its content was never touched.** Its mtime is 19:51:28, before
+the first file this session edited at 19:53:44, and it appears in no commit
+before this one. It was read once, in full, before committing, and scanned for
+tokens, keys, IDs and addresses: none, the only matches being the words
+"secret" and "key" in prose describing the blocker.
+
+## The heredoc mechanism, built rather than proposed
+
+Block-everything and leave-the-rule were both wrong, because the trap has a
+narrow shape and the two extremes either stop legitimate work or stop nothing.
+
+**The discriminator is the file write, not the backslash.** Most heredocs here
+are analysis that prints a number and exits, full of regex backslashes, and
+correct. The failing shape is content with a backslash headed for a file.
+
+    backslash + writes a file   ->  ask, and name the Edit and Write tools
+    backslash, reads only       ->  allow
+    writes a file, no backslash ->  allow
+
+`tools/heredoc_guard.py` with a `PreToolUse` hook on Bash in
+`.claude/settings.json`. **It asks, it never denies**, because a guard that
+refuses outright is one a session routes around within the hour.
+
+16 tests, and half of them are cases it must not fire on, since a guard that
+fires on ordinary work becomes something to click through. It also fails open:
+a malformed payload or a bug in the guard lets the command run, because a
+guard that fails closed on its own defect blocks work for a reason nobody can
+see.
+
+`[VERIFIED]` pipe-tested against six shapes including the exact command that
+broke `src/filters.py`, and the exact invocation from the project root.
+
+**One correction inside the correction.** My sixth probe case expected the
+guard to allow `write_atomic` with a backslash. Wrong: that is the shape that
+put a literal em-dash into prose three times. The guard was right and the
+expectation was mine to fix.
+
+## The Airtable steps, written down
+
+`docs/how-to/airtable-token-and-secrets.md`. The token was named as a blocker
+with no instructions for clearing it, which left the operator holding a
+blocker and no way to act on it.
+
+**Seven secrets, not the four originally planned.** ADR-0045's sweep reads
+three classification tables that did not exist when the four were specified.
+The alternative, looking them up by name each run, costs a call against a
+budget already at 27% of the allowance and breaks silently on a rename.
+
 ## Not done
 
 - Nothing in ADR-0045 is built. It is behind the token, as the brief says.
 - The eight reconstructed index statuses are reported, not edited.
-- Part 4 is a proposal.
+- The hook is written but not live in this session: `.claude/` did not exist
+  when the session started, so the settings watcher is not watching it. It
+  needs `/hooks` opened once, or a restart.

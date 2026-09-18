@@ -38,11 +38,6 @@ fetch-all/
 # Commit message drafts. Local scratch, never committed.
 .commitmsg/
 
-# Architecture chat tracking. Local to the operator's chat sessions, not
-# part of the project record. STATE.md is the project's state; this is the
-# conversation's.
-CHAT_STATE.md
-
 # Generated map output, before it is compared. The committed MAP.md is
 # checked in; this is the scratch file the pre-commit hook writes.
 MAP.generated.md

@@ -47,20 +47,10 @@ MAP_PATH = REPO_ROOT / "MAP.md"
 SKIP_DIRS = {".git", ".github", "node_modules", "__pycache__", ".venv", "venv", ".commitmsg",
              "data", "raw_responses"}
 
-# Files this generator walks past. MAP.md is its own output. CHAT_STATE.md
-# is gitignored local scratch: it is not part of the project record, so it
-# must not appear in a map that claims to list what the repository holds.
-# The generator does not read .gitignore, so anything ignored and ending
-# in .md has to be named here or it will halt the run demanding
-# frontmatter it should never have.
-#
-# 2026-09-18: the architecture chat removed this skip and the matching
-# .gitignore line, to start tracking CHAT_STATE.md. Both are restored for
-# now and neither is committed. The repository is public and a push is not
-# reversible, so publishing the chat's own ledger, which the file says
-# records the errors that chat made, is the operator's call to make
-# explicitly rather than a seat's to make by staging a file it found.
-SKIP_FILES = {"MAP.md", "MAP.generated.md", "CHAT_STATE.md"}
+# Files this generator walks past. MAP.md is its own output.
+# CHAT_STATE.md was skipped here while it was gitignored; it is now
+# committed and carries frontmatter like any other documented file.
+SKIP_FILES = {"MAP.md", "MAP.generated.md"}
 
 DECISIONS_DIR = REPO_ROOT / "docs" / "decisions"
 
