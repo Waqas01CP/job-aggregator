@@ -838,5 +838,26 @@
   "url_provenance": "payload",
   "stated_experience": null,
   "expires_at": null
+ },
+ {
+  "identity": "lever:d4adda54-7de9-44eb-a5d2-80bb8090f4cd",
+  "source": "lever",
+  "board_id": "lever:spreetail",
+  "external_id": "d4adda54-7de9-44eb-a5d2-80bb8090f4cd",
+  "employer": "Spreetail",
+  "employer_provenance": "slug",
+  "title": "Delivery Driver, $24/hr",
+  "title_normalised": "Delivery Driver, $24/hr",
+  "location": "South Tacoma, WA",
+  "published_at": "2026-09-18T20:22:27.017000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-09-19T03:26:16.957826Z",
+  "ordering_date": "2026-09-18T20:22:27.017000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/spreetail/d4adda54-7de9-44eb-a5d2-80bb8090f4cd",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null
  }
 ]

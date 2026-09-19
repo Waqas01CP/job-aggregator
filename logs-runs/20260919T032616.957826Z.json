@@ -1,0 +1,208 @@
+{
+ "run_at": "2026-09-19T03:26:16.957826Z",
+ "test_mode": false,
+ "boards": [
+  {
+   "board": "greenhouse:banyancanopygroup",
+   "fetched": 6,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 6
+   },
+   "status": "ok",
+   "detail": null
+  },
+  {
+   "board": "greenhouse:brkz",
+   "fetched": 19,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 17,
+    "seniority": 2
+   },
+   "status": "ok",
+   "detail": null
+  },
+  {
+   "board": "greenhouse:careem",
+   "fetched": 20,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 1,
+   "drops": {
+    "title": 17,
+    "seniority": 2
+   },
+   "status": "ok",
+   "detail": null
+  },
+  {
+   "board": "greenhouse:coderoad",
+   "fetched": 26,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 5,
+   "drops": {
+    "title": 13,
+    "seniority": 8
+   },
+   "status": "ok",
+   "detail": null
+  },
+  {
+   "board": "greenhouse:globalli",
+   "fetched": 14,
+   "parse_problems": 0,
+   "new": 1,
+   "kept": 1,
+   "drops": {
+    "title": 11,
+    "seniority": 2
+   },
+   "status": "ok",
+   "detail": null
+  },
+  {
+   "board": "greenhouse:gomotive",
+   "fetched": 152,
+   "parse_problems": 0,
+   "new": 6,
+   "kept": 3,
+   "drops": {
+    "title": 144,
+    "seniority": 5
+   },
+   "status": "ok",
+   "detail": null
+  },
+  {
+   "board": "greenhouse:joblogic",
+   "fetched": 34,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 8,
+   "drops": {
+    "title": 26
+   },
+   "status": "ok",
+   "detail": null
+  },
+  {
+   "board": "greenhouse:speechify",
+   "fetched": 255,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 241,
+   "drops": {
+    "title": 14
+   },
+   "status": "ok",
+   "detail": null
+  },
+  {
+   "board": "greenhouse:veeamsoftware",
+   "fetched": 237,
+   "parse_problems": 0,
+   "new": 2,
+   "kept": 12,
+   "drops": {
+    "title": 216,
+    "seniority": 9
+   },
+   "status": "ok",
+   "detail": null
+  },
+  {
+   "board": "himalayas:browse",
+   "fetched": 500,
+   "parse_problems": 0,
+   "new": 500,
+   "kept": 23,
+   "drops": {
+    "title": 455,
+    "seniority": 22
+   },
+   "status": "ok",
+   "detail": null,
+   "pages": 25
+  },
+  {
+   "board": "lever:smart-working-solutions",
+   "fetched": 11,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 7,
+    "seniority": 4
+   },
+   "status": "ok",
+   "detail": null
+  },
+  {
+   "board": "lever:spreetail",
+   "fetched": 24,
+   "parse_problems": 0,
+   "new": 1,
+   "kept": 1,
+   "drops": {
+    "title": 22,
+    "seniority": 1
+   },
+   "status": "ok",
+   "detail": null
+  }
+ ],
+ "totals": {
+  "fetched": 1298,
+  "new": 510,
+  "kept": 295,
+  "written_raw": {
+   "greenhouse": 9,
+   "himalayas": 500,
+   "lever": 1
+  },
+  "written_filtered": 25,
+  "backfilled": 257,
+  "backfilled_public": 257,
+  "backfilled_local": 0,
+  "written_filtered_local": 23,
+  "drops": {
+   "expiry": 0,
+   "experience": 0,
+   "annotation_vendor": 0,
+   "title": 948,
+   "seniority": 55
+  },
+  "dedupe": {
+   "postings": 1298,
+   "groups": 993,
+   "collapsed": 305,
+   "largest_group": 135
+  }
+ },
+ "requests": {
+  "requests_used": 36,
+  "budget": 500,
+  "budget_remaining": 464,
+  "by_source": {
+   "greenhouse": 9,
+   "lever": 2,
+   "himalayas": 25
+  },
+  "retries": 0,
+  "failures": 0,
+  "refused": 0,
+  "circuit_open": false
+ },
+ "stopped": null,
+ "source_class": {
+  "greenhouse": "ats",
+  "lever": "ats",
+  "himalayas": "aggregator"
+ }
+}
