@@ -39,17 +39,27 @@ and regenerate.
 
 ## When documents disagree
 
-Higher wins, without exception. ADR-0022.
+Two questions, two orders.
+
+**What is true**, what exists and what happened: the code and the data win
+over every document. A document that disagrees is stale. Report it and
+correct it. ADR-RULES.
+
+**What should be done**: higher wins. ADR-0022, ADR-0025, ADR-RULES.
 
 1. The operator's instruction in this conversation
 2. This file
 3. `docs/decisions/`, excluding anything marked superseded
-4. `docs/architecture-2.0.md`
-5. `docs/reference/`
-6. `docs/research/`, which is evidence for decisions, never a decision
-7. Everything else, including `docs/architecture.md`, which is superseded and
-   must never be implemented from
-8. Anything from outside this repository, including your own Auto Memory
+4. The brief for your task. It ranks below this file and every accepted
+   record: where it contradicts one, follow the record and report it. It
+   overrides a record only when it names the record and clause and states
+   that the operator approved the change; it then carries rank 1.
+5. `docs/architecture-2.0.md`
+6. `docs/reference/`
+7. `docs/research/`, evidence for decisions, never a decision
+8. Everything else, including `docs/architecture.md`, which is superseded
+   and must never be implemented from
+9. Anything from outside this repository, including your own Auto Memory
 
 Two unsuperseded records that conflict is a defect. Raise it. Do not choose.
 
@@ -64,8 +74,10 @@ improvements, do not reintroduce them in a refactor.
 - **No scoring, ranking, or model-based classification of any posting.** Every
   posting is admitted or dropped by a deterministic rule that can be named.
   ADR-0010.
-- **No user interface**, dashboard or web app. ADR-0010.
-- **No notification system.** The operator opens a table. ADR-0014.
+- **No user interface**, dashboard or web app. Operator's standing decision;
+  no record.
+- **No notification system.** The operator opens a table. Operator's standing
+  decision; no record.
 - **No email or search-alert ingestion.** ADR-0012.
 - **No paid services.** Free by default. Any spend is discussed first.
 
@@ -166,9 +178,12 @@ because the location format differs" is a hypothesis until you have looked.
 **Write the record when the decision concludes, not afterwards.** A record
 written later reconstructs its reasoning instead of committing to it.
 
-**Never edit an accepted record to change a decision.** Write a new record that
-supersedes it, and link both directions. A factual error may be corrected in
-place with a dated annotation.
+**An accepted record's decision is never silently rewritten.** A change
+that leaves it in force (one clause reversed, something added, a fact or
+reference corrected) is annotated with its date and logged in the record's
+Changes table. A change that replaces the decision, or more than half its
+Decision Outcome, is a new record that supersedes it, both directions
+linked. ADR-RULES says what a seat may correct without asking.
 
 **Every unmeasured number goes in Assumptions**, with what it is based on.
 

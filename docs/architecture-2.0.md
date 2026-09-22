@@ -56,8 +56,8 @@ These are not negotiable and are not time compromises. Each stands on its own re
 | Constraint | Recorded in |
 |---|---|
 | No scoring, ranking, or model-based classification of any posting | ADR-0010 |
-| No user interface, dashboard, or web app | ADR-0010 |
-| No notification beyond a table the operator opens | ADR-0014 |
+| No user interface, dashboard, or web app | Operator's standing decision; no record. *(Corrected 2026-09-22: this cell read ADR-0010, which decides scoring only)* |
+| No notification beyond a table the operator opens | Operator's standing decision; no record. *(Corrected 2026-09-22: this cell read ADR-0014, which decided the outcome sweep and says nothing about notification)* |
 | No paid data-acquisition runs | ADR-0019, section 11 |
 | No email or search-alert ingestion | ADR-0012 |
 

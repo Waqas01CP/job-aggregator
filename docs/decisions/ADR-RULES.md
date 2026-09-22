@@ -24,7 +24,7 @@ ADR-0022 sets seven ranks and ADR-0025 adds an eighth. They are not restated her
 
 **A brief ranks below CLAUDE.md and below any accepted record.**
 
-A brief from the architecture chat is not a decision. It is an instruction to implement decisions, and an instruction that contradicts the thing it implements is an error in the instruction. The implementing seat follows the record and reports the contradiction.
+A brief from the architecture chat is not a decision. It is an instruction to implement decisions, and an instruction that contradicts the thing it implements is an error in the instruction. The implementing seat follows the record and reports the contradiction. *(Extended 2026-09-22: one exception, and the brief's place against the lower ranks. See Changes.)*
 
 This is not hypothetical. A brief dated 2026-09-17 said "amend" for nine records where CLAUDE.md forbids editing an accepted record to change a decision. The seat split the changes by kind, followed the standing rule, and said plainly which instruction it had not followed as written. It resolved correctly without a rule to resolve it by, and this record is that rule.
 
@@ -38,9 +38,9 @@ CLAUDE.md carries this as a working rule. It belongs in the authority order as w
 
 The Decision Record Standard distinguishes reversal, extension, correction and supersession. It does not distinguish these two, and their handling differs.
 
-**Stale** — the record was true and the world moved. Annotate with a date and what changed. The original text stays, because it was correct when written, and the change is itself the finding.
+**Stale:** the record was true and the world moved. Annotate with a date and what changed. The original text stays, because it was correct when written, and the change is itself the finding.
 
-**Wrong** — the record was never true. Annotate with a date, name the error, and state what the evidence now shows. The original text stays, because a record that quietly becomes right teaches nobody why it was wrong, and the error is usually more instructive than the correction.
+**Wrong:** the record was never true. Annotate with a date, name the error, and state what the evidence now shows. The original text stays, because a record that quietly becomes right teaches nobody why it was wrong, and the error is usually more instructive than the correction.
 
 Neither is a supersession. Neither requires a new record. Both require a date and evidence.
 
@@ -77,3 +77,9 @@ The boundary between correction and decision is stated once rather than inferred
 Two live records in conflict now have a defined outcome, which is to stop. That will occasionally block work that could have proceeded on a guess. That is the intent.
 
 This record can itself go stale, and nothing here exempts it. It is subject to its own rules.
+
+## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-09-22 | The brief gains one exception: a brief that names the record and clause it overrides, and states that the operator approved the change, carries the operator's authority, rank 1. Otherwise it sits at rank 4, below accepted records and above the architecture document. `CLAUDE.md` now states the full nine-rank order | The operator's decision, 2026-09-22. The chat writes the brief, so where it ranks against a record is his call, and the declaration in the brief is how that call reaches the seat without the seat judging it at runtime. This record said where the brief sits against records but not against the lower ranks |

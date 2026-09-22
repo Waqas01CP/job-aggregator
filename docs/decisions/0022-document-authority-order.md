@@ -88,6 +88,8 @@ The pattern is taken from the operator's prior project, which states a six-level
 
 Extended by ADR-0025, which adds level 8 for inputs originating outside the repository.
 
+Extended by ADR-RULES, which puts reality above every document for what is true and places the brief below accepted records. `CLAUDE.md` states the combined order.
+
 ## Changes
 
 | Date | Change | Reason |
