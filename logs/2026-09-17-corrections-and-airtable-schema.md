@@ -1211,3 +1211,57 @@ separate precisely so that is visible.
 **The operator pushes.** A brief that ends "push" is authority to push that
 work, and nothing else is.
 
+
+---
+
+## After the close: the four seats written down
+
+Same session as the close above, after the operator asked whether to run
+Claude Code at `ultracode` and whether to compact or start fresh.
+
+**A claim this seat made and then had to correct.** It told the operator the
+three-seat protocol existed in no repository file. It does:
+`CHAT_STATE.md` carries a "Three seats, and what each does" section
+[VERIFIED, read 2026-09-22]. The claim came from a handoff summary rather than
+from the file, which is the failure `CLAUDE.md` names first. The gap is real
+but narrower than stated: that section is six lines, it opens "Read this at
+the start of a new architecture chat", and `CLAUDE.md`'s reading order does
+not send the implementing seat to it. The seat the rules bind hardest was the
+one never told them.
+
+**`docs/how-to/the-seats.md` written.** Four seats, the fourth being an audit
+seat running at `ultracode`. It carries a recheck table rather than a date
+alone, because nothing in the repository can verify a working arrangement
+between people: every row names who can check it, and six of nine are
+checkable by any seat while three are the operator's alone. The
+rule attached is that `verified:` moves only after every row is re-checked,
+since a date bumped on a half-checked file is worse than a stale one.
+
+**`CHAT_STATE.md` was not edited.** It is the architecture chat's file and its
+seat section is not wrong. The new file says so and says that a disagreement
+between the two is a defect to raise, not to settle by editing the other file.
+This follows the 2026-09-22 correction recorded above.
+
+**`CLAUDE.md` gained four lines** pointing at the new file from the reading
+order. Flagged to the operator rather than done silently, because `CLAUDE.md`
+is rank 2 and the architecture chat rewrote it on 2026-09-22.
+
+**The heredoc trap fired a seventh time**, writing the new file. `bash`
+reported "unexpected EOF while looking for matching quote" at a line past the
+end of the body, and nothing was created: `git status` was clean afterwards
+[VERIFIED]. The suspect is the backslash pair in a `grep` appended after the
+heredoc, not the body. Written with the Write tool instead. The trap has now
+cost seven attempts across this session and is the single most reliable way to
+lose work here.
+
+**Checked, not assumed, for the new file:** six gates in `.githooks/pre-commit`
+[VERIFIED, line 6 states "Six checks"], `core.hooksPath` returns `.githooks`
+[VERIFIED], 42 Python files and 8,642 lines [VERIFIED, `git ls-files` piped to
+`wc`], 49 files in `docs/decisions/` [VERIFIED], the four reading-order files
+total 72,765 bytes [VERIFIED, `wc -c`].
+
+**Not done.** The audit seat has never run, so every claim in this file about
+how it behaves is a design, not an observation. The `ultracode` availability
+row in the recheck table is marked operator-only for that reason. No test was
+run for this commit: the change is documentation only and touches no import.
+

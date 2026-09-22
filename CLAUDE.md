@@ -32,6 +32,11 @@ documented file set.
    purpose this index already states is the slowest way to find anything here,
    and it is what every session that skipped this line has done.
 
+**Then `docs/how-to/the-seats.md`, once, before your first action of the
+session.** Four seats work on this project and it says what each may and may
+not do, including what this one may not. It is the only document here that no
+command can verify, so it carries its own checks and the date they last ran.
+
 Then the brief for your task.
 
 `MAP.md` is generated. Never edit it by hand. Edit the source file's frontmatter
