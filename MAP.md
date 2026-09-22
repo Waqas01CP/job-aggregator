@@ -56,18 +56,18 @@ supersedes and superseded-by links, deliberately not duplicated here.
 
 | File | Holds | Status |
 | --- | --- | --- |
-| `docs/how-to/airtable-token-and-secrets.md` | The operator's steps to create the Airtable personal access token and the repository secrets that unblock the writer, the sweep and everything behind them. | current |
+| `docs/how-to/airtable-token-and-secrets.md` | The operator's steps for the Airtable token, the repository secrets, and the base changes ADR-0046 and ADR-0047 require. Steps 1 to 3 are done; steps 4 and 5 are not. | current |
 
 ## reference
 
 | File | Holds | Status |
 | --- | --- | --- |
 | `docs/decisions/README.md` | Every architecture decision made on this project, one file per decision, with the reasoning that produced it and the conditions that would show it was wrong. | current |
-| `docs/reference/airtable-schema.md` | The Airtable display's five tables and their fields as actually built, the ADR-0014 choices they carry, and the four things the Airtable MCP cannot do. | current |
+| `docs/reference/airtable-schema.md` | The Airtable display's five tables and their fields as actually built, the choices they carry, the one field change ADR-0046 still requires, and the five things the Airtable MCP cannot do. | current |
 | `docs/reference/annotation-vendors.md` | The annotation and data-labelling vendors whose postings are dropped, why the list exists, what it is sourced from, and how thin that evidence is. | current |
 | `docs/reference/completed.md` | Every completed task, with the evidence that proved it and the log or record that carries the proof. Split out of STATE.md so a session reads what is unsettled first. | current |
 | `docs/reference/platform-fields.md` | Every field each ATS platform and aggregator returns, with its type, how often it is populated, and whether the pipeline reads it. The inventory that makes "use everything that is fetched" checkable. | current |
-| `docs/reference/retention.md` | How long a classified row stays in Airtable and when it is written to its outcome store. Two separate clocks, both the operator's numbers. | current |
+| `docs/reference/retention.md` | How long a classified row stays in Airtable, when its outcome is written to its store, and which clock governs each table. The operator's numbers. | current |
 | `docs/reference/seniority-exclusions.md` | The senior-level title words that drop a posting the title pool admitted, the levels deliberately left in, and the evidence behind the numbered levels. | current |
 | `docs/reference/title-pool.md` | The 79 title terms a posting must match, grouped into the operator's four role families in order of precedence to be admitted, plus the normalisation and matching rules applied to both sides. | current |
 | `docs/research/README.md` | Dated snapshots of what was found and when. Numbered by the order the pass was run, so a later reader knows what was known at each point. | current |
@@ -118,6 +118,7 @@ Grouped by topic, in the order the pipeline runs. A record appears under exactly
 | `docs/decisions/0028-fetch-budget-and-detail-once.md` | **ADR-0028: Per-run fetch budget, and detail fetched once per posting.** A per-run request ceiling, and a posting's detail fetched once ever rather than once per run. | accepted |
 | `docs/decisions/0029-adapter-order-and-dover.md` | **ADR-0029: Adapter order after the slice, and Dover dropped.** Which adapters are built after the slice and in what order, ranked by the cost of obtaining a publication date. | accepted |
 | `docs/decisions/0039-aggregator-condition-three-components.md` | **ADR-0039: The aggregator condition is the three components.** Which of ADR-0019's two contradictory conditions governs when a source is added, and the rule the next aggregator faces. | accepted |
+| `docs/decisions/0048-poll-no-faster-than-the-feed-refreshes.md` | **ADR-0048: A source is polled no faster than its feed refreshes.** A source is polled no faster than its feed refreshes. Himalayas moves to the morning run only. The offset against its refresh stays unset until the refresh moment is measured. | accepted |
 
 ### Filtering, matching and preferences
 
@@ -146,6 +147,7 @@ Grouped by topic, in the order the pipeline runs. A record appears under exactly
 | `docs/decisions/0020-route-raw-storage-by-source-class.md` | **ADR-0020: Route raw storage by source class.** Raw storage is routed by source class, so an aggregator's rows are written locally and never published. | accepted |
 | `docs/decisions/0033-branch-is-the-store.md` | **ADR-0033: The data branch is the store, local files are working copies.** The data branch is the store and local files are working copies, so a committing run restores from the branch before it fetches. | accepted |
 | `docs/decisions/0037-filtered-layer-stores-rows.md` | **ADR-0037: The filtered layer stores rows, the projection groups them.** The filtered layer stores every kept row and the projection does the grouping, so no interpretation is frozen into the store. | accepted |
+| `docs/decisions/0047-aggregator-data-lives-in-private-destinations.md` | **ADR-0047: Aggregator data lives in private destinations.** Aggregator data lives in private destinations: a second private repository for every aggregator-sourced store, and the private Airtable base. Reverses ADR-0020's deferral. Nothing aggregator-sourced ever reaches the public branch. | accepted |
 
 ### The display and the projection
 
@@ -159,7 +161,8 @@ Grouped by topic, in the order the pipeline runs. A record appears under exactly
 | `docs/decisions/0040-current-rules-filter-the-projection.md` | **ADR-0040: The current rules filter the projection, never the store.** The current rules filter the projection and never the store. The half of the append-only problem that removes rows. | accepted |
 | `docs/decisions/0043-three-outcome-stores.md` | **ADR-0043: Three outcome stores, and what each is for.** Three append-only outcome corpora, one per kind of outcome, and what each one is allowed to feed back into. Reverses ADR-0014's single-file clause. | accepted |
 | `docs/decisions/0044-priority-star.md` | **ADR-0044: The priority star, and the line it must not cross.** A posting is starred when it shares one of three named attributes with an accepted role. The deterministic answer to "show me more like this", and the line it must not cross. | accepted |
-| `docs/decisions/0045-classification-flow.md` | **ADR-0045: The classification flow.** The operator classifies by moving a row to one of three tables; the sweep writes it to its store, verifies the write, then deletes. Supersedes ADR-0014's sweep. Accepted is never deleted automatically. | accepted |
+| `docs/decisions/0045-classification-flow.md` | **ADR-0045: The classification flow.** The operator classifies by moving a row to one of three tables; the sweep writes it to its store, verifies the write, then deletes. Supersedes ADR-0014's sweep. Accepted is never deleted automatically. | superseded by ADR-0046 |
+| `docs/decisions/0046-classification-by-status-and-fifteen-day-retention.md` | **ADR-0046: Classification by status, and the fifteen-day retention.** The operator classifies by setting one status in Jobs; the sweep copies the row out, then writes, verifies and deletes it at fifteen days. A stored outcome keeps a row out of the projection. Supersedes ADR-0045. | accepted |
 
 ### Measurement and evidence
 
@@ -187,4 +190,4 @@ Grouped by topic, in the order the pipeline runs. A record appears under exactly
 | `docs/deferred/rozee-pk.md` | Adding Rozee.pk as a source. Deferred until the display works and until more ATS sources are added, either of which may remove the need for it. | current |
 | `docs/deferred/similarity-matching.md` | Ranking postings by similarity to accepted roles. Deferred because ADR-0010 forbids it and the deterministic star was built instead; revisit when the accepted store holds fifty rows or when the operator stops reading every row. | current |
 
-Files listed: 82
+Files listed: 85

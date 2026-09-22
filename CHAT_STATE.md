@@ -14,6 +14,8 @@ It exists because items raised in a chat and not written down are forgotten the 
 
 Brought to final form 2026-09-18, at the close of the first architecture chat, after verifying against `logs/README.md` rather than against session reports.
 
+**Revised 2026-09-20**, in the second architecture chat, against the repository and the live Airtable base rather than against the handoff prompt. That prompt was stale in three places and is listed under the errors below.
+
 ---
 
 ## What this project is, in one paragraph
@@ -60,31 +62,30 @@ Items keep their number forever and move rows rather than being renumbered.
 
 | # | Item | Notes |
 |---|---|---|
-| 61 | Create the Airtable PAT and **seven** repository secrets | **The single largest blocker. Six decided things sit behind it.** Seven, not four: ADR-0045's sweep reads three classification tables that did not exist when four was specified. `docs/how-to/airtable-token-and-secrets.md` has the scopes and names |
-| 74 | Decide question C | Whether aggregator rows may be written to the private Airtable base. The only route by which Himalayas' kept rows reach the operator, since on a runner they persist nowhere |
-| 78 | The 2026-09-17 Airtable base is stranded | The MCP now reaches a different account. Five tables were built in the reachable base. Decide whether the old base is deleted or left |
-| 79 | `CLAUDE.md` still carries the old eight authority ranks | ADR-RULES adds two and neither record links to the other. A seat reading only `CLAUDE.md` gets an incomplete order |
-| 80 | Verify `STATE.md`'s two commit references | Its verified-against line and its headline are reported to disagree. **Not checked by this chat** |
-| 81 | Himalayas and Banyan Canopy trials end 2026-09-24 | Both need a verdict before that date |
+| 88 | Add three choices to `Status` on `Jobs` and `Jobs test` | `not fit`, `poor filtering`, `accepted`, keeping `expired_before_review`. **The connector cannot do this**: `update_field` takes only a formula in its options, so there is no path to a choices array on an existing field. The operator adds them in the browser. Step 4 of `docs/how-to/airtable-token-and-secrets.md`. **The sweep cannot be built until they exist**, because these names are what it matches on |
+| 89 | Create the private aggregator repository, its token and the eighth secret | ADR-0047. `AGGREGATOR_STORE_TOKEN`. Step 5 of the same file. Until then every run keeps 21 to 26 Himalayas rows and discards them, measured from the four run logs on the data branch at `d883b82` |
+| 81 | Himalayas and Banyan Canopy trials | Himalayas ends **2026-09-26**, Banyan Canopy **2026-09-24**. The 09-24 date previously given for both was wrong for Himalayas. Himalayas cannot be judged until item 89 is done, because nothing it keeps is stored |
+| 95 | A `Stage` changed after day 15 | The accepted store takes `Stage` as the copy holds it on day 15. A row shortlisted, stored, and applied to later stays `shortlisted` in the store, while the Airtable row, which no clock deletes, shows `applied`. Nothing reads the difference today (ADR-0044's star treats both alike). **Operator's decision**: accept it, or have the operator-run accepted-prune tool append the final `Stage` before it deletes |
+| 96 | ADR-0046's call budget undercounts the projection | Its table counts projection upserts at 1 call a run. Batched ten to a call, that holds only up to ten groups; ADR-0037 measured 25, which is 3 calls a run, 180 a month rather than 60, and a total near 480 rather than 360. **An arithmetic error in this chat's own record.** Brief 5 asks the seat for the measured count; the correction waits on that number and the operator's approval |
+| 97 | Brief 5, the projection | Written 2026-09-22 in the architecture chat, not sent. It carries the corrections notice for the seat as its first section. Waits on the operator's approval of its four decisions: A, a failed projection exits 2 so the push still happens; B, aggregator rows are projected before the private stores exist; C, a group's identity is its representative's and the skip tests every member; D, family labels and the star are part 2 |
 
 ## Gated
 
 | # | Item | Gated on |
 |---|---|---|
-| 64 | The Airtable writer and the weekly sweep | Item 61 |
-| 65 | ADR-0043's three outcome stores | Item 61. Recorded, not built |
-| 66 | ADR-0044's star has no caller | Item 61. The projection does not exist |
-| 67 | ADR-0040's projection filter | Item 61 |
-| 68 | ADR-0038's family views | Item 61. The label exists; the views do not |
+| 64 | The Airtable writer and the **daily** sweep | The writer is unblocked and deliberately not started. The sweep additionally needs item 88 |
+| 65 | ADR-0043's three outcome stores | The writer. Recorded, not built |
+| 66 | ADR-0044's star has no caller | The writer. The projection does not exist |
+| 67 | ADR-0040's projection filter, including ADR-0046's stored-outcome skip | The writer |
+| 68 | ADR-0038's family views | The writer. The label exists; the views do not |
 | 69 | ADR-0041's structured location half | A reachability field on the row and in the Airtable schema, neither of which exists |
 | 56 | Set the real fetch ceiling from measurement | A month of run logs. Every run so far has spent 36 requests against a provisional ceiling of 500 |
 | 70 | Every unread field in `platform-fields.md` | Each needs a decision about what it means and what its absence means. Himalayas returns `seniority` on 100% of postings while ADR-0032 infers it from title words |
-| 20 | Rozee.pk as a source | Needs a record. robots.txt permits the job paths, the terms carry no automated-access clause, and a sitemap publishes job URLs daily with the title in the slug |
+| 20 | Rozee.pk as a source | Deferred, `docs/deferred/rozee-pk.md`. The trigger is three conditions, the real one being whether the Karachi gap is still visible after ADR-0029's five adapters. Access questions already answered there so nobody re-investigates them |
 | 21 | Description matching | Deferred by ADR-0016. Field coverage is now measured |
 | 22 | Deduplication across source classes, employer alias map | A second source class in production |
 | 23 | End-state document | Operator's decision. No prior art in either project |
 | 24 | In-flight register separate from `STATE.md` | Work being in flight |
-| 25 | Second private repository for aggregator data | A reason to spend the effort |
 | 26 | Reuse boundary against the LinkedIn pipeline | One session, component by component |
 | 27 | Which skills the project gets | Nothing technical |
 | 28 | AGENTS.md symlink for Antigravity | Only matters if Antigravity is used here |
@@ -144,8 +145,23 @@ Items keep their number forever and move rows rather than being renumbered.
 | 72 | Record index restored | Fell fifteen records behind; repaired 2026-09-18 |
 | 73 | Brief 4 response read and verified | Against `logs/README.md`, not against the report of it |
 | 76 | Similarity matching decided against, for now | ADR-0044's deterministic star instead, with its trigger in `docs/deferred/` |
-| 77 | Deletion flow decided | ADR-0045. Manual classification, timestamped deletion from the two rejection tables, accepted deleted by hand only |
+| 77 | Deletion flow decided | ADR-0045. Manual classification, timestamped deletion from the two rejection tables, accepted deleted by hand only. **Superseded 2026-09-19 by ADR-0046; see item 83** |
 | 82 | The heredoc trap given a mechanism | `tools/heredoc_guard.py` and a PreToolUse hook. It asks, never denies, and fails open. Half its 16 tests are cases it must not fire on |
+| 61 | The Airtable PAT and seven repository secrets created | Done by the operator 2026-09-18. An eighth is now needed for ADR-0047; that is item 89 |
+| 74 | Question C answered | ADR-0047. Aggregator rows may go to private destinations, including the private Airtable base. They never reach the public branch |
+| 78 | The stranded 2026-09-17 Airtable base | Operator's decision 2026-09-19: left as it is unless it causes a problem. The connector lists exactly one base, and it is the right one |
+| 80 | `STATE.md`'s two commit references | Did disagree; both repaired by the seat, which also removed the commit hash from the headline so only the verified-against line names one. Local `main` and `origin/main` both at `da193b6`, checked 2026-09-19 |
+| 83 | Classification flow redesigned | ADR-0046, superseding ADR-0045. Airtable has no move operation, so classification is a status the operator sets, the pipeline copies and deletes, and a stored outcome keeps a row out of the projection for good. One fifteen-day period on two clocks, in `docs/reference/retention.md` |
+| 84 | Aggregator data destination decided | ADR-0047, reversing one clause of ADR-0020. A private repository for every aggregator-sourced store, plus the private Airtable base. Deletion becomes a complete purge because nothing was ever public |
+| 85 | Poll cadence rule | ADR-0048, extending ADR-0006. A source is polled no faster than its documented refresh interval. Himalayas moves to the morning run only. The offset stays unset until a spike measures when its cache refreshes |
+| 86 | The vault's operational test corrected | It pointed at cases 2 and 3, which are supersessions, and asked a question too broad to be true for case 3. Now asks whether a decision is still in force **and not carried into the later record**, and states the obligation that makes supersession safe. The short version in the record index was a second copy and was corrected with it |
+| 90 | `STATE.md` reconciled against origin, the data branch and the base | 2026-09-22. Headline and Blocked rewritten to current state; Himalayas, writer and sweep rows brought to ADR-0039, 0046, 0047 and 0048; two workflow rows moved to DONE; every replaced paragraph and row kept verbatim in `docs/reference/completed.md`, checked line by line. New facts: eleven production runs, 36 requests each; the backfill ran live on 2026-09-19 and appended 257; Himalayas kept 11 to 28 per run and lost every one |
+| 87 | `Classified at` created on `Jobs` and `Jobs test` | 2026-09-20, watching `Status` alone, verified by reading the schema back. A fifth connector limit found and recorded in `docs/reference/airtable-schema.md` |
+| 91 | Record corrections, first part | 2026-09-22. ADR-0036's pointer to ADR-0014 annotated in place with a Changes row: ADR-0004 is the record that makes Airtable what the operator opens. `logs/README.md` gained two rows: one saying eight rows live in `logs/2026-09-17-corrections-and-airtable-schema.md` rather than files of their own, and one for that log's section at line 277, which had no row. Both files read back byte for byte. ADR-0035 needed nothing |
+| 92 | `## Changes` moved to the bottom of sixteen records | 2026-09-22, operator's option A. Moved by script with three checks per file: the same non-blank lines before and after, frontmatter and title unchanged, and the table last. No Changes row, formatting only. `MAP.md` regenerated on a full copy of the 85 documented files, `--check` exit 0; the only rows that moved were three stale descriptions from this chat's 2026-09-20 edits. Index count updated: 51 rows across 27 records |
+| 93 | ADR-0046: how a reason reaches the store | 2026-09-22, operator's decision. Changes row plus an in-place pointer at step 2: on day 15 the row is written from `Jobs` and its reason from the matching copy in the same run; a status change discards the old copy's reason. `retention.md` and `airtable-schema.md` say the same |
+| 79 | `CLAUDE.md`'s authority order and two more defects | 2026-09-22, operator-approved. Nine ranks in two orders, with the brief at rank 4 and its one override; the amendment rule stated as the standard has it; the UI and notification lines cite no record, because none holds them. ADR-RULES gained a Changes row, ADR-0022 an Extended-by line, `architecture-2.0.md` the same two citation corrections, and the record index the amendment rule and the seven cases |
+| 94 | `Stage` carried to the accepted store | 2026-09-22, operator's decision. Second Changes row on ADR-0046, and `retention.md` and `airtable-schema.md` updated. ADR-RULES' two em dashes removed on his approval the same day, formatting only |
 
 ---
 
@@ -172,6 +188,18 @@ A record that reports only what survived is not a record.
 **Letting the record index fall fifteen records behind** while maintaining the rule that a second copy of a fact is a defect. Rebuilding it from session reports rather than the records then introduced three further defects, the worst of which marked the scope floor as partly overturned.
 
 **Writing four secrets and four tables into the handoff** from a brief rather than from the repository, after the seat had already recorded seven and five.
+
+**Asserting the `To review` view's filter and sort were set**, in `docs/reference/airtable-schema.md`, when the connector cannot read a view's filter and nothing had been checked. Caught in the same session and corrected to say what is actually known: the view exists, and its filter is specified in the how-to but not verified from here.
+
+**Placing `## Changes` above `## More Information`** in ADR-0040, ADR-0047 and ADR-0048, against the Decision Record Standard, which puts the table at the bottom. Found while writing the decision-record template, 2026-09-22. No functional cost; three files that later records get copied from carried the wrong order. Fix queued with the record corrections. **The audit of all 48 records then found the same order in 13 more, most of them the seat's**, so it is a corpus pattern rather than this chat's alone, and it is item 92.
+
+**Reporting that ADR-0035 names the reason fields as `Jobs` fields.** It does not, and needed no change. Found on reopening it, 2026-09-22.
+
+**Calling ADR-0036's pointer to ADR-0014 stale.** It was wrong from the day it was written: ADR-0014 decided the outcome sweep and says nothing about the operator opening a table as a report channel. The fix was the same annotation; the Changes row names it as a wrong cross-reference.
+
+**Leaving `MAP.md` stale on 2026-09-20.** Three descriptions changed in `retention.md`, `airtable-schema.md` and the how-to, and the map was not regenerated, which the pre-commit hook would have refused. One of them also still said four connector limits after the body said five. Found 2026-09-22 by running the generator on a full copy; corrected.
+
+**ADR-0046's budget line for the projection**, 1 upsert call a run where 25 groups at ten a call is 3. Written 2026-09-19, found 2026-09-22 while writing Brief 5. Item 96.
 
 ---
 
