@@ -143,3 +143,11 @@ answer to questions I and J.
 ADR-0003 is why the file is not edited. ADR-0013 is what a projection is.
 ADR-0014 owns the sweep. ADR-0035 owns the field ownership the removal
 exception rests on. ADR-0037 owns the grouping the projection also applies.
+
+## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-09-19 | Extended by ADR-0046, and one clause narrowed. The projection now also skips any identity present in one of ADR-0043's three outcome stores. "The sweep removes only rows whose `Status` is empty" now governs removal **by rule** alone: ADR-0046's sweep deletes rows whose status is not empty, but only after their outcome is written to a store and read back | Without the skip, a row deleted under the retention flow is projected again on the next run, because this record re-applies the chain to the whole filtered layer and ADR-0035's upsert matches only rows present in `Jobs`. The protection the empty-status clause gave an actioned row is now given by the store: a row leaves `Jobs` only once its outcome is durable |
+
+The sweep this record hands removal to was ADR-0014's when this was written. ADR-0014 was superseded by ADR-0045 and ADR-0045 by ADR-0046. The reference is left as written and the chain is followable from ADR-0014's own marker.

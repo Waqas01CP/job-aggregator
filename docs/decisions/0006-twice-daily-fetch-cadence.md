@@ -59,10 +59,11 @@ Measure A itself. If median age at first appearance exceeds 12 hours, the board-
 
 ## Pros and Cons of the Options
 
+## More Information
+
 ## Changes
 
 | Date | Change | Reason |
 |---|---|---|
+| 2026-09-19 | Extended by ADR-0048: a source is polled no faster than its own documented refresh interval, and Himalayas moves to the morning run only. The twice-daily run cadence decided here is unchanged | This record's propagation assumption was confirmed for ATS boards and explicitly not for Himalayas, whose 5.27-hour floor was attributed to feed staleness. Himalayas' API reference states the cache refreshes every 24 hours, so the second poll of each day cannot return new data. ADR-0048 governs which sources a run asks, not how often the run happens |
 | 2026-09-11 | The near-zero propagation assumption is confirmed, and the Confirmation is met | Greenhouse's youngest posting was 0.26 hours old at fetch, about 16 minutes, against a 2-hour bar. A quiet market would mean nothing recent existed; something published 16 minutes earlier was already in the feed, which is positive evidence rather than an absence of evidence for lag. A second run would tighten the bound and cannot change the verdict. Himalayas' 5.27-hour floor is its own feed staleness, and Lever's 35 hours is a volume artefact from 48 postings |
-
-## More Information

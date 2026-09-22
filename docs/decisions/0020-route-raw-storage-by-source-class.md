@@ -89,15 +89,16 @@ Good, because every row keeps an audit trail and an offsite copy.
 Bad, because it is a second repository to maintain before there is evidence it is needed.
 Deferred rather than rejected. The per-source file split is chosen partly to make this cheap later.
 
-## Changes
-
-| Date | Change | Reason |
-|---|---|---|
-| 2026-09-17 | The aggregator guard lives in the run's commit step, and a hook gate is added for data paths on main | This record promised a guard when the first aggregator adapter existed. A hook cannot serve that purpose: data-branch commits are built with git commit-tree, which runs no hooks. The working guard reads every record's source in the commit step and refuses any file holding an unpublishable row. The hook gate covers a different failure mode, a data path staged on main by hand, and is cheap |
-| 2026-09-17 | Seen-store entries are rows for the purposes of this record | Confirms the conservative reading already implemented. An entry carries a posting's identity, its first-seen and last-seen dates and its publication date, and publication date is the field an aggregator's terms restrict. Aggregator entries therefore stay in the local seen store and never reach the branch |
-
 ## More Information
 
 Terms evidence per source: `docs/research/0003-job-source-survey.md`.
 
 Constrains ADR-0019. Does not reverse ADR-0002 or ADR-0011; both hold for the data they govern.
+
+## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-09-19 | One clause reversed by ADR-0047: "we will not build the second private repository now". The routing rule, the one-file-per-source layout and the seen-store clarification all stand | The deferral assumed a machine that keeps the local file. On a GitHub runner the file is destroyed with the job, so aggregator rows were not stored anywhere. Measured from the four run logs on the data branch at d883b82: each run kept 21 to 26 Himalayas rows and discarded every one. The reason this record was waiting for arrived when the pipeline moved to a runner |
+| 2026-09-17 | The aggregator guard lives in the run's commit step, and a hook gate is added for data paths on main | This record promised a guard when the first aggregator adapter existed. A hook cannot serve that purpose: data-branch commits are built with git commit-tree, which runs no hooks. The working guard reads every record's source in the commit step and refuses any file holding an unpublishable row. The hook gate covers a different failure mode, a data path staged on main by hand, and is cheap |
+| 2026-09-17 | Seen-store entries are rows for the purposes of this record | Confirms the conservative reading already implemented. An entry carries a posting's identity, its first-seen and last-seen dates and its publication date, and publication date is the field an aggregator's terms restrict. Aggregator entries therefore stay in the local seen store and never reach the branch |

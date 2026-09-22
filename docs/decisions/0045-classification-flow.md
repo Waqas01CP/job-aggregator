@@ -1,5 +1,5 @@
 ---
-status: accepted
+status: superseded by ADR-0046
 topic: display
 description: The operator classifies by moving a row to one of three tables; the sweep writes it to its store, verifies the write, then deletes. Supersedes ADR-0014's sweep. Accepted is never deleted automatically.
 date: 2026-09-18
@@ -114,12 +114,6 @@ Bad, because the operator must remember which of four statuses means what, a mis
 Good, because it needs no new tables and no moves.
 Bad, because a view is a filter over a status, so it keeps every problem of the status field and adds a layer that looks like structure but is not. Deleting from a view deletes from the table.
 
-## Changes
-
-| Date | Change | Reason |
-|---|---|---|
-| 2026-09-18 | One retention period becomes two clocks: write to the store at 3 days, delete from Airtable at 14 | The operator's decision, which outranks this record under ADR-0022. The ordering invariant is untouched and is strengthened: write, verify, then delete, with the gap between write and delete widened from seconds to eleven days. A row is durable from day 3 and visible until day 14, so a sweep that fails for a week loses nothing and a cluster of one reason is still on screen to be noticed. He prefers 7 days for the delete and chose 14 as a starting value, because nothing in this path has run yet. Both numbers are configuration in `docs/reference/retention.md`, not constants |
-
 ## More Information
 
 Supersedes ADR-0014, which carries a Changes row and a superseded marker pointing here. ADR-0043's three stores are what this writes to. ADR-0044's star reads the accepted store.
@@ -127,3 +121,10 @@ Supersedes ADR-0014, which carries a Changes row and a superseded marker pointin
 ADR-0035's field ownership still holds: the pipeline writes only its own fields, and `Status`, the reasons and `Stage` are the operator's.
 
 The tables exist and are verified: `docs/reference/airtable-schema.md`.
+
+## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-09-19 | Superseded by ADR-0046 | Airtable has no move operation, so the central mechanism here cannot be performed in one action. ADR-0046 replaces it with a status field the pipeline acts on, and adds the rule that keeps a deleted row out of the projection. Case 2 of the Decision Record Standard: same question, different answer. What survives into ADR-0046 unchanged is write, verify, then delete, and `accepted` being deleted by no clock |
+| 2026-09-18 | One retention period becomes two clocks: write to the store at 3 days, delete from Airtable at 14 | The operator's decision, which outranks this record under ADR-0022. The ordering invariant is untouched and is strengthened: write, verify, then delete, with the gap between write and delete widened from seconds to eleven days. A row is durable from day 3 and visible until day 14, so a sweep that fails for a week loses nothing and a cluster of one reason is still on screen to be noticed. He prefers 7 days for the delete and chose 14 as a starting value, because nothing in this path has run yet. Both numbers are configuration in `docs/reference/retention.md`, not constants |
