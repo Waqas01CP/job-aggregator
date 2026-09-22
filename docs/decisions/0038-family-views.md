@@ -81,13 +81,14 @@ Bad, because a single ordered list where position encodes preference is a rankin
 Good, because it generalises to more dimensions later.
 Bad, because it is precisely what ADR-0010 exists to prevent, and a score cannot be explained by naming a rule.
 
-## Changes
-
-| Date | Change | Reason |
-|---|---|---|
-| 2026-09-18 | The term-to-family map is built | `load_title_pool` read the pool's four headings and discarded them, so no family label could reach a row. `load_term_families` in `src/filters.py` now maps all 79 terms to their heading, and `TitleMatcher.family_of` exposes it. Built for ADR-0044's third star attribute; the views this record describes are still unbuilt, and still wait on the writer |
 ## More Information
 
 Answers question F of the 2026-09-17 architecture brief. ADR-0010 carries a Changes row pointing here.
 
 ADR-0031 covers why the family list is configuration. The pool's headings and their order are in `docs/reference/title-pool.md`.
+
+## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-09-18 | The term-to-family map is built | `load_title_pool` read the pool's four headings and discarded them, so no family label could reach a row. `load_term_families` in `src/filters.py` now maps all 79 terms to their heading, and `TitleMatcher.family_of` exposes it. Built for ADR-0044's third star attribute; the views this record describes are still unbuilt, and still wait on the writer |

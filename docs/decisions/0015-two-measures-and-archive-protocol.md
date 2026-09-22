@@ -75,13 +75,13 @@ Measure A is computable from the filtered layer alone: publication date and firs
 
 ## Pros and Cons of the Options
 
+## More Information
+
+Replaces the original falsifier from the project brief. The retrospective baseline exercise over the fifteen-row Application Log is abandoned: that log records application dates and was built to prevent reapplication and track follow-ups, so it never held discovery dates and cannot be made to yield them.
+
 ## Changes
 
 | Date | Change | Reason |
 |---|---|---|
 | 2026-09-17 | Go-live, for Measure A's two-week window, is the first row in Airtable | This record measures publication date to first appearance in the display. The data branch is not the display: a row on it is invisible to the operator. The window starts when a row is visible to him, which also makes ADR-0009's slice Confirmation and this window start together |
 | 2026-09-17 | Rows appended by a backfill are excluded from Measure A | ADR-0030 appends rows for postings first seen long before the rules that now admit them. This record already excludes postings published before the pipeline's first successful run against their board, for the same reason. Without the exclusion a backfill would make freshness look catastrophic while nothing had got worse |
-
-## More Information
-
-Replaces the original falsifier from the project brief. The retrospective baseline exercise over the fifteen-row Application Log is abandoned: that log records application dates and was built to prevent reapplication and track follow-ups, so it never held discovery dates and cannot be made to yield them.

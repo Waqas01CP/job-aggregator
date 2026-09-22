@@ -59,10 +59,10 @@ Inspect the data branch after the first month and confirm no file contains descr
 
 ## Pros and Cons of the Options
 
+## More Information
+
 ## Changes
 
 | Date | Change | Reason |
 |---|---|---|
 | 2026-09-17 | The field enumeration is marked illustrative, not a schema | It was read as a schema and was eight fields out of date, every one of them required by ADR-0007, ADR-0026 or ADR-0027. What this record governs is the content class: identifying and locating metadata yes, description text no. The row shape is stated by the code, and a hand-maintained list here is a second copy of it |
-
-## More Information

@@ -59,12 +59,11 @@ Measure data-branch size monthly for the first three months and compare against 
 
 ## Pros and Cons of the Options
 
+## More Information
+
 ## Changes
 
 | Date | Change | Reason |
 |---|---|---|
 | 2026-09-15 | The postings-per-run assumption is falsified and the snapshot cost projection rises | Eleven boards returned 1646 postings, so the snapshot cost at measured volume is 2.40 GB a year rather than 1.4 GB. **The decision is unaffected.** The argument was the ratio between snapshots and deltas, and the delta cost does not depend on postings per run at all. A higher fetch volume makes snapshots worse, not deltas |
 | 2026-09-17 | Confirmed compatible with ADR-0030's backfill | A backfill appends records absent from the filtered file and rewrites nothing, which is exactly what this record permits. 'We will never rewrite an existing record and never write a full snapshot' is unaffected |
-
-
-## More Information

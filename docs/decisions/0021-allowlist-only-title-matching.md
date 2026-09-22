@@ -97,13 +97,6 @@ Bad, because it duplicates a safety net ADR-0001 already provides more completel
 
 Bad, because the blocklist has nothing left to do once unmatched rows are dropped, and it is the only place where a machine would delete a row on a judgement rather than on a named match.
 
-## Changes
-
-| Date | Change | Reason |
-|---|---|---|
-| 2026-09-17 | The no-blocklist clause is reversed in one respect | ADR-0032 adds a seniority rule the operator owns, and ADR-0031 records why a versioned preference file is configuration rather than the machine judgement this clause forbids. The clause was written about ADR-0008's unmatched bucket, which this record removed, not about seniority |
-| 2026-09-17 | The Confirmation case set is re-run, not replaced | Run against the current chain on 2026-09-17: all eight cases produce the verdict this record requires. 'Software Engineer II' is still not admitted, but the mechanism changed, since the pool now matches it and the seniority rule drops it. 'Non-AI Systems Analyst' is admitted by 'ai system', which this record named as the one to watch, and it is a live false positive |
-
 ## More Information
 
 Supersedes ADR-0008. The three-way classification is replaced by a different approach to the same question, and more than half of ADR-0008's Decision Outcome no longer holds.
@@ -111,3 +104,10 @@ Supersedes ADR-0008. The three-way classification is replaced by a different app
 Reverses one clause of ADR-0016, which named the unmatched bucket as the mechanism for extending the pool. That mechanism is now the drop log. The rest of ADR-0016 stands: title-only matching, storing every field a board returns, a versioned pool, and the deferral of description matching.
 
 The pool itself: `docs/reference/title-pool.md`.
+
+## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-09-17 | The no-blocklist clause is reversed in one respect | ADR-0032 adds a seniority rule the operator owns, and ADR-0031 records why a versioned preference file is configuration rather than the machine judgement this clause forbids. The clause was written about ADR-0008's unmatched bucket, which this record removed, not about seniority |
+| 2026-09-17 | The Confirmation case set is re-run, not replaced | Run against the current chain on 2026-09-17: all eight cases produce the verdict this record requires. 'Software Engineer II' is still not admitted, but the mechanism changed, since the pool now matches it and the seniority rule drops it. 'Non-AI Systems Analyst' is admitted by 'ai system', which this record named as the one to watch, and it is a live false positive |

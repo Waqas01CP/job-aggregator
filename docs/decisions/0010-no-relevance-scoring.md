@@ -56,12 +56,12 @@ Any admitted or dropped row can be explained by naming one rule. If a row's pres
 
 ## Pros and Cons of the Options
 
+## More Information
+
+If revisited, ADR-0001 guarantees the raw layer needed to evaluate any proposed scorer against real history.
+
 ## Changes
 
 | Date | Change | Reason |
 |---|---|---|
 | 2026-09-17 | Role families are permitted, as separate date-ordered views | ADR-0038. The pipeline assigns a family label derived from the term that matched, which is a lookup rather than a judgement, and every view remains ordered by date alone. Numeric weights per family, a single ordered list mixing families, and any label assigned by anything other than the matched term stay forbidden |
-
-## More Information
-
-If revisited, ADR-0001 guarantees the raw layer needed to evaluate any proposed scorer against real history.

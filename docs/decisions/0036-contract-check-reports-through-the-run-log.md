@@ -46,7 +46,7 @@ Chosen option: "the run log, mirrored into Airtable later".
 
 **`tools/run_log_report.py` is where the operator, or a session, sees it.** That tool already reads run logs from the branch and is the existing channel.
 
-**Once the Airtable writer exists, a contract change also becomes a row**, which is the operator opening a table, exactly as ADR-0014 intends. This is deferred behind the writer rather than built twice.
+**Once the Airtable writer exists, a contract change also becomes a row**, which is the operator opening a table, exactly as ADR-0014 intends. This is deferred behind the writer rather than built twice. *(Corrected 2026-09-22: the record that makes an Airtable table what the operator opens is ADR-0004. ADR-0014 decided the outcome sweep, says nothing about a report channel, and is superseded, by ADR-0045 and then ADR-0046.)*
 
 **This answers question D with a no.** GitHub's failed-run email is not an acceptable report for ADR-0018.
 
@@ -80,14 +80,15 @@ Bad, because it cannot name the field, and it makes a contract change indistingu
 Good, because it is durable and diffable.
 Bad, because it is a second artifact with its own format when the run log already exists and is already read by a tool.
 
-## Changes
-
-| Date | Change | Reason |
-|---|---|---|
-| 2026-09-18 | Cadence decided: daily | The operator's choice from the costed options. About 90 requests a month now and about 240 after ADR-0029's five adapters, against a per-run ceiling of 500 that no run has come within 90% of. A contract change is noticed within a day. This record decided the channel and left the cadence open; it is now closed. The check itself is still unbuilt |
-
 ## More Information
 
 Answers question D of the 2026-09-17 architecture brief. ADR-0018 carries a Changes row pointing here.
 
 The check itself is unbuilt and its cadence is the operator's decision.
+
+## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-09-18 | Cadence decided: daily | The operator's choice from the costed options. About 90 requests a month now and about 240 after ADR-0029's five adapters, against a per-run ceiling of 500 that no run has come within 90% of. A contract change is noticed within a day. This record decided the channel and left the cadence open; it is now closed. The check itself is still unbuilt |
+| 2026-09-22 | The Decision Outcome said a contract-change row is the operator opening a table "exactly as ADR-0014 intends". It now carries an in-place note naming ADR-0004, the record that makes Airtable what the operator opens | A cross-reference that pointed at the wrong record: ADR-0014 decided the outcome sweep and is superseded. Found by the architecture chat in an audit. The decision is unchanged |
