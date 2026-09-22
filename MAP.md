@@ -57,6 +57,7 @@ supersedes and superseded-by links, deliberately not duplicated here.
 | File | Holds | Status |
 | --- | --- | --- |
 | `docs/how-to/airtable-token-and-secrets.md` | The operator's steps for the Airtable token, the repository secrets, and the base changes ADR-0046 and ADR-0047 require. Steps 1 to 3 are done; steps 4 and 5 are not. | current |
+| `docs/how-to/build-the-writer.md` | The held implementation, assembled in one place: every constraint the Airtable writer, projection and sweep must satisfy, which record each comes from, what is already built, and the order to build in. | current |
 
 ## reference
 
@@ -190,4 +191,4 @@ Grouped by topic, in the order the pipeline runs. A record appears under exactly
 | `docs/deferred/rozee-pk.md` | Adding Rozee.pk as a source. Deferred until the display works and until more ATS sources are added, either of which may remove the need for it. | current |
 | `docs/deferred/similarity-matching.md` | Ranking postings by similarity to accepted roles. Deferred because ADR-0010 forbids it and the deterministic star was built instead; revisit when the accepted store holds fifty rows or when the operator stops reading every row. | current |
 
-Files listed: 85
+Files listed: 86

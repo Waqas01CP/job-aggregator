@@ -1045,3 +1045,169 @@ being actioned.
 - Nothing was committed to `docs/decisions/README.md` or `CHAT_STATE.md`, both
   of which the architecture chat has edited.
 
+---
+
+# The chat's files committed, and item 80 answered
+
+On the operator's instruction, `CHAT_STATE.md` and `docs/decisions/README.md`
+were committed as `da193b6`. Neither was modified by this seat. `CHAT_STATE.md`
+was read in full and scanned for credentials and identifiers before the push,
+as it was the first time: none, the only matches being the words "secret" and
+"key" in prose describing a blocker.
+
+**Item 80 in that ledger asked whether `STATE.md`'s verified-against line and
+its headline disagreed, and recorded that the chat had not checked.** They did.
+`[VERIFIED]` the headline named `2bfb393` as the current head, which it had not
+been for eleven commits, and the verified-against line named `ff83385`, one
+commit behind.
+
+**The headline no longer carries a commit hash at all**, and that is the
+durable fix rather than the correction. A hash in any sentence other than the
+verified-against line ages out every time anything is committed, which is
+exactly how this one came to read as a verified fact while being eleven
+commits stale. One place in the file names a commit, and it carries a UTC
+timestamp rather than a bare date.
+
+---
+
+# Added at session close
+
+Everything above was written during the work. This section is what existed
+only in this session's context. The session ran from 2026-09-17T21:08Z to
+2026-09-22T20:56Z across roughly a dozen briefs, from `2bfb393` to `0e0419f`.
+
+## The state a new seat inherits, checked at close
+
+`[VERIFIED]` 2026-09-22T20:56Z. `main` and `origin/main` at `0e0419f`, working
+tree clean. `data` at `137364f`, `data-test` at `6c7425d`. 383 tests pass.
+`generate_map.py --check` exits 0. `preference_audit.py` reports 19 hits, all
+comments or docstrings, no violation. Fifteen Actions runs, the last three all
+successful.
+
+Twelve production runs have written to `data`. `filtered.json` holds 345 rows,
+the seen store 923, raw Greenhouse 876 and Lever 47. Every run spends 36 of
+500 requests.
+
+## The backfill is proven in production, and how that was confirmed
+
+This is the most load-bearing verification of the session and it was only
+possible days after the change.
+
+`[VERIFIED]` by reading `totals.backfilled` out of all twelve run logs on the
+branch. The 2026-09-19T03:26Z run reports **257**, which is precisely the
+number measured by hand on 2026-09-18 against a scratch copy, before the code
+existed. **Every one of the seven runs since reports 0.**
+
+That is the whole claim of ADR-0030 demonstrated end to end: it closes the gap
+once, and appends nothing when there is no gap, which is why it is safe inside
+every run rather than needing anyone to remember after a pool change.
+
+The number to watch next is not the backfill. It is that `filtered.json` grew
+from 284 to 345 in the last two runs, and the 2026-09-22T17:33Z run reports
+`new 579` and `written_filtered 87` against a usual 11 to 28. **Noticed, not
+investigated.** The same run reports `kept 298`, and the run before it reports
+`kept 222` against a usual 293 to 299. Two anomalies in consecutive runs is
+the shape of a board changing, which is exactly what ADR-0018's contract check
+exists to name and which is still unbuilt.
+
+## Defects this seat put into its own work
+
+Listed because the shape of each is more instructive than the fix.
+
+1. **The heredoc guard was built backwards.** It tested for a backslash in a
+   heredoc that writes a file. The escape is converted before a hook sees the
+   command, so it fired on backslashes that survive, which are regex patterns
+   and harmless, and was silent on converted ones, which are the failure.
+   **What hid it:** every test ran `verdict()` against text written in the test
+   file, never against a payload shaped like the one the hook receives. The
+   lesson generalises past this guard: **a hook is tested against its payload,
+   not against your intent.** The rebuilt guard triggers on the destination,
+   which no conversion can hide, and the test file keeps the backwards case
+   permanently so nobody restores the obvious-looking trigger.
+2. **Reverting the architecture chat's change instead of flagging it.** It had
+   removed `CHAT_STATE.md` from `.gitignore` and from the generator's skip list
+   with the intent in a code comment. Restoring both decided by undoing.
+   **What hid it:** framing a deliberate, documented change by another party as
+   an ambiguity to be resolved rather than a decision to be respected. A flag
+   costs one message; an unexplained revert costs the decision.
+3. **`load_families` leaked `FileNotFoundError`** where every sibling loader
+   raises the module's own error. Found by a test written in the same hour.
+4. **A regression in `TitleMatcher.__init__`.** Adding the family load broke
+   `tools/title_pool_report.py --pool CANDIDATE`, because a candidate pool has
+   terms and no family headings. **What hid it:** nothing exercised a candidate
+   pool through the matcher. The fix distinguishes two cases rather than
+   becoming tolerant: no headings at all is a pool without families, which a
+   candidate legitimately is; a term above the first heading raises.
+5. **Two wrong test expectations**, both mine, both where the code was right:
+   asserting a file would not exist when the helper had created it, and
+   expecting `write_atomic` with a backslash to be allowed when that is the
+   em-dash case.
+6. **A count reported before it was final.** 57 DONE rows of 69 was true when
+   measured and 60 of 69 at the split, because the same round added three.
+7. **ADR-0013 had no pointer to ADR-0040**, which is what changed the meaning
+   of its own "projection of that file". My omission from the round before.
+
+## The trap that fired six times
+
+A backslash inside a bash heredoc loses a level of escaping. `backslash-n`
+becomes a real newline and the file stops parsing. It broke `src/filters.py`
+twice, test and scratch files three times, and **the guard's own reason string
+while that guard was being written**, which is the sixth.
+
+The rule that works: **anything containing a backslash goes through the Write
+or Edit tool, or is built in code with `chr(92)` and `chr(10)`.** Both the
+guard and its tests do the latter throughout.
+
+`tools/heredoc_guard.py` and `.claude/settings.json` hold the mechanism.
+**It has never been observed firing.** Two probes ran without asking, because
+`.claude/` did not exist when this session started and the settings watcher
+does not watch a directory that was absent at launch. A new session starts
+with the directory present, so the next seat should see it work, and should
+treat "it did not fire" as unverified rather than as evidence it is broken.
+
+## Where a close alternative was wrong
+
+- **Seeding `Jobs` rather than `Jobs test`.** Ten rows went to the test table.
+  Production stays empty for the writer, because ADR-0009's Confirmation needs
+  the pipeline to surface a role, not a hand-filled snapshot.
+- **Running the backfill on demand rather than inside every run.** On demand
+  needs someone to remember after every pool change, and forgetting is
+  invisible. In-run appends nothing in the normal case.
+- **Blocking every heredoc, or leaving the rule alone.** Both ends were
+  rejected by the operator, correctly. The narrow trigger is the destination.
+- **Writing decision records for the architecture chat.** Findings that
+  contradict a record are raised, not resolved by a seat.
+- **Tidying `architecture-2.0.md` and ADR-0009's "eleven boards"** as stale
+  text. Both were open questions with the chat.
+
+## Noticed and not investigated
+
+- The two anomalous runs above.
+- `data-test` still sits on the remote from a manual test run and nothing
+  deletes it.
+- Himalayas is first contact on all twelve runs and spends 25 of every 36
+  requests. ADR-0048 reduces it to one poll a day; ADR-0047 gives its rows
+  somewhere to live. Neither is built.
+- The `accepted` table will grow without bound until the operator prunes it,
+  and the tool that prunes it is named in ADR-0046 and unbuilt.
+
+## Advice to the next seat, earned rather than assumed
+
+**Read `docs/reference/` before writing any Airtable code.** `retention.md`
+and `airtable-schema.md` were both rewritten by the architecture chat after
+this seat built the tables, and they carry decisions the code does not yet
+reflect.
+
+**The connector cannot add a choice to an existing single select.** That is
+why ADR-0046's three `Status` values are the operator's step 4 and not a task.
+Verify they exist before building the sweep, because the sweep matches on
+those exact names.
+
+**Check `totals.backfilled` against `totals.written_filtered` when reading any
+run log.** A run writing 0 of its own while the backfill writes many is a
+broken write path wearing a healthy run's clothes, and the two numbers are
+separate precisely so that is visible.
+
+**The operator pushes.** A brief that ends "push" is authority to push that
+work, and nothing else is.
+
