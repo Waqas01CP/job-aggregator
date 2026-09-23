@@ -92,8 +92,13 @@ says push, or work around the scope floor in `CLAUDE.md`.
 ## The audit seat
 
 Claude Code at `ultracode`, which runs the model at `xhigh` and lets it
-orchestrate dynamic workflows across parallel subagents. **A fresh chat every
-time, never compacted.**
+orchestrate dynamic workflows across parallel subagents.
+
+**It continues across jobs like any other seat, with one exception.** When the
+work is critical enough that being cold to it is worth the re-reading, the
+operator starts a fresh chat for it. Cold is this seat's method, not its
+housekeeping, so that call is made on the importance of the audit and not on
+how long the chat has run.
 
 **Cold is the point.** A seat that wrote the work reads its own intent into
 it, not the text. The implementing seat tested a permission hook against what
@@ -169,13 +174,25 @@ scratchpad.
 **Never bypass the pre-commit hook.** Six gates, and the reason each exists is
 written above it in `.githooks/pre-commit`. Read the refusal instead.
 
-**Start a new chat at a task boundary; compact only to finish work already in
-flight.** A compaction summary is self-report with the commands and outputs
-stripped, which is the one input class `CLAUDE.md` refuses to trust. Reading
-the four files in the reading order costs about 73,000 bytes, measured
-2026-09-22, and buys a seat whose every claim traces to a file. Never compact
-twice in one session: a summary of a summary is how a wrong number becomes
-permanent.
+**A chat ends when the operator says "close this chat", and at no other
+time.** He watches the context with `/context` and decides when it is full
+enough. Those three words are the trigger. A seat does not close itself, does
+not ration its own work against a context budget, and does not suggest
+wrapping up because it feels near the end. Until he says it, the chat
+continues.
+
+**When he says it, the next chat starts fresh rather than compacting.** That
+is the whole point of the keyword: compaction is the thing it exists to
+replace. A compaction summary is self-report with the commands and outputs
+stripped, which is the one input class `CLAUDE.md` refuses to trust, and a
+summary of a summary is how a wrong number becomes permanent. Reading the
+files in the reading order costs about 73,000 bytes, measured 2026-09-22, and
+buys a seat whose every claim traces to a file.
+
+**One implementing seat at a time.** When a new one is initialised the old one
+is closed, because two seats committing to the same working copy is how a
+correct change gets reverted. On 2026-09-23 two ran in parallel for one round
+and only the clean tree between their commits kept it harmless.
 
 ## What this file does not hold
 
@@ -188,4 +205,5 @@ this file. This one holds only who does what.
 
 | Date | Change | Reason |
 |---|---|---|
+| 2026-09-23 | The session-boundary rule replaced with the operator's, and the audit seat's fresh-chat rule relaxed to its reason | The file said to start a new chat at a task boundary and said the audit seat takes a fresh chat every time. Both were the seat's inference, not the operator's practice, and the audit one was already producing a wrong answer within a day. He decides closure by watching `/context` and saying "close this chat"; a seat does not decide it. The audit seat goes cold when the importance of the audit justifies it, not on a schedule. The one-seat-at-a-time rule was added after two implementing seats ran in parallel for a round |
 | 2026-09-22 | File created | The arrangement governed every session and lived in handoff prompts. `CHAT_STATE.md` carried six lines of it addressed to the architecture chat, so the implementing seat was never told the rules it is bound by. A fourth seat made the omission worse, since an `ultracode` seat fans work out to agents that inherit no context at all |
