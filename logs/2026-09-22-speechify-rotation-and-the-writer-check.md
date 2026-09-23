@@ -1,6 +1,6 @@
 ---
 type: log
-description: The two anomalous runs of 2026-09-22 explained as Speechify rotating its city copies, not a board fault; the handoff checked and four of its statements found wrong; the corrected writer how-to checked cold against its records; and the heredoc guard seen running for the first time, with a working-directory defect.
+description: The two anomalous runs of 2026-09-22 explained as Speechify rotating its city copies, not a board fault; the corrected writer how-to checked cold against its records; the heredoc guard seen running, with a working-directory defect; and step 1 of the writer, the Airtable client and the shared retry module, built and proved by mutation.
 status: current
 ---
 
@@ -202,3 +202,150 @@ heredoc carrying a backslash into a file. Nothing in this session wrote one.
   are record conflicts for the architecture chat, routed through the
   operator.
 - The field sets of the Speechify payloads were not diffed across the swap.
+
+---
+
+# Step 1: the Airtable client, 2026-09-23 UTC
+
+The operator's go, 2026-09-23: step 1 only, and only after the cold check
+above. Step 2 is blocked on the two decisions with the architecture chat, and
+step 3 needs step 2. Step 1 depends on neither. The cold check found nothing
+that changes step 1's constraints and two ADR-0034 requirements the how-to
+had left out, so it went ahead with them included.
+
+| Header | Value |
+|---|---|
+| HEAD at start | `d8f3658`, one ahead of `origin/main` at `8f4c251` |
+| Mode | **Mutating.** No request made to Airtable or to any board. Every Airtable behaviour below is sourced from its documentation through ADR-0004 and ADR-0034, not exercised |
+| Tests | 383 at start, 427 at end, all passing on Python 3.12.10, on 3.11.9 in a scratch venv (the version the workflow pins), and on 3.11 with `TEST_MODE=1` `[VERIFIED]` |
+| Verification | 21 mutations, 20 caught on the first pass, 1 survivor closed by a new test and re-run caught `[VERIFIED]` |
+
+## What was built
+
+**`src/resilience.py`, the shared half.** The retry loop, the backoff
+calculation, `Retry-After` parsing, the circuit breaker, the pacer and the
+error classes, moved out of `src/http_client.py`. The loop takes a
+`repeatable` flag: a request that is unsafe to send twice after an unknown
+outcome is retried only on a status in `NOT_ACTED_ON`, which is 429, where
+the server says it did not act. A service's required wait after a status is a
+floor the client passes in, so Airtable's 30 seconds lives in Airtable's
+client and the fetch module has none.
+
+**`src/http_client.py`, moved onto it.** Its budget stays, because it is per
+run. Its public surface is unchanged: the same names, attributes and
+counters, with the error classes re-exported. **The 383 existing tests passed
+against the refactor before anything else was written** `[VERIFIED]`, which
+is the behaviour-preservation check ADR-0034's Consequences asks for.
+
+**`src/airtable_client.py`, the scoped exception.** It owns the token, the
+write verbs, the 429 and its 30-second wait, pacing at five requests a second,
+and a call budget counted per month. Four verbs, batching ten to a call:
+
+| Verb | Sent again after an unknown outcome | Checks the answer by |
+|---|---|---|
+| `upsert_records` | Yes: a retry matches what the first attempt made, which is why ADR-0035 chose upsert | Key: every merge value sent must come back |
+| `create_records` | **No.** Retried only on a 429 | Count, since a create has no key |
+| `delete_records` | **No.** The one irreversible act; an unknown outcome is reported and the caller re-derives on its next run | Key: every record ID must come back marked deleted |
+| `list_records` | Yes | Follows the offset; every page is a call against the month |
+
+Refused before anything is sent: an upsert record with no value in a merge
+field, two records sharing a merge key, a table given by name rather than
+`tbl` ID, a record ID not beginning `rec`, an empty secret, and a base secret
+not beginning `app`. `from_env` names an empty secret and never echoes a
+value.
+
+**No identifier reaches an error message.** Errors name the operation and the
+batch. Base and table IDs are secrets in this repository and an error's text
+can reach a run log on the public data branch; a test asserts the token, the
+base, the table and a record ID are absent from every error class.
+
+## Decided here, and why
+
+Method decisions, which the protocol leaves to this seat.
+
+- **The client writes whatever fields it is given.** Refusing `Status` in the
+  client would settle ADR-0035 against ADR-0046 in code. Field ownership
+  stays the projection's, and a test pins that the client adds nothing.
+- **Creates and deletes are not sent again after an unknown outcome.**
+  Rejected: retrying every verb alike, as the fetch loop does. Right for a
+  GET; for a create it is ADR-0035's duplicate row, and for a delete it
+  repeats the only irreversible act on a guess.
+- **The monthly budget takes the month so far as an input.**
+  `month_to_date` sums `calls_used` from run logs in the current UTC month.
+  **On a runner the run logs are not restored**: `src/storage.py` restores
+  the raw layer, `filtered.json` and `seen.json` only
+  (`RESTORED_FILES`, `RESTORED_DIRS`) `[VERIFIED]`. Until step 2 reads the
+  month's logs from the branches, every run starts the month at zero and the
+  ceiling works per run. The allowance is per workspace, so test-mode calls
+  count against the same month and both branches' logs must be read.
+- **The ceiling is 1,000**, ADR-0004's sourced free-plan allowance. Calls made
+  through a session's connector may count against the same allowance and are
+  invisible to the pipeline. Unmeasured.
+- **Pacing at the limit, 0.2 seconds.** A run makes a handful of calls; the
+  constraint that binds is the month, not the second.
+
+## The Confirmation, and what caught what
+
+ADR-0034's Confirmation has two halves and both are now tests.
+
+**The grep half**, `TestTheExceptionStaysScoped` in
+`tests/test_airtable_client.py`: the Airtable client imports nothing from the
+fetch module, the fetch module mentions no token and no write verb, and the
+shared module imports no HTTP library, so what is shared is logic and not a
+session. **Proved able to fail** twice over: the checks are fed doctored
+source built to defeat them, and two mutations reintroduce each violation in
+the real files.
+
+**The mutation half.** `tools/mutations/2026-09-23-shared-resilience-and-airtable-client.json`,
+run with `tools/mutate.py --why` `[VERIFIED]`:
+
+| Mutation | Caught by |
+|---|---|
+| Shared backoff exponent off by one | **Both modules**: `test_http_client` `test_backoff_grows` and `test_a_junk_retry_after_does_not_crash_the_run`; `test_airtable_client` `test_a_server_error_backs_off_exponentially` |
+| Shared breaker never resets | **Both**: `test_any_success_resets_it` in each |
+| Shared breaker opens one failure late | **Both**: three tests across the two |
+| Shared backoff ignores `Retry-After` | **Both**: one test in each |
+| 30-second floor ignored; 429 not treated as not acted on | Airtable only, as expected: the fetch module has no floor and repeats every request |
+| Unrepeatable request retried after a server error, or after a dropped connection; create or delete marked repeatable | Airtable's unknown-outcome tests |
+| Monthly ceiling off by one; budget forgets the month; `month_to_date` counts every month | Airtable's budget tests |
+| Batches of eleven; no pacing | Batching, counter and pacing tests |
+| Upsert answer aligned by count instead of key | `test_the_response_is_matched_by_key_not_by_position` |
+| Record with no identity sent | `test_a_record_with_no_identity_is_refused_before_any_call` |
+| Errors name the URL, which carries the base and table IDs | `test_permanent_and_transient_errors` |
+| Client imports the fetch module; fetch module gains an authorization header | The two grep tests |
+| **Delete confirmed without checking `deleted`** | **Survived.** No test returned an ID marked `deleted: false`, only IDs absent altogether. `test_an_id_returned_but_not_marked_deleted_is_refused` added; re-run with `--only`, caught by that test |
+
+**That is ADR-0034's Confirmation met**: the backoff broken once fails both
+modules' tests. The shared utility is shared.
+
+## A record the refactor made stale
+
+ADR-0039's Confirmation reads the diff that adds a source for a change to
+`src/http_client.py`. The shared logic now also lives in `src/resilience.py`,
+so the check as written would pass a source that changed it. Annotated with a
+date and a Changes row, which ADR-RULES lets a seat do unasked for a stale
+record; the Decision Outcome is untouched. `docs/decisions/README.md` indexes
+status only and needs no change.
+
+## The heredoc hook, the condition stated precisely
+
+The section above says the hook fails closed "as soon as the shell leaves the
+repository root". Narrower than that `[VERIFIED]`: a `cd` into a directory
+outside the repository is reset by the harness after the call, and later
+calls ran from the root; a `cd` into a **subdirectory of the repository**
+persists, and that is what blocked every following call.
+
+## Not done
+
+- Nothing calls the client, and the run log does not yet carry its counters.
+  ADR-0034 requires both budgets in the run log; the wiring lands with step
+  2, the first caller.
+- ADR-0035's Confirmation against `Jobs test` is step 2's.
+- No Airtable behaviour is exercised: the upsert response's `createdRecords`
+  and `updatedRecords`, the delete response's `deleted` flags, the 429's
+  timing and the five-a-second limit are all taken from documentation.
+- `CLAUDE.md` line 104 still says fetch behaviour "lives in one shared HTTP
+  module"; its next paragraph already says the utilities are shared by
+  import, so it reads correctly as a pair. Not edited: `CLAUDE.md` is the
+  architecture chat's.
+- The heredoc hook's path is still relative.

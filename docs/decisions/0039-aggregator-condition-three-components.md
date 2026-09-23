@@ -70,6 +70,8 @@ The five remaining aggregators in ADR-0019's survey face a stated criterion.
 
 Read the diff that adds a source. If `src/http_client.py`, the normaliser's row shape, or the filter chain changed, the source fails.
 
+*(Annotated 2026-09-23, stale under ADR-RULES: the shared HTTP module is now two files. ADR-0034's client moved retry, backoff and the circuit breaker out of `src/http_client.py` into `src/resilience.py`, which both the fetch module and the Airtable client import. A diff touching `src/resilience.py` is a change to the shared HTTP module for this check. The criterion is unchanged; only the file it is read from moved. See Changes.)*
+
 The check that can fail: Himalayas' own diff must pass this test and fail the narrow one. It does, which is the case that made the contradiction visible in the first place.
 
 ## Pros and Cons of the Options
@@ -89,3 +91,9 @@ Bad, because it is the same evaluation with a redrawn boundary, which decides by
 Resolves the contradiction in ADR-0019 lines 55 and 83, which carries a Changes row pointing here.
 
 Whether Himalayas stays on the schedule was open when this record was written and was closed the same day: it stays. See the annotation above and ADR-0019's Changes.
+
+## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-09-23 | The Confirmation annotated: the shared HTTP module now includes `src/resilience.py` | Stale, not wrong. Building ADR-0034's Airtable client extracted the shared retry, backoff and breaker into their own module, so a Confirmation that reads only `src/http_client.py` would pass a source that changed the shared logic. Annotated by the implementing seat under ADR-RULES, which allows a stale record to be annotated unasked; the Decision Outcome is untouched |

@@ -42,6 +42,22 @@ reads"; who performs the removal in ADR-0040; and how ADR-0038's family label
 and ADR-0044's star reason are classified under ADR-0035:58 before the writer
 touches them.
 
+**Checked cold by a second seat on 2026-09-23.** Every clause was re-located
+in its record and the group counts were reproduced from the code: 39, 334
+admitted, 29, and the 170-member group re-projecting as
+`greenhouse:5974247004`. The corrections hold. Two facts the open questions
+above were missing, both for the architecture chat:
+
+- **ADR-0004 records its own no-read clause as reversed by ADR-0014**, at its
+  lines 30 and 64. Its own 2026-09-17 Changes row and ADR-0035:48 treat the
+  clause as standing, and ADR-0046:75 budgets a projection read of `Jobs`. The
+  records disagree about whether the clause is in force at all.
+- **The `Status` conflict is also inside ADR-0046**: line 50 has the pipeline
+  setting `expired_before_review`, and line 134 says `Status` is the
+  operator's.
+
+`logs/2026-09-22-speechify-rotation-and-the-writer-check.md` has the table.
+
 ## Before you write any code
 
 1. **Read `docs/reference/airtable-schema.md`.** It is the built state of the
@@ -70,6 +86,8 @@ touches them.
 | Term to family map | `src/filters.py`, `load_term_families` | Built, all 79 terms |
 | The chain | `src/filters.py`, `apply_chain` | Built. Pure: takes rows and a clock |
 | The backfill | `src/backfill.py`, called by every run | Built and proven in production |
+| Shared retry, backoff, breaker | `src/resilience.py`, imported by the fetch module and the Airtable client | Built 2026-09-23. ADR-0034's mutation Confirmation passes: breaking the backoff fails both modules' tests |
+| The Airtable client | `src/airtable_client.py` | Built 2026-09-23, 44 tests. No caller, and no call yet made to Airtable |
 
 ## The constraints, and the record each comes from
 
@@ -85,7 +103,10 @@ second posting. An upsert matches server side and reads nothing back. ADR-0035
 amends ADR-0004's "batched creates" and leaves the rest of that record
 standing. **Whether the projection may read `Jobs` is open**: ADR-0004 says
 the pipeline performs no reads, and later records assume a read. Raised, not
-settled here.
+settled here. **Upsert itself is sourced, not exercised** (ADR-0035:31), and
+the record names the fallback if the plan lacks it: creates plus the same
+field discipline, with a duplicate after a failed retry a known defect
+(ADR-0035:60).
 
 **Write only pipeline-owned fields.** ADR-0035, and this one destroys data if
 missed. The record names the ten the writer may send: Title, Employer,
@@ -191,8 +212,8 @@ ten to a call.
 
 **The record's arithmetic is probably low and this is open.** It counts one
 upsert call per run. At 29 to 39 groups batched ten to a call that is three or
-four calls a run, so roughly 180 a month rather than 60, and a total nearer
-48% than 36%. It holds only if the writer sends new rows alone, which no
+four calls a run, so 180 to 240 a month rather than 60, and a total of 48% to
+54% rather than 36%. It holds only if the writer sends new rows alone, which no
 record decides. Do not treat 36% as measured.
 
 ## Suggested build order
@@ -200,11 +221,18 @@ record decides. Do not treat 36% as measured.
 Each step is independently testable, and the first three need nothing from the
 operator.
 
-1. **The client.** Authenticated writes, the 429 and its 30-second wait, a
-   monthly call budget, and the shared retry and backoff extracted so both it
-   and the fetch module import them. ADR-0034's Confirmation is a mutation:
-   break the backoff once and both modules' tests must fail, or it is not
-   actually shared.
+1. **The client. Built 2026-09-23.** Authenticated writes, the 429 and its
+   30-second wait, five requests a second per base (ADR-0034:26), a monthly
+   call budget, and the shared retry and backoff extracted so both it and the
+   fetch module import them. ADR-0034's Confirmation has two halves, both now
+   tests: the grep at :74, that the client imports nothing from the fetch
+   module and the fetch module carries no token or write verb; and the
+   mutation at :76, break the backoff once and both modules' tests must fail.
+   **Left for step 2, the first caller:** the run log must report the
+   client's counters beside the fetch budget (ADR-0034:68), and the monthly
+   count must be read from the month's run logs on **both** branches, since
+   the allowance is per workspace and a runner does not restore run logs.
+   Until then each run starts the month at zero.
 2. **The projection.** Read `filtered.json`, apply the chain, group, skip
    stored outcomes, upsert pipeline-owned fields only. **Blocked on the two
    open decisions above**, both of which change what it writes. ADR-0035's
@@ -224,13 +252,15 @@ operator.
 
 ## What to prove before calling it done
 
-ADR-0009's Confirmation: a scheduled run completes unattended and the operator
-finds a role in the display he had not already seen by hand. That is the whole
+ADR-0009's Confirmation: a scheduled run completes unattended, writes rows to
+all three layers, and the operator finds a role in the display he had not
+already seen by hand. That is the whole
 project, and nothing before it counts as the slice being confirmed.
 
 ## Changes
 
 | Date | Change | Reason |
 |---|---|---|
+| 2026-09-23 | Checked cold by a second seat. Step 1 built and marked so. Four gaps closed: the budget range at three to four calls a run is 48% to 54%, not "nearer 48%"; step 1 gained ADR-0034's grep Confirmation, its run-log requirement and the five-a-second limit; ADR-0009's Confirmation gained "writes rows to all three layers"; ADR-0035's upsert assumption and fallback added. Two facts added to the open questions | The corrections had been verified only by the seat that made them. Every clause was re-located in its record rather than by the audit's anchors, and the counts reproduced from the code. The four gaps are factual and closed here; the two record conflicts are the architecture chat's and are stated, not settled |
 | 2026-09-23 | Six errors corrected and eight omissions folded in, after an audit seat checked every constraint against its record | The file claimed nine source records and cites twelve; invented two of the five operator-owned fields it listed and misattributed a computed field to the operator; said three outcome stores where ADR-0047 says six; carried a group count copied from a measurement over 270 rows, which made the call budget look smaller than it is; treated `Classified at` as outstanding when it was built on 2026-09-20; and omitted ADR-0040's removal path entirely. Two constraints are still missing because no record settles them, and both are now named at the top rather than silently absent. Corrections verified against the records by the correcting seat and **not yet checked by a second** |
 | 2026-09-22 | File created at session close | The writer was held for a fresh seat, and its constraints were spread across nine records written over six days. Assembling them at close costs this seat an hour and saves the next one a day, and stops a constraint being missed: the field-ownership rule in ADR-0035 silently destroys the operator's classifications if it is, and it is one clause in the middle of a record about something else |

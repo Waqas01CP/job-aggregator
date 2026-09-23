@@ -1,0 +1,128 @@
+[
+  {
+    "label": "shared backoff exponent off by one",
+    "path": "src/resilience.py",
+    "find": "delay = base ** (attempt - 1)",
+    "replace": "delay = base ** attempt"
+  },
+  {
+    "label": "shared breaker never resets on success",
+    "path": "src/resilience.py",
+    "find": "    def record_success(self):\n        self.consecutive = 0",
+    "replace": "    def record_success(self):\n        pass"
+  },
+  {
+    "label": "shared breaker opens one failure late",
+    "path": "src/resilience.py",
+    "find": "return self.consecutive >= self.threshold",
+    "replace": "return self.consecutive > self.threshold"
+  },
+  {
+    "label": "shared backoff ignores Retry-After",
+    "path": "src/resilience.py",
+    "find": "delay = max(delay, retry_after)",
+    "replace": "delay = delay"
+  },
+  {
+    "label": "the 30-second floor after a 429 is ignored",
+    "path": "src/resilience.py",
+    "find": "return max(delay, floor)",
+    "replace": "return delay"
+  },
+  {
+    "label": "a 429 is not treated as not acted on",
+    "path": "src/resilience.py",
+    "find": "NOT_ACTED_ON = frozenset({429})",
+    "replace": "NOT_ACTED_ON = frozenset()"
+  },
+  {
+    "label": "an unrepeatable request is retried after a server error",
+    "path": "src/resilience.py",
+    "find": "if (repeatable or status in NOT_ACTED_ON) and self._may_retry(attempt):",
+    "replace": "if self._may_retry(attempt):"
+  },
+  {
+    "label": "an unrepeatable request is retried after a dropped connection",
+    "path": "src/resilience.py",
+    "find": "if repeatable and self._may_retry(attempt):",
+    "replace": "if self._may_retry(attempt):"
+  },
+  {
+    "label": "create marked repeatable",
+    "path": "src/airtable_client.py",
+    "find": "            payload = self._call(\"POST\", table, \"create\", target, body=body,\n                                 repeatable=False)",
+    "replace": "            payload = self._call(\"POST\", table, \"create\", target, body=body,\n                                 repeatable=True)"
+  },
+  {
+    "label": "delete marked repeatable",
+    "path": "src/airtable_client.py",
+    "find": "params=params, repeatable=False)",
+    "replace": "params=params, repeatable=True)"
+  },
+  {
+    "label": "monthly ceiling admits one call too many",
+    "path": "src/airtable_client.py",
+    "find": "if self.used_before + self.calls_used >= self.monthly_ceiling:",
+    "replace": "if self.used_before + self.calls_used > self.monthly_ceiling:"
+  },
+  {
+    "label": "monthly budget forgets the month so far",
+    "path": "src/airtable_client.py",
+    "find": "if self.used_before + self.calls_used >= self.monthly_ceiling:",
+    "replace": "if self.calls_used >= self.monthly_ceiling:"
+  },
+  {
+    "label": "month_to_date counts every month",
+    "path": "src/airtable_client.py",
+    "find": "if str(log.get(\"run_at\", \"\"))[:7] != month:",
+    "replace": "if False:"
+  },
+  {
+    "label": "batches of eleven",
+    "path": "src/airtable_client.py",
+    "find": "BATCH_SIZE = 10",
+    "replace": "BATCH_SIZE = 11"
+  },
+  {
+    "label": "no pacing",
+    "path": "src/airtable_client.py",
+    "find": "MIN_INTERVAL = 0.2",
+    "replace": "MIN_INTERVAL = 0.0"
+  },
+  {
+    "label": "upsert response aligned by count, not key",
+    "path": "src/airtable_client.py",
+    "find": "unaccounted = [key for key in sent if key not in got]",
+    "replace": "unaccounted = [] if len(returned) == len(sent) else sent"
+  },
+  {
+    "label": "a record with no identity is sent",
+    "path": "src/airtable_client.py",
+    "find": "missing = [name for name in merge_on if fields.get(name) in (None, \"\")]",
+    "replace": "missing = []"
+  },
+  {
+    "label": "delete confirmed without checking deleted",
+    "path": "src/airtable_client.py",
+    "find": "if r.get(\"deleted\") is True}",
+    "replace": "}"
+  },
+  {
+    "label": "errors name the URL, which carries the base and table IDs",
+    "path": "src/airtable_client.py",
+    "find": "target, operation, repeatable=repeatable)",
+    "replace": "url, operation, repeatable=repeatable)"
+  },
+  {
+    "label": "the Airtable client imports the fetch module",
+    "path": "src/airtable_client.py",
+    "find": "import requests\n\nfrom .resilience",
+    "replace": "import requests\n\nfrom .http_client import HttpClient  # noqa: F401\nfrom .resilience"
+  },
+  {
+    "label": "the fetch module gains an authorization header",
+    "path": "src/http_client.py",
+    "find": "USER_AGENT = (\"job-aggregator/0.1",
+    "replace": "AUTH_HEADER = \"Authorization\"\nUSER_AGENT = (\"job-aggregator/0.1"
+  }
+]

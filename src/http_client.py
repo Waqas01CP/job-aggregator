@@ -28,11 +28,20 @@ A body containing the word "error" is not an error, and a 404 page that says
 When the budget is exhausted the caller is told, not lied to. ADR-0028 requires
 deferred work to be recorded and picked up next run, which is safe only because
 ADR-0007 makes a late posting a latency cost rather than a loss.
+
+**Retry, backoff and the breaker live in `src/resilience.py`**, since
+ADR-0034 gave the Airtable writer a client of its own and both must share
+them. The budget stays here, because it is per run and the writer's is per
+month. The error classes are imported from there and re-exported, so a caller
+of this module sees the names it always did.
 """
 
 import time
 
 import requests
+
+from .resilience import (RETRYABLE_STATUS, CircuitOpen, HttpError,  # noqa: F401
+                         PermanentError, ResilientClient, TransientError)
 
 # ADR-0028. Provisional, and explicitly so: a runaway guard, not a measured
 # volume. Amended once the run log has a month of per-source counts.
@@ -48,33 +57,6 @@ DEFAULT_MIN_INTERVAL = 1.0
 USER_AGENT = ("job-aggregator/0.1 (scheduled job-board poller; "
               "https://github.com/Waqas01CP/job-aggregator)")
 
-# Status codes worth trying again. Everything else in 4xx is the caller's
-# fault and will fail identically on a retry.
-RETRYABLE_STATUS = frozenset({408, 425, 429, 500, 502, 503, 504})
-
-
-class HttpError(Exception):
-    """Base for every failure this module reports."""
-
-
-class PermanentError(HttpError):
-    """A status that will not change on retry. 404, 403, 400."""
-
-    def __init__(self, url, status):
-        super().__init__("%s returned %s, which is not retryable" % (url, status))
-        self.url = url
-        self.status = status
-
-
-class TransientError(HttpError):
-    """Retryable, and every attempt was used."""
-
-    def __init__(self, url, detail, attempts):
-        super().__init__("%s failed after %d attempts: %s" % (url, attempts, detail))
-        self.url = url
-        self.detail = detail
-        self.attempts = attempts
-
 
 class BudgetExhausted(HttpError):
     """The run's request ceiling was reached. Not a failure of the board.
@@ -87,50 +69,29 @@ class BudgetExhausted(HttpError):
         self.budget = budget
 
 
-class CircuitOpen(HttpError):
-    """Consecutive failures crossed the threshold. Further requests are
-    refused without spending budget, until a success resets it."""
-
-    def __init__(self, failures):
-        super().__init__("circuit open after %d consecutive failures" % failures)
-        self.failures = failures
-
-
-class HttpClient:
+class HttpClient(ResilientClient):
     def __init__(self, budget=DEFAULT_BUDGET, max_attempts=DEFAULT_MAX_ATTEMPTS,
                  backoff_base=DEFAULT_BACKOFF_BASE, timeout=DEFAULT_TIMEOUT,
                  breaker_threshold=DEFAULT_BREAKER_THRESHOLD,
                  min_interval=DEFAULT_MIN_INTERVAL, session=None,
                  sleep=time.sleep, now=time.monotonic):
+        super().__init__(max_attempts=max_attempts, backoff_base=backoff_base,
+                         breaker_threshold=breaker_threshold,
+                         min_interval=min_interval, sleep=sleep, now=now)
         self.budget = budget
-        self.max_attempts = max_attempts
-        self.backoff_base = backoff_base
         self.timeout = timeout
-        self.breaker_threshold = breaker_threshold
-        self.min_interval = min_interval
         self._session = session if session is not None else requests.Session()
-        self._sleep = sleep
-        self._now = now
-        self._last_request_at = None
 
         # Counters. These are the run log's raw material, so they count
         # attempts rather than logical fetches: a fetch that retried twice
         # cost three requests and the log must say so.
         self.requests_used = 0
         self.requests_by_source = {}
-        self.retries = 0
-        self.failures = 0
-        self.consecutive_failures = 0
-        self.refused = 0
 
     # ---------------------------------------------------------------- state
     @property
     def budget_remaining(self):
         return self.budget - self.requests_used
-
-    @property
-    def circuit_is_open(self):
-        return self.consecutive_failures >= self.breaker_threshold
 
     def counters(self):
         """A snapshot for the run log. ADR-0028 wants per source and total."""
@@ -153,22 +114,6 @@ class HttpClient:
         self.requests_used += 1
         self.requests_by_source[source] = self.requests_by_source.get(source, 0) + 1
 
-    def _pace(self):
-        if self.min_interval <= 0:
-            return
-        if self._last_request_at is not None:
-            wait = self.min_interval - (self._now() - self._last_request_at)
-            if wait > 0:
-                self._sleep(wait)
-        self._last_request_at = self._now()
-
-    def _record_success(self):
-        self.consecutive_failures = 0
-
-    def _record_failure(self):
-        self.failures += 1
-        self.consecutive_failures += 1
-
     # ---------------------------------------------------------------- fetch
     def get_json(self, url, source, params=None):
         """GET and decode JSON, or raise. `source` names the counter bucket,
@@ -183,60 +128,9 @@ class HttpClient:
             raise PermanentError(url, "200 but body is not JSON: %s" % e)
 
     def get(self, url, source, params=None):
-        if self.circuit_is_open:
-            self.refused += 1
-            raise CircuitOpen(self.consecutive_failures)
-
-        last_detail = None
-        for attempt in range(1, self.max_attempts + 1):
-            self._spend(source)
-            if attempt > 1:
-                self.retries += 1
-            self._pace()
-            try:
-                response = self._session.get(
-                    url, params=params, timeout=self.timeout,
-                    headers={"User-Agent": USER_AGENT, "Accept": "application/json"})
-                status = response.status_code
-            except Exception as e:
-                # Transport-level: DNS, connection reset, read timeout.
-                last_detail = "%s: %s" % (type(e).__name__, e)
-                self._record_failure()
-                if attempt < self.max_attempts and not self.circuit_is_open:
-                    self._backoff(attempt)
-                    continue
-                raise TransientError(url, last_detail, attempt)
-
-            if 200 <= status < 300:
-                self._record_success()
-                return response
-
-            if status not in RETRYABLE_STATUS:
-                self._record_failure()
-                raise PermanentError(url, status)
-
-            last_detail = "HTTP %s" % status
-            self._record_failure()
-            if attempt < self.max_attempts and not self.circuit_is_open:
-                self._backoff(attempt, response)
-                continue
-            raise TransientError(url, last_detail, attempt)
-
-        raise TransientError(url, last_detail or "no attempt made", self.max_attempts)
-
-    def _backoff(self, attempt, response=None):
-        """Exponential, and honours Retry-After when the server sends one,
-        because a server that names a wait has better information than we do."""
-        delay = self.backoff_base ** (attempt - 1)
-        if response is not None:
-            header = None
-            try:
-                header = response.headers.get("Retry-After")
-            except Exception:
-                header = None
-            if header:
-                try:
-                    delay = max(delay, float(header))
-                except (TypeError, ValueError):
-                    pass
-        self._sleep(delay)
+        """A GET is safe to repeat, so every retryable failure is retried."""
+        return self._send(
+            lambda: self._session.get(
+                url, params=params, timeout=self.timeout,
+                headers={"User-Agent": USER_AGENT, "Accept": "application/json"}),
+            url, source)
