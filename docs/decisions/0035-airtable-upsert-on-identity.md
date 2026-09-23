@@ -82,3 +82,9 @@ Bad, because it reads from Airtable, which is the clause ADR-0004 wrote to preve
 Amends ADR-0004, which carries a Changes row pointing here. Answers question B of the 2026-09-17 architecture brief.
 
 ADR-0034 decides that the writer is a separate client. The schema, including `Identity`, is recorded in `docs/reference/airtable-schema.md`.
+
+## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-09-23 | Two fields are classified pipeline-owned ahead of being built, so the sent set becomes twelve when they exist: `Family`, ADR-0038's label, and `Star reason`, ADR-0044's explanation. Both single line or long text, never a single select | This record requires a field added later to be classified before the writer touches it, because an upsert overwrites what it sends. Both are derived and recomputed every run, from the matched term and from the accepted store, so neither can carry a judgement of the operator's that an overwrite could destroy. A select is refused because the Airtable connector cannot add a choice to an existing field, which would make every new family a manual step. `Star reason` empty means not starred, so no checkbox can disagree with its own reason. The operator's decision, 2026-09-23 |

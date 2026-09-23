@@ -100,3 +100,9 @@ Bad, because the operator loses a signal the data already carries, and the three
 The boundary is the point of this record. ADR-0010 is the scope floor; ADR-0038 sets the same boundary for role families and is the precedent this follows.
 
 ADR-0043 owns the accepted store. `src/star.py` implements it, and `src/filters.py` gained `load_term_families` for the family attribute.
+
+## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-09-23 | The star's home is named: a pipeline-owned `Star reason` field on `Jobs`, long text, empty meaning not starred | ADR-0035 requires a new field to be classified before the writer sends it. The star is derived from three named attributes against the accepted store and is recomputed every run. One field rather than a checkbox plus a reason, so the mark and its explanation cannot disagree. The field waits on the accepted store, which waits on the sweep. The operator's decision, 2026-09-23 |

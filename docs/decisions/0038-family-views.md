@@ -92,3 +92,4 @@ ADR-0031 covers why the family list is configuration. The pool's headings and th
 | Date | Change | Reason |
 |---|---|---|
 | 2026-09-18 | The term-to-family map is built | `load_title_pool` read the pool's four headings and discarded them, so no family label could reach a row. `load_term_families` in `src/filters.py` now maps all 79 terms to their heading, and `TitleMatcher.family_of` exposes it. Built for ADR-0044's third star attribute; the views this record describes are still unbuilt, and still wait on the writer |
+| 2026-09-23 | The label's home is named: a pipeline-owned `Family` field on `Jobs`, single line text | ADR-0035 requires a new field to be classified before the writer sends it. The label is a lookup from the matched term, recomputed every run, so nothing of the operator's is at risk. Text rather than a select, because the connector cannot add a choice to an existing field. The operator's decision, 2026-09-23 |

@@ -121,11 +121,16 @@ it later as an inconsistency somebody chose.
 - **Status**, on `Jobs` and `Jobs test`. As built it carries ADR-0014's four
   values, checked against ADR-0014 lines 49 to 52 before the field was
   created: `applied`, `rejected_pipeline`, `rejected_choice`,
-  `expired_before_review`. **Pending, per ADR-0046:** the operator-facing
-  choices become `not fit`, `poor filtering` and `accepted`, with
-  `expired_before_review` kept as the one value only the pipeline sets. These
-  three names are what the sweep matches on, so they are exact. Empty means
-  not yet reviewed, and that is what the `To review` view filters on.
+  `expired_before_review`. **Pending, per ADR-0046:** the field carries
+  exactly three choices, `not fit`, `poor filtering` and `accepted`, all set
+  by the operator. **`expired_before_review` is retired**, 2026-09-23: the
+  pipeline never writes `Status`, and the event that value named is recorded
+  by the sweep in `outcomes/removed_unreviewed.json`. The four values as built
+  can all be deleted, because no row carries one. These three names are what
+  the sweep matches on, so they are exact. Empty means not yet reviewed, and
+  that is what the `To review` view filters on.
+  **Checked 2026-09-23 through the connector: still the four old values on
+  both tables.** Step 4 of `docs/how-to/airtable-token-and-secrets.md`.
 - **Pipeline reason** and **Choice reason**: as the table above lists, each on
   its own classification table.
 
@@ -174,6 +179,7 @@ and ADR-0046 the classification flow the three tables serve.
 
 | Date | Change | Reason |
 |---|---|---|
+| 2026-09-23 | The `Status` choices become three, and `expired_before_review` is retired | ADR-0046, on the operator's decision. The pipeline never writes `Status`, so no value on this field is the pipeline's. Field re-read through the connector the same day: the four ADR-0014 values are still what exists |
 | 2026-09-22 | `Stage` carried to the accepted store on day 15, like the reason | ADR-0046 extended on the operator's decision |
 | 2026-09-22 | Says how a reason reaches the store: read from the copy on day 15, in the same run | ADR-0046 extended on the operator's decision; before it, step 2 read only `Jobs` and no reason would have been stored |
 | 2026-09-20 | `Classified at` created on `Jobs` and `Jobs test`, watching `Status` alone, and verified by reading the schema back. A fifth connector limit recorded: it cannot add a choice to an existing single select field | ADR-0046 needs a clock in `Jobs` that moves when a classification changes, which no date field already present does. The three `Status` choices could not be added the same way, so they stay with the operator |

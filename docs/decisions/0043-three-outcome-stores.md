@@ -52,7 +52,7 @@ Chosen option: "three files, one per outcome class".
 | `outcomes/rejected_poor_filtering.json` | `rejected_pipeline` | the filter's defects, with the reason naming the rule |
 | `outcomes/accepted.json` | `applied` | ADR-0044's priority star |
 
-**`expired_before_review` gets no store.** It is not a judgement about a role; it measures the cost of the operator's absences, which is what ADR-0014 already says it is for. It stays a counted outcome and nothing reads it as a corpus.
+**`expired_before_review` gets no store.** *(Amended 2026-09-23: this clause is reversed. The status is retired, and the event it named is recorded in a fourth store. See Changes.)* It is not a judgement about a role; it measures the cost of the operator's absences, which is what ADR-0014 already says it is for. It stays a counted outcome and nothing reads it as a corpus.
 
 **This reverses ADR-0014's "not one file per status", and keeps what that clause was protecting.** The invariant was that a row has exactly one outcome. Routing is therefore exclusive: a swept row goes to exactly one store, decided by its status, and no identity may appear in two. That is now a checkable property rather than a property of the file layout, which is the better place for it.
 
@@ -99,3 +99,9 @@ Bad, because nothing would read it. It is a measure of absence, not a corpus of 
 Reverses one clause of ADR-0014, which carries a Changes row pointing here. The four statuses, their reasons and the write-before-delete rule are unchanged.
 
 ADR-0044 consumes the accepted store. ADR-0011 governs what a record may carry. ADR-0020 governs the split. ADR-0003 governs the append.
+
+## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-09-23 | The "no fourth store" clause is reversed. `outcomes/removed_unreviewed.json` is written by ADR-0046's sweep step 4: an unreviewed row the current chain no longer admits, with the rule that dropped it and the date. A row dropped by the expiry rule is the event `expired_before_review` named | This record rejected a fourth store because "nothing would read it". Two things changed. The operator asked for the signal and is its reader: how many roles closed before he saw them, on which boards, and how long after they were surfaced. And ADR-0046 retired `expired_before_review` as a status, so without a store the event would have no home at all. The three outcome stores are unaffected, and this fourth one is not read by the projection's skip, so a row that fell out on a narrowed rule can still return if the rule widens |

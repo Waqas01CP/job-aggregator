@@ -71,6 +71,24 @@ belonged to the old classification. An accepted row carries its `Stage`,
 shortlisted or applied, the same way. A `Stage` changed after day 15 does not
 reach the store. ADR-0046, Changes rows of 2026-09-22.
 
+## What has no clock at all
+
+**A row that fell out, unreviewed, goes at the next sweep.** ADR-0046's step
+4: a row in `Jobs` with an empty `Status` that the current chain no longer
+admits is written to `outcomes/removed_unreviewed.json` with the rule that
+dropped it, verified, then deleted. There is no fifteen days here, because
+nothing was classified: the row is gone from the display because the rules
+say it does not belong there, and the store is what keeps the fact.
+
+A row dropped by the expiry rule is the event ADR-0014 called
+`expired_before_review`: it was fresh when surfaced and closed before the
+operator reached it. A row dropped by a narrowed pool term is a different
+event with the same shape, and the stored rule name is what tells them apart.
+
+**That store is not read by the projection's skip.** ADR-0040 requires a row
+that fell out on a narrowed rule to reappear if the rule widens again, and
+only the three classification stores make a removal final.
+
 ## The ordering invariant
 
 Write, verify, then delete. Never the reverse. Inherited from ADR-0014 through
@@ -99,6 +117,7 @@ below, never a code change.
 
 | Date | Change | Reason |
 |---|---|---|
+| 2026-09-23 | A fourth removal added, on no clock: unreviewed rows the chain no longer admits, stored with the rule that dropped them | ADR-0046 step 4, on the operator's decision. It closes ADR-0040's unowned removal and preserves the `expired_before_review` signal, which ADR-0046 retired as a status |
 | 2026-09-22 | An accepted row carries its `Stage` to the store the same way | The operator's decision; ADR-0046 extended |
 | 2026-09-22 | The `Jobs` row and a new paragraph say where the stored reason comes from: the matching copy, read in the same run | ADR-0046's step 2 read only `Jobs`, where no reason lives, so no reason would have reached a store. Closed in ADR-0046 on the operator's decision |
 | 2026-09-20 | Two clocks of 3 and 14 days become one period of 15 days on two clocks, and `Jobs` gains a clock of its own | ADR-0046 replaced classification-by-moving with classification-by-status, so a row now sits in `Jobs` with a status rather than leaving it. A separate early store write no longer helps: the operator can change a status after it, leaving the store holding an outcome he has reversed. One write at the moment of deletion removes that case, and the row is visible in Airtable the whole time, so nothing is at risk. The 15 is the operator's number |

@@ -47,7 +47,7 @@ Two forces pull against each other. A row's location is unambiguous, but the int
 
 Chosen option: "one status field, with the pipeline performing the copy and the deletion".
 
-**The operator classifies by setting `Status` on the row in `Jobs`.** Its values are `not fit`, `poor filtering`, `accepted` and `expired_before_review`, the last of which only the pipeline sets. Empty means not yet reviewed, and the "To review" view shows exactly those rows.
+**The operator classifies by setting `Status` on the row in `Jobs`.** Its values are `not fit`, `poor filtering`, `accepted` and `expired_before_review`, the last of which only the pipeline sets. *(Corrected 2026-09-23: `expired_before_review` is retired and the pipeline never writes `Status` at all. The three operator-set values stand. See Changes.)* Empty means not yet reviewed, and the "To review" view shows exactly those rows.
 
 **`Jobs` carries a `Classified at` field of type `lastModifiedTime` watching `Status` alone.** It is empty until a status is set, it moves when the status changes, and nothing sets it by hand. The projection's writes leave it alone, because it watches one field the pipeline never writes.
 
@@ -58,10 +58,11 @@ Chosen option: "one status field, with the pipeline performing the copy and the 
 1. **Copy.** Every row in `Jobs` with an operator status and no copy in the matching table is created there. A row whose status changed since its copy was made has the old copy deleted and a new one created, which resets that table's `Classified`.
 2. **Store, verify, delete from `Jobs`.** For each row whose `Classified at` is more than fifteen days old: write it to its store under ADR-0043, read the store back and confirm its `Identity` is present, then delete it from `Jobs`. A row that fails verification stays and is reported, and no row is deleted on the strength of another row's success. *(Extended 2026-09-22: where the reason and `Stage` come from. See Changes.)*
 3. **Delete from the rejection tables.** A row in `rejected-not-a-fit` or `rejected-poor-filtering` whose `Classified` is more than fifteen days old is deleted. Its outcome reached the store in step 2.
+4. **Remove what fell out, unreviewed.** *(Added 2026-09-23. See Changes.)* A row in `Jobs` with an empty `Status` that the current chain no longer admits is written to `outcomes/removed_unreviewed.json` with the rule that now drops it, verified, then deleted. No clock: it goes at the first sweep after it falls out.
 
 **Write, verify, then delete. Never the reverse.** Inherited unchanged from ADR-0045 and from ADR-0014 before it.
 
-**A stored outcome keeps a row out of the projection.** The writer reads the three outcome stores and skips any identity present in any of them. This is what makes a deletion final, and it extends ADR-0040.
+**A stored outcome keeps a row out of the projection.** The writer reads the three outcome stores and skips any identity present in any of them. *(Extended 2026-09-23: the skip tests every member of a display group, and a projected row carries its group representative's identity. See Changes.)* This is what makes a deletion final, and it extends ADR-0040.
 
 **`accepted` is deleted by no clock.** Step 2 writes accepted rows to the accepted store so ADR-0044's star can read them, and step 3 does not touch that table. A separate tool, run by the operator when he chooses, deletes accepted rows from Airtable alone so the base stays under its record cap. It never touches a store.
 
@@ -71,16 +72,18 @@ Chosen option: "one status field, with the pipeline performing the copy and the 
 
 | Operation | Calls | Per month |
 |---|---|---|
-| Projection upserts, 2 runs a day, batched 10 per call | 1 per run | 60 |
-| Projection reads `Jobs` to find rows that fell out, per ADR-0040 | 1 per run | 60 |
+| Projection upserts, 2 runs a day, batched 10 per call, at 29 groups | 3 per run | 180 |
 | Sweep reads `Jobs` for statuses and clocks | 1 per day | 30 |
 | Sweep creates copies, batched 10 per call | up to 1 per day | 30 |
 | Sweep reads the three classification tables | 3 per day | 90 |
 | Sweep deletes from `Jobs`, batched 10 per call | up to 1 per day | 30 |
 | Sweep deletes from the two rejection tables, batched 10 per call | up to 2 per day | 60 |
-| **Total** | | **about 360** |
+| Sweep step 4, deletes rows that fell out, batched 10 per call | up to 1 per day | 30 |
+| **Total** | | **about 450** |
 
-**About 36% of the allowance**, against ADR-0045's 270 and ADR-0014's 130. This is arithmetic from the operations above, not a measurement, and no run has made an Airtable call. The two things holding it there are unchanged: ADR-0037's grouping keeps `Jobs` to one page, and writes and deletes batch ten to a call.
+*(Corrected 2026-09-23: this table counted the projection at 1 upsert call a run and carried a projection read of `Jobs`, totalling about 360, or 36%. See Changes.)*
+
+**About 45% of the allowance**, against ADR-0045's 270 and ADR-0014's 130. This is arithmetic from the operations above, not a measurement, and no run has made an Airtable call. The two things holding it there are unchanged: ADR-0037's grouping keeps `Jobs` to one page, and writes and deletes batch ten to a call.
 
 ### Consequences
 
@@ -143,3 +146,7 @@ Unbuilt at the time of writing. The `Status` choices and the `Classified at` fie
 |---|---|---|
 | 2026-09-22 | Step 2 now says where the reason comes from. On day 15 the row is written from `Jobs` and its reason from the matching copy, read in the same run. A status change discards the old copy's reason, because it belonged to the old classification | The reason fields live only on the copies, and step 2 read only `Jobs`, so no reason would have reached a store, against ADR-0043, whose outcome records carry "the reason where one was given". Found by the architecture chat, decided by the operator. No extra calls: the sweep already reads the three classification tables daily |
 | 2026-09-22 | `Stage` travels the same way. An accepted row is written with the `Stage` its `accepted` copy holds on day 15, shortlisted or applied, read in the same run | `Stage` lives only on the `accepted` copy, so without this the accepted store could not tell a shortlisted role from one applied to. The operator's decision. A `Stage` changed after day 15 does not reach the store; that is open as a separate question |
+| 2026-09-23 | The pipeline never writes `Status`, without exception, and `expired_before_review` is retired as a choice. `Status` now holds exactly `not fit`, `poor filtering` and `accepted`, all set by the operator | A pipeline write to `Status` moves `Classified at`, which starts the fifteen-day clock on a row nobody classified; ADR-0043 gave that value no store, so step 2 would have had nowhere to write it; and ADR-0035's ownership test, which protects the operator's review data, cannot hold if the pipeline sends the field at all. The event the value named is not lost: it is captured by step 4 below. The operator's decision, 2026-09-23 |
+| 2026-09-23 | The sweep gains step 4: an unreviewed row the current chain no longer admits is stored in `outcomes/removed_unreviewed.json` with the rule that dropped it, verified, then deleted from `Jobs`. It runs on no clock | ADR-0040 handed removal of rows that fell out to the sweep, and this record's three steps did not include it, so nobody owned it. A row dropped by the expiry rule is exactly ADR-0014's `expired_before_review`, so one step answers both. This store is not read by the skip: ADR-0040 requires a row that fell out on a narrowed rule to return if the rule widens again |
+| 2026-09-23 | The skip tests every member of a display group, not the group's identity alone, and a projected row carries its representative's identity | Measured on live data by the implementing seat at `data` head `def4f935`: the group `speechify\|software engineer platform\|2024-01-24` holds 170 members, and with its representative in a store the group re-projected under `greenhouse:5974247004`, which breaks this record's own rule that a classified row must never reappear in `Jobs`. Storing every member instead was rejected: it would write up to 170 records into ADR-0043's corpora for one judgement, and those corpora are read as one row per decision. The operator's decision, 2026-09-23 |
+| 2026-09-23 | The budget is corrected to about 450 calls a month, 45%. The projection costs 3 upsert calls a run rather than 1, the projection's read of `Jobs` is removed, and step 4's deletes are added | The 1-call line held only below eleven groups: ten rows go to a call, and the implementing seat measured 39 groups over 345 rows at `data` head `def4f935`, 29 after the chain admits 334. ADR-0037 measured 25 over 270 rows, which is where the old figure came from. The read is removed because every read now belongs to the sweep, per ADR-0004's clarification of the same date. The figure moves with the group count, not the row count: Speechify's 301 copies cost three calls between them |
