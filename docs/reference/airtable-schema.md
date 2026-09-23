@@ -46,7 +46,7 @@ only renamed.
 
 | Field | Type | Holds |
 |---|---|---|
-| Title | single line text | The posting's title as the board states it |
+| Title | single line text | The posting's title as the board states it. *(From 2026-09-23 the projection sends the normalised title, on the operator's decision: a trailing " - <city>" equal to the row's own location is removed, because Location already lists every city in the group. The raw title stays in every layer on the data branch as `title`. The field's own description in the base still reads "as the board states it")* |
 | Employer | single line text | ADR-0026 records how it is derived per source |
 | Location | long text | The board's raw location text, which varies in form |
 | Link | URL | Canonical URL, given or constructed, per ADR-0026 |
@@ -179,6 +179,7 @@ and ADR-0046 the classification flow the three tables serve.
 
 | Date | Change | Reason |
 |---|---|---|
+| 2026-09-23 | `Title` carries the normalised title | The operator's decision, answering the implementing seat's question after the first test-mode projection. A display row is a group whose Location lists every city, so a raw title naming one city misled; the raw title is kept in the store. Annotated in the table above rather than rewritten |
 | 2026-09-23 | The `Status` choices become three, and `expired_before_review` is retired | ADR-0046, on the operator's decision. The pipeline never writes `Status`, so no value on this field is the pipeline's. Field re-read through the connector the same day: the four ADR-0014 values are still what exists |
 | 2026-09-22 | `Stage` carried to the accepted store on day 15, like the reason | ADR-0046 extended on the operator's decision |
 | 2026-09-22 | Says how a reason reaches the store: read from the copy on day 15, in the same run | ADR-0046 extended on the operator's decision; before it, step 2 read only `Jobs` and no reason would have been stored |

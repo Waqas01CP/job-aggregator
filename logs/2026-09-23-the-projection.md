@@ -251,3 +251,129 @@ through the create and delete verbs.
 - The audit report's findings about the decision corpus. They are for the
   architecture chat; the operator noted some may already be resolved.
 - Measured Airtable calls per run: none exist until the first live run.
+
+---
+
+# The first live run, the operator's answers, and the hook fixed, 2026-09-23 UTC
+
+The operator pushed `ee0fc79`, `5ea1e8c` and `5768cf0` and dispatched the
+workflow from `main` with the test-mode box ticked, which is the intended
+dispatch: the workflow always runs from `main`, and that box is `test_mode`.
+
+## Live run 1: the projection reached `Jobs test`
+
+`[VERIFIED]` run 35912554579, `workflow_dispatch`, head `5768cf0`, created
+2026-09-23T19:55:43Z, conclusion success (public Actions API). `data-test`
+moved from `6c7425d` to `105d10a`; `data` stayed at `bab0acf`. Its committed
+run log, read from a scratch clone of `data-test`:
+
+| Block | Values |
+|---|---|
+| `projection` | 371 rows read (344 public, 27 Himalayas), 361 admitted, 56 groups, 0 skipped by a store, 56 to send, 56 sent |
+| `airtable` | 6 calls, 56 rows sent, 0 retries, 0 failures, 0 refused, breaker closed, `failure` null, 994 of 1,000 left this month |
+| Fetch | 36 requests; backfill appended 257, the test branch's first backfill |
+
+Read back through the connector at 20:07Z `[VERIFIED]`: **`Jobs test` holds
+56 records, equal to the sent count, and `Jobs` holds 0.** Every `Status` is
+empty. Dates at millisecond precision were accepted. **No failure also means
+the private repository was reached**: with either store secret empty the read
+refuses by name, and with the repository unreachable it raises, so both
+secrets exist and a fine-grained token in a Basic header reaches it through
+git on a runner. Whether the repository holds any file yet is not visible
+from here.
+
+**My canary prediction was wrong.** I said up to six of the ten canary rows
+would be left over, from a plan over `data-test` as it stood. The run's
+backfill added 257 rows to `data-test` first, and all ten canary identities
+were among the 56 sent. Each canary was matched and overwritten, its `First
+seen` and `Published` now the pipeline's, so no duplicate and no leftover:
+the count check holds exactly.
+
+**The measured calls, against ADR-0046's corrected budget.** Six calls for 56
+groups. ADR-0046 budgets the projection at three calls a run from 29 groups,
+but that count is the public filtered file alone. Since ADR-0047, aggregator
+rows reach the private base, and this run projected 27 Himalayas rows beside
+the public ones. A production run will do the same, so the projection is five
+or six calls a run rather than three, about 300 to 360 a month for that line
+alone, and the total nearer 60% than 45% `[INFERRED]` from one test run. A
+second consequence: until ADR-0047's write path is built, Himalayas rows live
+only for the run that fetched them, so no run re-projects or removes an
+earlier run's, and they accumulate in `Jobs` until the sweep's step 4 exists.
+Against the free plan's 1,000-record cap across the base, which ADR-0046
+sources and has not re-verified, that is the number to watch. Both are for
+the architecture chat.
+
+## The operator's answers
+
+1. **Delete the ten canaries.** Not done, and why: after run 1 they are no
+   longer canaries. Each was matched on `Identity` and every one of its ten
+   pipeline-owned fields overwritten by the projection; only its
+   `createdTime` remembers the seeding. Deleting them would remove ten live
+   projection rows that the next run recreates, which is exactly the count
+   change the second run's check must not see. Offered to delete if he still
+   wants it.
+2. **Naming the private repository is fine.** `CHAT_STATE.md` and the
+   Airtable how-to are committed as the chat wrote them, in a commit of their
+   own. Their sentence saying the name is kept out of this repository is now
+   untrue; the wording is the chat's to fix.
+3. **Exit 2 is reasonable; suggest better if there is one.** A
+   recommendation, labelled as one, below.
+4. **Normalised title, raw title kept.** Built: `Title` is `title_normalised`.
+   Normalisation only removes a trailing " - <city>" equal to the row's own
+   location field (`src/normalise.py`, `strip_location_suffix`); it changes
+   299 of 345 stored rows, all Speechify city copies `[VERIFIED]`. The raw
+   `title` is stored beside it in the raw layer and the filtered layer on the
+   branch, which a test now pins. **The exception:** Himalayas rows are not
+   durably stored anywhere until ADR-0047's write path exists.
+5. **Fix the hook path.** Done; below.
+
+## Recommendation for question 3: persistent failure turns the run red
+
+The operator wants not to have to check whether the store works. Exit 2 is
+right for one failure, since the next run repairs it, but the workflow shows
+exit 2 as a green run with a warning, so a projection failing every run for a
+week would look healthy from the Actions list. **Recommended:** count
+consecutive projection failures from the month's run logs, which the run
+already reads for the budget, and on the third in a row still commit and
+push, then fail the job after the push step. Data is never lost, a single
+failure stays quiet, and a persistent one shows as a failed run. Two things
+make it the chat's rather than this seat's: it changes the exit contract
+`CLAUDE.md` states, and a failed scheduled run makes GitHub email the
+repository owner by default, which sits close to the scope floor's "no
+notification system" even though nothing new is built. That GitHub behaviour
+is from outside this repository and was not checked this session. ADR-0018's contract
+check, still unbuilt, is the other home for store health.
+
+## The hook, fixed and proved
+
+`.claude/settings.json` now runs the guard through a Python launcher rather
+than a relative path. It looks for `tools/heredoc_guard.py` from
+`CLAUDE_PROJECT_DIR` if the harness sets it, else from the working directory,
+walking up the parents, and exits 0 when it finds nothing, so the guard fails
+open as it was designed to and never blocks every call again.
+
+Proved offline `[VERIFIED]`, `scratchpad/hookprobe.py`, the exact launcher
+string run with a payload built to trigger the guard and one built not to:
+
+| From | Env var | Risky heredoc | Harmless command |
+|---|---|---|---|
+| `docs/decisions` | set | ask | nothing |
+| `docs/decisions` | unset | ask | nothing |
+| outside the repository | unset | nothing, fail-open | nothing |
+
+Proved live `[VERIFIED]`: with the new settings in place, the shell was moved
+into `docs/decisions` and left there, and the next Bash call ran. Before the
+fix that exact sequence refused every call with "can't open file".
+
+## Not done
+
+- **Live run 2**: the operator sets `Status` by hand on one `Jobs test` row
+  and dispatches a second test run; then the value must survive, no
+  `Identity` may appear twice, and `Jobs` must still hold 0.
+- The canaries, per answer 1.
+- The `Title` field's own description in the base still says "as the board
+  states it". Changing it is an Airtable schema write, offered rather than
+  done.
+- **Production goes live on the next scheduled run.** The code is on `main`;
+  the next cron is 00:00Z, landing about 03:30Z on 2026-09-24 by recent runs,
+  and it will project into `Jobs`.

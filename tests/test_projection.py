@@ -148,7 +148,20 @@ class TestTheRowSent(Harness):
         self.write_filtered([make_row(1, title=raw, title_normalised=normalised)])
         client, _ = self.project()
         self.assertEqual(client.sent[0]["Matched term"], MATCHER.match(normalised))
-        self.assertEqual(client.sent[0]["Title"], raw)
+
+    def test_title_is_the_normalised_one_and_the_raw_one_stays_in_the_store(self):
+        """The operator's choice, 2026-09-23: the display reads the normalised
+        title, because the group's Location already names every city. The
+        raw title must never be lost, so the stored record still carries it."""
+        raw, normalised = "Software Engineer, Platform - Lahore, Pakistan", \
+            "Software Engineer, Platform"
+        self.write_filtered([make_row(1, title=raw, title_normalised=normalised,
+                                      location="Lahore, Pakistan")])
+        client, _ = self.project()
+        self.assertEqual(client.sent[0]["Title"], normalised)
+        stored = storage.read_records(self.paths["filtered"])[0]
+        self.assertEqual(stored["title"], raw)
+        self.assertEqual(stored["title_normalised"], normalised)
 
     def test_times_go_to_the_millisecond_in_utc(self):
         self.assertEqual(projection.airtable_datetime("2026-09-17T14:52:57.903143Z"),

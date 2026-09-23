@@ -8,7 +8,7 @@
           {
             "type": "command",
             "command": "python",
-            "args": ["tools/heredoc_guard.py"],
+            "args": ["-c", "from pathlib import Path; import os,runpy,sys; d=Path(os.environ.get('CLAUDE_PROJECT_DIR') or os.getcwd()).resolve(); g=[p/'tools'/'heredoc_guard.py' for p in [d,*d.parents] if (p/'tools'/'heredoc_guard.py').is_file()]; g or sys.exit(0); sys.argv=[str(g[0])]; runpy.run_path(str(g[0]),run_name='__main__')"],
             "timeout": 10,
             "statusMessage": "Checking the heredoc"
           }

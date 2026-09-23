@@ -108,13 +108,17 @@ def airtable_datetime(value):
 def fields_for(g, matcher):
     """ADR-0035's ten fields for one display group.
 
-    Matched term is taken from `title_normalised`, which is what the chain's
-    title rule matches on. Matching the raw title could name a different term
-    from the one that admitted the row, or none, on a board that puts a city
-    in its titles."""
+    **Title and Matched term both come from `title_normalised`.** It is what
+    the chain's title rule matches on, so the term shown is the term that
+    admitted the row; matching the raw title could name another, or none, on
+    a board that puts a city in its titles. And it is what the operator chose
+    to read, 2026-09-23: a group gathers every city into Location, so a raw
+    title naming one of them misleads. Normalisation only strips a trailing
+    " - <city>" equal to the row's own location. The raw title is never lost:
+    every layer stores `title` beside `title_normalised`."""
     rep = g.representative
     values = {
-        "Title": rep.title,
+        "Title": rep.title_normalised,
         "Employer": rep.employer,
         "Location": "\n".join(g.locations),
         "Link": rep.url,

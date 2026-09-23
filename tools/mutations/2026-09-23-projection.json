@@ -78,6 +78,12 @@
     "replace": "\"Matched term\": matcher.match(rep.title),"
   },
   {
+    "label": "Title from the raw title",
+    "path": "src/projection.py",
+    "find": "\"Title\": rep.title_normalised,",
+    "replace": "\"Title\": rep.title,"
+  },
+  {
     "label": "the representative's location only",
     "path": "src/projection.py",
     "find": "\"Location\": \"\\n\".join(g.locations),",
