@@ -57,7 +57,7 @@ supersedes and superseded-by links, deliberately not duplicated here.
 | File | Holds | Status |
 | --- | --- | --- |
 | `docs/how-to/airtable-token-and-secrets.md` | The operator's steps for the Airtable token, the repository secrets, and the base changes ADR-0046 and ADR-0047 require. Steps 1 to 3 are done; steps 4 and 5 are not. | current |
-| `docs/how-to/build-the-writer.md` | The held implementation, assembled in one place: every constraint the Airtable writer, projection and sweep must satisfy, which record each comes from, what is already built, and the order to build in. | current |
+| `docs/how-to/build-the-writer.md` | The held implementation, assembled in one place: every constraint the Airtable writer, projection and sweep must satisfy, which record each comes from, what is already built, and the order to build in. Audited 2026-09-23 and corrected; two constraints are undecided and named at the top. | current |
 | `docs/how-to/the-seats.md` | The four seats that work on this project, what each may and may not do, how work moves between them, and the procedure for re-checking that this file is still true. Nothing in the repository can prove it, which is why it carries its own checks. | current |
 
 ## reference

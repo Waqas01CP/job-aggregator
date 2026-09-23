@@ -83,6 +83,7 @@ Current blockers only. Resolved paragraphs moved to `docs/reference/completed.md
 |---|---|---|---|
 | The sweep | Three `Status` choices on `Jobs` and `Jobs test`: `not fit`, `poor filtering`, `accepted`. The connector cannot add a choice to an existing field | Operator, by hand | 2026-09-20 |
 | Himalayas' rows being stored at all | The private aggregator repository, its token, and the eighth secret, `AGGREGATOR_STORE_TOKEN` (ADR-0047) | Operator | 2026-09-19 |
+| The projection, and therefore the writer | **Two decisions no record settles.** (1) Whether the writer ever writes `Status`: ADR-0035 says the pipeline never writes it, ADR-0046 says `expired_before_review` is a `Status` value only the pipeline sets, and both are accepted. (2) Which identity a grouped display row carries: skipping a stored identity then grouping re-projects the role under the next member's identity, which breaks ADR-0046's "a row the operator has classified must never reappear in `Jobs`". [VERIFIED] 2026-09-23 by an audit seat and reproduced independently by the implementing seat over `filtered.json` at `def4f935`: the 170-member group `speechify\|software engineer platform\|2024-01-24` re-projects as `greenhouse:5974247004` after its representative `greenhouse:5058944004` is stored | Architecture chat | 2026-09-23 |
 | The writer | The operator's go, held until the implementing seat is restarted | Operator | 2026-09-19 |
 | Himalayas' trial verdict | 2026-09-26 | Operator | 2026-09-17 |
 | Banyan Canopy's review | 2026-09-24 | Operator | 2026-09-17 |

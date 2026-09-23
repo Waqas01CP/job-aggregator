@@ -1265,3 +1265,59 @@ how it behaves is a design, not an observation. The `ultracode` availability
 row in the recheck table is marked operator-only for that reason. No test was
 run for this commit: the change is documentation only and touches no import.
 
+
+---
+
+## The audit seat's findings checked, and build-the-writer.md corrected
+
+2026-09-23 UTC. An audit seat, Claude Code on Opus 5.5 at ultracode, audited
+`docs/how-to/build-the-writer.md` against its records. This seat checked its
+load-bearing claims rather than accepting them, then applied the corrections.
+
+**Its central finding reproduced independently** [VERIFIED]. A probe written
+from `src/dedupe.py` over a scratchpad clone of `data` at `def4f935` returned
+the same group, the same representative and the same post-skip identity it
+reported: the 170-member group `speechify|software engineer platform|
+2024-01-24`, representative `greenhouse:5058944004`, still projected as
+`greenhouse:5974247004` once the representative is stored. It also follows
+from the code alone: `group()` sorts members by publication date then identity
+and takes the first, so removing that member promotes another. Skipping a
+stored identity and then grouping lets a classified role return under a new
+identity, which breaks ADR-0046's core promise.
+
+**Its record conflict is real** [VERIFIED]. ADR-0035 lists `Status` among
+three fields "never written by the pipeline". ADR-0046 says
+`expired_before_review` is a `Status` value "only the pipeline sets". Two
+accepted records in force. Not settled here, per CLAUDE.md: raise it, do not
+choose.
+
+**Also confirmed against the records**: ADR-0047 says six outcome stores, not
+three; this file cited twelve records while claiming nine; two of the five
+operator-owned fields it listed were invented and `Classified at` is computed
+by Airtable rather than owned by anyone; `Classified at` was built on
+2026-09-20 so the how-to's step 4 is stale on that point; ADR-0040's removal
+path was omitted entirely; and "roughly 25 groups" was a number copied from
+ADR-0037's measurement over 270 rows. This seat measured 39 groups over 345
+rows with no chain applied, against the audit seat's 29 after the chain. Both
+refute 25, and both make ADR-0046's call budget low.
+
+**One defect in the audit output, worth knowing before trusting its
+citations** [VERIFIED]. A large minority of its line anchors point past the
+end of the file they name: ADR-0047 has 116 lines and it cited 176, 162 and
+186; ADR-0009 has 63 and it cited 132 and 128; ADR-0040 has 153 and it cited
+234. The claims at those anchors are genuinely in the records, elsewhere. The
+cause was not determined. Read its findings as "this record says X" and
+re-locate X.
+
+**Ultracode did not fan out.** The audit seat stated it used no subagents, so
+none of its output is workflow synthesis. That is why its token cost landed
+near xhigh. On a 42-file repository the model judged the task
+single-agent-sized, which means the quality came from the charter, read-only
+and one scoped job and a cold start, rather than from orchestration. The
+seats file's rules about subagents remain untested for the same reason.
+
+**Not done.** The corrections to `build-the-writer.md` have been verified by
+one seat only, the one that made them. The successor checks them cold before
+building. Eight further omissions the audit named were folded in only where
+this seat could verify them against the record in this session.
+
