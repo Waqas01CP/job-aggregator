@@ -134,6 +134,9 @@ Not done. Himalayas rows are currently fetched and discarded.
 | Secret name | Value |
 |---|---|
 | `AGGREGATOR_STORE_TOKEN` | The GitHub token from step 5.2 |
+| `AGGREGATOR_STORE_REPO` | `Waqas01CP/job-aggregator-store`. The path only: no `https://`, no `.git`, no trailing slash |
+
+**Two secrets, not one, and the second holds nothing secret.** The repository's name is kept out of this public repository rather than put in a config file, because naming it here publishes the existence of a private store for no benefit. ADR-0011 keeps this repository to metadata only, and this follows the same line.
 
 **Do not make this repository public later.** Anything committed to a public
 repository stays in that history and in every clone already made, which is
