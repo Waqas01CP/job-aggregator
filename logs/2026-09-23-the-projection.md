@@ -377,3 +377,68 @@ fix that exact sequence refused every call with "can't open file".
 - **Production goes live on the next scheduled run.** The code is on `main`;
   the next cron is 00:00Z, landing about 03:30Z on 2026-09-24 by recent runs,
   and it will project into `Jobs`.
+
+---
+
+# Live run 2: the operator's `Status` survives, 2026-09-23 UTC
+
+**Both live checks pass.** `[VERIFIED]` run 35917058573, `workflow_dispatch`
+on `af899c1`, created 20:36:13Z, success; `data-test` `105d10a` to `d71e4ea`,
+`data` still `bab0acf`. It ran the normalised-title code.
+
+| | Run 1, 19:55Z | Run 2, 20:36Z |
+|---|---|---|
+| Rows read (public + Himalayas) | 371 (344 + 27) | 369 (344 + 25) |
+| Admitted | 361 | 359 |
+| Groups (public + Himalayas) | 56 (29 + 27) | 54 (29 + 25) |
+| Sent | 56 | 54 |
+| Calls | 6 | 6 |
+| Month so far before the run | 0 | **6** |
+| Backfilled | 257 | **0** |
+| Failure | none | none |
+
+**The operator's hand-set values.** Before run 2 he set `Status` on four
+`Jobs test` rows through the browser, the old choices being all that exist:
+`greenhouse:4977137101` `applied` at 20:31:49Z, `greenhouse:4406476009`
+`applied` at 20:32:35Z, a Himalayas row `rejected_choice` at 20:33:22Z and
+another `rejected_pipeline` at 20:34:57Z, the times being their `Classified
+at` values. After run 2, read through the connector at 20:43Z `[VERIFIED]`:
+**all four values are still there, and all four `Classified at` values are
+unchanged.** `Classified at` watches `Status` alone, so an unchanged value is
+direct evidence the run never wrote `Status`.
+
+**The survival proof rests on rows the run actually re-sent.** Himalayas rows
+live only for the run that fetched them, so a Himalayas row marked by hand
+may simply not have been sent again. Both ATS rows were: planned over
+`data-test` at `d71e4ea` with run 2's clock, `greenhouse:4406476009` and
+`greenhouse:4977137101` are in the 29 public groups `[VERIFIED]`. The upsert
+matched each and updated its pipeline-owned fields, and the operator's field
+survived. That is ADR-0035's check that can fail, passed live.
+
+**No duplicate, and the count moves only by new postings.** `Jobs test` went
+from 56 to 59 `[VERIFIED]`. The three created at 20:37Z are Himalayas
+postings whose identities were not in run 1's list. Run 2 sent 54, so 51 were
+matched and updated in place. The strict form of ADR-0035's Confirmation, the
+same batch twice with the count identical, cannot occur against live boards;
+it holds in the form they allow.
+
+**Accumulation, observed rather than inferred.** 56 plus 3 less 54 sent means
+**five of run 1's Himalayas rows were not sent again and remain in `Jobs
+test`**, untouched, after one run. Nothing will remove them until the sweep's
+step 4 exists, and nothing re-sends them because ADR-0047's store is unbuilt.
+Two runs a day at this rate is the accumulation the previous section
+inferred.
+
+**The budget carries across runs.** Run 2's `month_to_date_before_run` is 6,
+run 1's `calls_used` read back from `data-test`'s run logs by
+`storage.read_month_run_logs`: the monthly count works on a runner that
+restores no run logs. And the backfill appended 0 after run 1's 257, the
+idempotence ADR-0030 claims, now on the test branch too.
+
+`Jobs` holds 0 `[VERIFIED]`: two test runs, no production write.
+
+## Still not done
+
+- Production's first projection, at the next scheduled run.
+- The `Title` field's description in the base.
+- `null` for an empty field: no row sent had one.

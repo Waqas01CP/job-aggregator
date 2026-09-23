@@ -173,3 +173,11 @@ Moved verbatim. The architecture chat settled both decisions on 2026-09-23 with 
 | Item | Blocked on | Who | Since |
 |---|---|---|---|
 | The projection, and therefore the writer | **Two decisions no record settles.** (1) Whether the writer ever writes `Status`: ADR-0035 says the pipeline never writes it, ADR-0046 says `expired_before_review` is a `Status` value only the pipeline sets, and both are accepted. (2) Which identity a grouped display row carries: skipping a stored identity then grouping re-projects the role under the next member's identity, which breaks ADR-0046's "a row the operator has classified must never reappear in `Jobs`". [VERIFIED] 2026-09-23 by an audit seat and reproduced independently by the implementing seat over `filtered.json` at `def4f935`: the 170-member group `speechify\|software engineer platform\|2024-01-24` re-projects as `greenhouse:5974247004` after its representative `greenhouse:5058944004` is stored | Architecture chat | 2026-09-23 |
+
+## Another row of the Blocked table, resolved 2026-09-23
+
+Moved verbatim. Both live checks passed on 2026-09-23: test run 35912554579 put 56 records in `Jobs test` against 56 sent with `Jobs` untouched, and test run 35917058573 left four hand-set `Status` values and their `Classified at` times unchanged, two of them on rows it re-sent. `logs/2026-09-23-the-projection.md`.
+
+| Item | Blocked on | Who | Since |
+|---|---|---|---|
+| The projection going live | *(2026-09-23: pushed, and test run 1 passed: `Jobs test` 56 against 56 sent, `Jobs` 0. What remains is the operator setting `Status` by hand on one `Jobs test` row and dispatching a second test run. Production projects on the next scheduled run whatever happens, since the code is on `main`.)* The operator pushes, then dispatches a **test-mode** run; the live checks follow: `Jobs test`'s count against the run log's sent count, a hand-set `Status` surviving a second test run, and `Jobs` unchanged by both. *(The two decisions that blocked the projection were settled 2026-09-23; that row is in `docs/reference/completed.md`)* | Operator | 2026-09-23 |
