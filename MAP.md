@@ -102,6 +102,7 @@ supersedes and superseded-by links, deliberately not duplicated here.
 | `logs/2026-09-17-test-run-verified-and-no-input-work.md` | The ticked test run verified on GitHub, a publication-lag report built, the README brought up to date, ADR-0023 annotated, a decision pack prepared for the operator, and the Airtable writer found to need the architecture chat first. | current |
 | `logs/2026-09-17-vertical-slice.md` | The vertical slice built end to end. Config, HTTP module, Greenhouse and Lever adapters, normaliser, deduplicator, filter chain, writers, orchestrator and schedule, plus Himalayas on condition. | current |
 | `logs/2026-09-18-pool-version-4.md` | Pool version 4 with eighteen AI terms added ahead of the boards that carry them, one of which immediately admitted a missed AI internship; why Himalayas cannot be seen from GitHub; and why Airtable could not be built in this session. | current |
+| `logs/2026-09-22-speechify-rotation-and-the-writer-check.md` | The two anomalous runs of 2026-09-22 explained as Speechify rotating its city copies, not a board fault; the handoff checked and four of its statements found wrong; the corrected writer how-to checked cold against its records; and the heredoc guard seen running for the first time, with a working-directory defect. | current |
 
 ## decision
 
@@ -192,4 +193,4 @@ Grouped by topic, in the order the pipeline runs. A record appears under exactly
 | `docs/deferred/rozee-pk.md` | Adding Rozee.pk as a source. Deferred until the display works and until more ATS sources are added, either of which may remove the need for it. | current |
 | `docs/deferred/similarity-matching.md` | Ranking postings by similarity to accepted roles. Deferred because ADR-0010 forbids it and the deterministic star was built instead; revisit when the accepted store holds fifty rows or when the operator stops reading every row. | current |
 
-Files listed: 87
+Files listed: 88

@@ -96,6 +96,15 @@ holds exactly the rows whose `Status` you have not yet set.
 
 Not done. The sweep cannot be built until these exist.
 
+*(Annotated 2026-09-23: half done. Items 2 and 3 were done on 2026-09-20,
+when `Classified at` was created on `Jobs` and `Jobs test` watching `Status`
+alone, per `docs/reference/airtable-schema.md`. Read back through the
+connector 2026-09-22T22:30Z: type `lastModifiedTime`, referencing the
+`Status` field only, on both tables. **Only item 1, the three `Status`
+choices, is outstanding.** The same read found the field still carrying
+`applied`, `rejected_pipeline`, `rejected_choice` and
+`expired_before_review`.)*
+
 1. In `Jobs`, open the `Status` field and add three choices:
    `not fit`, `poor filtering`, `accepted`. Leave `expired_before_review`,
    which only the pipeline sets.
@@ -156,5 +165,6 @@ and a token pasted into a conversation is a token that has to be rotated.
 
 | Date | Change | Reason |
 |---|---|---|
+| 2026-09-23 | Step 4 annotated as half done: `Classified at` exists, only the three `Status` choices remain | The step said "Not done" as a whole and still instructed creating `Classified at`, which was built on 2026-09-20. `STATE.md` and `airtable-schema.md` already said so, so the operator was being sent to do work that existed. Annotated rather than rewritten, so the original instruction survives beside what is true |
 | 2026-09-20 | Steps 1 to 3 marked done. Step 4 added for the `Status` choices and the `Classified at` field, step 5 for the private aggregator repository and an eighth secret. The `To review` explanation corrected, and the budget figure updated from 27% to 36% | ADR-0046 replaced classification-by-moving with classification-by-status, so a classified row now stays in `Jobs` for fifteen days and the view's filter is what hides it, not the row's absence. ADR-0047 added the private aggregator store and its token. The opening framing of this file as the only blocker was true when written and stopped being true when the operator completed steps 1 and 2 |
 | 2026-09-18 | File created, with seven secrets rather than the four originally planned | The token had been named as a blocker in `STATE.md` without steps to clear it. ADR-0045's sweep reads three classification tables that did not exist when the four secrets were specified, and looking them up by name each run costs a call and breaks on a rename |
