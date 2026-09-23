@@ -985,5 +985,26 @@
   "url_provenance": "payload",
   "stated_experience": null,
   "expires_at": null
+ },
+ {
+  "identity": "lever:3cf813f8-5943-4459-b7c3-b14ffb652fca",
+  "source": "lever",
+  "board_id": "lever:spreetail",
+  "external_id": "3cf813f8-5943-4459-b7c3-b14ffb652fca",
+  "employer": "Spreetail",
+  "employer_provenance": "slug",
+  "title": "EHS Manager",
+  "title_normalised": "EHS Manager",
+  "location": "Greenwood, IN",
+  "published_at": "2026-09-23T15:10:23.328000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-09-23T17:45:46.903616Z",
+  "ordering_date": "2026-09-23T15:10:23.328000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/spreetail/3cf813f8-5943-4459-b7c3-b14ffb652fca",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null
  }
 ]
