@@ -48,74 +48,50 @@
     "replace": "if self._may_retry(attempt):"
   },
   {
-    "label": "create marked repeatable",
-    "path": "src/airtable_client.py",
-    "find": "            payload = self._call(\"POST\", table, \"create\", target, body=body,\n                                 repeatable=False)",
-    "replace": "            payload = self._call(\"POST\", table, \"create\", target, body=body,\n                                 repeatable=True)"
-  },
-  {
-    "label": "delete marked repeatable",
-    "path": "src/airtable_client.py",
-    "find": "params=params, repeatable=False)",
-    "replace": "params=params, repeatable=True)"
-  },
-  {
     "label": "monthly ceiling admits one call too many",
-    "path": "src/airtable_client.py",
+    "path": "src/airtable.py",
     "find": "if self.used_before + self.calls_used >= self.monthly_ceiling:",
     "replace": "if self.used_before + self.calls_used > self.monthly_ceiling:"
   },
   {
     "label": "monthly budget forgets the month so far",
-    "path": "src/airtable_client.py",
+    "path": "src/airtable.py",
     "find": "if self.used_before + self.calls_used >= self.monthly_ceiling:",
     "replace": "if self.calls_used >= self.monthly_ceiling:"
   },
   {
     "label": "month_to_date counts every month",
-    "path": "src/airtable_client.py",
+    "path": "src/airtable.py",
     "find": "if str(log.get(\"run_at\", \"\"))[:7] != month:",
     "replace": "if False:"
   },
   {
     "label": "batches of eleven",
-    "path": "src/airtable_client.py",
+    "path": "src/airtable.py",
     "find": "BATCH_SIZE = 10",
     "replace": "BATCH_SIZE = 11"
   },
   {
     "label": "no pacing",
-    "path": "src/airtable_client.py",
-    "find": "MIN_INTERVAL = 0.2",
+    "path": "src/airtable.py",
+    "find": "MIN_INTERVAL = 0.25",
     "replace": "MIN_INTERVAL = 0.0"
   },
   {
     "label": "upsert response aligned by count, not key",
-    "path": "src/airtable_client.py",
-    "find": "unaccounted = [key for key in sent if key not in got]",
-    "replace": "unaccounted = [] if len(returned) == len(sent) else sent"
+    "path": "src/airtable.py",
+    "find": "unaccounted = [identity for identity in sent if identity not in got]",
+    "replace": "unaccounted = [] if len(got) == len(sent) else sent"
   },
   {
     "label": "a record with no identity is sent",
-    "path": "src/airtable_client.py",
-    "find": "missing = [name for name in merge_on if fields.get(name) in (None, \"\")]",
-    "replace": "missing = []"
-  },
-  {
-    "label": "delete confirmed without checking deleted",
-    "path": "src/airtable_client.py",
-    "find": "if r.get(\"deleted\") is True}",
-    "replace": "}"
-  },
-  {
-    "label": "errors name the URL, which carries the base and table IDs",
-    "path": "src/airtable_client.py",
-    "find": "target, operation, repeatable=repeatable)",
-    "replace": "url, operation, repeatable=repeatable)"
+    "path": "src/airtable.py",
+    "find": "            if not fields[IDENTITY_FIELD]:",
+    "replace": "            if False:"
   },
   {
     "label": "the Airtable client imports the fetch module",
-    "path": "src/airtable_client.py",
+    "path": "src/airtable.py",
     "find": "import requests\n\nfrom .resilience",
     "replace": "import requests\n\nfrom .http_client import HttpClient  # noqa: F401\nfrom .resilience"
   },

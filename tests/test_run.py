@@ -21,6 +21,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src import run as run_module
 from src import storage
+from src.airtable import AirtableConfigError
 from src.config import Board, ConfigError
 from src.normalise import dumps
 from src.filters import TitleMatcher
@@ -74,6 +75,28 @@ class FakeSession:
                     raise value
                 return FakeResponse(value)
         return FakeResponse({"jobs": []})
+
+
+class FakeAirtable:
+    """Stands in for AirtableClient in the run's tests. Records what it is
+    given and sends nothing, so no test reaches a live base."""
+
+    CALLS = 3
+
+    def __init__(self):
+        self.sent = []
+        self.rows_sent = 0
+
+    def upsert(self, records):
+        self.sent.extend(records)
+        self.rows_sent += len(records)
+        return {"created": [], "updated": []}
+
+    def counters(self):
+        return {"calls_used": self.CALLS, "rows_sent": self.rows_sent}
+
+    def redact(self, text):
+        return text
 
 
 def client_for(routes, **kw):
@@ -362,16 +385,31 @@ class TestMain(unittest.TestCase):
         self.cwd = os.getcwd()
         os.chdir(self.dir)
         self.real = (storage.REPO_ROOT, storage.commit_files, storage.restore_from_branch,
-                     run_module.load_boards, run_module.HttpClient)
+                     run_module.load_boards, run_module.HttpClient,
+                     run_module.make_airtable_client, run_module.read_private_stores)
         storage.REPO_ROOT = self.dir
         subprocess.run(["git", "init", "-q"], cwd=self.dir)
         self.payload = gh_payload(["AI Engineer"])
         run_module.load_boards = lambda: [GH]
         run_module.HttpClient = lambda **kw: client_for({"careem": self.payload})
+        # A committing run now projects. No test may reach a live base, so the
+        # client is a fake that records what it is given, and the private
+        # store is an empty reachable one.
+        self.airtable = []
+        self.airtable_asked = []
+
+        def fake_client(test_mode, used_this_month):
+            self.airtable_asked.append((test_mode, used_this_month))
+            client = FakeAirtable()
+            self.airtable.append(client)
+            return client
+        run_module.make_airtable_client = fake_client
+        run_module.read_private_stores = lambda: []
 
     def tearDown(self):
         (storage.REPO_ROOT, storage.commit_files, storage.restore_from_branch,
-         run_module.load_boards, run_module.HttpClient) = self.real
+         run_module.load_boards, run_module.HttpClient,
+         run_module.make_airtable_client, run_module.read_private_stores) = self.real
         os.environ.pop("TEST_MODE", None)
         if self.env_test_mode is not None:
             os.environ["TEST_MODE"] = self.env_test_mode
@@ -521,6 +559,101 @@ class TestMain(unittest.TestCase):
         code, _, err = self.main()
         self.assertEqual(code, 1)
         self.assertIn("could not start", err)
+
+    # ------------------------------------------------------------ projection
+    def test_a_committing_run_projects_and_logs_what_it_sent(self):
+        code, out, _ = self.main()
+        self.assertEqual(code, EXIT_OK)
+        sent = self.airtable[0].sent
+        self.assertEqual([r["Identity"] for r in sent], ["greenhouse:1000"])
+        log = self.last_run_log()
+        self.assertEqual(log["airtable"]["rows_sent"], 1)
+        self.assertIsNone(log["airtable"]["failure"])
+        self.assertEqual(log["projection"]["groups"], 1)
+        self.assertIn("projection:", out)
+        on_branch = json.loads(self.on_branch("data", "logs-runs/%s"
+                                              % sorted(os.listdir("data/logs-runs"))[-1]))
+        self.assertIn("airtable", on_branch, "the committed log lacks the airtable block")
+
+    def test_a_failed_projection_still_commits_and_exits_2(self):
+        """The operator's decision of 2026-09-23: exit 1 would stop the push
+        and lose the fetch for a display failure. ADR-0040 re-projects every
+        run, so the failure is resumable."""
+        def refuse(test_mode, used_this_month):
+            raise AirtableConfigError("empty or unset: AIRTABLE_TOKEN")
+        run_module.make_airtable_client = refuse
+        code, _, err = self.main()
+        self.assertEqual(code, EXIT_STOPPED_RESUMABLE)
+        self.assertIn("projection to Airtable failed", err)
+        self.assertEqual(self.identities("data"), ["greenhouse:1000"],
+                         "the fetch was not committed")
+        self.assertIn("AIRTABLE_TOKEN", self.last_run_log()["airtable"]["failure"])
+
+    def test_an_unreachable_private_store_fails_the_projection_visibly(self):
+        """ADR-0047's rule: a store the run cannot reach fails the run and
+        says so, rather than projecting as though it held nothing."""
+        def unreachable():
+            raise storage.PrivateStoreUnreachable("the private store could not be reached")
+        run_module.read_private_stores = unreachable
+        code, _, _ = self.main()
+        self.assertEqual(code, EXIT_STOPPED_RESUMABLE)
+        self.assertEqual(self.airtable[0].sent, [], "projected without the private stores")
+        self.assertIn("could not be reached", self.last_run_log()["airtable"]["failure"])
+
+    def test_a_failure_quoting_a_secret_is_scrubbed_before_it_is_logged(self):
+        """The run log is committed to a public branch. The case built to
+        defeat the clients' own discipline: an exception that quotes every
+        secret the run holds."""
+        secrets = {name: "SECRET-VALUE-%d-xyz" % i
+                   for i, name in enumerate(run_module.SECRET_ENVS)}
+        saved = {name: os.environ.get(name) for name in secrets}
+        os.environ.update(secrets)
+        try:
+            def leak(test_mode, used_this_month):
+                raise RuntimeError("boom " + " ".join(secrets.values()))
+            run_module.make_airtable_client = leak
+            code, out, err = self.main()
+        finally:
+            for name, value in saved.items():
+                if value is None:
+                    os.environ.pop(name, None)
+                else:
+                    os.environ[name] = value
+        self.assertEqual(code, EXIT_STOPPED_RESUMABLE)
+        committed = self.on_branch("data", "logs-runs/%s"
+                                   % sorted(os.listdir("data/logs-runs"))[-1])
+        for value in secrets.values():
+            for text, where in ((committed, "the committed run log"), (out, "stdout"),
+                                (err, "stderr")):
+                self.assertNotIn(value, text, "a secret reached %s" % where)
+
+    def test_a_no_commit_run_reaches_no_base_and_no_private_store(self):
+        def forbidden(*args, **kwargs):
+            raise AssertionError("a no-commit run reached for a live service")
+        run_module.make_airtable_client = forbidden
+        run_module.read_private_stores = forbidden
+        code, _, _ = self.main("--no-commit")
+        self.assertEqual(code, EXIT_OK)
+        log = self.last_run_log()
+        self.assertIn("dry run", log["projection"]["mode"])
+        self.assertEqual(log["projection"]["rows_to_send"], 1)
+        self.assertEqual(log["airtable"]["calls_used"], 0)
+        self.assertIsNone(log["airtable"]["failure"])
+
+    def test_test_mode_asks_for_the_test_table(self):
+        self.main("--test-mode")
+        self.assertEqual(self.airtable_asked[0][0], True)
+        self.main()
+        self.assertEqual(self.airtable_asked[1][0], False)
+
+    def test_the_month_so_far_reaches_the_next_runs_client(self):
+        """ADR-0034: a budget counted per month. A runner restores no run
+        logs, so the count must come back from the branch."""
+        self.main()
+        self.fresh_machine()
+        self.main()
+        self.assertEqual(self.airtable_asked[0][1], 0)
+        self.assertEqual(self.airtable_asked[1][1], FakeAirtable.CALLS)
 
     def test_an_unreadable_branch_stops_the_run_before_any_fetch(self):
         def unreadable(test_mode=False):

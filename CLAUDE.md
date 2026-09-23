@@ -129,7 +129,11 @@ so a run that changes nothing produces a diff containing nothing.
 resumable. The orchestrator treats 2 as non-fatal. Exit 1 has two causes, a
 run that could not start and a run that fetched but could not store the
 result, and the run's own output says which. Run 35179218050 was the second
-kind and was reported as the first.
+kind and was reported as the first. **A failed projection to Airtable exits
+2, not 1**: the fetch is committed, the run log records the failure, and the
+next run re-projects the whole layer. Exit 1 would stop the push and lose the
+fetch for a display failure. The operator's decision, 2026-09-23, in
+ADR-0034's Changes.
 
 **Log per board every run, including zero.** A board returning nothing for a
 week is a broken adapter. Without a zero logged it looks like a quiet market.

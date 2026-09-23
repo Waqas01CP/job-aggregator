@@ -67,7 +67,7 @@ Retry and backoff move out of the fetch module into a shared utility, which is a
 
 Two budgets exist with different units: requests per run for fetching, calls per month for Airtable. The run log must report both, or one of them goes unmeasured, which is how ADR-0028's ceiling came to be a guess.
 
-A failure to write to Airtable is not a failure to fetch. The run must distinguish them, and exit 1's two causes already carry that distinction.
+A failure to write to Airtable is not a failure to fetch. The run must distinguish them, and exit 1's two causes already carry that distinction. *(Changed 2026-09-23: a failed projection exits 2, not 1. See Changes.)*
 
 ### Confirmation
 
@@ -94,3 +94,9 @@ Answers question A of the 2026-09-17 architecture brief.
 ADR-0035 decides how the writer avoids duplicates. ADR-0004 remains the record of what the display layer is for.
 
 CLAUDE.md carries the amended rule and points here.
+
+## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-09-23 | A failed projection exits 2, not 1. The run records the failure in its log, commits the fetch, and exits 2; the workflow's exit-2 warning names the projection beside the request budget and the circuit breaker | Exit 1 stops the workflow's push, which would lose the run's fetched data for a failure of the display alone, while ADR-0040 re-projects the whole filtered layer on every run, so a failed projection is resumable by construction. The failure is still distinguished from a fetch failure, which is what this record's Consequences required, by the run log's `airtable` block and the run's own output rather than by exit 1. The operator's decision, 2026-09-23, carried by Brief 6. `CLAUDE.md`'s exit-code line says the same |

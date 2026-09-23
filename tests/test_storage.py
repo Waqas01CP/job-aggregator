@@ -494,6 +494,136 @@ class TestRestoreFromBranch(unittest.TestCase):
                          "a test restore read the production branch")
 
 
+class TestOutcomesAndRunLogsFromTheBranch(unittest.TestCase):
+    """Brief 6: ADR-0043's stores are state, so they are restored; run logs
+    are history, and only this month's are read back, for the Airtable
+    client's monthly budget. Borrows the restore tests' throwaway repository
+    rather than subclassing, which would run those tests twice."""
+
+    setUp = TestRestoreFromBranch.setUp
+    tearDown = TestRestoreFromBranch.tearDown
+
+    def test_outcome_stores_are_restored_with_the_rest(self):
+        self.state["outcomes/accepted.json"] = dumps([{"identity": "greenhouse:1"}])
+        storage.commit_files(self.state, "run", branch="data")
+        written = storage.restore_from_branch(False)
+        self.assertIn("data/outcomes/accepted.json", written)
+        self.assertEqual(read_text("data/outcomes/accepted.json"),
+                         self.state["outcomes/accepted.json"])
+
+    def test_a_branch_without_outcome_stores_restores_none(self):
+        """No sweep has written one yet. Absent reads as empty downstream."""
+        storage.commit_files(self.state, "run", branch="data")
+        storage.restore_from_branch(False)
+        self.assertFalse(os.path.exists("data/outcomes"))
+
+    def test_only_this_months_run_logs_are_read(self):
+        self.state["logs-runs/20260831T235900Z.json"] = dumps({"run_at": "2026-08-31",
+                                                               "airtable": {"calls_used": 900}})
+        self.state["logs-runs/20260923T033636Z.json"] = dumps({"run_at": "2026-09-23",
+                                                               "airtable": {"calls_used": 3}})
+        storage.commit_files(self.state, "run", branch="data")
+        logs = storage.read_month_run_logs("202609", False)
+        self.assertEqual(sorted(log["run_at"] for log in logs), ["2026-09-23", "x"])
+        self.assertEqual(storage.read_month_run_logs("202609", True), [],
+                         "test mode read the production branch's logs")
+
+
+class FakeGit:
+    """Stands in for subprocess.run under read_private_files. No network."""
+
+    def __init__(self, listing=b"abc123\tHEAD\n", fails=None, files=None, stderr=b""):
+        self.listing = listing
+        self.fails = fails or set()
+        self.files = files or {}
+        self.stderr = stderr
+        self.calls = []
+
+    def __call__(self, args, cwd=None, env=None, capture_output=None, timeout=None):
+        self.calls.append(args)
+        verb = next(a for a in args[1:] if not a.startswith("-") and "=" not in a
+                    and not a.startswith("http.") and a != "credential.helper=")
+        result = type("P", (), {})()
+        result.returncode, result.stdout, result.stderr = 0, b"", b""
+        if verb in self.fails:
+            result.returncode, result.stderr = 128, self.stderr
+        elif verb == "ls-remote":
+            result.stdout = self.listing
+        elif verb == "show":
+            path = args[-1].split(":", 1)[1]
+            if path in self.files:
+                result.stdout = self.files[path].encode("utf-8")
+            else:
+                result.returncode = 128
+        return result
+
+
+class TestPrivateStore(unittest.TestCase):
+    """ADR-0047 and the operator's decision of 2026-09-23: absent is empty,
+    unreachable is a failure, and neither the token nor the repository's name
+    reaches an error."""
+
+    REPO = "someone/private-thing"
+    TOKEN = "github_pat_FAKE0123456789"
+    PATHS = ["outcomes/accepted.json", "outcomes/rejected_not_a_fit.json"]
+
+    def read(self, git, repo=REPO, token=TOKEN):
+        return storage.read_private_files(repo, token, self.PATHS, run=git)
+
+    def assertClean(self, error):
+        text = str(error)
+        self.assertNotIn(self.TOKEN, text)
+        self.assertNotIn(self.REPO, text)
+        self.assertNotIn("private-thing", text)
+
+    def test_a_file_the_repository_holds_is_returned_and_an_absent_one_is_none(self):
+        git = FakeGit(files={"outcomes/accepted.json": "[]\n"})
+        self.assertEqual(self.read(git), {"outcomes/accepted.json": "[]\n",
+                                          "outcomes/rejected_not_a_fit.json": None})
+
+    def test_an_empty_repository_holds_nothing_yet(self):
+        git = FakeGit(listing=b"")
+        self.assertEqual(self.read(git), dict.fromkeys(self.PATHS))
+        self.assertFalse(any("fetch" in c for c in git.calls), "fetched an empty repository")
+
+    def test_an_unreachable_repository_fails_and_says_nothing_it_should_not(self):
+        """The case built to defeat a message guard: git's own stderr quotes
+        the repository, and the token is set in the header."""
+        git = FakeGit(fails={"ls-remote"},
+                      stderr=("remote: Repository not found.\nfatal: repository "
+                              "'https://github.com/%s.git/' not found (%s)"
+                              % (self.REPO, self.TOKEN)).encode("utf-8"))
+        with self.assertRaises(storage.PrivateStoreUnreachable) as caught:
+            self.read(git)
+        self.assertClean(caught.exception)
+        self.assertIn("git exit 128", str(caught.exception))
+
+    def test_a_failed_fetch_is_unreachable_too(self):
+        with self.assertRaises(storage.PrivateStoreUnreachable):
+            self.read(FakeGit(fails={"fetch"}))
+
+    def test_missing_secrets_are_named_not_echoed(self):
+        for repo, token in (("", self.TOKEN), (self.REPO, ""), (None, None)):
+            with self.assertRaises(storage.PrivateStoreUnreachable) as caught:
+                self.read(FakeGit(), repo=repo, token=token)
+            self.assertIn("AGGREGATOR_STORE", str(caught.exception))
+            self.assertClean(caught.exception)
+
+    def test_a_url_in_the_repository_secret_is_refused(self):
+        for repo in ("https://github.com/%s" % self.REPO, self.REPO + ".git",
+                     self.REPO + "/"):
+            with self.assertRaises(storage.PrivateStoreUnreachable) as caught:
+                self.read(FakeGit(), repo=repo)
+            self.assertClean(caught.exception)
+
+    def test_the_token_is_never_a_bare_argument(self):
+        git = FakeGit(files={})
+        self.read(git)
+        for args in git.calls:
+            self.assertFalse(any(self.TOKEN in a for a in args),
+                             "the token appeared in plain text on a command line")
+
+
 class TestSeenStorePartition(unittest.TestCase):
     def test_a_mixed_store_splits_by_whether_its_source_may_be_published(self):
         """A seen file written before the split holds both classes, as

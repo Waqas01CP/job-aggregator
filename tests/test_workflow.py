@@ -17,9 +17,12 @@ import unittest
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
+from src import run as run_module
 from src import storage
 
 WORKFLOW = os.path.join(ROOT, ".github", "workflows", "fetch.yml")
+SECRET_NAMES = ("AIRTABLE_TOKEN", "AIRTABLE_BASE_ID", "AIRTABLE_TABLE_ID",
+                "AIRTABLE_TEST_TABLE_ID", "AGGREGATOR_STORE_TOKEN", "AGGREGATOR_STORE_REPO")
 
 
 def workflow():
@@ -82,6 +85,33 @@ class TestWorkflow(unittest.TestCase):
         self.assertEqual(sorted(name for name, _ in used), sorted(first_node24))
         for name, major in used:
             self.assertGreaterEqual(int(major), first_node24[name], name)
+
+    def test_every_secret_reaches_the_fetch_step_and_nothing_else(self):
+        """Brief 6: the six secrets go to the Fetch step only. Each must be
+        defined exactly once, inside that step, and never at job level or in
+        the test step, where a job-level variable once broke run 35236457737."""
+        lines = self.text.splitlines()
+        fetch_step = next(i for i, l in enumerate(lines) if l.strip() == "- name: Fetch")
+        next_step = next(i for i, l in enumerate(lines)
+                         if i > fetch_step and l.strip().startswith("- name:"))
+        for name in SECRET_NAMES:
+            defined = [i for i, l in enumerate(lines)
+                       if l.strip() == "%s: ${{ secrets.%s }}" % (name, name)]
+            self.assertEqual(len(defined), 1, "%s is not defined exactly once" % name)
+            self.assertTrue(fetch_step < defined[0] < next_step,
+                            "%s is not set inside the Fetch step" % name)
+            mentions = [i for i, l in enumerate(lines) if name in l]
+            self.assertEqual(mentions, defined, "%s appears outside its definition" % name)
+
+    def test_the_secret_list_matches_the_code(self):
+        """The names the workflow passes are the names the run reads."""
+        self.assertEqual(sorted(SECRET_NAMES), sorted(run_module.SECRET_ENVS))
+
+    def test_the_exit_2_warning_names_the_projection(self):
+        warning = next(l for l in self.text.splitlines() if "::warning::" in l)
+        self.assertIn("projection", warning)
+        self.assertIn("budget", warning)
+        self.assertIn("breaker", warning)
 
     def test_exit_1_is_not_labelled_as_could_not_start(self):
         """Run 35179218050 failed at the commit after a full fetch and the

@@ -88,10 +88,19 @@ jobs:
             *) echo "::error::could not ask origin whether $DATA_BRANCH exists"; exit 1 ;;
           esac
 
+      # The secrets reach this step and no other. Set at job level they would
+      # reach the test step too, which is how a job-level TEST_MODE broke run
+      # 35236457737; tests use a fake transport and need none of them.
       - name: Fetch
         id: fetch
         env:
           TEST_MODE: ${{ inputs.test_mode && '1' || '0' }}
+          AIRTABLE_TOKEN: ${{ secrets.AIRTABLE_TOKEN }}
+          AIRTABLE_BASE_ID: ${{ secrets.AIRTABLE_BASE_ID }}
+          AIRTABLE_TABLE_ID: ${{ secrets.AIRTABLE_TABLE_ID }}
+          AIRTABLE_TEST_TABLE_ID: ${{ secrets.AIRTABLE_TEST_TABLE_ID }}
+          AGGREGATOR_STORE_TOKEN: ${{ secrets.AGGREGATOR_STORE_TOKEN }}
+          AGGREGATOR_STORE_REPO: ${{ secrets.AGGREGATOR_STORE_REPO }}
         run: |
           set +e
           python -m src.run
@@ -99,9 +108,10 @@ jobs:
           echo "exit_code=$code" >> "$GITHUB_OUTPUT"
           # Three exit codes, and only one of them is a failure.
           #   0 finished
-          #   2 stopped deliberately and resumable: the budget was reached or
-          #     the circuit opened. The run log names what it did not reach and
-          #     the next run picks it up.
+          #   2 resumable: the budget was reached, the circuit opened, or the
+          #     projection to Airtable failed. The run log names which, the
+          #     fetch is committed, and the next run picks it up; the next
+          #     projection sends the whole layer again.
           #   1 failed: either it could not start, or it fetched and could not
           #     store the result. The run's own output above says which.
           if [ "$code" -eq 1 ]; then
@@ -109,7 +119,7 @@ jobs:
             exit 1
           fi
           if [ "$code" -eq 2 ]; then
-            echo "::warning::the run stopped early and is resumable; see the run log"
+            echo "::warning::the run is resumable: it stopped early on the request budget or the circuit breaker, or its projection to Airtable failed; the run log says which"
           fi
           exit 0
 

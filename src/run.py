@@ -4,13 +4,19 @@ Exit codes, because the orchestrator needs to tell three things apart:
 
   0  finished
   1  could not start, or fetched and could not store the result
-  2  stopped deliberately and resumable
+  2  stopped deliberately and resumable, or the projection to Airtable failed
 
 Exit 1 has two causes because CLAUDE.md fixes the codes at three, and a
 completed fetch that cannot be stored is neither a clean finish nor a
 deliberate stop. The printed message says which cause it was. Run 35179218050
 failed at the commit after fetching 1239 postings, and was reported as "could
 not start" because nothing distinguished the two.
+
+**A failed projection exits 2, not 1.** The operator's decision of
+2026-09-23, recorded in ADR-0034's Changes. Exit 1 stops the workflow's push,
+which would lose the run's fetched data for a display failure, while ADR-0040
+re-projects the whole layer every run, so the next run repairs the display by
+construction. The run records the failure in its log, commits, and exits 2.
 
 Two runs a day, early PKT morning and early PKT evening. ADR-0006.
 
@@ -30,8 +36,10 @@ import sys
 import traceback
 from datetime import datetime, timezone
 
-from . import storage
+from . import envfile, projection, storage
 from .adapters import greenhouse, himalayas, lever
+from .airtable import (BASE_ENV, RUN_LOG_KEY, TABLE_ENV, TEST_TABLE_ENV, TOKEN_ENV,
+                       AirtableClient, month_to_date)
 from .backfill import backfill
 from .config import ConfigError, is_publishable, load_boards
 from .dedupe import counts as dedupe_counts
@@ -50,6 +58,75 @@ ADAPTERS = {"greenhouse": greenhouse, "lever": lever,
 # A paginated feed is read until it reaches postings already stored. The cap is
 # a runaway guard on top of the stop rule, in the same spirit as ADR-0028.
 MAX_PAGES = 25
+
+# Every value that must never reach a run log or the console: the run log is
+# committed to the public data branch. Scrubbed from any projection failure
+# before it is recorded, as a last line behind the clients' own discipline.
+SECRET_ENVS = (TOKEN_ENV, BASE_ENV, TABLE_ENV, TEST_TABLE_ENV,
+               storage.PRIVATE_STORE_TOKEN_ENV, storage.PRIVATE_STORE_REPO_ENV)
+
+
+def make_airtable_client(test_mode, used_this_month):
+    """The one place the run builds its Airtable client. Tests replace it with
+    a fake transport, so no unit test can reach a live base."""
+    return AirtableClient.from_env(test_mode, used_this_month=used_this_month)
+
+
+def read_private_stores():
+    """The private repository's copies of the classification stores, as
+    (label, text or None) pairs. ADR-0047. Tests replace it."""
+    texts = storage.read_private_files(os.environ.get(storage.PRIVATE_STORE_REPO_ENV),
+                                       os.environ.get(storage.PRIVATE_STORE_TOKEN_ENV),
+                                       projection.store_paths())
+    return [("private %s" % path, text) for path, text in texts.items()]
+
+
+def redact_secrets(text, environ=None):
+    environ = os.environ if environ is None else environ
+    for name in SECRET_ENVS:
+        value = (environ.get(name) or "").strip()
+        if value:
+            text = text.replace(value, "<%s>" % name)
+    return text
+
+
+def project_display(run, no_commit, test_mode):
+    """Project the filtered layer to `Jobs`, or to `Jobs test` in test mode.
+
+    Returns (projection stages, the airtable block, failure or None). Never
+    raises: a failed projection is recorded, the run still commits, and the
+    caller exits 2.
+
+    **A no-commit run reaches no base and no private store.** It plans the
+    projection from the local files and sends nothing, so the counts can be
+    checked offline."""
+    now_iso = iso(run.now)
+    stages = {}
+    client = None
+    try:
+        if no_commit:
+            stages["mode"] = "dry run: a no-commit run reaches no base and no private store"
+            records = projection.plan(projection.load_rows(run.paths), now_iso, run.matcher,
+                                      projection.identities_in(
+                                          projection.public_store_texts(run.paths)), stages)
+            return stages, {"calls_used": 0, "rows_sent": 0, "failure": None,
+                            "would_send": len(records)}, None
+
+        month = now_iso[:7].replace("-", "")
+        used = month_to_date(storage.read_month_run_logs(month, test_mode), now_iso)
+        client = make_airtable_client(test_mode, used)
+        projection.project(run.paths, now_iso, run.matcher, client,
+                           read_private_stores(), stages)
+        return stages, dict(client.counters(), failure=None), None
+    except Exception as e:
+        failure = "%s: %s" % (type(e).__name__, e)
+        if client is not None:
+            failure = client.redact(failure)
+        failure = redact_secrets(failure)
+        block = dict(client.counters()) if client is not None else {"calls_used": 0,
+                                                                    "rows_sent": 0}
+        block["failure"] = failure
+        return stages, block, failure
 
 
 class Run:
@@ -278,6 +355,21 @@ def summarise(run_log):
                     r["retries"], r["failures"]))
     if run_log["stopped"]:
         lines.append("  STOPPED: %s. Unreached boards resume next run." % run_log["stopped"])
+    p = run_log.get("projection")
+    if p is not None:
+        # Each stage on the line, because the display, the chain and the store
+        # differ in count by design and only the stages show where.
+        lines.append("  projection: read %s, admitted %s, groups %s, skipped by a store %s, "
+                     "to send %s%s"
+                     % (p.get("rows_read", "-"), p.get("rows_admitted", "-"),
+                        p.get("groups", "-"), p.get("groups_skipped_by_store", "-"),
+                        p.get("rows_to_send", "-"),
+                        "  [%s]" % p["mode"] if p.get("mode") else ""))
+    a = run_log.get(RUN_LOG_KEY)
+    if a is not None:
+        lines.append("  airtable: %d call(s), %d row(s) sent%s"
+                     % (a.get("calls_used", 0), a.get("rows_sent", 0),
+                        "  FAILED: %s" % a["failure"] if a.get("failure") else ""))
     return "\n".join(lines)
 
 
@@ -335,6 +427,12 @@ def main(argv=None):
                         help="write files but do not commit to the data branch")
     args = parser.parse_args(argv)
 
+    # Local runs read their secrets from .env; anything already set wins, so
+    # a runner is unaffected. Names are counted, never printed with values.
+    loaded = envfile.load()
+    if loaded:
+        print("environment: %d name(s) loaded from .env" % len(loaded))
+
     test_mode = args.test_mode or os.environ.get("TEST_MODE") == "1"
 
     try:
@@ -368,6 +466,11 @@ def main(argv=None):
               "anything was committed", file=sys.stderr)
         return EXIT_CANNOT_START
 
+    # After the files are written, before the run log is: the log records the
+    # outcome. Never raises; a failure is recorded and the run still commits.
+    run_log["projection"], run_log[RUN_LOG_KEY], projection_failure = \
+        project_display(run, args.no_commit, test_mode)
+
     print(summarise(run_log))
 
     stage = "writing the run log"
@@ -387,6 +490,10 @@ def main(argv=None):
               "failed, so nothing was committed" % stage, file=sys.stderr)
         return EXIT_CANNOT_START
 
+    if projection_failure:
+        print("the projection to Airtable failed; the fetch is stored and the next run "
+              "re-projects: %s" % projection_failure, file=sys.stderr)
+        return EXIT_STOPPED_RESUMABLE
     return run.exit_code()
 
 

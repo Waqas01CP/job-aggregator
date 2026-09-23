@@ -33,7 +33,9 @@ tracked on another. A run can therefore commit data while the operator has
 uncommitted work on main.
 """
 
+import base64
 import os
+import re
 import shutil
 import subprocess
 import tempfile
@@ -77,11 +79,20 @@ LOCAL_DIR = "local"
 FILTERED_FILE = "filtered.json"
 SEEN_FILE = "seen.json"
 RUNLOG_DIR = "logs-runs"
+# ADR-0043's outcome stores. Written by the sweep, read by the projection's
+# skip, so they are state and are restored with the rest.
+OUTCOMES_DIR = "outcomes"
 
 # What a committing run reads back from the branch before it starts. Run logs
 # are history rather than state, so they are not restored.
 RESTORED_FILES = (FILTERED_FILE, SEEN_FILE)
-RESTORED_DIRS = (RAW_DIR,)
+RESTORED_DIRS = (RAW_DIR, OUTCOMES_DIR)
+
+# ADR-0047: aggregator-sourced stores live in a private repository, reached
+# with a token. Its name is a secret too, so it never appears in a file here.
+PRIVATE_STORE_REPO_ENV = "AGGREGATOR_STORE_REPO"
+PRIVATE_STORE_TOKEN_ENV = "AGGREGATOR_STORE_TOKEN"
+PRIVATE_STORE_TIMEOUT = 120
 
 
 class StorageError(Exception):
@@ -109,6 +120,7 @@ def layout(test_mode=False):
         "local_filtered": "%s/%s/%s" % (root, LOCAL_DIR, FILTERED_FILE),
         "local_seen": "%s/%s/%s" % (root, LOCAL_DIR, SEEN_FILE),
         "runlog_dir": "%s/%s" % (root, RUNLOG_DIR),
+        "outcomes_dir": "%s/%s" % (root, OUTCOMES_DIR),
     }
 
 
@@ -316,6 +328,111 @@ def restore_from_branch(test_mode=False):
         write_atomic(local, text)
         written.append(local)
     return written
+
+
+def read_month_run_logs(yyyymm, test_mode=False):
+    """This month's run logs from the branch, as dicts.
+
+    Run logs are not restored, because they are history rather than state; a
+    runner therefore holds none. The Airtable client's monthly budget needs
+    the month so far, so it reads just these from the branch."""
+    branch = data_branch(test_mode)
+    if not branch_exists(branch):
+        return []
+    listed = _git(["ls-tree", "--name-only", branch, RUNLOG_DIR + "/"]).splitlines()
+    logs = []
+    for path in sorted(listed):
+        if os.path.basename(path).startswith(yyyymm) and path.endswith(".json"):
+            text = read_branch_file(path, branch)
+            if text is None:
+                raise StorageError("%s:%s is listed but could not be read" % (branch, path))
+            logs.append(loads(text))
+    return logs
+
+
+# ------------------------------------------------- the private store
+class PrivateStoreUnreachable(StorageError):
+    """ADR-0047: the private store could not be reached at all, and a run that
+    cannot reach it must fail visibly rather than proceed as though it held
+    nothing. The message never names the repository or carries the token."""
+
+
+def _scrub(text, secrets):
+    for secret in secrets:
+        if secret:
+            text = re.sub(re.escape(secret), "<private>", text, flags=re.IGNORECASE)
+    return text
+
+
+def read_private_files(repo, token, paths, run=subprocess.run,
+                       timeout=PRIVATE_STORE_TIMEOUT):
+    """Read files from the private aggregator repository. Returns
+    {path: text}, with None for a file the repository does not hold.
+
+    **Absent is empty; unreachable is a failure.** The operator's decision of
+    2026-09-23: no sweep has written a store yet, so a store file missing from
+    a repository the run can reach counts as empty, and an empty repository
+    holds nothing yet. A repository the run cannot reach at all raises.
+
+    **The token never reaches a command line's error text.** It travels in an
+    HTTP header set on each git call, errors carry git's exit code and a
+    scrubbed stderr, and the repository's name is scrubbed too, because this
+    text can reach a run log on the public data branch."""
+    repo, token = (repo or "").strip(), (token or "").strip()
+    if not repo or not token:
+        raise PrivateStoreUnreachable(
+            "%s or %s is empty or unset" % (PRIVATE_STORE_REPO_ENV, PRIVATE_STORE_TOKEN_ENV))
+    if not re.fullmatch(r"[\w.-]+/[\w.-]+", repo) or repo.endswith(".git"):
+        raise PrivateStoreUnreachable(
+            "%s must be owner/name only: no scheme, no .git, no trailing slash"
+            % PRIVATE_STORE_REPO_ENV)
+
+    url = "https://github.com/%s.git" % repo
+    basic = base64.b64encode(("x-access-token:%s" % token).encode("utf-8")).decode("ascii")
+    secrets = (token, basic, repo)
+    auth = ["-c", "credential.helper=",
+            "-c", "http.extraHeader=Authorization: Basic %s" % basic]
+    env = dict(os.environ, GIT_TERMINAL_PROMPT="0", GCM_INTERACTIVE="never")
+    work = tempfile.mkdtemp(prefix="private-store-")
+
+    def git(args, what):
+        try:
+            p = run(["git"] + args, cwd=work, env=env, capture_output=True,
+                    timeout=timeout)
+        except subprocess.TimeoutExpired:
+            raise PrivateStoreUnreachable("the private store timed out while %s" % what)
+        return p
+
+    def fail(p, what):
+        detail = _scrub(p.stderr.decode("utf-8", "replace").strip(), secrets)
+        raise PrivateStoreUnreachable("the private store could not be reached while %s "
+                                      "(git exit %d): %s" % (what, p.returncode, detail))
+
+    # No ref is named on either command: ls-remote lists every ref, which is
+    # nothing for an empty repository, and a fetch from a URL with no refspec
+    # takes the remote's default branch into FETCH_HEAD. Checked against real
+    # git on 2026-09-23. It also keeps git's word for that branch out of a
+    # string literal, where ADR-0031's audit reads it as a seniority word.
+    try:
+        p = git(auth + ["ls-remote", url], "listing it")
+        if p.returncode != 0:
+            fail(p, "listing it")
+        if not p.stdout.strip():
+            return {path: None for path in paths}
+        p = git(["init", "-q"], "preparing a scratch repository")
+        if p.returncode != 0:
+            fail(p, "preparing a scratch repository")
+        p = git(auth + ["fetch", "-q", "--depth", "1", "--no-tags", url],
+                "fetching it")
+        if p.returncode != 0:
+            fail(p, "fetching it")
+        out = {}
+        for path in paths:
+            p = git(["show", "FETCH_HEAD:%s" % path], "reading a file")
+            out[path] = p.stdout.decode("utf-8") if p.returncode == 0 else None
+        return out
+    finally:
+        shutil.rmtree(work, ignore_errors=True)
 
 
 def commit_files(files, message, branch=DATA_BRANCH):

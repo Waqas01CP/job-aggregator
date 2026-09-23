@@ -1,0 +1,122 @@
+[
+  {
+    "label": "Status added to the sent set",
+    "path": "src/airtable.py",
+    "find": "                   \"First seen\", \"Order date\", \"Board\", \"Matched term\",\n                   \"Identity\")",
+    "replace": "                   \"First seen\", \"Order date\", \"Board\", \"Matched term\",\n                   \"Identity\", \"Status\")"
+  },
+  {
+    "label": "test mode resolves to the production table",
+    "path": "src/airtable.py",
+    "find": "return TEST_TABLE_ENV if test_mode else TABLE_ENV",
+    "replace": "return TABLE_ENV"
+  },
+  {
+    "label": "the skip tests the group's identity, not every member",
+    "path": "src/projection.py",
+    "find": "send = [g for g in groups if not any(m.identity in stored for m in g.members)]",
+    "replace": "send = [g for g in groups if g.representative.identity not in stored]"
+  },
+  {
+    "label": "the skip reads the fourth store",
+    "path": "src/projection.py",
+    "find": "CLASSIFICATION_STORES = (\"rejected_not_a_fit.json\", \"rejected_poor_filtering.json\",\n                         \"accepted.json\")",
+    "replace": "CLASSIFICATION_STORES = (\"rejected_not_a_fit.json\", \"rejected_poor_filtering.json\",\n                         \"accepted.json\", \"removed_unreviewed.json\")"
+  },
+  {
+    "label": "a test table equal to production is allowed",
+    "path": "src/airtable.py",
+    "find": "if test_mode and value(TEST_TABLE_ENV) == value(TABLE_ENV):",
+    "replace": "if False:"
+  },
+  {
+    "label": "a read verb reaches the wire",
+    "path": "src/airtable.py",
+    "find": "self._session.request(\"PATCH\", url",
+    "replace": "self._session.request(\"GET\", url"
+  },
+  {
+    "label": "a transport failure keeps its message, and the URL",
+    "path": "src/airtable.py",
+    "find": "raise TransportFailure(type(e).__name__) from None",
+    "replace": "raise TransportFailure(str(e)) from None"
+  },
+  {
+    "label": "the client's redact does nothing",
+    "path": "src/airtable.py",
+    "find": "                text = text.replace(secret, label)",
+    "replace": "                pass"
+  },
+  {
+    "label": "a no-commit run projects for real",
+    "path": "src/run.py",
+    "find": "        if no_commit:",
+    "replace": "        if False:"
+  },
+  {
+    "label": "a failed projection exits 1",
+    "path": "src/run.py",
+    "find": "              \"re-projects: %s\" % projection_failure, file=sys.stderr)\n        return EXIT_STOPPED_RESUMABLE",
+    "replace": "              \"re-projects: %s\" % projection_failure, file=sys.stderr)\n        return EXIT_CANNOT_START"
+  },
+  {
+    "label": "the run's secret scrub does nothing",
+    "path": "src/run.py",
+    "find": "            text = text.replace(value, \"<%s>\" % name)",
+    "replace": "            pass"
+  },
+  {
+    "label": "the month so far is not read",
+    "path": "src/run.py",
+    "find": "used = month_to_date(storage.read_month_run_logs(month, test_mode), now_iso)",
+    "replace": "used = 0"
+  },
+  {
+    "label": "matched term from the raw title",
+    "path": "src/projection.py",
+    "find": "\"Matched term\": matcher.match(rep.title_normalised),",
+    "replace": "\"Matched term\": matcher.match(rep.title),"
+  },
+  {
+    "label": "the representative's location only",
+    "path": "src/projection.py",
+    "find": "\"Location\": \"\\n\".join(g.locations),",
+    "replace": "\"Location\": rep.location,"
+  },
+  {
+    "label": "outcome stores are not restored",
+    "path": "src/storage.py",
+    "find": "RESTORED_DIRS = (RAW_DIR, OUTCOMES_DIR)",
+    "replace": "RESTORED_DIRS = (RAW_DIR,)"
+  },
+  {
+    "label": "an unreachable private store reads as empty",
+    "path": "src/storage.py",
+    "find": "        p = git(auth + [\"ls-remote\", url], \"listing it\")\n        if p.returncode != 0:\n            fail(p, \"listing it\")",
+    "replace": "        p = git(auth + [\"ls-remote\", url], \"listing it\")\n        if p.returncode != 0:\n            return {path: None for path in paths}"
+  },
+  {
+    "label": "the private store's errors are not scrubbed",
+    "path": "src/storage.py",
+    "find": "            text = re.sub(re.escape(secret), \"<private>\", text, flags=re.IGNORECASE)",
+    "replace": "            pass"
+  },
+  {
+    "label": "the private store's token goes on the command line",
+    "path": "src/storage.py",
+    "find": "\"-c\", \"http.extraHeader=Authorization: Basic %s\" % basic]",
+    "replace": "\"-c\", \"http.extraHeader=Authorization: Bearer %s\" % token]"
+  },
+  {
+    "label": ".env replaces what is already set",
+    "path": "src/envfile.py",
+    "find": "        if name not in environ:",
+    "replace": "        if True:"
+  },
+  {
+    "label": "a secret reaches the test step",
+    "path": ".github/workflows/fetch.yml",
+    "find": "      DATA_BRANCH: ${{ inputs.test_mode && 'data-test' || 'data' }}",
+    "replace": "      DATA_BRANCH: ${{ inputs.test_mode && 'data-test' || 'data' }}\n      AIRTABLE_TOKEN: ${{ secrets.AIRTABLE_TOKEN }}"
+  }
+]
