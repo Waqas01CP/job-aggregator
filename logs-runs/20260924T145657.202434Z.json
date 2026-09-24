@@ -1,0 +1,241 @@
+{
+ "run_at": "2026-09-24T14:56:57.202434Z",
+ "test_mode": true,
+ "boards": [
+  {
+   "board": "greenhouse:banyancanopygroup",
+   "fetched": 5,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 5
+   },
+   "status": "ok",
+   "detail": null
+  },
+  {
+   "board": "greenhouse:brkz",
+   "fetched": 21,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 19,
+    "seniority": 2
+   },
+   "status": "ok",
+   "detail": null
+  },
+  {
+   "board": "greenhouse:careem",
+   "fetched": 19,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 1,
+   "drops": {
+    "title": 16,
+    "seniority": 2
+   },
+   "status": "ok",
+   "detail": null
+  },
+  {
+   "board": "greenhouse:coderoad",
+   "fetched": 26,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 5,
+   "drops": {
+    "title": 13,
+    "seniority": 8
+   },
+   "status": "ok",
+   "detail": null
+  },
+  {
+   "board": "greenhouse:globalli",
+   "fetched": 12,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 10,
+    "seniority": 2
+   },
+   "status": "ok",
+   "detail": null
+  },
+  {
+   "board": "greenhouse:gomotive",
+   "fetched": 160,
+   "parse_problems": 0,
+   "new": 2,
+   "kept": 2,
+   "drops": {
+    "title": 154,
+    "seniority": 4
+   },
+   "status": "ok",
+   "detail": null
+  },
+  {
+   "board": "greenhouse:joblogic",
+   "fetched": 37,
+   "parse_problems": 0,
+   "new": 2,
+   "kept": 8,
+   "drops": {
+    "title": 28,
+    "seniority": 1
+   },
+   "status": "ok",
+   "detail": null
+  },
+  {
+   "board": "greenhouse:speechify",
+   "fetched": 254,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 241,
+   "drops": {
+    "title": 13
+   },
+   "status": "ok",
+   "detail": null
+  },
+  {
+   "board": "greenhouse:veeamsoftware",
+   "fetched": 259,
+   "parse_problems": 0,
+   "new": 10,
+   "kept": 12,
+   "drops": {
+    "title": 238,
+    "seniority": 9
+   },
+   "status": "ok",
+   "detail": null
+  },
+  {
+   "board": "himalayas:browse",
+   "fetched": 500,
+   "parse_problems": 0,
+   "new": 500,
+   "kept": 32,
+   "drops": {
+    "title": 452,
+    "seniority": 16
+   },
+   "status": "ok",
+   "detail": null,
+   "pages": 25
+  },
+  {
+   "board": "lever:smart-working-solutions",
+   "fetched": 16,
+   "parse_problems": 0,
+   "new": 1,
+   "kept": 0,
+   "drops": {
+    "title": 11,
+    "seniority": 5
+   },
+   "status": "ok",
+   "detail": null
+  },
+  {
+   "board": "lever:spreetail",
+   "fetched": 25,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 1,
+   "drops": {
+    "title": 23,
+    "seniority": 1
+   },
+   "status": "ok",
+   "detail": null
+  }
+ ],
+ "totals": {
+  "fetched": 1334,
+  "new": 515,
+  "kept": 302,
+  "written_raw": {
+   "greenhouse": 14,
+   "himalayas": 500,
+   "lever": 1
+  },
+  "written_filtered": 32,
+  "backfilled": 0,
+  "backfilled_public": 0,
+  "backfilled_local": 0,
+  "written_filtered_local": 32,
+  "drops": {
+   "expiry": 0,
+   "experience": 0,
+   "annotation_vendor": 0,
+   "title": 982,
+   "seniority": 50
+  },
+  "dedupe": {
+   "postings": 1334,
+   "groups": 945,
+   "collapsed": 389,
+   "largest_group": 134
+  }
+ },
+ "requests": {
+  "requests_used": 36,
+  "budget": 500,
+  "budget_remaining": 464,
+  "by_source": {
+   "greenhouse": 9,
+   "lever": 2,
+   "himalayas": 25
+  },
+  "retries": 0,
+  "failures": 0,
+  "refused": 0,
+  "circuit_open": false
+ },
+ "stopped": null,
+ "source_class": {
+  "greenhouse": "ats",
+  "lever": "ats",
+  "himalayas": "aggregator"
+ },
+ "private_store": {
+  "branch": "data-test",
+  "restored": 0,
+  "pushed": true,
+  "failure": null,
+  "files": 3
+ },
+ "projection": {
+  "stored_identities": 0,
+  "rows_read": 376,
+  "rows_admitted": 366,
+  "groups": 48,
+  "groups_skipped_by_store": 0,
+  "rows_to_send": 48,
+  "rows_sent": 48
+ },
+ "airtable": {
+  "calls_used": 5,
+  "rows_sent": 48,
+  "monthly_ceiling": 1000,
+  "month_to_date_before_run": 12,
+  "month_remaining": 983,
+  "retries": 0,
+  "failures": 0,
+  "refused": 0,
+  "circuit_open": false,
+  "failure": null
+ },
+ "attention": {
+  "failed_in_a_row": 0,
+  "escalate": false
+ }
+}
