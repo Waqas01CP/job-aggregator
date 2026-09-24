@@ -38,6 +38,11 @@ fetch-all/
 # Commit message drafts. Local scratch, never committed.
 .commitmsg/
 
+# The latest brief this seat wrote to each other seat, one file per seat,
+# overwritten by the next. A reference for the operator, never a record.
+# CLAUDE.md, "Briefs this seat writes".
+briefs/
+
 # Generated map output, before it is compared. The committed MAP.md is
 # checked in; this is the scratch file the pre-commit hook writes.
 MAP.generated.md

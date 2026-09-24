@@ -6,6 +6,8 @@ status: current
 
 # STATE
 
+**Touched 2026-09-24T16:13Z by the implementing seat, for the briefs folder only:** `briefs/` holds the latest brief to each other seat, gitignored and skipped by the map, with `CLAUDE.md` naming the rule; a new test proves the map skips `data/`, `raw_responses/` and `briefs/`, and was made to fail by un-skipping `briefs/`. No pipeline code changed. The line that follows stands.
+
 **Last verified 2026-09-24T15:30Z by the implementing seat, for the operator's `Status` rename, against `main` at `a9a59d3`.** Checked for it: both tables' `Status` choices and every marked row read through the connector, and each row's `Classified at` compared with its value read at 15:08Z. `2026-09-24-operator-decisions-and-the-next-builds.md`. The line that follows is the previous one.
 
 **Touched 2026-09-24T15:12Z** *(stamped 15:16Z when written, four minutes ahead of the clock; pre-commit gate 4 reads only a "Last verified" line, so it did not catch it. Corrected in the next commit)* **by the implementing seat, for one log correction only:** the log's D5 row claimed the operator answered D5, when it came from his go on G1 to G6. Nothing was re-verified for it; the line that follows stands.

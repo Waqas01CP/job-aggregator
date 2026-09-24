@@ -306,3 +306,16 @@ connector at 15:30Z `[VERIFIED]`:
   connector.
 
 The sweep now waits only on its brief.
+
+## Where briefs now live
+
+The operator's decision: the latest brief to each other seat is kept in the
+repository, gitignored, one file per seat, overwritten by the next, with a
+box on its first line that is ticked with the date once he says it has been
+executed. `briefs/architecture.md` holds the unexecuted brief of 10:12Z,
+recovered word for word from the session transcript, followed by the
+addendum. Its own line says 10:15Z, about three minutes ahead of the message
+that carried it; kept as he copied it and noted in the file's header.
+`briefs/audit.md` holds the audit brief. The map generator walks every `.md`
+file, ignored or not, so `briefs/` joined its skip list beside `data/`;
+without that, a local `MAP.md` would name files no clean clone has.

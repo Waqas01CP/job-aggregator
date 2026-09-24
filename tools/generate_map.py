@@ -44,8 +44,10 @@ MAP_PATH = REPO_ROOT / "MAP.md"
 # data/ and raw_responses/ are gitignored working data, never part of the
 # record. A markdown report written under data/ on 2026-09-17 halted this
 # generator, and with it the pre-commit hook, until data/ was listed here.
+# briefs/ is gitignored too, added 2026-09-24: mapped, its files would land in
+# a MAP.md that no clean clone could reproduce.
 SKIP_DIRS = {".git", ".github", "node_modules", "__pycache__", ".venv", "venv", ".commitmsg",
-             "data", "raw_responses"}
+             "data", "raw_responses", "briefs"}
 
 # Files this generator walks past. MAP.md is its own output.
 # CHAT_STATE.md was skipped here while it was gitignored; it is now

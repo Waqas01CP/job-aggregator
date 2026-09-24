@@ -6,11 +6,15 @@ present. These are the cases built to defeat the new one.
 """
 
 import os
+import shutil
 import sys
+import tempfile
 import unittest
+from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from tools import generate_map
 from tools.generate_map import MapError, check_status, record_numbers
 
 
@@ -43,6 +47,26 @@ class TestStatusGate(unittest.TestCase):
         numbers = record_numbers()
         self.assertIn("0046", numbers)
         self.assertNotIn("ADR-", "".join(numbers))
+
+
+class TestWhatIsMapped(unittest.TestCase):
+    def test_gitignored_working_directories_are_never_mapped(self):
+        """A file only this machine has would put a line in MAP.md that no
+        clean clone reproduces, and the committed map would be stale there.
+        data/ halted the hook on 2026-09-17; briefs/ was added 2026-09-24."""
+        root = Path(tempfile.mkdtemp())
+        real = generate_map.REPO_ROOT
+        try:
+            for rel in ("docs/kept.md", "data/report.md", "raw_responses/x.md",
+                        "briefs/audit.md", "briefs/architecture.md"):
+                (root / rel).parent.mkdir(parents=True, exist_ok=True)
+                (root / rel).write_text("# x" + chr(10), encoding="utf-8")
+            generate_map.REPO_ROOT = root
+            mapped = [p.relative_to(root).as_posix() for p in generate_map.markdown_files()]
+        finally:
+            generate_map.REPO_ROOT = real
+            shutil.rmtree(root, ignore_errors=True)
+        self.assertEqual(mapped, ["docs/kept.md"])
 
 
 if __name__ == "__main__":
