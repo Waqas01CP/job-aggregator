@@ -2,8 +2,8 @@
   {
     "label": "Status added to the sent set",
     "path": "src/airtable.py",
-    "find": "                   \"First seen\", \"Order date\", \"Board\", \"Matched term\",\n                   \"Identity\")",
-    "replace": "                   \"First seen\", \"Order date\", \"Board\", \"Matched term\",\n                   \"Identity\", \"Status\")"
+    "find": "                   \"Identity\", \"Family\")",
+    "replace": "                   \"Identity\", \"Family\", \"Status\")"
   },
   {
     "label": "test mode resolves to the production table",
@@ -56,8 +56,8 @@
   {
     "label": "a failed projection exits 1",
     "path": "src/run.py",
-    "find": "              \"re-projects: %s\" % projection_failure, file=sys.stderr)\n        return EXIT_STOPPED_RESUMABLE",
-    "replace": "              \"re-projects: %s\" % projection_failure, file=sys.stderr)\n        return EXIT_CANNOT_START"
+    "find": "    if private_failure or projection_failure:\n        return EXIT_STOPPED_RESUMABLE",
+    "replace": "    if private_failure or projection_failure:\n        return EXIT_CANNOT_START"
   },
   {
     "label": "the run's secret scrub does nothing",
@@ -74,8 +74,8 @@
   {
     "label": "matched term from the raw title",
     "path": "src/projection.py",
-    "find": "\"Matched term\": matcher.match(rep.title_normalised),",
-    "replace": "\"Matched term\": matcher.match(rep.title),"
+    "find": "    term = matcher.match(rep.title_normalised)",
+    "replace": "    term = matcher.match(rep.title)"
   },
   {
     "label": "Title from the raw title",
@@ -97,9 +97,9 @@
   },
   {
     "label": "an unreachable private store reads as empty",
-    "path": "src/storage.py",
-    "find": "        p = git(auth + [\"ls-remote\", url], \"listing it\")\n        if p.returncode != 0:\n            fail(p, \"listing it\")",
-    "replace": "        p = git(auth + [\"ls-remote\", url], \"listing it\")\n        if p.returncode != 0:\n            return {path: None for path in paths}"
+    "path": "src/private_store.py",
+    "find": "        listing = self._out([\"ls-remote\", \"--heads\", self._url], \"listing it\", auth=True)",
+    "replace": "        listing = self._git([\"ls-remote\", \"--heads\", self._url], \"listing it\", auth=True, check=False).stdout.decode(\"utf-8\")"
   },
   {
     "label": "the private store's errors are not scrubbed",
@@ -109,7 +109,7 @@
   },
   {
     "label": "the private store's token goes on the command line",
-    "path": "src/storage.py",
+    "path": "src/private_store.py",
     "find": "\"-c\", \"http.extraHeader=Authorization: Basic %s\" % basic]",
     "replace": "\"-c\", \"http.extraHeader=Authorization: Bearer %s\" % token]"
   },

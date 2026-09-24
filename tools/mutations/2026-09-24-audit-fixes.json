@@ -38,19 +38,13 @@
   {
     "label": "Status added to the constant",
     "path": "src/airtable.py",
-    "find": "\"Identity\")\nIDENTITY_FIELD",
-    "replace": "\"Identity\", \"Status\")\nIDENTITY_FIELD"
+    "find": "\"Identity\", \"Family\")\nIDENTITY_FIELD",
+    "replace": "\"Identity\", \"Family\", \"Status\")\nIDENTITY_FIELD"
   },
   {
     "label": "the run's scrub misses the encoded token",
     "path": "src/run.py",
     "find": "    if token:",
     "replace": "    if False:"
-  },
-  {
-    "label": "a listed but unfetchable store is called unreachable",
-    "path": "src/storage.py",
-    "find": "\"the private store was reached and listed, but its default branch \"",
-    "replace": "\"the private store could not be reached; its default branch \""
   }
 ]

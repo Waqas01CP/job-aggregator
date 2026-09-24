@@ -110,7 +110,9 @@ seniority rule; the other twenty are city names or titles no term matched
 either way. **No employer folds differently, and no two of the 1,001 stored
 normalised titles merge into one dedupe key.** The strip touches only a mark
 that follows a plain Latin letter, so a Japanese voicing mark or a Greek
-accent survives, and a string with no Latin accent folds exactly as before,
+accent survives *(narrower than the code, found by the audit of 2026-09-24,
+F13: any mark after any ASCII character goes, a stray one after a digit or
+space included, and a mark on a non-ASCII Latin letter such as `ǿ` stays)*, and a string with no Latin accent folds exactly as before,
 since NFC after NFKD is NFKC; tests pin all three. `docs/reference/title-pool.md`
 gains the rule as normalisation step 1. ADR-0021 specifies the fold, so this
 is for the chat to record.
@@ -140,9 +142,11 @@ unchanged.
 ## Built: Family in the display
 
 **G4, `Family`.** ADR-0038's label, which ADR-0035's Changes classified
-pipeline-owned on 2026-09-23. The field was created on `Jobs`
-(`fld2ugC2DsHdjre5W`) and `Jobs test` (`fldlD4Bc1ZipKanZp`) through the
-connector as single-line text `[VERIFIED]` from the connector's answer. The
+pipeline-owned on 2026-09-23. The field was created on `Jobs` and
+`Jobs test` through the connector as single-line text *(the two field IDs
+first written here were removed on 2026-09-24 after that day's audit, F1:
+`docs/how-to/the-seats.md` holds field IDs secret. `101371d` still carries
+them in history)* `[VERIFIED]` from the connector's answer. The
 projection sends it as the eleventh pipeline-owned field: the family of the
 term shown in `Matched term`, a lookup on the term and never a reading of the
 title. Both test files pin the eleven by hand. One test sends two rows from
@@ -150,7 +154,11 @@ different families; another uses a row whose raw and normalised titles name
 terms in different families, so a `Family` taken from the raw title fails it.
 Six mutations, all caught `[VERIFIED]`: `tools/mutations/2026-09-24-family.json`.
 Rows already in `Jobs` gain their `Family` on the next projection, since every
-run re-sends the whole layer.
+run re-sends the whole layer. *(Wrong for aggregator rows, found by the audit
+of 2026-09-24, F6: the 15 Himalayas rows projected into `Jobs` at 03:27Z, and
+30 in `Jobs test`, sit in no store, so no run re-sends them unless a morning
+run fetches them again. The 29 public rows in `Jobs` carry `Family` since the
+evening run.)*
 
 The D1 escalation tests had two survivors, both closed before this commit:
 the reset test now checks the count after fail, fail, success, fail, and the
@@ -319,3 +327,47 @@ that carried it; kept as he copied it and noted in the file's header.
 `briefs/audit.md` holds the audit brief. The map generator walks every `.md`
 file, ignored or not, so `briefs/` joined its skip list beside `data/`;
 without that, a local `MAP.md` would name files no clean clone has.
+
+## The second audit, and what was done
+
+The audit seat, started fresh, audited `f864053..06c3749` from 16:47Z to
+18:14Z. It found no path that loses or corrupts data, reproduced the D4 check
+to the number, and caught 40 of 40 of this range's mutations. It made fourteen
+findings. Each is closed below or left with the owner named.
+
+| # | Finding | Done |
+|---|---|---|
+| F1 | Two live Airtable field IDs in this log, pushed in `101371d` | Removed from the log. History still holds them; rewriting a public branch's history is the operator's call |
+| F2 | The guards around the previous-logs read in `attention()` and the private store's git time limit had no test | A run test where the read raises still commits and exits 2; a store test checks every git call carries the limit and a hang raises "timed out". `needs_attention` now refuses a log that is not an object, so `attention()` cannot raise on one |
+| F3 | A third run arriving could cancel a waiting fetch, since the contract check shares the group | `queue: max` on both workflows, from GitHub's concurrency documentation `[VERIFIED]`; a workflow test holds it |
+| F4 | Swapping the slot labels, or `main` ignoring `RUN_SLOT`, failed no test | The workflow test pins which cron is which; a run test sets `RUN_SLOT` and checks Himalayas is asked in the morning and skipped in the evening |
+| F5 | `CONSUMED` was compared on last names only | A test holds every undotted path to a key the saved response has, and every dotted one to a declared parent |
+| F6 | "Rows already in `Jobs` gain their `Family`" was wrong for aggregator rows | Annotated above: 15 Himalayas rows in `Jobs` and 30 in `Jobs test` sit in no store and are never re-sent |
+| F7 | ADR-0047's D6 row changed a clause without an inline note, and credited the operator with the seat's design | Inline notes at the clause and the Confirmation. Exit 2 is his; skipping aggregators and failing the projection on a failed restore is the seat's, for the chat to confirm. `CLAUDE.md` says the same |
+| F8 | ADR-0034's row said "once ADR-0047 is built" | Annotated: built, and tested |
+| F9 | Stale descriptions in the base | 14 rewritten through the connector and read back: `Jobs`, `Status` and `Title` on both tables, the three classification tables, and `Classified` on all six |
+| F10 | Two STATE rows stale | Corrected |
+| F11 | The private store's scrub of the encoded token had no test | The unreachable-repository test now puts the encoded token in the URL too |
+| F12 | The Y1 notes said "renamed by ADR-0046", whose names never reached the base | Corrected in ADR-0030, ADR-0032 and ADR-0043 |
+| F13 | The accent rule was described as narrower than the code | `src/normalise.py`, `docs/reference/title-pool.md` and this log corrected: any mark after any ASCII character goes, and a mark on a non-ASCII Latin letter stays |
+| F14 | The first audit's mutation file no longer ran | Re-expressed. The same check found five stale entries in `2026-09-23-projection.json` the audit did not name, now re-expressed too |
+
+Fifteen changed or new mutations, all caught `[VERIFIED]`:
+`tools/mutations/2026-09-24-second-audit.json` (9), the re-expressed entry in
+`2026-09-24-audit-fixes.json`, and the five in `2026-09-23-projection.json`.
+549 tests on Python 3.12 and 3.11.
+
+**The first production evening run**, 36036717095 at 17:47Z `[VERIFIED]` from
+its committed log. Himalayas was logged `skipped` with ADR-0048's reason, so
+the record's evening half holds. The private store's `data` branch was created,
+`pushed: true`, with one file, an empty `seen.json`. 29 rows went to `Jobs` in
+3 calls with no failure. The next morning run is Himalayas' first contact with
+the private store.
+
+**Two things the audit noticed outside its range**, for the architecture chat.
+The monthly Airtable count reads only the run's own branch, while the
+allowance is per workspace: production counted 5 before tonight, while the
+workspace had spent 22 counting the three test runs. And a failed private
+restore fails the whole projection, public rows included. That is the seat's
+design, so an expired token freezes the display until someone acts; the run
+turns red on the third.

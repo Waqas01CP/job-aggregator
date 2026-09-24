@@ -26,9 +26,14 @@ on:
 
 # Two runs must never write the data branch at once. A queued run waits rather
 # than being cancelled, because cancelling would drop the fetch entirely.
+# cancel-in-progress protects the running one and queue: max the waiting ones:
+# without it GitHub keeps one pending run per group and cancels it when a
+# third arrives, which the contract check sharing this group made likelier.
+# The audit of 2026-09-24, F3, against GitHub's concurrency documentation.
 concurrency:
   group: fetch
   cancel-in-progress: false
+  queue: max
 
 permissions:
   contents: write

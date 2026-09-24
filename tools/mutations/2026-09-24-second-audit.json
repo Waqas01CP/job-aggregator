@@ -1,0 +1,56 @@
+[
+  {
+    "label": "unreadable previous run logs raise before the commit",
+    "path": "src/run.py",
+    "find": "    try:\n        previous = storage.read_recent_run_logs(ESCALATE_AFTER - 1, test_mode)\n    except Exception as e:\n        return {\"failed_in_a_row\": 1, \"escalate\": False,\n                \"note\": \"previous run logs unreadable: %s\" % type(e).__name__}",
+    "replace": "    previous = storage.read_recent_run_logs(ESCALATE_AFTER - 1, test_mode)"
+  },
+  {
+    "label": "a previous log that is not an object raises",
+    "path": "src/run.py",
+    "find": "    if not isinstance(run_log, dict):\n        return False\n    for block",
+    "replace": "    for block"
+  },
+  {
+    "label": "the private store's git calls have no time limit",
+    "path": "src/private_store.py",
+    "find": "capture_output=True, timeout=self._timeout,",
+    "replace": "capture_output=True,"
+  },
+  {
+    "label": "the encoded token is not scrubbed from git's stderr",
+    "path": "src/private_store.py",
+    "find": "self._secrets = (token, basic, repo)",
+    "replace": "self._secrets = (token, repo)"
+  },
+  {
+    "label": "the morning and evening slot labels are swapped",
+    "path": ".github/workflows/fetch.yml",
+    "find": "github.event.schedule == '0 0 * * *' && 'morning' || github.event.schedule == '0 13 * * *' && 'evening'",
+    "replace": "github.event.schedule == '0 0 * * *' && 'evening' || github.event.schedule == '0 13 * * *' && 'morning'"
+  },
+  {
+    "label": "main ignores RUN_SLOT",
+    "path": "src/run.py",
+    "find": "slot = os.environ.get(\"RUN_SLOT\") or None",
+    "replace": "slot = None"
+  },
+  {
+    "label": "a consumed path loses its parent",
+    "path": "src/adapters/greenhouse.py",
+    "find": "\"location\", \"location.name\")",
+    "replace": "\"location\", \"name\")"
+  },
+  {
+    "label": "a waiting fetch can be cancelled",
+    "path": ".github/workflows/fetch.yml",
+    "find": "  cancel-in-progress: false\n  queue: max",
+    "replace": "  cancel-in-progress: false"
+  },
+  {
+    "label": "a waiting run can be cancelled by the contract check's group",
+    "path": ".github/workflows/contract.yml",
+    "find": "  cancel-in-progress: false\n  queue: max",
+    "replace": "  cancel-in-progress: false"
+  }
+]

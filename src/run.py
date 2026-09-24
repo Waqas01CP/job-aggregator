@@ -82,7 +82,11 @@ ESCALATE_AFTER = 3
 
 
 def needs_attention(run_log):
-    """A run whose display or private store failed, which exit 2 hides."""
+    """A run whose display or private store failed, which exit 2 hides. A
+    log that is not an object needs none, so attention() can never raise on
+    one: it runs before the commit."""
+    if not isinstance(run_log, dict):
+        return False
     for block in (run_log.get(RUN_LOG_KEY), run_log.get("private_store")):
         if isinstance(block, dict) and block.get("failure"):
             return True

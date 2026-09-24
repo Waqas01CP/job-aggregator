@@ -121,6 +121,30 @@ class TestConsumedFields(unittest.TestCase):
                             for path in module.CONSUMED + module.CONSUMED_RESPONSE}
                 self.assertEqual(reads_of(module), declared)
 
+    def test_each_declared_path_is_a_real_path_in_a_saved_response(self):
+        """Compared on its last name alone, `location.name` could become a
+        top-level `name` no posting has, and the fingerprint would watch
+        nothing (the audit of 2026-09-24, F5). So every undotted path must be
+        a key the saved response really has, and every dotted one must hang
+        off a declared parent."""
+        saved = {"greenhouse": "greenhouse-careem.json",
+                 "lever": "lever-smart-working-solutions.json",
+                 "himalayas": "himalayas-browse.json"}
+        for module in (greenhouse, lever, himalayas):
+            with self.subTest(adapter=module.PLATFORM):
+                payload = cassette(saved[module.PLATFORM])
+                keys = set()
+                for posting in contract.postings_in(module, payload):
+                    keys |= set(posting)
+                for path in module.CONSUMED:
+                    parent = path.rpartition(".")[0]
+                    if parent:
+                        self.assertIn(parent, module.CONSUMED, path)
+                    else:
+                        self.assertIn(path, keys, path)
+                for path in module.CONSUMED_RESPONSE:
+                    self.assertIn(path, payload, path)
+
     def test_the_reader_is_not_blind(self):
         """The case built to defeat the test above: a key read through a
         literal, through a module constant and through a subscript must all

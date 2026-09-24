@@ -85,7 +85,7 @@ The case set above runs before any change to the seniority list, and every case 
 
 The rule is proved by the case built to defeat it: a title containing a seniority word that the pool does not match must be dropped by the **title** rule, not the seniority rule, or the order has been reversed. "Senior Red Team Operator" is that case and is dropped by title.
 
-Within two weeks of the display existing, count `rejected_pipeline` *(now `rejected-poor-filtering`, renamed by ADR-0046 and again by the operator on 2026-09-24)* rows with reason `experience level`. A cluster means the list is wrong in one direction; the operator finding senior roles he wanted and never saw means it is wrong in the other, and only the display can show that.
+Within two weeks of the display existing, count `rejected_pipeline` *(now `rejected-poor-filtering`: the operator's rename of 2026-09-24, in the base from 15:30Z; ADR-0046's `poor filtering` never reached it. Corrected after that day's audit, F12, which found this note saying "renamed by ADR-0046 and again by the operator")* rows with reason `experience level`. A cluster means the list is wrong in one direction; the operator finding senior roles he wanted and never saw means it is wrong in the other, and only the display can show that.
 
 ## Pros and Cons of the Options
 

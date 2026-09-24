@@ -42,6 +42,7 @@ GH = Board(platform="greenhouse", slug="careem")
 GH2 = Board(platform="greenhouse", slug="globalli")
 LV = Board(platform="lever", slug="spreetail", employer_alias="Spreetail")
 HIM = Board(platform="himalayas", slug="browse")
+HIM_MORNING = Board(platform="himalayas", slug="browse", poll_slots=("morning",))
 
 
 def him_payload(guids):
@@ -461,6 +462,9 @@ class TestMain(unittest.TestCase):
         # Inside the workflow's test step GITHUB_OUTPUT is set; a test must
         # never write that step's outputs.
         self.env_output = os.environ.pop("GITHUB_OUTPUT", None)
+        # The workflow sets RUN_SLOT on its Fetch step only; a test must not
+        # inherit one.
+        self.env_slot = os.environ.pop("RUN_SLOT", None)
         self.dir = tempfile.mkdtemp()
         self.cwd = os.getcwd()
         os.chdir(self.dir)
@@ -507,6 +511,9 @@ class TestMain(unittest.TestCase):
         os.environ.pop("GITHUB_OUTPUT", None)
         if self.env_output is not None:
             os.environ["GITHUB_OUTPUT"] = self.env_output
+        os.environ.pop("RUN_SLOT", None)
+        if self.env_slot is not None:
+            os.environ["RUN_SLOT"] = self.env_slot
         os.chdir(self.cwd)
         shutil.rmtree(self.dir, ignore_errors=True)
 
@@ -952,6 +959,44 @@ class TestMain(unittest.TestCase):
         self.assertIn("cannot read", log["airtable"]["failure"])
         self.assertEqual(log["attention"], {"failed_in_a_row": 1, "escalate": False})
 
+    def test_unreadable_previous_logs_never_cost_the_commit(self):
+        """attention() runs before the commit. Had reading the previous run
+        logs raised through it, the run would exit 1, the workflow would skip
+        its push, and the fetch would be lost. The audit of 2026-09-24 removed
+        the guard and nothing failed (F2)."""
+        self.failing_projection()
+        real = storage.read_recent_run_logs
+
+        def unreadable(count, test_mode=False):
+            raise storage.StorageError("logs-runs/x.json is listed but could not be read")
+        storage.read_recent_run_logs = unreadable
+        try:
+            code, _, _ = self.main()
+        finally:
+            storage.read_recent_run_logs = real
+        self.assertEqual(code, EXIT_STOPPED_RESUMABLE)
+        self.assertEqual(self.identities("data"), ["greenhouse:1000"],
+                         "the fetch was not committed")
+        att = self.last_run_log()["attention"]
+        self.assertEqual(att["failed_in_a_row"], 1)
+        self.assertIn("unreadable", att["note"])
+
+    def test_the_slot_the_workflow_names_reaches_the_run(self):
+        """ADR-0048 end to end: main reads RUN_SLOT. The evening run never
+        asks Himalayas and says so; the morning run does. The audit of
+        2026-09-24 replaced main's read with None and no test failed (F4)."""
+        run_module.load_boards = lambda: [GH, HIM_MORNING]
+        for slot, asked in (("evening", False), ("morning", True)):
+            with self.subTest(slot=slot):
+                self.sessions.clear()
+                os.environ["RUN_SLOT"] = slot
+                self.main("--no-commit")
+                him = next(b for b in self.last_run_log()["boards"]
+                           if b["board"] == "himalayas:browse")
+                self.assertEqual(any("himalayas" in u for s in self.sessions for u in s.calls),
+                                 asked)
+                self.assertEqual(him["status"] == "skipped", not asked)
+
     def test_an_unreadable_branch_stops_the_run_before_any_fetch(self):
         def unreadable(test_mode=False):
             raise storage.StorageError("data:seen.json is listed but could not be read")
@@ -961,6 +1006,21 @@ class TestMain(unittest.TestCase):
         self.assertIn("could not start", err)
         self.assertFalse(os.path.exists("data/fetch-all/greenhouse.json"),
                          "the run fetched without its state")
+
+
+class TestAttention(unittest.TestCase):
+    def test_a_previous_log_that_is_not_an_object_never_raises(self):
+        """attention() promises never to raise, because it runs before the
+        commit. A previous log that parses but is not an object stops the
+        count there instead."""
+        failing = {"airtable": {"failure": "boom"}}
+        real = storage.read_recent_run_logs
+        storage.read_recent_run_logs = lambda count, test_mode=False: [["not an object"], failing]
+        try:
+            got = run_module.attention(failing, False, False)
+        finally:
+            storage.read_recent_run_logs = real
+        self.assertEqual(got, {"failed_in_a_row": 2, "escalate": False})
 
 
 class TestSummary(RunHarness):

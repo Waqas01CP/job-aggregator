@@ -20,10 +20,12 @@ on:
         default: false
 
 # The same group as the fetch: both write the data branch, and two pushes to
-# it at once would refuse one of them.
+# it at once would refuse one of them. queue: max, as in fetch.yml, so a
+# waiting fetch is never cancelled to make room for this.
 concurrency:
   group: fetch
   cancel-in-progress: false
+  queue: max
 
 permissions:
   contents: write

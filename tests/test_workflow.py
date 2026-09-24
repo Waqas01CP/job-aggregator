@@ -31,6 +31,11 @@ def workflow():
         return f.read()
 
 
+def contract_workflow():
+    with open(CONTRACT, encoding="utf-8") as f:
+        return f.read()
+
+
 class TestWorkflow(unittest.TestCase):
     def setUp(self):
         self.text = workflow()
@@ -117,8 +122,21 @@ class TestWorkflow(unittest.TestCase):
         line = next(l for l in self.text.splitlines() if l.strip().startswith("RUN_SLOT:"))
         mapping = dict((c, s) for c, s in re.findall(r"github\.event\.schedule == '([^']+)' && '(\w+)'", line))
         self.assertEqual(set(mapping), set(crons))
-        self.assertEqual(sorted(mapping.values()), ["evening", "morning"])
+        # Which cron is which, not only that both labels appear: the audit of
+        # 2026-09-24 swapped them and this test passed (F4). 00:00 UTC is
+        # 05:00 PKT, the morning run; 13:00 UTC is 18:00 PKT, the evening one.
+        self.assertEqual(mapping, {"0 0 * * *": "morning", "0 13 * * *": "evening"})
         self.assertIn("'manual'", line)
+
+    def test_no_waiting_run_is_ever_cancelled(self):
+        """GitHub keeps one pending run per concurrency group by default and
+        cancels it when a third arrives, and the contract check shares this
+        group. Both workflows must queue. The audit of 2026-09-24, F3."""
+        for name, text in (("fetch.yml", self.text), ("contract.yml", contract_workflow())):
+            with self.subTest(workflow=name):
+                block = re.search(r"^concurrency:\n((?:  .*\n)+)", text, re.M).group(1)
+                self.assertIn("queue: max", block)
+                self.assertIn("cancel-in-progress: false", block)
 
     def test_the_escalation_step_is_last_and_after_the_push(self):
         """The operator's decision of 2026-09-24: marking a run failed must

@@ -18,7 +18,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src import storage
 from src.private_store import PrivateStore, files_to_push, local_path_for
-from src.storage import PrivateStoreUnreachable
+from src.storage import PrivateStoreUnreachable, private_store_basic
 
 REPO = "someone/private-thing"
 TOKEN = "github_pat_FAKE0123456789"
@@ -167,16 +167,44 @@ class TestTestModeIsolation(Harness):
 class TestSecrets(Harness):
     def test_an_unreachable_repository_raises_and_names_nothing_it_should_not(self):
         """The case built to defeat the scrub: git's stderr quotes the URL,
-        and this URL carries the repository's name and the token."""
+        and this URL carries the repository's name, the token, and the token
+        in the encoded form git sends it in. The audit of 2026-09-24 dropped
+        the encoded form from the scrub and nothing failed (F11)."""
         missing = os.path.join(self.dir, "nowhere.git")
-        s = PrivateStore(REPO, TOKEN,
-                         url_for=lambda repo: file_url(missing) + "/" + REPO + "/" + TOKEN)
+        basic = private_store_basic(TOKEN)
+        s = PrivateStore(REPO, TOKEN, url_for=lambda repo: file_url(missing) + "/" + REPO
+                         + "/" + TOKEN + "/" + basic)
         self.opened.append(s)
         with self.assertRaises(PrivateStoreUnreachable) as caught:
             s.open()
-        for secret in (REPO, TOKEN, "private-thing"):
+        for secret in (REPO, TOKEN, "private-thing", basic):
             self.assertNotIn(secret, str(caught.exception))
         self.assertIn("git exit", str(caught.exception))
+
+    def test_every_git_call_has_a_time_limit(self):
+        """One hung call to the private store, opened before the fetch and
+        pushed before the commit, would hold the job until GitHub kills it,
+        and the fetch would go with it. The audit of 2026-09-24 removed the
+        limit and nothing failed (F2)."""
+        limits = []
+
+        def recording(args, **kw):
+            limits.append(kw.get("timeout"))
+            return subprocess.run(args, **kw)
+        url = file_url(self.bare)
+        s = PrivateStore(REPO, TOKEN, run=recording, url_for=lambda repo: url, timeout=7)
+        self.opened.append(s)
+        s.open().commit_and_push({"seen.json": "{}\n"}, "run 1")
+        self.assertGreater(len(limits), 5)
+        self.assertEqual(set(limits), {7})
+
+        def hanging(args, **kw):
+            raise subprocess.TimeoutExpired(args, kw.get("timeout"))
+        hung = PrivateStore(REPO, TOKEN, run=hanging, url_for=lambda repo: url)
+        self.opened.append(hung)
+        with self.assertRaises(PrivateStoreUnreachable) as caught:
+            hung.open()
+        self.assertIn("timed out", str(caught.exception))
 
     def test_the_token_is_never_a_bare_argument(self):
         calls = []

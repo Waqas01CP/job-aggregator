@@ -125,14 +125,18 @@ _SPACE = re.compile(r"\s+")
 
 
 def strip_latin_marks(text):
-    """Remove accents from Latin letters, and only from them.
+    """Remove every combining mark that follows an ASCII character.
 
     "Sênior" reached `Jobs` on 2026-09-24 because "sênior" is not "senior";
-    the operator decided accents are stripped before matching. Only a mark
-    that follows an ASCII letter is removed, so the marks that carry meaning
-    in other scripts, a Japanese voicing mark or a Greek accent, survive.
-    Composing again afterwards returns everything else to NFKC, so a string
-    with no Latin accent folds exactly as it did before."""
+    the operator decided accents are stripped before matching. The rule is
+    the ASCII test below, and that covers every accent on a plain Latin
+    letter: é, ê, ñ, ü. It also drops a stray mark after a digit, a space or
+    punctuation, which carries nothing. A mark on any other base survives: a
+    Japanese voicing mark, a Greek accent, and a mark on a Latin letter
+    outside ASCII, so ǿ and ǽ keep theirs. *(Corrected 2026-09-24 after the
+    audit of that day, which found this docstring saying "only after an ASCII
+    letter".)* Composing again afterwards returns everything else to NFKC, so
+    a string with no such mark folds exactly as it did before."""
     out = []
     for ch in unicodedata.normalize("NFKD", text):
         if unicodedata.combining(ch) and out and out[-1].isascii():

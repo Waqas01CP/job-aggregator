@@ -16,7 +16,7 @@ A posting is admitted to the display only if its normalised title contains one o
 
 Applied to the title and to every term, identically, before matching.
 
-1. Remove accents from Latin letters, so `Sênior` becomes `senior` and `São Paulo` becomes `sao paulo`. Only a mark on a plain Latin letter goes; marks that belong to another script's spelling stay. Added 2026-09-24 on the operator's decision.
+1. Remove accents from Latin letters, so `Sênior` becomes `senior` and `São Paulo` becomes `sao paulo`. The rule is exact: a combining mark goes when it follows an ASCII character, which covers every accent on a plain Latin letter and also a stray mark after a digit or a space. A mark on any other base stays: another script's marks, and a mark on a Latin letter outside ASCII, so `ǿ` keeps its accent. Added 2026-09-24 on the operator's decision. *(This sentence first said "only a mark on a plain Latin letter", narrower than the code; corrected after that day's audit, F13. No stored title is affected.)*
 2. Lowercase.
 3. Replace hyphen, en-dash, em-dash, underscore and forward slash with a single space. This is what makes `AI-Agent` match `ai agent`, and turns `AI/ML` into `ai ml`.
 4. Delete commas, parentheses, periods and colons.
