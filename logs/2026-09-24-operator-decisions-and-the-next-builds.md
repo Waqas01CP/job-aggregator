@@ -208,3 +208,40 @@ connector with the originals' fields, descriptions and choices `[VERIFIED]`
 from the connector's answers. `Classified` is created time, which
 `create_table` cannot make, so it was added afterwards with `create_field`.
 The sweep needs a secret for each table ID, which its brief names.
+
+## Built: the contract check
+
+**G6, ADR-0018 and ADR-0036.** `src/contract.py` asks the first configured
+board of each platform for one response and fingerprints the fields the
+adapter consumes. Each field's shape is recorded as words across every
+posting in the response: present in all, some or none; null never, in some
+or always; and its type names. It compares that with the fingerprint on the
+data branch, names every field whose shape changed with both shapes, and
+exits 0. A crash exits 1 and commits no log. Its logs live in
+`logs-contract/`, never `logs-runs/`: the escalation counts failures in a row
+from `logs-runs/`, and a contract log there would read as a success. A board
+that cannot be answered is logged and keeps its last fingerprint.
+`.github/workflows/contract.yml` runs it daily at 06:30 UTC in the fetch's
+concurrency group, with no secrets. `tools/run_log_report.py` closes its
+report with the check.
+
+Each adapter now declares `CONSUMED`, and a test reads the adapter's source
+and holds the list to every key `parse()` reads, both ways. A second test
+gives that reader a key through a literal, a module constant and a
+subscript, so it cannot be blind. Eleven mutations, all caught `[VERIFIED]`:
+`tools/mutations/2026-09-24-contract-check.json`. ADR-0036's two
+Confirmations run as tests.
+
+**Against the live boards** `[VERIFIED]`, `--test-mode --no-commit`, three
+requests a check: Greenhouse's first board, `veeamsoftware`, with 259
+postings; Lever's `smart-working-solutions` with 16; Himalayas' first page
+of 20. The first check recorded a baseline and the second found nothing
+changed. Then `absolute_url` was removed by hand from the stored Greenhouse
+fingerprint, and the third check named it: "was not in the stored
+fingerprint, now present in all, null never, string". Exit 0 each time. That
+is ADR-0018's Confirmation, on this machine rather than on the branch.
+
+Two judgments for the architecture chat. Himalayas' fingerprint sits on the
+public branch: it holds field names, type names and the three-way words,
+never a value, and a test proves no posting value reaches it. And ADR-0036's
+Airtable row is not built, since it needs a table.

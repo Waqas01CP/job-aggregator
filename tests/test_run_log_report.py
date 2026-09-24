@@ -269,6 +269,32 @@ class TestReadingTheBranch(unittest.TestCase):
         self.assertIn("the data-test branch", out)
         self.assertRegex(out, r"all sources\s+1\s+7\s")
 
+    def test_the_contract_checks_changes_close_the_report(self):
+        """ADR-0036: this tool is where a contract change is seen. Its logs
+        are read from their own directory and never counted as runs."""
+        check = {"run_at": "2026-09-18T06:30:00Z", "test_mode": False,
+                 "platforms": {"lever": {"status": "changed", "changes": [
+                     {"field": "hostedUrl", "in": "posting",
+                      "was": {"present": "all"}, "now": {"present": "none"}}]},
+                     "greenhouse": {"status": "unchanged", "changes": []}}}
+        storage.commit_files({
+            "logs-runs/p.json": dumps(log("2026-09-17T00:00:00Z", 12, {"greenhouse": 12})),
+            "logs-contract/20260918T063000Z.json": dumps(check)}, "run", branch="data")
+        code, out, _ = self.run_tool("--repo", self.dir)
+        self.assertEqual(code, 0)
+        self.assertRegex(out, r"all sources\s+1\s+12\s")
+        self.assertIn("Contract check", out)
+        self.assertIn("lever posting field hostedUrl", out)
+        self.assertIn("lever changed", out)
+
+    def test_no_contract_logs_says_so(self):
+        storage.commit_files({"logs-runs/p.json": dumps(log("2026-09-17T00:00:00Z", 12,
+                                                            {"greenhouse": 12}))},
+                             "run", branch="data")
+        code, out, _ = self.run_tool("--repo", self.dir)
+        self.assertEqual(code, 0)
+        self.assertIn("no contract check logs", out)
+
     def test_a_missing_branch_says_how_to_fetch_it(self):
         code, out, err = self.run_tool("--repo", self.dir)
         self.assertEqual(code, 1)

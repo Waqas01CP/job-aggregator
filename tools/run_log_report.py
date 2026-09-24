@@ -37,6 +37,11 @@ So the report ends with every board whose latest runs fetched nothing or
 failed, and for how long. No threshold is applied: how long is too long is not
 decided anywhere.
 
+**Then the contract check.** ADR-0036 makes this tool where a contract change
+is seen: when reading a branch, the report closes with the check's latest
+status per platform and every field it found changed, from its own logs in
+`logs-contract/`.
+
 Exit 0 when a report was printed, 1 when there was nothing to read.
 """
 
@@ -53,14 +58,16 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT))
 
 from src import storage  # noqa: E402  the names come from the writer, never repeated
+from src.contract import LOG_DIR as CONTRACT_LOG_DIR  # noqa: E402
 
 RUNLOG_DIR = storage.RUNLOG_DIR
 BRANCHES = {False: storage.DATA_BRANCH, True: storage.TEST_DATA_BRANCH}
 
 
 # ------------------------------------------------------------------ reading
-def logs_from_branch(repo, branch):
-    """Every run log on a branch, as (name, text). None when the branch is absent.
+def logs_from_branch(repo, branch, directory=RUNLOG_DIR):
+    """Every log in `directory` on a branch, as (name, text). None when the
+    branch is absent.
 
     One `git cat-file --batch` for all of them, so a year of twice-daily logs
     is one process rather than seven hundred."""
@@ -70,7 +77,7 @@ def logs_from_branch(repo, branch):
 
     if git(["rev-parse", "--verify", "--quiet", "refs/heads/" + branch]).returncode:
         return None
-    listed = git(["ls-tree", "-r", "--name-only", "refs/heads/" + branch, "--", RUNLOG_DIR + "/"])
+    listed = git(["ls-tree", "-r", "--name-only", "refs/heads/" + branch, "--", directory + "/"])
     names = [n for n in listed.stdout.decode("utf-8").splitlines() if n.endswith(".json")]
     if not names:
         return []
@@ -121,6 +128,52 @@ def parse(named_texts, test_mode, since=None):
                      "stopped": log.get("stopped")})
     runs.sort(key=lambda r: r["when"])
     return runs, problems
+
+
+def contract_findings(named_texts, test_mode, since=None):
+    """The contract check's logs, ADR-0036: how many checks, each platform's
+    latest status, and every change found, oldest first. A log that cannot
+    be read is counted, never fatal."""
+    found = {"checks": 0, "latest": {}, "changes": [], "unreadable": 0}
+    for name, text in sorted(named_texts):
+        try:
+            log = json.loads(text)
+            when = datetime.fromisoformat(log["run_at"].replace("Z", "+00:00"))
+            platforms = dict(log["platforms"])
+        except (ValueError, KeyError, TypeError, AttributeError):
+            found["unreadable"] += 1
+            continue
+        if bool(log.get("test_mode")) != test_mode or (since and when.date() < since):
+            continue
+        found["checks"] += 1
+        for platform, entry in sorted(platforms.items()):
+            found["latest"][platform] = (when, entry.get("status"))
+            for change in entry.get("changes") or []:
+                found["changes"].append((when, platform, change))
+    return found
+
+
+def render_contract(found):
+    def shape(s):
+        return json.dumps(s, sort_keys=True) if isinstance(s, dict) else str(s)
+
+    lines = ["", "Contract check, ADR-0018 and ADR-0036"]
+    if not found["checks"]:
+        lines.append("  no contract check logs")
+        return "\n".join(lines)
+    lines.append("  %d check(s). Latest per platform: %s" % (found["checks"], ", ".join(
+        "%s %s (%s)" % (p, status, when.strftime("%Y-%m-%d %H:%M"))
+        for p, (when, status) in sorted(found["latest"].items()))))
+    if found["changes"]:
+        for when, platform, c in found["changes"]:
+            lines.append("  %s  %s %s field %s: was %s, now %s"
+                         % (when.strftime("%Y-%m-%d %H:%M"), platform, c.get("in"),
+                            c.get("field"), shape(c.get("was")), shape(c.get("now"))))
+    else:
+        lines.append("  no field changed")
+    if found["unreadable"]:
+        lines.append("  unreadable contract logs: %d" % found["unreadable"])
+    return "\n".join(lines)
 
 
 # ---------------------------------------------------------------- summarising
@@ -287,6 +340,9 @@ def main(argv=None):
                 print("  %s: %d" % (k, len(names)), file=sys.stderr)
         return 1
     print(render(summarise(runs), where, problems))
+    if not args.dir:
+        contract_texts = logs_from_branch(args.repo, branch, CONTRACT_LOG_DIR) or []
+        print(render_contract(contract_findings(contract_texts, args.test_mode, args.since)))
     return 0
 
 

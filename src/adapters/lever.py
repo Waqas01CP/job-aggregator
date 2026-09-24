@@ -33,6 +33,13 @@ BASE = "https://api.lever.co/v0/postings/%s?mode=json"
 
 PUBLISHED_FIELD = "createdAt"
 
+# ADR-0018: what parse() reads, and nothing else. The contract check
+# fingerprints exactly these, and tests/test_contract.py holds them to the code.
+# The response is the list of postings itself.
+CONSUMED_RESPONSE = ()
+POSTINGS_AT = None
+CONSUMED = ("id", "text", "hostedUrl", PUBLISHED_FIELD, "categories", "categories.location")
+
 # Recorded on every Lever row. Removed when a second observation settles it.
 PUBLISHED_MEANING_UNCONFIRMED = True
 

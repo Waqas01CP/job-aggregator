@@ -1,0 +1,79 @@
+name: contract
+
+# ADR-0018 and ADR-0036: once a day, one response per platform, fingerprinted
+# over the fields each adapter consumes and compared with the last check. A
+# change is written to the check's own log on the data branch and the run
+# still succeeds; the run fails only when the check itself does. Daily is the
+# operator's cadence, ADR-0036's Changes.
+#
+# 06:30 UTC, 11:30 PKT, sits between the fetch runs at 00:00 and 13:00 UTC, so
+# neither waits for the other in the shared concurrency group below.
+
+on:
+  schedule:
+    - cron: "30 6 * * *"
+  workflow_dispatch:
+    inputs:
+      test_mode:
+        description: "Read and write the data-test branch, leaving production alone"
+        type: boolean
+        default: false
+
+# The same group as the fetch: both write the data branch, and two pushes to
+# it at once would refuse one of them.
+concurrency:
+  group: fetch
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    env:
+      DATA_BRANCH: ${{ inputs.test_mode && 'data-test' || 'data' }}
+
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - run: pip install -r requirements.txt
+
+      - name: Run the tests before asking a live board
+        run: python -m unittest discover -s tests -t .
+
+      # As in fetch.yml: the check reads the last fingerprint from the branch
+      # and commits the next one on top, so the branch is fetched first.
+      - name: Fetch the data branch
+        run: |
+          set +e
+          git ls-remote --exit-code --heads origin "refs/heads/$DATA_BRANCH" >/dev/null
+          found=$?
+          set -e
+          case "$found" in
+            0) git fetch --no-tags --depth=1 origin "refs/heads/$DATA_BRANCH:refs/heads/$DATA_BRANCH" ;;
+            2) echo "origin has no $DATA_BRANCH branch yet; this check starts it" ;;
+            *) echo "::error::could not ask origin whether $DATA_BRANCH exists"; exit 1 ;;
+          esac
+
+      # No secret reaches this step: every board it asks is public.
+      - name: Check
+        env:
+          TEST_MODE: ${{ inputs.test_mode && '1' || '0' }}
+        run: python -m src.contract
+
+      - name: Push the data branch
+        run: |
+          if git rev-parse --verify --quiet "refs/heads/$DATA_BRANCH" >/dev/null; then
+            git push origin "refs/heads/$DATA_BRANCH:refs/heads/$DATA_BRANCH"
+          else
+            echo "no $DATA_BRANCH branch was written, so nothing to push"
+          fi

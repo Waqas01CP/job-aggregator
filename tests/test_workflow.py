@@ -21,6 +21,7 @@ from src import run as run_module
 from src import storage
 
 WORKFLOW = os.path.join(ROOT, ".github", "workflows", "fetch.yml")
+CONTRACT = os.path.join(ROOT, ".github", "workflows", "contract.yml")
 SECRET_NAMES = ("AIRTABLE_TOKEN", "AIRTABLE_BASE_ID", "AIRTABLE_TABLE_ID",
                 "AIRTABLE_TEST_TABLE_ID", "AGGREGATOR_STORE_TOKEN", "AGGREGATOR_STORE_REPO")
 
@@ -142,6 +143,45 @@ class TestWorkflow(unittest.TestCase):
         """Run 35179218050 failed at the commit after a full fetch and the
         workflow announced that the run could not start."""
         self.assertNotIn("::error::the run could not start", self.text)
+
+
+
+class TestContractWorkflow(unittest.TestCase):
+    """ADR-0018 and ADR-0036: the contract check's own workflow, daily, apart
+    from the fetch, writing the same data branch."""
+
+    def setUp(self):
+        with open(CONTRACT, encoding="utf-8") as f:
+            self.text = f.read()
+
+    def test_it_shares_the_fetchs_concurrency_group(self):
+        """Both push the data branch. In different groups, a check and a
+        fetch could push at once and one would be refused."""
+        group = re.compile(r"^concurrency:\s*\n\s+group:\s*(\S+)", re.M)
+        self.assertEqual(group.search(self.text).group(1), group.search(workflow()).group(1))
+
+    def test_it_runs_once_a_day_away_from_the_fetch(self):
+        crons = re.findall(r'cron:\s*"([^"]+)"', self.text)
+        self.assertEqual(len(crons), 1)
+        hour = crons[0].split()[1]
+        self.assertEqual(crons[0].split()[2:], ["*", "*", "*"], "not daily")
+        fetch_hours = {c.split()[1] for c in re.findall(r'cron:\s*"([^"]+)"', workflow())}
+        self.assertNotIn(hour, fetch_hours)
+
+    def test_it_names_the_same_branches_as_the_code(self):
+        m = re.search(r"DATA_BRANCH:\s*\$\{\{\s*inputs\.test_mode\s*&&\s*'([^']+)'"
+                      r"\s*\|\|\s*'([^']+)'\s*\}\}", self.text)
+        self.assertEqual((m.group(1), m.group(2)),
+                         (storage.data_branch(True), storage.data_branch(False)))
+
+    def test_the_branch_is_fetched_before_the_check_and_pushed_after(self):
+        order = [self.text.index(s) for s in ("python -m unittest", "git fetch",
+                                              "python -m src.contract", "git push")]
+        self.assertEqual(order, sorted(order))
+
+    def test_no_secret_reaches_it(self):
+        """Every board it asks is public."""
+        self.assertNotIn("secrets.", self.text)
 
 
 if __name__ == "__main__":

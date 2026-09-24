@@ -1,0 +1,68 @@
+[
+  {
+    "label": "a changed shape is not reported",
+    "path": "src/contract.py",
+    "find": "            if old.get(path) != new.get(path):",
+    "replace": "            if False:"
+  },
+  {
+    "label": "a field missing from the stored fingerprint is not compared",
+    "path": "src/contract.py",
+    "find": "        for path in sorted(set(old) | set(new)):",
+    "replace": "        for path in sorted(set(old)):"
+  },
+  {
+    "label": "contract logs land among the fetch run logs",
+    "path": "src/contract.py",
+    "find": "LOG_DIR = \"logs-contract\"",
+    "replace": "LOG_DIR = \"logs-runs\""
+  },
+  {
+    "label": "presence is a count, not a word",
+    "path": "src/contract.py",
+    "find": "    return {\"present\": word(len(present), n, \"none\", \"all\"),",
+    "replace": "    return {\"present\": len(present),"
+  },
+  {
+    "label": "nulls are not fingerprinted",
+    "path": "src/contract.py",
+    "find": "\"null\": word(nulls, len(present), \"never\", \"always\") if present else \"never\",",
+    "replace": "\"null\": \"never\","
+  },
+  {
+    "label": "types are not fingerprinted",
+    "path": "src/contract.py",
+    "find": "\"types\": sorted({type_name(v) for v in present if v is not None})}",
+    "replace": "\"types\": []}"
+  },
+  {
+    "label": "a boolean reads as a number",
+    "path": "src/contract.py",
+    "find": "TYPE_NAMES = {bool: \"boolean\",",
+    "replace": "TYPE_NAMES = {bool: \"number\","
+  },
+  {
+    "label": "an empty response wipes the stored posting fingerprint",
+    "path": "src/contract.py",
+    "find": "            fp[\"posting\"] = (stored.get(platform) or {}).get(\"posting\", {})",
+    "replace": "            pass"
+  },
+  {
+    "label": "an adapter declares a field it never reads",
+    "path": "src/adapters/greenhouse.py",
+    "find": "\"location\", \"location.name\")",
+    "replace": "\"location\", \"location.name\", \"updated_at\")"
+  },
+  {
+    "label": "the check runs in its own concurrency group",
+    "path": ".github/workflows/contract.yml",
+    "find": "  group: fetch",
+    "replace": "  group: contract"
+  },
+  {
+    "label": "the report leaves out the contract check",
+    "path": "tools/run_log_report.py",
+    "find": "        print(render_contract(contract_findings(contract_texts, args.test_mode, args.since)))",
+    "replace": "        pass"
+  }
+]

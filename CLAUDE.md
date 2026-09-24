@@ -226,6 +226,9 @@ deactivate                             leave it
 .venv/Scripts/python -m unittest discover -s tests -t .     run every test
 .venv/Scripts/python -m src.run --test-mode --no-commit     one run, alternate
                                                             files, no commit
+.venv/Scripts/python -m src.contract --test-mode --no-commit
+                                       one contract check (ADR-0018), three
+                                       requests, no commit
 
 python tools/generate_map.py           regenerate MAP.md
 python tools/generate_map.py --check   report whether MAP.md is current

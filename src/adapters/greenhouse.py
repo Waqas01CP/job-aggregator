@@ -33,6 +33,13 @@ BASE = "https://boards-api.greenhouse.io/v1/boards/%s/jobs"
 
 PUBLISHED_FIELD = "first_published"
 
+# ADR-0018: what parse() reads, and nothing else. The contract check
+# fingerprints exactly these, and tests/test_contract.py holds them to the code.
+CONSUMED_RESPONSE = ("jobs",)
+POSTINGS_AT = "jobs"
+CONSUMED = ("id", "title", "absolute_url", PUBLISHED_FIELD, "application_deadline",
+            "application_deadline.date", "company_name", "location", "location.name")
+
 
 def url_for(board):
     return BASE % board.slug

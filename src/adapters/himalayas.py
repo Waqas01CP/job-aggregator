@@ -39,6 +39,13 @@ PAGE_SIZE = 20
 
 PUBLISHED_FIELD = "pubDate"
 
+# ADR-0018: what parse() reads, and nothing else. The contract check
+# fingerprints exactly these, and tests/test_contract.py holds them to the code.
+CONSUMED_RESPONSE = ("jobs", "nextCursor")
+POSTINGS_AT = "jobs"
+CONSUMED = ("guid", "title", "applicationLink", PUBLISHED_FIELD, "expiryDate", "companyName",
+            "locationRestrictions")
+
 # Epoch seconds for plausible posting dates, so a millisecond value cannot
 # silently become the year 58000.
 _S_MIN = 1_000_000_000      # 2001-09-09
