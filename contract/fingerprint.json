@@ -1,0 +1,190 @@
+{
+ "greenhouse": {
+  "response": {
+   "jobs": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "array"
+    ]
+   }
+  },
+  "posting": {
+   "id": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "number"
+    ]
+   },
+   "title": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "absolute_url": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "first_published": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "application_deadline": {
+    "present": "all",
+    "null": "always",
+    "types": []
+   },
+   "application_deadline.date": {
+    "present": "none",
+    "null": "never",
+    "types": []
+   },
+   "company_name": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "location": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "object"
+    ]
+   },
+   "location.name": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   }
+  }
+ },
+ "lever": {
+  "response": {},
+  "posting": {
+   "id": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "text": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "hostedUrl": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "createdAt": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "number"
+    ]
+   },
+   "categories": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "object"
+    ]
+   },
+   "categories.location": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   }
+  }
+ },
+ "himalayas": {
+  "response": {
+   "jobs": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "array"
+    ]
+   },
+   "nextCursor": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   }
+  },
+  "posting": {
+   "guid": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "title": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "applicationLink": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "pubDate": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "number"
+    ]
+   },
+   "expiryDate": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "number"
+    ]
+   },
+   "companyName": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "locationRestrictions": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "array"
+    ]
+   }
+  }
+ }
+}
