@@ -38,7 +38,7 @@ chat records them afterwards from an addendum to the pending brief.
 | Y2 | Changing the choices | The connector cannot: `update_field` accepts only a formula in its options `[VERIFIED]` from its schema. He renames them in the browser, which keeps the rows he has already marked |
 | D1 | A projection failing run after run | After three consecutive failed projections the run still commits and pushes, then the workflow marks the run failed. Approved, after the seat confirmed his understanding: marking a run failed only changes its status in GitHub and happens after the data is saved, so nothing is lost or altered |
 | D2 | GitHub's failed-run email | Does not breach "no notification system". His standing rule, his ruling |
-| D3 | Closed postings | **Clarification asked and pending.** He does not want to see a closed role and mentioned the fifteen-day rule; the seat asked whether a closed row goes at the next sweep, stored with the reason, or after fifteen days |
+| D3 | Closed postings | *(Answered 2026-09-24T15:10Z, below: stored with the reason "closed", visible for fifteen days after it closed, then deleted under the same rule.)* **Clarification asked and pending.** He does not want to see a closed role and mentioned the fifteen-day rule; the seat asked whether a closed row goes at the next sweep, stored with the reason, or after fifteen days |
 | D4 | "Sênior" escaping the seniority rule | Strip accents before matching, **with extra care**: every title's verdict before and after is compared, and any change is shown before it ships |
 | D5 | Aggregator rows accumulating | Build ADR-0047's write path |
 | D6 | The private store cannot be written | Exit 2, not 1, keeping the public fetch. Test that the repository saves before relying on it. **`AGGREGATOR_STORE_TOKEN` expires on 2027-01-01**, to be recorded |
@@ -245,3 +245,44 @@ Two judgments for the architecture chat. Himalayas' fingerprint sits on the
 public branch: it holds field names, type names and the three-way words,
 never a value, and a test proves no posting value reaches it. And ADR-0036's
 Airtable row is not built, since it needs a table.
+
+## The first live write to the private store, D3 answered, and `Status` as it stands
+
+**The token writes** `[VERIFIED]`. The operator's test-mode dispatch,
+run 36016481510 at `e2a481d`, committed `fe8f56f` to `data-test`. Its run log
+reads `private_store: {branch: data-test, restored: 0, pushed: true,
+files: 3, failure: null}`. Himalayas fetched 500 in 25 pages, all new, and
+kept 32. The projection sent 48 groups to `Jobs test` in 5 calls with no
+failure. The public `data-test` branch holds `fetch-all/greenhouse.json`,
+`fetch-all/lever.json`, `filtered.json`, `seen.json` and run logs, and none
+of those four data files contains the string "himalayas". So both halves of
+ADR-0047's Confirmation hold on the test branch, except the private file
+counts, which this seat cannot read without the token. A second run showing
+`restored: 3` and a Himalayas `new` well under 500 proves the round trip.
+`Family` is filled on the `Jobs test` rows this run re-sent `[VERIFIED]`, so
+G4 is live.
+
+**D3, the operator's answer**, 2026-09-24: "it should be stored with reason
+as you recommended but later should be deleted meaning visible for 15 days
+then the delete rules apply on this as well." So a closed posting is stored
+with the reason "closed", stays in `Jobs` for fifteen days after it closed,
+then goes. The pipeline never writes `Status` (ADR-0046, 2026-09-23), and
+`Classified at` moves only when `Status` does. So the closure needs its own
+clock and, for the operator to tell a closed row from an open one in those
+fifteen days, probably a visible mark. Both are the sweep brief's to design.
+
+**`Status` as it stands** `[VERIFIED]` through the connector. Both tables
+still hold the original four choices, `applied`, `rejected_pipeline`,
+`rejected_choice` and `expired_before_review`; ADR-0046's `not fit` and
+`poor filtering` never reached the base. `Jobs` has 3 marked rows, all
+`rejected_pipeline`. `Jobs test` has 5: 2 `applied`, 1 `rejected_choice`,
+2 `rejected_pipeline`. No row in either holds `expired_before_review`, so
+deleting it clears nothing. Renaming the other three in the browser, as the
+operator was told, keeps every marked row's meaning. When he tried it,
+Airtable warned that the change "will impact 2 dependencies": `Classified at`,
+which watches `Status`, and the `To review` view, which filters on it. The
+seat's answer: proceed. Whether Airtable counts a rename as a change to each
+marked row's `Status`, restarting `Classified at`, is unknown. If it does,
+the only effect is that those rows' fifteen-day clocks start later, since
+nothing deletes on that clock yet. The seat checks `Classified at` after the
+rename.
