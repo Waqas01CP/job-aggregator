@@ -286,12 +286,18 @@ If the hook blocks you, read the reason. Do not bypass it with `--no-verify`.
 ## Briefs this seat writes
 
 The latest brief to each other seat is kept in `briefs/`, one file per seat:
-`briefs/architecture.md` and `briefs/audit.md`. A new brief overwrites the
-old one, so the folder never grows. The first line is a box, empty until the
-operator says the brief has been executed, then ticked with the date. An
-addendum to an unsent brief goes in the same file, after it. The folder is
-gitignored and the map skips it: it is a reference for the operator, never a
-record, and it ranks with "everything else" above. The operator's decision,
+today `briefs/architecture.md` and `briefs/audit.md`, and a seat added later
+gets its own. Its life has three steps:
+
+1. **Unexecuted:** the box on its first line is empty, and each addendum is
+   appended to the same file.
+2. **Executed:** once the operator says so, the box is ticked with the date.
+3. **Replaced:** the next brief to that seat is written only after the old
+   one has been read for what it still says, then overwrites it.
+
+So there is always exactly one brief per seat, and the folder never grows.
+It is gitignored and the map skips it: a reference for the operator, never a
+record, ranking with "everything else" above. The operator's decision,
 2026-09-24.
 
 ## Writing
