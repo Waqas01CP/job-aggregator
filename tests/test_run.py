@@ -19,6 +19,7 @@ from datetime import datetime, timezone
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from src import projection as projection_module
 from src import run as run_module
 from src import storage
 from src.airtable import AirtableConfigError
@@ -743,15 +744,30 @@ class TestMain(unittest.TestCase):
         self.main()
         self.failing_projection()
         self.main()
+        # The case built to defeat a count that skips successes instead of
+        # stopping at one: fail, fail, success, fail is 1 in a row, not 3.
+        self.assertEqual(self.last_run_log()["attention"]["failed_in_a_row"], 1)
         self.main()
         self.assertEqual(self.last_run_log()["attention"]["failed_in_a_row"], 2)
         self.assertNotIn("escalate", self.outputs())
 
     def test_a_no_commit_run_never_escalates(self):
-        self.failing_projection()
-        for _ in range(3):
-            self.main("--no-commit")
-        self.assertFalse(self.last_run_log()["attention"]["escalate"])
+        """A no-commit run only plans the projection, so it is the plan that
+        must fail here; a failing Airtable client would never be reached and
+        the test would pass whatever the code did."""
+        real = run_module.projection.load_rows
+
+        def unreadable(paths):
+            raise projection_module.ProjectionError("a store this code cannot read")
+        run_module.projection.load_rows = unreadable
+        try:
+            for _ in range(3):
+                self.main("--no-commit")
+        finally:
+            run_module.projection.load_rows = real
+        log = self.last_run_log()
+        self.assertIn("cannot read", log["airtable"]["failure"])
+        self.assertEqual(log["attention"], {"failed_in_a_row": 1, "escalate": False})
 
     def test_an_unreadable_branch_stops_the_run_before_any_fetch(self):
         def unreadable(test_mode=False):

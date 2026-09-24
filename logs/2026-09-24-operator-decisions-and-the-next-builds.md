@@ -136,3 +136,24 @@ first two do not, that all three committed, that a success in between resets
 it, and that the escalation step is the workflow's last, after the push.
 `CLAUDE.md`'s exit-code line and ADR-0034's Changes carry it; exit codes are
 unchanged.
+
+## Built: Family in the display
+
+**G4, `Family`.** ADR-0038's label, which ADR-0035's Changes classified
+pipeline-owned on 2026-09-23. The field was created on `Jobs`
+(`fld2ugC2DsHdjre5W`) and `Jobs test` (`fldlD4Bc1ZipKanZp`) through the
+connector as single-line text `[VERIFIED]` from the connector's answer. The
+projection sends it as the eleventh pipeline-owned field: the family of the
+term shown in `Matched term`, a lookup on the term and never a reading of the
+title. Both test files pin the eleven by hand. One test sends two rows from
+different families; another uses a row whose raw and normalised titles name
+terms in different families, so a `Family` taken from the raw title fails it.
+Six mutations, all caught `[VERIFIED]`: `tools/mutations/2026-09-24-family.json`.
+Rows already in `Jobs` gain their `Family` on the next projection, since every
+run re-sends the whole layer.
+
+The D1 escalation tests had two survivors, both closed before this commit:
+the reset test now checks the count after fail, fail, success, fail, and the
+no-commit test fails the plan itself, since a failing Airtable client is
+never reached by a run that only plans. `tools/mutations/2026-09-24-accents-slots-escalation.json`,
+ten mutations, all caught.

@@ -11,13 +11,14 @@ performs no reads, and every read belongs to the sweep. This module has one
 verb, an upsert, and a test asserts it exposes no other. The sweep is a later
 build and gets its reads where that brief puts them, not here.
 
-**It sends exactly ADR-0035's ten fields.** An upsert updates every field it
-is given, so a field outside the ten would overwrite something that is not
-the pipeline's: `Status` above all, whose every write also restarts the
-fifteen-day clock on `Classified at`. A record carrying any other key, or
-missing one of the ten, is refused before anything is sent. Adding `Family`
-and `Star reason` later, both classified pipeline-owned on 2026-09-23, is a
-change to PIPELINE_FIELDS and to the test that pins it.
+**It sends exactly the pipeline-owned fields**: ADR-0035's ten, and `Family`,
+classified pipeline-owned on 2026-09-23 and built 2026-09-24. An upsert
+updates every field it is given, so a field outside the set would overwrite
+something that is not the pipeline's: `Status` above all, whose every write
+also restarts the fifteen-day clock on `Classified at`. A record carrying any
+other key, or missing one of the set, is refused before anything is sent.
+Adding `Star reason` later is a change to PIPELINE_FIELDS and to the tests
+that pin it, and the field must exist in the base first.
 
 **A test run cannot reach production's table.** In test mode the table comes
 from AIRTABLE_TEST_TABLE_ID only; there is no fallback, and a test ID equal to
@@ -47,10 +48,11 @@ API_ROOT = "https://api.airtable.com/v0"
 
 # ADR-0035: the only fields the pipeline may send, in the base's own order.
 # Status, Classified at and the classification tables' reason fields are the
-# operator's or Airtable's, and are never among them.
+# operator's or Airtable's, and are never among them. Family is ADR-0038's
+# label, classified pipeline-owned in ADR-0035's 2026-09-23 Changes row.
 PIPELINE_FIELDS = ("Title", "Employer", "Location", "Link", "Published",
                    "First seen", "Order date", "Board", "Matched term",
-                   "Identity")
+                   "Identity", "Family")
 IDENTITY_FIELD = "Identity"
 
 # ADR-0004 and ADR-0035: ten records a call.
@@ -266,7 +268,7 @@ class AirtableClient(ResilientClient):
             missing = sorted(expected - set(fields))
             if extra or missing:
                 raise ValueError(
-                    "record %d is not ADR-0035's ten fields: extra %s, missing %s"
+                    "record %d is not the pipeline-owned fields: extra %s, missing %s"
                     % (index, extra or "none", missing or "none"))
             if not fields[IDENTITY_FIELD]:
                 raise ValueError("record %d has no Identity, so the upsert "

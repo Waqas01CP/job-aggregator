@@ -1,0 +1,38 @@
+[
+  {
+    "label": "Family is not sent",
+    "path": "src/airtable.py",
+    "find": "\"Identity\", \"Family\")",
+    "replace": "\"Identity\")"
+  },
+  {
+    "label": "Family is always empty",
+    "path": "src/projection.py",
+    "find": "\"Family\": matcher.family_of(term),",
+    "replace": "\"Family\": None,"
+  },
+  {
+    "label": "Family is one fixed label",
+    "path": "src/projection.py",
+    "find": "\"Family\": matcher.family_of(term),",
+    "replace": "\"Family\": \"Software engineering\","
+  },
+  {
+    "label": "Family comes from the raw title",
+    "path": "src/projection.py",
+    "find": "\"Family\": matcher.family_of(term),",
+    "replace": "\"Family\": matcher.family_of(matcher.match(rep.title)),"
+  },
+  {
+    "label": "Matched term comes from the raw title, Family does not",
+    "path": "src/projection.py",
+    "find": "\"Matched term\": term,",
+    "replace": "\"Matched term\": matcher.match(rep.title),"
+  },
+  {
+    "label": "the upsert no longer refuses a record missing a field",
+    "path": "src/airtable.py",
+    "find": "            if extra or missing:",
+    "replace": "            if extra:"
+  }
+]

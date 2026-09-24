@@ -21,7 +21,8 @@ looks like a bug:
    measured on a 170-member group. `removed_unreviewed.json` is deliberately
    not read, so a row that fell out on a narrowed rule returns if the rule
    widens again (ADR-0040, ADR-0043).
-5. **Send** ADR-0035's ten fields through the Airtable client.
+5. **Send** the pipeline-owned fields, ADR-0035's ten and ADR-0038's `Family`,
+   through the Airtable client.
 """
 
 from datetime import datetime, timezone
@@ -106,7 +107,8 @@ def airtable_datetime(value):
 
 
 def fields_for(g, matcher):
-    """ADR-0035's ten fields for one display group.
+    """The pipeline-owned fields for one display group: ADR-0035's ten and
+    ADR-0038's `Family`, the family of the term shown, never of the title.
 
     **Title and Matched term both come from `title_normalised`.** It is what
     the chain's title rule matches on, so the term shown is the term that
@@ -120,6 +122,7 @@ def fields_for(g, matcher):
     normalised one, and aggregator rows are stored nowhere until ADR-0047's
     write path exists."""
     rep = g.representative
+    term = matcher.match(rep.title_normalised)
     values = {
         "Title": rep.title_normalised,
         "Employer": rep.employer,
@@ -129,8 +132,9 @@ def fields_for(g, matcher):
         "First seen": airtable_datetime(rep.first_seen),
         "Order date": airtable_datetime(rep.ordering_date),
         "Board": rep.board_id,
-        "Matched term": matcher.match(rep.title_normalised),
+        "Matched term": term,
         "Identity": rep.identity,
+        "Family": matcher.family_of(term),
     }
     return {name: values[name] for name in PIPELINE_FIELDS}
 

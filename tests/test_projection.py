@@ -24,10 +24,11 @@ from tests.test_normalise import SPEECHIFY, posting
 
 MATCHER = TitleMatcher()
 NOW = "2026-09-23T12:00:00.000000Z"
-# ADR-0035's ten, by hand, in the base's order. A test compares against this,
-# never against the constant under test.
-TEN_IN_ORDER = ["Title", "Employer", "Location", "Link", "Published", "First seen",
-                "Order date", "Board", "Matched term", "Identity"]
+# The pipeline-owned fields by hand, in the base's order: ADR-0035's ten, and
+# ADR-0038's Family. A test compares against this, never against the constant
+# under test.
+OWNED_IN_ORDER = ["Title", "Employer", "Location", "Link", "Published", "First seen",
+                  "Order date", "Board", "Matched term", "Identity", "Family"]
 
 
 class FakeClient:
@@ -139,14 +140,26 @@ class TestTheRowSent(Harness):
         self.assertEqual(record["Identity"], "greenhouse:3")
         self.assertEqual(record["Location"].split("\n"), ["Karachi", "Lahore"])
 
-    def test_the_fields_are_exactly_the_ten(self):
-        """Against ADR-0035's ten written out by hand, never against
+    def test_the_fields_are_exactly_the_pipeline_owned_ones(self):
+        """Against the set written out by hand, never against
         PIPELINE_FIELDS: the audit of 2026-09-24 added Status to both the
         constant and fields_for, and a comparison with the constant passed."""
         self.write_filtered([make_row(1)])
         client, _ = self.project()
-        self.assertEqual(list(client.sent[0]), TEN_IN_ORDER)
-        self.assertEqual(list(PIPELINE_FIELDS), TEN_IN_ORDER)
+        self.assertEqual(list(client.sent[0]), OWNED_IN_ORDER)
+        self.assertEqual(list(PIPELINE_FIELDS), OWNED_IN_ORDER)
+
+    def test_family_is_the_family_of_the_term_shown(self):
+        """ADR-0038: a lookup on the term the title rule named, never a
+        reading of the title. Two rows in different families, written out by
+        hand from docs/reference/title-pool.md, so a Family taken from the wrong
+        term, or the same for every row, fails one of them."""
+        self.write_filtered([make_row(1, title="AI Engineer"),
+                             make_row(2, title="Software Engineer", employer="Globex")])
+        client, _ = self.project()
+        got = {r["Identity"]: (r["Matched term"], r["Family"]) for r in client.sent}
+        self.assertEqual(got, {"greenhouse:1": ("ai engineer", "LLM and applied AI"),
+                               "greenhouse:2": ("software engineer", "Software engineering")})
 
     def test_matched_term_comes_from_the_title_the_chain_matched(self):
         """The chain's title rule matches title_normalised. The raw title of
@@ -158,6 +171,12 @@ class TestTheRowSent(Harness):
         self.write_filtered([make_row(1, title=raw, title_normalised=normalised)])
         client, _ = self.project()
         self.assertEqual(client.sent[0]["Matched term"], MATCHER.match(normalised))
+        # The two terms sit in different families, so Family taken from the
+        # raw title fails here as well.
+        self.assertNotEqual(MATCHER.family_of(MATCHER.match(raw)),
+                            MATCHER.family_of(MATCHER.match(normalised)))
+        self.assertEqual(client.sent[0]["Family"],
+                         MATCHER.family_of(MATCHER.match(normalised)))
 
     def test_title_is_the_normalised_one_and_the_raw_one_stays_in_the_store(self):
         """The operator's choice, 2026-09-23: the display reads the normalised

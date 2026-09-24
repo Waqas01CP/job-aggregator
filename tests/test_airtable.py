@@ -30,10 +30,12 @@ BASE = "appFAKEBASE000001"
 TABLE = "tblFAKETABLE00001"
 TEST_TABLE = "tblFAKETESTTAB001"
 
-# ADR-0035's ten, written out by hand so a change to PIPELINE_FIELDS has to
-# change this too. The set a mutation adding Status must break.
-TEN = {"Title", "Employer", "Location", "Link", "Published", "First seen",
-       "Order date", "Board", "Matched term", "Identity"}
+# The pipeline-owned fields, written out by hand so a change to
+# PIPELINE_FIELDS has to change this too: ADR-0035's ten, and ADR-0038's Family,
+# classified pipeline-owned 2026-09-23. The set a mutation adding Status must
+# break.
+OWNED = {"Title", "Employer", "Location", "Link", "Published", "First seen",
+         "Order date", "Board", "Matched term", "Identity", "Family"}
 
 
 class FakeResponse:
@@ -95,7 +97,7 @@ def row(i):
             "Link": "https://example.test/%d" % i, "Published": "2026-09-20T10:00:00.000Z",
             "First seen": "2026-09-21T10:00:00.000Z", "Order date": "2026-09-20T10:00:00.000Z",
             "Board": "greenhouse:acme", "Matched term": "ai engineer",
-            "Identity": "greenhouse:%d" % i}
+            "Identity": "greenhouse:%d" % i, "Family": "LLM and applied AI"}
 
 
 def rows(n):
@@ -109,17 +111,17 @@ def env(**overrides):
     return base
 
 
-class TestTheTenFields(unittest.TestCase):
-    def test_the_sent_set_is_exactly_adr_0035s_ten(self):
+class TestThePipelineOwnedFields(unittest.TestCase):
+    def test_the_sent_set_is_exactly_the_pipeline_owned_fields(self):
         """The guard against the worst failure available here. An upsert
-        overwrites every field it sends, so an eleventh field is somebody
-        else's data."""
-        self.assertEqual(set(PIPELINE_FIELDS), TEN)
+        overwrites every field it sends, so a field outside the set is
+        somebody else's data."""
+        self.assertEqual(set(PIPELINE_FIELDS), OWNED)
         c = client()
         c.upsert(rows(12))
         for call in c._session.calls:
             for record in call["json"]["records"]:
-                self.assertEqual(set(record["fields"]), TEN)
+                self.assertEqual(set(record["fields"]), OWNED)
 
     def test_status_is_refused_before_anything_is_sent(self):
         """Ruling 1, 2026-09-23: the pipeline never writes Status. A write
@@ -131,17 +133,19 @@ class TestTheTenFields(unittest.TestCase):
             c.upsert([record])
         self.assertEqual(c._session.calls, [])
 
-    def test_a_record_missing_one_of_the_ten_is_refused(self):
-        record = row(1)
-        del record["Matched term"]
-        c = client()
-        with self.assertRaises(ValueError):
-            c.upsert([record])
-        self.assertEqual(c._session.calls, [])
+    def test_a_record_missing_one_of_the_set_is_refused(self):
+        for name in ("Matched term", "Family"):
+            with self.subTest(missing=name):
+                record = row(1)
+                del record[name]
+                c = client()
+                with self.assertRaises(ValueError):
+                    c.upsert([record])
+                self.assertEqual(c._session.calls, [])
 
     def test_an_empty_published_is_sent_as_empty(self):
         """A platform with no publication date sends an empty Published,
-        which the brief expects; the field is still one of the ten."""
+        which the brief expects; the field is still one of the set."""
         record = row(1)
         record["Published"] = None
         c = client()

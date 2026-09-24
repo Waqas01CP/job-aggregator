@@ -1,0 +1,62 @@
+[
+  {
+    "label": "fold no longer strips accents",
+    "path": "src/normalise.py",
+    "find": "text = strip_latin_marks(unicodedata.normalize(\"NFKC\", str(text)))",
+    "replace": "text = unicodedata.normalize(\"NFKC\", str(text))"
+  },
+  {
+    "label": "marks stripped after any letter, not only Latin",
+    "path": "src/normalise.py",
+    "find": "if unicodedata.combining(ch) and out and out[-1].isascii():",
+    "replace": "if unicodedata.combining(ch):"
+  },
+  {
+    "label": "polled_on ignores poll_slots",
+    "path": "src/config.py",
+    "find": "return slot not in SLOTS or not self.poll_slots or slot in self.poll_slots",
+    "replace": "return True"
+  },
+  {
+    "label": "an unknown poll slot is accepted",
+    "path": "src/config.py",
+    "find": "        if s not in SLOTS:",
+    "replace": "        if False:"
+  },
+  {
+    "label": "a skipped board is still polled",
+    "path": "src/run.py",
+    "find": "                if not board.polled_on(self.slot):",
+    "replace": "                if False:"
+  },
+  {
+    "label": "the evening cron is named the morning slot",
+    "path": ".github/workflows/fetch.yml",
+    "find": "'0 13 * * *' && 'evening'",
+    "replace": "'0 13 * * *' && 'morning'"
+  },
+  {
+    "label": "escalation after two failures",
+    "path": "src/run.py",
+    "find": "ESCALATE_AFTER = 3",
+    "replace": "ESCALATE_AFTER = 2"
+  },
+  {
+    "label": "a success does not reset the count",
+    "path": "src/run.py",
+    "find": "        if not needs_attention(log):\n            break",
+    "replace": "        if not needs_attention(log):\n            continue"
+  },
+  {
+    "label": "a no-commit run escalates",
+    "path": "src/run.py",
+    "find": "        return {\"failed_in_a_row\": 1, \"escalate\": False}\n    try:",
+    "replace": "        return {\"failed_in_a_row\": 1, \"escalate\": True}\n    try:"
+  },
+  {
+    "label": "the workflow is never told",
+    "path": "src/run.py",
+    "find": "        tell_the_workflow(\"escalate\", \"true\")",
+    "replace": "        pass"
+  }
+]
