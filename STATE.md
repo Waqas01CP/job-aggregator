@@ -6,6 +6,8 @@ status: current
 
 # STATE
 
+**Touched 2026-09-24T15:16Z by the implementing seat, for one log correction only:** the log's D5 row claimed the operator answered D5, when it came from his go on G1 to G6. Nothing was re-verified for it; the line that follows stands.
+
 **Last verified 2026-09-24T15:10Z by the implementing seat, for the first live write to the private store and the `Status` choices, against `main` at `e2a481d` and `data-test` at `fe8f56f`.** Checked for it: test-mode dispatch 36016481510 through the public Actions API and its committed run log from a scratch clone of `data-test`; every stored file on `data-test` searched for Himalayas; both tables' `Status` choices and every marked row read through the connector. `2026-09-24-operator-decisions-and-the-next-builds.md`. The line that follows is the previous verification.
 
 **Verified earlier, 2026-09-24T14:15Z by the implementing seat, for G6, against `main` at `1187193`, pushed.** Checked for it: 542 tests on Python 3.12 and 3.11; eleven contract-check mutations, all caught; the check run twice against the live boards with `--no-commit`, then once more with a field removed by hand from the stored fingerprint, which it named. `2026-09-24-operator-decisions-and-the-next-builds.md`. The line that follows is the previous verification.
