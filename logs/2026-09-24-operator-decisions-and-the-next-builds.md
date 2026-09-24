@@ -40,7 +40,7 @@ chat records them afterwards from an addendum to the pending brief.
 | D2 | GitHub's failed-run email | Does not breach "no notification system". His standing rule, his ruling |
 | D3 | Closed postings | *(Answered 2026-09-24T15:10Z, below: stored with the reason "closed", visible for fifteen days after it closed, then deleted under the same rule.)* **Clarification asked and pending.** He does not want to see a closed role and mentioned the fifteen-day rule; the seat asked whether a closed row goes at the next sweep, stored with the reason, or after fifteen days |
 | D4 | "Sênior" escaping the seniority rule | Strip accents before matching, **with extra care**: every title's verdict before and after is compared, and any change is shown before it ships |
-| D5 | Aggregator rows accumulating | Build ADR-0047's write path. *(Corrected 2026-09-24T15:15Z: not answered on its own. His reply skipped D5; this is taken from his go on G1 to G6, which includes G2, the write path, and was the recommended option)* |
+| D5 | Aggregator rows accumulating | Build ADR-0047's write path. *(Corrected 2026-09-24T15:12Z, stamped 15:15Z when written, ahead of the clock: not answered on its own. His reply skipped D5; this is taken from his go on G1 to G6, which includes G2, the write path, and was the recommended option)* |
 | D6 | The private store cannot be written | Exit 2, not 1, keeping the public fetch. Test that the repository saves before relying on it. **`AGGREGATOR_STORE_TOKEN` expires on 2027-01-01**, to be recorded |
 | D7 | Test copies of the three classification tables | Yes. The real tables may be used meanwhile |
 | D8 | Banyan Canopy | The deferral to 2026-10-07 stands |
