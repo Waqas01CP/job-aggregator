@@ -371,3 +371,24 @@ workspace had spent 22 counting the three test runs. And a failed private
 restore fails the whole projection, public rows included. That is the seat's
 design, so an expired token freezes the display until someone acts; the run
 turns red on the third.
+
+## F1 decided, and both workflows proven after the concurrency change
+
+**F1**, the operator, 2026-09-24: "leave the field ids, it is not that much
+of an issue." They stay in `101371d`'s history; the log no longer carries them.
+
+**Test-mode dispatches at `056e21a`** `[VERIFIED]` through the public Actions
+API and a scratch clone of `data-test`. Both succeeded, so GitHub accepted
+`queue: max`.
+
+- **Fetch, 36059310671.** `private_store` reads `restored: 3, pushed: true`,
+  no failure: the private store's round trip holds on the test branch.
+  Himalayas stopped after one page, 20 fetched and 14 new, because its stop
+  rule now anchors on stored data. First contact took 25 pages and all 500
+  were new. The run's requests fell from 36 to 13. 48 groups were sent in 5
+  calls. No stored file on the public `data-test` branch contains
+  "himalayas".
+- **Contract check, 36059946826.** Exit 0, and a baseline for all three
+  platforms committed to `data-test` under `logs-contract/`, with
+  `contract/fingerprint.json` beside it: Greenhouse 258 postings, Lever 16,
+  Himalayas 20.
