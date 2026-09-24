@@ -286,3 +286,23 @@ marked row's `Status`, restarting `Classified at`, is unknown. If it does,
 the only effect is that those rows' fifteen-day clocks start later, since
 nothing deletes on that clock yet. The seat checks `Classified at` after the
 rename.
+
+## The `Status` rename, done
+
+The operator renamed the choices in the browser. Read back through the
+connector at 15:30Z `[VERIFIED]`:
+
+- Both tables hold exactly `accepted`, `rejected-poor-filtering` and
+  `rejected-not-a-fit`, and `expired_before_review` is gone.
+- Each choice kept its ID: `applied` is `accepted`, `rejected_pipeline` is
+  `rejected-poor-filtering`, `rejected_choice` is `rejected-not-a-fit`.
+- All 8 marked rows keep their meaning: 3 in `Jobs`, all
+  `rejected-poor-filtering`; in `Jobs test`, 2 `accepted`, 1
+  `rejected-not-a-fit` and 2 `rejected-poor-filtering`.
+- **Not one `Classified at` moved.** Each matches its value read at 15:08Z,
+  so a rename does not restart a row's fifteen-day clock. That answers the
+  question the dependency warning raised.
+- The `To review` view still exists. Its filter cannot be read through the
+  connector.
+
+The sweep now waits only on its brief.
