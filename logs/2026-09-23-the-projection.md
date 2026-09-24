@@ -111,7 +111,9 @@ token, its encoded header and the repository's name from every error.
 before the run log is, and never raises. A committing run projects through
 the client; a no-commit run plans from local files and reaches no base and no
 private store; a failure is scrubbed of every secret the run holds, recorded,
-committed, and exits 2. `make_airtable_client` and `read_private_stores` are
+committed, and exits 2. *(Overstated when written, found by the audit of
+2026-09-24: the run-level scrub missed the private token's base64 form, which
+git sends. Fixed that day.)* `make_airtable_client` and `read_private_stores` are
 the two seams the tests replace, as they already replace `HttpClient`.
 
 **`src/envfile.py` and `.env.example`.** Standard library only. Loaded at
@@ -442,3 +444,87 @@ idempotence ADR-0030 claims, now on the test branch too.
 - Production's first projection, at the next scheduled run.
 - The `Title` field's description in the base.
 - `null` for an empty field: no row sent had one.
+
+---
+
+# The audit, its nine findings fixed, and production's first projection, 2026-09-24 UTC
+
+The operator ran the audit brief. The audit seat read `d8f3658` to `f864053`
+at `f864053`, wrote nothing to the repository, and found nine things. Its
+verdict: the work does what the operator and Brief 6 asked, every safety
+property held against the case built to break it, and no finding is a live
+pipeline defect. Each finding was checked at its line before it was fixed.
+
+## Production's first projection
+
+`[VERIFIED]` scheduled run 35951490496, created 2026-09-24T03:27:00Z, on
+`f864053`, success; `data` moved from `bab0acf` to `a5abc3b`. Its run log:
+360 rows read (345 public, 15 Himalayas), 349 admitted, 44 groups (29 plus
+15), 44 sent in 5 calls, no failure, no retry; `month_to_date_before_run` 0,
+because the two test runs' calls sit on `data-test`, as designed. `Jobs`,
+read through the connector at about 09:50Z, holds 44 records, every `Status`
+empty, Speechify's rows showing the normalised title.
+
+Two things seen in `Jobs` and not investigated. A Himalayas row titled
+"Fullstack Developer | Sênior (13593)" was admitted. `fold` normalises with
+NFKC, which keeps the circumflex, so "sênior" never matches the seniority word
+"senior". That is a filter gap, and a rule change is the operator's. And
+"GTM AI Engineer -Deal Desk" appears twice: once from Motive's Greenhouse board
+and once through Himalayas under the company slug `thinkmotive`. Cross-source
+deduplication depends on the employer names agreeing (ADR-0026). Both go to
+the architecture brief.
+
+## The findings, and what was done
+
+| # | Finding | Done |
+|---|---|---|
+| 1 | STATE.md's headline and its "audit seat has never run", and four sentences in `build-the-writer.md`, still said the writer was unbuilt or unrun | Annotated with dates in all six places; the headline now states what the production run did |
+| 2 | Two more future timestamps, in `af899c1` and `f864053`, after `5768cf0` had fixed the first | Both corrected to their commit times, with notes. **A mechanical guard instead of a third promise:** gate 4 of the pre-commit hook now refuses a staged STATE.md whose first "Last verified" time is later than the moment of committing. Kept inside gate 4 so the documented count of six gates stays true |
+| 3 | STATE.md claimed a hook mutation that did not exist, and nothing in the repository tested the launcher | The claim is annotated. `TestTheLauncher` in `tests/test_heredoc_guard.py` runs the exact launcher read out of `.claude/settings.json`, and three mutations of the settings file are caught |
+| 4 | Two tests that could not fail for what their names say | The title test now builds its row through the real normaliser, and the audit's own mutation, a normaliser storing the normalised title as `title`, is caught by it. The ten-field test now compares against the ten names written out by hand, and the audit's mutation, `Status` added to both the constant and `fields_for`, is caught by it |
+| 5 | The run-level scrub missed the private token's base64 form | `storage.private_store_basic` builds the encoding in one place; `redact_secrets` scrubs it too; the run test raises an exception quoting it and asserts it reaches neither the committed log nor the output. The log's sentence that overstated the scrub is annotated |
+| 6 | `storage.py` said the private repository's name "never appears in a file here", made false by `fe07242` | The comment now says what is true: the run treats the name as a secret and scrubs it from all output; documents may name it, by the operator's decision |
+| 7 | The guard switched off silently when `CLAUDE_PROJECT_DIR` pointed elsewhere | The launcher searches from the variable and from the working directory. When it finds nothing it still fails open, but now prints a `systemMessage` saying the command was not checked. The guard itself now returns 0 on a payload that is valid JSON but not an object, where it used to exit 1 |
+| 8 | A remote with an unborn default branch beside other branches was reported as unreachable | A listed-but-unfetchable store now says "was reached and listed, but its default branch could not be fetched", still failing visibly |
+| 9 | `d8f3658` combined the small commit with the cold check, unreported | Reported here. The cold check's findings were logged in the same commit as the small change the operator approved; the two were not separated |
+
+Also from the audit, corrected: `src/projection.py`'s docstring said "every
+layer stores `title`", which is true of the branch and not of `Jobs` or of
+aggregator rows. It now says which is which.
+
+For the architecture chat, from the audit: ADR-0027:61 says dedupe
+normalisation and title matching "must not be merged", and the chain has
+matched on `title_normalised` since before this work; and the treatment of the
+private repository's name as a secret in code no longer matches the tree's
+documents.
+
+## Proving the timestamp gate
+
+`[VERIFIED]` with the case built to defeat it: with every file of this commit
+staged and STATE.md stamped 2026-09-24T10:15Z while `date -u` read 10:10Z,
+`git commit` was refused with "COMMIT BLOCKED: STATE.md says it was last
+verified at 2026-09-24T10:15Z, but it is now 2026-09-24T10:10Z UTC", and no
+commit was made. The stamp was then set from `date -u` and the commit passed.
+
+## Mutations
+
+`tools/mutations/2026-09-24-audit-fixes.json`, 9, run with `--why`
+`[VERIFIED]`, all caught, each by a test built for it:
+
+| Mutation | Caught by |
+|---|---|
+| The launcher searches the project directory only | `test_a_project_dir_pointing_elsewhere_does_not_switch_it_off` |
+| The launcher does not walk up to the parents | the two subdirectory tests of `TestTheLauncher` |
+| The launcher fails open silently | `test_where_no_guard_exists_it_fails_open_and_says_so` |
+| The guard exits 1 on a payload that is not an object | `test_a_payload_that_is_not_an_object_never_blocks` |
+| The normaliser stores the normalised title as the title, the audit's own | `test_original_title_is_never_replaced`, and now `test_title_is_the_normalised_one_and_the_raw_one_stays_in_the_store` |
+| `fields_for` emits `Status` | `test_the_fields_are_exactly_the_ten` |
+| `Status` added to the constant | 46 tests, including `test_the_sent_set_is_exactly_adr_0035s_ten` |
+| The run's scrub misses the encoded token | `test_a_failure_quoting_a_secret_is_scrubbed_before_it_is_logged` |
+| A listed but unfetchable store is called unreachable | `test_a_failed_fetch_is_unreachable_too` |
+
+The audit's combined case, `Status` in both the constant and `fields_for` at
+once, spans two files and so cannot be one mutation for the harness. It was
+applied by hand to a scratch copy of the tree `[VERIFIED]`:
+`test_the_fields_are_exactly_the_ten` failed, where before the fix it passed.
+Every find in the two 2026-09-23 mutation files still occurs exactly once.

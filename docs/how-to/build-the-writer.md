@@ -6,6 +6,12 @@ status: current
 
 # Build the writer
 
+*(2026-09-24: no longer on hold. Steps 1 and 2 are built and live. Both test-mode
+checks passed on 2026-09-23 and production's first projection filled `Jobs`
+with 44 rows at 2026-09-24T03:27Z. What remains is step 3, the star, and step
+4, the sweep. The paragraphs below are kept as written; the audit of that date
+found them stale.)*
+
 **This is the one implementation on hold.** Everything else in the pipeline
 runs. The writer is what stands between a working fetch-and-filter pipeline
 and a display the operator can read, and therefore between the project and
@@ -95,8 +101,8 @@ above were missing, both for the architecture chat:
 | The chain | `src/filters.py`, `apply_chain` | Built. Pure: takes rows and a clock |
 | The backfill | `src/backfill.py`, called by every run | Built and proven in production |
 | Shared retry, backoff, breaker | `src/resilience.py`, imported by the fetch module and the Airtable client | Built 2026-09-23. ADR-0034's mutation Confirmation passes: breaking the backoff fails both modules' tests |
-| The Airtable client | `src/airtable.py` | Built 2026-09-23, renamed from `src/airtable_client.py` for Brief 6. One verb, an upsert of exactly ADR-0035's ten fields; no read path; test mode can only reach `Jobs test`. No call yet made to Airtable |
-| The projection | `src/projection.py`, called by every committing run | Built 2026-09-23. Over `data` at `bab0acf`: 345 rows read, 334 admitted, 29 groups, 29 to send, `filtered.json` byte-identical afterwards. Not yet run against the base |
+| The Airtable client | `src/airtable.py` | Built 2026-09-23, renamed from `src/airtable_client.py` for Brief 6. One verb, an upsert of exactly ADR-0035's ten fields; no read path; test mode can only reach `Jobs test`. No call yet made to Airtable *(2026-09-24: calls made by two test runs and one production run, 6, 6 and 5)* |
+| The projection | `src/projection.py`, called by every committing run | Built 2026-09-23. Over `data` at `bab0acf`: 345 rows read, 334 admitted, 29 groups, 29 to send, `filtered.json` byte-identical afterwards. Not yet run against the base *(2026-09-24: run against it; `Jobs test` 56 then 59, `Jobs` 44 after the first scheduled run)* |
 | The outcome stores' reader | `src/storage.py`: restored from the branch, and read from the private repository | Built 2026-09-23. Absent reads as empty; an unreachable private repository fails the projection |
 
 ## The constraints, and the record each comes from
@@ -252,7 +258,8 @@ operator.
    its own, so a test run's calls are not counted against production's month
    or the reverse. Test runs are dispatched by hand and rare.)*
 2. **The projection. Built 2026-09-23, offline-verified; the live checks
-   below are outstanding.** Read `filtered.json`, apply the chain, group, skip
+   below are outstanding.** *(2026-09-24: both live checks passed on
+   2026-09-23, and production projects on every scheduled run.)* Read `filtered.json`, apply the chain, group, skip
    stored outcomes, upsert pipeline-owned fields only. ~~Blocked on the two
    open decisions above~~, decided 2026-09-23. ADR-0035's
    Confirmation runs **against `Jobs test`**: project the same batch twice,
@@ -280,6 +287,7 @@ project, and nothing before it counts as the slice being confirmed.
 
 | Date | Change | Reason |
 |---|---|---|
+| 2026-09-24 | "On hold", "no call yet made", "not yet run against the base" and "the live checks are outstanding" annotated as no longer true | The audit of 2026-09-24 found them stale: both live checks passed on 2026-09-23 and production's first projection filled `Jobs` at 03:27Z. Annotated so the questions stay readable beside what happened |
 | 2026-09-23 | Step 2 marked built, with the client's new name and the outcome stores' reader added to what exists. The two undecided constraints and the three open questions noted as decided, pointing at the records' Changes rows | Brief 6 built the projection on the architecture chat's five rulings of the same day. The notes are annotations so the questions stay readable beside their answers |
 | 2026-09-23 | Checked cold by a second seat. Step 1 built and marked so. Four gaps closed: the budget range at three to four calls a run is 48% to 54%, not "nearer 48%"; step 1 gained ADR-0034's grep Confirmation, its run-log requirement and the five-a-second limit; ADR-0009's Confirmation gained "writes rows to all three layers"; ADR-0035's upsert assumption and fallback added. Two facts added to the open questions | The corrections had been verified only by the seat that made them. Every clause was re-located in its record rather than by the audit's anchors, and the counts reproduced from the code. The four gaps are factual and closed here; the two record conflicts are the architecture chat's and are stated, not settled |
 | 2026-09-23 | Six errors corrected and eight omissions folded in, after an audit seat checked every constraint against its record | The file claimed nine source records and cites twelve; invented two of the five operator-owned fields it listed and misattributed a computed field to the operator; said three outcome stores where ADR-0047 says six; carried a group count copied from a measurement over 270 rows, which made the call budget look smaller than it is; treated `Classified at` as outstanding when it was built on 2026-09-20; and omitted ADR-0040's removal path entirely. Two constraints are still missing because no record settles them, and both are now named at the top rather than silently absent. Corrections verified against the records by the correcting seat and **not yet checked by a second** |

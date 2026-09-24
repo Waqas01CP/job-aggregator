@@ -18,10 +18,16 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src import projection, storage
 from src.airtable import PIPELINE_FIELDS
 from src.filters import TitleMatcher
-from src.normalise import Row, dumps
+from src.normalise import Row, dumps, normalise
+from tests.test_normalise import NOW as NORMALISE_NOW
+from tests.test_normalise import SPEECHIFY, posting
 
 MATCHER = TitleMatcher()
 NOW = "2026-09-23T12:00:00.000000Z"
+# ADR-0035's ten, by hand, in the base's order. A test compares against this,
+# never against the constant under test.
+TEN_IN_ORDER = ["Title", "Employer", "Location", "Link", "Published", "First seen",
+                "Order date", "Board", "Matched term", "Identity"]
 
 
 class FakeClient:
@@ -134,9 +140,13 @@ class TestTheRowSent(Harness):
         self.assertEqual(record["Location"].split("\n"), ["Karachi", "Lahore"])
 
     def test_the_fields_are_exactly_the_ten(self):
+        """Against ADR-0035's ten written out by hand, never against
+        PIPELINE_FIELDS: the audit of 2026-09-24 added Status to both the
+        constant and fields_for, and a comparison with the constant passed."""
         self.write_filtered([make_row(1)])
         client, _ = self.project()
-        self.assertEqual(list(client.sent[0]), list(PIPELINE_FIELDS))
+        self.assertEqual(list(client.sent[0]), TEN_IN_ORDER)
+        self.assertEqual(list(PIPELINE_FIELDS), TEN_IN_ORDER)
 
     def test_matched_term_comes_from_the_title_the_chain_matched(self):
         """The chain's title rule matches title_normalised. The raw title of
@@ -152,11 +162,17 @@ class TestTheRowSent(Harness):
     def test_title_is_the_normalised_one_and_the_raw_one_stays_in_the_store(self):
         """The operator's choice, 2026-09-23: the display reads the normalised
         title, because the group's Location already names every city. The
-        raw title must never be lost, so the stored record still carries it."""
+        raw title must never be lost, so the stored record still carries it.
+
+        The row is built by the real normaliser and stored as the run stores
+        it. The first version wrote both titles by hand and read them back,
+        so it passed with a normaliser that overwrote the raw title; the audit
+        of 2026-09-24 proved that."""
         raw, normalised = "Software Engineer, Platform - Lahore, Pakistan", \
             "Software Engineer, Platform"
-        self.write_filtered([make_row(1, title=raw, title_normalised=normalised,
-                                      location="Lahore, Pakistan")])
+        row = normalise([posting(title=raw, location="Lahore, Pakistan",
+                                 board_id="greenhouse:speechify")], SPEECHIFY, NORMALISE_NOW)[0]
+        storage.write_atomic(self.paths["filtered"], dumps([row.as_record()]))
         client, _ = self.project()
         self.assertEqual(client.sent[0]["Title"], normalised)
         stored = storage.read_records(self.paths["filtered"])[0]

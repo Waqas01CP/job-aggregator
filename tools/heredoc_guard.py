@@ -126,6 +126,8 @@ def main():
         payload = json.load(sys.stdin)
     except Exception:
         return 0  # not our business to fail a tool call over a malformed payload
+    if not isinstance(payload, dict):
+        return 0  # valid JSON that is not an object used to raise and exit 1
     command = (payload.get("tool_input") or {}).get("command") or ""
     should_ask, reason = verdict(command)
     if should_ask:

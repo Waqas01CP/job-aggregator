@@ -1,0 +1,56 @@
+[
+  {
+    "label": "the launcher searches the project directory only",
+    "path": ".claude/settings.json",
+    "find": "(os.environ.get('CLAUDE_PROJECT_DIR'),os.getcwd())",
+    "replace": "(os.environ.get('CLAUDE_PROJECT_DIR') or os.getcwd(),)"
+  },
+  {
+    "label": "the launcher does not walk up to the parents",
+    "path": ".claude/settings.json",
+    "find": "for p in [r,*r.parents]",
+    "replace": "for p in [r]"
+  },
+  {
+    "label": "the launcher fails open silently",
+    "path": ".claude/settings.json",
+    "find": "g or (print(json.dumps({'systemMessage':'heredoc guard not found; this command was not checked'})),sys.exit(0));",
+    "replace": "g or sys.exit(0);"
+  },
+  {
+    "label": "the guard exits 1 on a payload that is not an object",
+    "path": "tools/heredoc_guard.py",
+    "find": "    if not isinstance(payload, dict):\n        return 0",
+    "replace": "    if False:\n        return 0"
+  },
+  {
+    "label": "the normaliser stores the normalised title as the title",
+    "path": "src/normalise.py",
+    "find": "            title=p.title,",
+    "replace": "            title=normalised_title(p, board),"
+  },
+  {
+    "label": "fields_for emits Status",
+    "path": "src/projection.py",
+    "find": "    return {name: values[name] for name in PIPELINE_FIELDS}",
+    "replace": "    return dict({name: values[name] for name in PIPELINE_FIELDS}, Status=None)"
+  },
+  {
+    "label": "Status added to the constant",
+    "path": "src/airtable.py",
+    "find": "\"Identity\")\nIDENTITY_FIELD",
+    "replace": "\"Identity\", \"Status\")\nIDENTITY_FIELD"
+  },
+  {
+    "label": "the run's scrub misses the encoded token",
+    "path": "src/run.py",
+    "find": "    if token:",
+    "replace": "    if False:"
+  },
+  {
+    "label": "a listed but unfetchable store is called unreachable",
+    "path": "src/storage.py",
+    "find": "\"the private store was reached and listed, but its default branch \"",
+    "replace": "\"the private store could not be reached; its default branch \""
+  }
+]

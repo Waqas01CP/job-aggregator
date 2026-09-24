@@ -8,7 +8,7 @@
           {
             "type": "command",
             "command": "python",
-            "args": ["-c", "from pathlib import Path; import os,runpy,sys; d=Path(os.environ.get('CLAUDE_PROJECT_DIR') or os.getcwd()).resolve(); g=[p/'tools'/'heredoc_guard.py' for p in [d,*d.parents] if (p/'tools'/'heredoc_guard.py').is_file()]; g or sys.exit(0); sys.argv=[str(g[0])]; runpy.run_path(str(g[0]),run_name='__main__')"],
+            "args": ["-c", "from pathlib import Path; import json,os,runpy,sys; roots=[Path(x).resolve() for x in (os.environ.get('CLAUDE_PROJECT_DIR'),os.getcwd()) if x]; g=[p/'tools'/'heredoc_guard.py' for r in roots for p in [r,*r.parents] if (p/'tools'/'heredoc_guard.py').is_file()]; g or (print(json.dumps({'systemMessage':'heredoc guard not found; this command was not checked'})),sys.exit(0)); sys.argv=[str(g[0])]; runpy.run_path(str(g[0]),run_name='__main__')"],
             "timeout": 10,
             "statusMessage": "Checking the heredoc"
           }

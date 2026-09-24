@@ -599,8 +599,17 @@ class TestPrivateStore(unittest.TestCase):
         self.assertIn("git exit 128", str(caught.exception))
 
     def test_a_failed_fetch_is_unreachable_too(self):
-        with self.assertRaises(storage.PrivateStoreUnreachable):
-            self.read(FakeGit(fails={"fetch"}))
+        """Listed but not fetchable fails the same way and says which: the
+        audit of 2026-09-24 found an unborn default branch reported as a
+        repository that could not be reached."""
+        git = FakeGit(fails={"fetch"},
+                      stderr=("fatal: couldn't find remote ref (%s %s)"
+                              % (self.REPO, self.TOKEN)).encode("utf-8"))
+        with self.assertRaises(storage.PrivateStoreUnreachable) as caught:
+            self.read(git)
+        self.assertIn("reached and listed", str(caught.exception))
+        self.assertIn("default branch", str(caught.exception))
+        self.assertClean(caught.exception)
 
     def test_missing_secrets_are_named_not_echoed(self):
         for repo, token in (("", self.TOKEN), (self.REPO, ""), (None, None)):

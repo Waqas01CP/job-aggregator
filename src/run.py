@@ -82,11 +82,19 @@ def read_private_stores():
 
 
 def redact_secrets(text, environ=None):
+    """Every secret the run holds, scrubbed, including the private store's
+    token in the encoded form git sends it in. The audit of 2026-09-24 put an
+    exception quoting that encoded header through the run, and it reached the
+    run log intact while the raw token was scrubbed."""
     environ = os.environ if environ is None else environ
     for name in SECRET_ENVS:
         value = (environ.get(name) or "").strip()
         if value:
             text = text.replace(value, "<%s>" % name)
+    token = (environ.get(storage.PRIVATE_STORE_TOKEN_ENV) or "").strip()
+    if token:
+        text = text.replace(storage.private_store_basic(token),
+                            "<%s, encoded>" % storage.PRIVATE_STORE_TOKEN_ENV)
     return text
 
 

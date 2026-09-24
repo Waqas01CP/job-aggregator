@@ -19,8 +19,10 @@ click through, and a gate people click through is worse than none.
 
 import json
 import os
+import shutil
 import subprocess
 import sys
+import tempfile
 import unittest
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -157,6 +159,82 @@ class TestTheHookContract(unittest.TestCase):
         out = self.run_guard({"tool_name": "Bash", "tool_input": {}})
         self.assertEqual(out.returncode, 0)
         self.assertEqual(out.stdout.strip(), "")
+
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+def launcher():
+    """The exact launcher the hook runs, read from .claude/settings.json, so a
+    change there is what these tests exercise."""
+    with open(os.path.join(ROOT, ".claude", "settings.json"), encoding="utf-8") as f:
+        hook = json.load(f)["hooks"]["PreToolUse"][0]["hooks"][0]
+    assert hook["command"] == "python" and hook["args"][0] == "-c", hook
+    return hook["args"][1]
+
+
+def run_launcher(payload, cwd, project_dir=None):
+    env = dict(os.environ)
+    env.pop("CLAUDE_PROJECT_DIR", None)
+    if project_dir:
+        env["CLAUDE_PROJECT_DIR"] = project_dir
+    return subprocess.run([sys.executable, "-c", launcher()],
+                          input=payload if isinstance(payload, str) else json.dumps(payload),
+                          cwd=cwd, env=env, capture_output=True, text=True, timeout=60)
+
+
+RISKY = {"tool_input": {"command": "cat <<'EOF' > src/x.py" + chr(10) + "print(1)"
+                                  + chr(10) + "EOF"}}
+HARMLESS = {"tool_input": {"command": "git status --short"}}
+
+
+class TestTheLauncher(unittest.TestCase):
+    """The hook once ran `python tools/heredoc_guard.py`, a path relative to
+    the working directory. From any subdirectory Python exited 2 on the
+    missing script, a PreToolUse hook reads 2 as block, and every Bash call was
+    refused. The launcher finds the guard from wherever it runs and never
+    blocks. Before 2026-09-24 nothing in the repository tested it; its only
+    proof was a scratchpad script, which the audit of that date reported."""
+
+    def decision(self, result):
+        self.assertEqual(result.returncode, 0, result.stderr)
+        if not result.stdout.strip():
+            return None
+        return json.loads(result.stdout)
+
+    def test_it_finds_the_guard_from_a_subdirectory(self):
+        out = self.decision(run_launcher(RISKY, os.path.join(ROOT, "docs", "decisions")))
+        self.assertEqual(out["hookSpecificOutput"]["permissionDecision"], "ask")
+
+    def test_it_stays_quiet_on_a_harmless_command_from_a_subdirectory(self):
+        self.assertIsNone(self.decision(run_launcher(HARMLESS, os.path.join(ROOT, "docs"))))
+
+    def test_a_project_dir_pointing_elsewhere_does_not_switch_it_off(self):
+        """The audit's case: CLAUDE_PROJECT_DIR set to another directory used
+        to find nothing and exit silently. The working directory is searched
+        too."""
+        elsewhere = tempfile.mkdtemp()
+        try:
+            out = self.decision(run_launcher(RISKY, ROOT, project_dir=elsewhere))
+        finally:
+            shutil.rmtree(elsewhere, ignore_errors=True)
+        self.assertEqual(out["hookSpecificOutput"]["permissionDecision"], "ask")
+
+    def test_where_no_guard_exists_it_fails_open_and_says_so(self):
+        """Failing open is the design; failing open silently made a disabled
+        guard look like one with nothing to say."""
+        nowhere = tempfile.mkdtemp()
+        try:
+            out = self.decision(run_launcher(RISKY, nowhere))
+        finally:
+            shutil.rmtree(nowhere, ignore_errors=True)
+        self.assertNotIn("hookSpecificOutput", out)
+        self.assertIn("not checked", out["systemMessage"])
+
+    def test_a_payload_that_is_not_an_object_never_blocks(self):
+        for payload in ("[1, 2]", "not json at all"):
+            with self.subTest(payload=payload):
+                self.assertIsNone(self.decision(run_launcher(payload, ROOT)))
 
 
 if __name__ == "__main__":

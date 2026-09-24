@@ -608,9 +608,12 @@ class TestMain(unittest.TestCase):
                    for i, name in enumerate(run_module.SECRET_ENVS)}
         saved = {name: os.environ.get(name) for name in secrets}
         os.environ.update(secrets)
+        # The private token as git sends it, which decodes to the token. The
+        # audit of 2026-09-24 found this form passing the scrub intact.
+        encoded = storage.private_store_basic(secrets[storage.PRIVATE_STORE_TOKEN_ENV])
         try:
             def leak(test_mode, used_this_month):
-                raise RuntimeError("boom " + " ".join(secrets.values()))
+                raise RuntimeError("boom " + " ".join(secrets.values()) + " " + encoded)
             run_module.make_airtable_client = leak
             code, out, err = self.main()
         finally:
@@ -622,7 +625,7 @@ class TestMain(unittest.TestCase):
         self.assertEqual(code, EXIT_STOPPED_RESUMABLE)
         committed = self.on_branch("data", "logs-runs/%s"
                                    % sorted(os.listdir("data/logs-runs"))[-1])
-        for value in secrets.values():
+        for value in list(secrets.values()) + [encoded]:
             for text, where in ((committed, "the committed run log"), (out, "stdout"),
                                 (err, "stderr")):
                 self.assertNotIn(value, text, "a secret reached %s" % where)

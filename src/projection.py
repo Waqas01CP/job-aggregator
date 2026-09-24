@@ -114,8 +114,11 @@ def fields_for(g, matcher):
     a board that puts a city in its titles. And it is what the operator chose
     to read, 2026-09-23: a group gathers every city into Location, so a raw
     title naming one of them misleads. Normalisation only strips a trailing
-    " - <city>" equal to the row's own location. The raw title is never lost:
-    every layer stores `title` beside `title_normalised`."""
+    " - <city>" equal to the row's own location. The raw title is never lost
+    where the pipeline stores anything: the raw and filtered layers on the
+    branch keep `title` beside `title_normalised`. `Jobs` shows only the
+    normalised one, and aggregator rows are stored nowhere until ADR-0047's
+    write path exists."""
     rep = g.representative
     values = {
         "Title": rep.title_normalised,

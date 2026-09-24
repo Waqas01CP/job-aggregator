@@ -89,7 +89,9 @@ RESTORED_FILES = (FILTERED_FILE, SEEN_FILE)
 RESTORED_DIRS = (RAW_DIR, OUTCOMES_DIR)
 
 # ADR-0047: aggregator-sourced stores live in a private repository, reached
-# with a token. Its name is a secret too, so it never appears in a file here.
+# with a token. The run treats the repository's name as a secret: it comes from
+# a repository secret and is scrubbed from every error. Documents may name it,
+# by the operator's decision of 2026-09-23; run output never does.
 PRIVATE_STORE_REPO_ENV = "AGGREGATOR_STORE_REPO"
 PRIVATE_STORE_TOKEN_ENV = "AGGREGATOR_STORE_TOKEN"
 PRIVATE_STORE_TIMEOUT = 120
@@ -357,6 +359,12 @@ class PrivateStoreUnreachable(StorageError):
     nothing. The message never names the repository or carries the token."""
 
 
+def private_store_basic(token):
+    """The Basic credential git sends for the private store. It decodes to the
+    token, so anything that scrubs the token must scrub this too."""
+    return base64.b64encode(("x-access-token:%s" % token).encode("utf-8")).decode("ascii")
+
+
 def _scrub(text, secrets):
     for secret in secrets:
         if secret:
@@ -388,7 +396,7 @@ def read_private_files(repo, token, paths, run=subprocess.run,
             % PRIVATE_STORE_REPO_ENV)
 
     url = "https://github.com/%s.git" % repo
-    basic = base64.b64encode(("x-access-token:%s" % token).encode("utf-8")).decode("ascii")
+    basic = private_store_basic(token)
     secrets = (token, basic, repo)
     auth = ["-c", "credential.helper=",
             "-c", "http.extraHeader=Authorization: Basic %s" % basic]
@@ -425,7 +433,15 @@ def read_private_files(repo, token, paths, run=subprocess.run,
         p = git(auth + ["fetch", "-q", "--depth", "1", "--no-tags", url],
                 "fetching it")
         if p.returncode != 0:
-            fail(p, "fetching it")
+            # Reached and listed, so not unreachable in the ordinary sense. An
+            # unborn default branch beside other branches fails exactly here,
+            # found by the audit of 2026-09-24; the message says so rather
+            # than blaming the network or the token.
+            detail = _scrub(p.stderr.decode("utf-8", "replace").strip(), secrets)
+            raise PrivateStoreUnreachable(
+                "the private store was reached and listed, but its default branch "
+                "could not be fetched (git exit %d); an unborn default branch is "
+                "one cause: %s" % (p.returncode, detail))
         out = {}
         for path in paths:
             p = git(["show", "FETCH_HEAD:%s" % path], "reading a file")
