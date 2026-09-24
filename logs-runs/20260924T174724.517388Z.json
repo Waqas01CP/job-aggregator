@@ -1,0 +1,235 @@
+{
+ "run_at": "2026-09-24T17:47:24.517388Z",
+ "test_mode": false,
+ "boards": [
+  {
+   "board": "greenhouse:banyancanopygroup",
+   "fetched": 5,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 5
+   },
+   "status": "ok",
+   "detail": null
+  },
+  {
+   "board": "greenhouse:brkz",
+   "fetched": 21,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 19,
+    "seniority": 2
+   },
+   "status": "ok",
+   "detail": null
+  },
+  {
+   "board": "greenhouse:careem",
+   "fetched": 19,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 1,
+   "drops": {
+    "title": 16,
+    "seniority": 2
+   },
+   "status": "ok",
+   "detail": null
+  },
+  {
+   "board": "greenhouse:coderoad",
+   "fetched": 26,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 5,
+   "drops": {
+    "title": 13,
+    "seniority": 8
+   },
+   "status": "ok",
+   "detail": null
+  },
+  {
+   "board": "greenhouse:globalli",
+   "fetched": 12,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 10,
+    "seniority": 2
+   },
+   "status": "ok",
+   "detail": null
+  },
+  {
+   "board": "greenhouse:gomotive",
+   "fetched": 163,
+   "parse_problems": 0,
+   "new": 2,
+   "kept": 3,
+   "drops": {
+    "title": 156,
+    "seniority": 4
+   },
+   "status": "ok",
+   "detail": null
+  },
+  {
+   "board": "greenhouse:joblogic",
+   "fetched": 37,
+   "parse_problems": 0,
+   "new": 2,
+   "kept": 8,
+   "drops": {
+    "title": 28,
+    "seniority": 1
+   },
+   "status": "ok",
+   "detail": null
+  },
+  {
+   "board": "greenhouse:speechify",
+   "fetched": 254,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 241,
+   "drops": {
+    "title": 13
+   },
+   "status": "ok",
+   "detail": null
+  },
+  {
+   "board": "greenhouse:veeamsoftware",
+   "fetched": 259,
+   "parse_problems": 0,
+   "new": 7,
+   "kept": 12,
+   "drops": {
+    "title": 238,
+    "seniority": 9
+   },
+   "status": "ok",
+   "detail": null
+  },
+  {
+   "board": "himalayas:browse",
+   "fetched": 0,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {},
+   "status": "skipped",
+   "detail": "polled on the morning run only (ADR-0048); this is the evening run"
+  },
+  {
+   "board": "lever:smart-working-solutions",
+   "fetched": 16,
+   "parse_problems": 0,
+   "new": 1,
+   "kept": 0,
+   "drops": {
+    "title": 11,
+    "seniority": 5
+   },
+   "status": "ok",
+   "detail": null
+  },
+  {
+   "board": "lever:spreetail",
+   "fetched": 25,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 1,
+   "drops": {
+    "title": 23,
+    "seniority": 1
+   },
+   "status": "ok",
+   "detail": null
+  }
+ ],
+ "totals": {
+  "fetched": 837,
+  "new": 12,
+  "kept": 271,
+  "written_raw": {
+   "greenhouse": 11,
+   "lever": 1
+  },
+  "written_filtered": 0,
+  "backfilled": 0,
+  "backfilled_public": 0,
+  "backfilled_local": 0,
+  "written_filtered_local": 0,
+  "drops": {
+   "expiry": 0,
+   "experience": 0,
+   "annotation_vendor": 0,
+   "title": 532,
+   "seniority": 34
+  },
+  "dedupe": {
+   "postings": 837,
+   "groups": 536,
+   "collapsed": 301,
+   "largest_group": 134
+  }
+ },
+ "requests": {
+  "requests_used": 11,
+  "budget": 500,
+  "budget_remaining": 489,
+  "by_source": {
+   "greenhouse": 9,
+   "lever": 2
+  },
+  "retries": 0,
+  "failures": 0,
+  "refused": 0,
+  "circuit_open": false
+ },
+ "stopped": null,
+ "source_class": {
+  "greenhouse": "ats",
+  "lever": "ats",
+  "himalayas": "aggregator"
+ },
+ "private_store": {
+  "branch": "data",
+  "restored": 0,
+  "pushed": true,
+  "failure": null,
+  "files": 1
+ },
+ "projection": {
+  "stored_identities": 0,
+  "rows_read": 345,
+  "rows_admitted": 334,
+  "groups": 29,
+  "groups_skipped_by_store": 0,
+  "rows_to_send": 29,
+  "rows_sent": 29
+ },
+ "airtable": {
+  "calls_used": 3,
+  "rows_sent": 29,
+  "monthly_ceiling": 1000,
+  "month_to_date_before_run": 5,
+  "month_remaining": 992,
+  "retries": 0,
+  "failures": 0,
+  "refused": 0,
+  "circuit_open": false,
+  "failure": null
+ },
+ "attention": {
+  "failed_in_a_row": 0,
+  "escalate": false
+ }
+}

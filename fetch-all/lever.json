@@ -1006,5 +1006,26 @@
   "url_provenance": "payload",
   "stated_experience": null,
   "expires_at": null
+ },
+ {
+  "identity": "lever:484dcd0c-d39c-4f50-840d-b794d749ed4b",
+  "source": "lever",
+  "board_id": "lever:smart-working-solutions",
+  "external_id": "484dcd0c-d39c-4f50-840d-b794d749ed4b",
+  "employer": "Smart Working Solutions",
+  "employer_provenance": "slug",
+  "title": "Lead Data Engineer - Founding Member (Contract, Full-Time) [HR208] (UK)",
+  "title_normalised": "Lead Data Engineer - Founding Member (Contract, Full-Time) [HR208] (UK)",
+  "location": "Greater London",
+  "published_at": "2026-08-20T07:40:52.308000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-09-24T17:47:24.517388Z",
+  "ordering_date": "2026-08-20T07:40:52.308000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/smart-working-solutions/484dcd0c-d39c-4f50-840d-b794d749ed4b",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null
  }
 ]
