@@ -1027,5 +1027,26 @@
   "url_provenance": "payload",
   "stated_experience": null,
   "expires_at": null
+ },
+ {
+  "identity": "lever:df59c6a2-99fe-4724-94fa-a1e129646591",
+  "source": "lever",
+  "board_id": "lever:spreetail",
+  "external_id": "df59c6a2-99fe-4724-94fa-a1e129646591",
+  "employer": "Spreetail",
+  "employer_provenance": "slug",
+  "title": "Fulfillment Center Lead",
+  "title_normalised": "Fulfillment Center Lead",
+  "location": "South Tacoma, WA",
+  "published_at": "2026-09-24T19:24:54.530000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-09-24T21:06:56.942923Z",
+  "ordering_date": "2026-09-24T19:24:54.530000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/spreetail/df59c6a2-99fe-4724-94fa-a1e129646591",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null
  }
 ]
