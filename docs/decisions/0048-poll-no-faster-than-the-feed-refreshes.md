@@ -31,7 +31,7 @@ There is a second question underneath, and it does not have an answer yet. If th
 ## Assumptions
 
 - Himalayas' cache refreshes every 24 hours. **Sourced** from its API reference, read 2026-09-19. Not measured.
-- Twenty-five requests per Himalayas run. **Measured** as 500 postings per run from the four run logs, divided by the documented maximum page size of 20. The 500 is ADR-0028's cap rather than the feed's size, so this is what the cap costs, not what a full walk would cost.
+- Twenty-five requests per Himalayas run. **Measured** as 500 postings per run from the four run logs, divided by the documented maximum page size of 20. The 500 is ADR-0028's cap rather than the feed's size, so this is what the cap costs, not what a full walk would cost. *(Annotated 2026-09-24, wrong when written: the 500 postings are the adapter's page cap, `MAX_PAGES = 25` in `src/run.py` times `PAGE_SIZE = 20` in `src/adapters/himalayas.py`. ADR-0028's 500 caps requests, not postings (`DEFAULT_BUDGET` in `src/http_client.py`). The conclusion stands: this is what a cap costs, not a full walk.)*
 - One poll a day does not lose postings. Anything published between polls is still in the feed at the next one, and ADR-0007 makes a gap non-destructive. **Not measured**, and it is the assumption this record is most exposed on.
 
 ## Considered Options
@@ -87,3 +87,7 @@ Extends ADR-0006, which carries a Changes row pointing here. ADR-0028 owns the f
 The `updatedAt` finding is in `docs/research/0003-job-source-survey.md`, in its corrections table dated 2026-09-15.
 
 ## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-09-24 | The attribution of the 500 postings annotated as wrong | They are the adapter's page cap, 25 pages of 20, not ADR-0028's request cap. Annotated by the implementing seat under ADR-RULES, which allows a stale or wrong fact to be annotated unasked; the Decision Outcome is untouched. Found by the corpus audit of 2026-09-23 |

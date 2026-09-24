@@ -131,6 +131,29 @@ TOPICS = {
 }
 
 
+# MADR 4.0.0's statuses. Until 2026-09-24 the check tested presence only, so a
+# record reading `status: acepted` rendered in the map as a status nobody
+# would read; the corpus audit of 2026-09-23 proved it. A supersession must
+# also name a record that exists.
+STATUSES = {"proposed", "rejected", "accepted", "deprecated"}
+SUPERSEDED_RE = re.compile(r"^superseded by ADR-(\d{4})$")
+
+
+def record_numbers():
+    return {p.name[:4] for p in DECISIONS_DIR.glob("[0-9][0-9][0-9][0-9]-*.md")}
+
+
+def check_status(rel, status, numbers):
+    if status in STATUSES:
+        return
+    match = SUPERSEDED_RE.match(status)
+    if match is None:
+        raise MapError(f"{rel}: status '{status}' is not one of {sorted(STATUSES)} "
+                       f"or 'superseded by ADR-NNNN'")
+    if match.group(1) not in numbers:
+        raise MapError(f"{rel}: status names ADR-{match.group(1)}, which does not exist")
+
+
 def describe(path):
     text = path.read_text(encoding="utf-8")
     rel = path.relative_to(REPO_ROOT).as_posix()
@@ -143,6 +166,7 @@ def describe(path):
         status = fm.get("status")
         if not status:
             raise MapError(f"{rel}: decision record has no status in frontmatter")
+        check_status(rel, status, record_numbers())
         # A record's title says what was decided. Its description says what
         # question it answers, which is how a reader arrives: by topic, not
         # by decision. Both are required, so a new record cannot be added

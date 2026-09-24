@@ -16,7 +16,7 @@ The title pool admits a role by name. It cannot tell a role the operator can get
 
 The operator decided on 2026-09-17 to exclude senior-level title words, and the rule was implemented on his instruction, which outranks the records under ADR-0022. It has run since without a record carrying it. This is that record.
 
-**It reverses one clause of ADR-0021**, which says at line 50: "We will maintain no blocklist. It is unnecessary once unmatched rows are dropped." That sentence was written about a different problem. ADR-0008 had an unmatched bucket that a blocklist existed to clean up; ADR-0021 removed the bucket, so the blocklist had nothing to do. A seniority rule was not wanted then and is not what that clause was about.
+**It reverses one clause of ADR-0021**, which says at line 50 *(line 52 since `dc02b0f` added two frontmatter lines on 2026-09-18)*: "We will maintain no blocklist. It is unnecessary once unmatched rows are dropped." That sentence was written about a different problem. ADR-0008 had an unmatched bucket that a blocklist existed to clean up; ADR-0021 removed the bucket, so the blocklist had nothing to do. A seniority rule was not wanted then and is not what that clause was about.
 
 The word list is fourteen words: `senior`, `sr`, `staff`, `lead`, `principal`, `head`, `manager`, `director`, `vp`, `vice president`, `chief`, `ii`, `iii`, `iv`. `architect` and level I are deliberately kept.
 
@@ -46,7 +46,7 @@ Chosen option: "a seniority rule after the title rule".
 
 **A rule running immediately after the title rule drops a posting whose title contains any word in the operator's seniority list.** The drop names the word. The list lives in `docs/reference/seniority-exclusions.md` with its own change log, which is ADR-0031's shape.
 
-**ADR-0021's line 50 is reversed in this respect only.** A blocklist that deletes rows on a machine's judgement of category is still rejected, and nothing here reinstates one. What this record permits is narrower and different in kind: a list of words about the operator's own level, owned by him, in a file he edits, applied by a rule that names its match. ADR-0031 records why that is configuration rather than judgement.
+**ADR-0021's line 50 *(line 52 since `dc02b0f` added two frontmatter lines on 2026-09-18)* is reversed in this respect only.** A blocklist that deletes rows on a machine's judgement of category is still rejected, and nothing here reinstates one. What this record permits is narrower and different in kind: a list of words about the operator's own level, owned by him, in a file he edits, applied by a rule that names its match. ADR-0031 records why that is configuration rather than judgement.
 
 **Order matters and is part of the decision.** Placing it before the title rule would make the `seniority` count mean "every senior posting on every board" rather than "relevant roles excluded for level", and would empty the title drop log of its meaning as the record of titles the pool is missing.
 
@@ -85,7 +85,7 @@ The case set above runs before any change to the seniority list, and every case 
 
 The rule is proved by the case built to defeat it: a title containing a seniority word that the pool does not match must be dropped by the **title** rule, not the seniority rule, or the order has been reversed. "Senior Red Team Operator" is that case and is dropped by title.
 
-Within two weeks of the display existing, count `rejected_pipeline` rows with reason `experience level`. A cluster means the list is wrong in one direction; the operator finding senior roles he wanted and never saw means it is wrong in the other, and only the display can show that.
+Within two weeks of the display existing, count `rejected_pipeline` *(now `rejected-poor-filtering`, renamed by ADR-0046 and again by the operator on 2026-09-24)* rows with reason `experience level`. A cluster means the list is wrong in one direction; the operator finding senior roles he wanted and never saw means it is wrong in the other, and only the display can show that.
 
 ## Pros and Cons of the Options
 
@@ -101,8 +101,14 @@ Bad, because it makes the operator wait on an architecture discussion for a deci
 
 ## More Information
 
-Reverses ADR-0021 line 50 in this respect only, and is linked from ADR-0021's Changes.
+Reverses ADR-0021 line 50 *(line 52 since `dc02b0f` added two frontmatter lines on 2026-09-18)* in this respect only, and is linked from ADR-0021's Changes.
 
 ADR-0031 supplies the frame: preferences are configuration.
 
 The evidence for the numbered levels, the words, and the reasons `architect` and level I stay are in `docs/reference/seniority-exclusions.md`.
+
+## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-09-24 | Three references to ADR-0021's line 50 annotated as line 52, and the status name annotated | `dc02b0f` added two frontmatter lines to every record on 2026-09-18, moving every cited line down by two. Annotated by the implementing seat under ADR-RULES, which allows a stale or wrong fact to be annotated unasked; the Decision Outcome is untouched. Found by the corpus audit of 2026-09-23 |

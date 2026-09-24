@@ -24,6 +24,13 @@ NOW = "2026-09-18T12:00:00.000000Z"
 MATCHER = TitleMatcher()
 
 
+def read_bytes(path):
+    """Closed after reading. A bare open().read() left the handle to the
+    garbage collector, which the suite reported as ResourceWarnings."""
+    with open(path, "rb") as f:
+        return f.read()
+
+
 def row(identity, title="AI Engineer", source="greenhouse", expires_at=None):
     return Row(identity=identity, source=source, board_id="%s:b" % source,
                external_id=identity.split(":")[-1], title=title,
@@ -117,10 +124,10 @@ class TestTheAppend(BackfillCase):
         self.write_raw(rows)
         self.write_filtered([])
         backfill(self.paths, NOW, MATCHER)
-        before = open(self.paths["filtered"], "rb").read()
+        before = read_bytes(self.paths["filtered"])
         result = backfill(self.paths, NOW, MATCHER)
         self.assertEqual(result["written_public"], 0)
-        self.assertEqual(open(self.paths["filtered"], "rb").read(), before)
+        self.assertEqual(read_bytes(self.paths["filtered"]), before)
 
     def test_rows_already_present_are_never_duplicated(self):
         rows = [row("greenhouse:1"), row("greenhouse:2")]
@@ -133,11 +140,11 @@ class TestTheAppend(BackfillCase):
     def test_dry_run_writes_nothing(self):
         self.write_raw([row("greenhouse:1")])
         self.write_filtered([])
-        before = open(self.paths["filtered"], "rb").read()
+        before = read_bytes(self.paths["filtered"])
         result = backfill(self.paths, NOW, MATCHER, dry_run=True)
         self.assertEqual(result["missing"], 1)
         self.assertEqual(result["written_public"], 0)
-        self.assertEqual(open(self.paths["filtered"], "rb").read(), before)
+        self.assertEqual(read_bytes(self.paths["filtered"]), before)
 
 
 class TestADR0020IsEnforced(BackfillCase):

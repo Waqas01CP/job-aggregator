@@ -46,7 +46,7 @@ We will not build email ingestion, IMAP polling, or a search-alert path into the
 
 Employers not in the registry are not covered by the pipeline. Extending coverage means adding boards to the registry, which is the intended mechanism.
 
-No mailbox credentials exist in the system. The secret surface stays at the repository token and the Airtable token.
+No mailbox credentials exist in the system. The secret surface stays at the repository token and the Airtable token. *(Annotated 2026-09-24, stale: ADR-0047 added a third credential, the private aggregator store's token. There is still no mailbox credential, which is this record's point.)*
 
 No email parsing code exists, so no maintenance burden from changes to alert email structure.
 
@@ -67,3 +67,4 @@ The decision holds unchanged: no email ingestion, no IMAP, no search-alert path.
 | Date | Change | Reason |
 |---|---|---|
 | 2026-09-10 | Decision Outcome contained "The source registry is the source list." Removed | That sentence was never part of the decision, only a description of the situation at the time. Research pass 0003 made it false by identifying six aggregator feeds that pass every gate |
+| 2026-09-24 | The secret surface annotated as stale | ADR-0047 added the private store's token. Annotated by the implementing seat under ADR-RULES, which allows a stale or wrong fact to be annotated unasked; the Decision Outcome is untouched. Found by the corpus audit of 2026-09-23 |

@@ -28,7 +28,7 @@ The operator states that periods of one to ten days without reading the table ar
 
 ## Assumptions
 
-- A material number of registry platforms expose no reliable publication date. Asserted from the source registry's own notes; verified for no platform in this session.
+- A material number of registry platforms expose no reliable publication date. Asserted from the source registry's own notes; verified for no platform in this session. *(Annotated 2026-09-24, stale: checked since across 16 platforms. Manatal exposes no date field of any kind and Dover's board carries none; `logs/2026-09-16-publication-date-across-untested-platforms.md`.)*
 - Postings remain on their board for days rather than hours, so a missed run recovers on the next. Stated from the operator's experience of postings aged 24 hours to three weeks.
 
 ## Considered Options
@@ -63,3 +63,9 @@ Deliberately skip one scheduled run and confirm the following run ingests the po
 ## More Information
 
 The ingest-filter failure mode described here is live in the operator's LinkedIn pipeline and is the reason this decision goes the other way.
+
+## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-09-24 | The unverified date-coverage claim annotated as stale | Checked across 16 platforms on 2026-09-16. Annotated by the implementing seat under ADR-RULES, which allows a stale or wrong fact to be annotated unasked; the Decision Outcome is untouched. Found by the corpus audit of 2026-09-23 |

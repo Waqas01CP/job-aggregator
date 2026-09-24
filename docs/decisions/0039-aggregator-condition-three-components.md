@@ -14,9 +14,9 @@ decision-makers: Waqas Sharif
 
 ADR-0019 admitted Himalayas to the vertical slice on a condition, and states that condition twice in incompatible words.
 
-Line 55, the criterion: "Himalayas is removed from the slice if adding it forces a change to the shared HTTP module, the normaliser's row shape, or the filter chain. Adding a configuration entry and an adapter file is not a complication; that is the model working."
+Line 55 *(line 57 since `dc02b0f` added two frontmatter lines on 2026-09-18)*, the criterion: "Himalayas is removed from the slice if adding it forces a change to the shared HTTP module, the normaliser's row shape, or the filter chain. Adding a configuration entry and an adapter file is not a complication; that is the model working."
 
-Line 83, the Confirmation: "A diff touching only a config entry and a new adapter file passes. A diff touching the shared HTTP module, the normaliser, or the filter chain fails, and Himalayas leaves the slice."
+Line 83 *(line 85 since `dc02b0f` added two frontmatter lines on 2026-09-18)*, the Confirmation: "A diff touching only a config entry and a new adapter file passes. A diff touching the shared HTTP module, the normaliser, or the filter chain fails, and Himalayas leaves the slice."
 
 The first sentence names three components and says what a complication is. The second sentence adds a narrower test: only two kinds of file may change at all. The real diff satisfied the first and failed the second. It touched none of the three named components, and it did touch `src/config.py`, to register the platform and its source class, `src/run.py`, to add a pagination loop, and `src/storage.py`, for ADR-0020's local routing.
 
@@ -88,7 +88,7 @@ Bad, because it is the same evaluation with a redrawn boundary, which decides by
 
 ## More Information
 
-Resolves the contradiction in ADR-0019 lines 55 and 83, which carries a Changes row pointing here.
+Resolves the contradiction in ADR-0019 lines 55 and 83 *(57 and 85 since `dc02b0f` added two frontmatter lines on 2026-09-18)*, which carries a Changes row pointing here.
 
 Whether Himalayas stays on the schedule was open when this record was written and was closed the same day: it stays. See the annotation above and ADR-0019's Changes.
 
@@ -97,3 +97,4 @@ Whether Himalayas stays on the schedule was open when this record was written an
 | Date | Change | Reason |
 |---|---|---|
 | 2026-09-23 | The Confirmation annotated: the shared HTTP module now includes `src/resilience.py` | Stale, not wrong. Building ADR-0034's Airtable client extracted the shared retry, backoff and breaker into their own module, so a Confirmation that reads only `src/http_client.py` would pass a source that changed the shared logic. Annotated by the implementing seat under ADR-RULES, which allows a stale record to be annotated unasked; the Decision Outcome is untouched |
+| 2026-09-24 | Three references to ADR-0019's lines annotated two lines later | `dc02b0f` moved every record's lines down by two on 2026-09-18. Annotated by the implementing seat under ADR-RULES, which allows a stale or wrong fact to be annotated unasked; the Decision Outcome is untouched. Found by the corpus audit of 2026-09-23 |

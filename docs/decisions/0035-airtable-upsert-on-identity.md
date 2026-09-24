@@ -12,7 +12,7 @@ decision-makers: Waqas Sharif
 
 ## Context and Problem Statement
 
-ADR-0004 decides at line 40: "We will write the filtered layer to an Airtable base using batched creates of ten records per call. We will perform no reads. We will determine novelty entirely from repository-side state."
+ADR-0004 decides at line 40 *(line 42 since `dc02b0f` added two frontmatter lines on 2026-09-18)*: "We will write the filtered layer to an Airtable base using batched creates of ten records per call. We will perform no reads. We will determine novelty entirely from repository-side state."
 
 Plain creates are not idempotent. A projection that writes ten rows, receives a network error after the service has accepted them, and retries, creates twenty rows. The operator then reviews the same posting twice, and the duplicate carries no marker distinguishing it from a genuine second posting.
 
@@ -88,3 +88,4 @@ ADR-0034 decides that the writer is a separate client. The schema, including `Id
 | Date | Change | Reason |
 |---|---|---|
 | 2026-09-23 | Two fields are classified pipeline-owned ahead of being built, so the sent set becomes twelve when they exist: `Family`, ADR-0038's label, and `Star reason`, ADR-0044's explanation. Both single line or long text, never a single select | This record requires a field added later to be classified before the writer touches it, because an upsert overwrites what it sends. Both are derived and recomputed every run, from the matched term and from the accepted store, so neither can carry a judgement of the operator's that an overwrite could destroy. A select is refused because the Airtable connector cannot add a choice to an existing field, which would make every new family a manual step. `Star reason` empty means not starred, so no checkbox can disagree with its own reason. The operator's decision, 2026-09-23 |
+| 2026-09-24 | The reference to ADR-0004's line 40 annotated as line 42 | `dc02b0f` moved every record's lines down by two on 2026-09-18. Annotated by the implementing seat under ADR-RULES, which allows a stale or wrong fact to be annotated unasked; the Decision Outcome is untouched. Found by the corpus audit of 2026-09-23 |

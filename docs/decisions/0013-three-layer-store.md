@@ -47,7 +47,7 @@ Rows can be deleted from Airtable freely, which is what makes the sweep in ADR-0
 
 Switching display tool later costs one small writer rather than a redesign.
 
-A third write path exists. Three files on the data branch now carry pipeline state: raw, filtered, and the outcomes log from ADR-0014.
+A third write path exists. Three files on the data branch now carry pipeline state: raw, filtered, and the outcomes log from ADR-0014. *(Annotated 2026-09-24, stale: ADR-0043 replaced the one outcomes log with three stores, ADR-0046 added a fourth, `outcomes/removed_unreviewed.json`, and ADR-0047 gives each an aggregator copy in the private repository.)*
 
 The filtered file and the Airtable base can drift if a write to one succeeds and the other fails. The run log must record both write results.
 
@@ -67,3 +67,4 @@ Extends ADR-0001. Related to ADR-0014, which defines how outcomes set in the dis
 |---|---|---|
 | 2026-09-17 | The projection copies the filtered file, and a rule change backfills the file first | ADR-0030. Copying the file as it stands is what 'a projection of that file' means, and it is accurate only if the file tracks the rules in force. Re-applying the chain at projection time was rejected because it would make the filtered file a log rather than the thing the display reads |
 | 2026-09-18 | The projection applies the current chain rather than copying the file as it stands | ADR-0040. "A projection of that file" was read as a straight copy, which would show rows the current rules reject: measured, 11 of the 24 rows in `filtered.json`. Added late: this pointer was missing when ADR-0040 was written, which left this record's own Changes table silent about the record that changed it |
+| 2026-09-24 | The outcomes log annotated as stale | Now four stores, each with a private aggregator copy, per ADR-0043, ADR-0046 and ADR-0047. Annotated by the implementing seat under ADR-RULES, which allows a stale or wrong fact to be annotated unasked; the Decision Outcome is untouched. Found by the corpus audit of 2026-09-23 |

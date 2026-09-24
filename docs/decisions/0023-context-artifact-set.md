@@ -61,7 +61,7 @@ A session reading the index and needing more reads the most recent relevant log,
 
 Log format is ADR-0024.
 
-**Onboarding order, stated in `CLAUDE.md`:** `CLAUDE.md`, then `STATE.md`, then `logs/README.md`, then `MAP.md` on demand, then the task's own brief. A session does not read the documented file set; it reads four files and follows pointers.
+**Onboarding order, stated in `CLAUDE.md`:** `CLAUDE.md`, then `STATE.md`, then `logs/README.md`, then `MAP.md` on demand, then the task's own brief. *(Annotated 2026-09-24, stale: `CLAUDE.md`, which outranks this record, now makes `MAP.md` the fourth required read and adds `docs/how-to/the-seats.md` before the first action.)* A session does not read the documented file set; it reads four files and follows pointers.
 
 **Deferred, not rejected:** an in-flight register separate from `STATE.md`, wanted once work is genuinely in flight and held defects exist.
 
@@ -113,3 +113,4 @@ Reading order is authoritative per ADR-0022. Log format is ADR-0024.
 | 2026-09-11 | The end-state document moved from deferred-pending-a-read to confirmed open | `SPRINT_PLAN.md` was read. It is a task plan, not a statement of the finished system, so there is no prior art to port and the gap is real |
 | 2026-09-17 | Factual correction, not a change of decision: the Consequences sentence saying the same-commit rule is not a gate yet | Gate 4 of `.githooks/pre-commit`, added in commit `7b5633e` (author date 2026-09-15), blocks a commit that stages implementation paths without `STATE.md`. `STATE.md` records it as proven to fire. The verified-against header is still not gated |
 | 2026-09-18 | The artifact set gains `docs/reference/completed.md`, and `STATE.md` holds only what is unsettled | Measured: 60 of `STATE.md`'s 69 table rows were DONE and were 18.7KB of a 42,036-byte file that every session reads at the start, so a session read finished history to reach the nine rows that were not finished. The 60 moved verbatim, and the reading order is unchanged: the four files a session starts with are the same, and the completed rows are read on demand like `MAP.md`. This record's own point stands, that `STATE.md` is the artifact most able to lie; the split makes the part that can lie smaller |
+| 2026-09-24 | The onboarding order annotated as stale | `CLAUDE.md` now requires `MAP.md` and the seats file. Annotated by the implementing seat under ADR-RULES, which allows a stale or wrong fact to be annotated unasked; the Decision Outcome is untouched. Found by the corpus audit of 2026-09-23 |

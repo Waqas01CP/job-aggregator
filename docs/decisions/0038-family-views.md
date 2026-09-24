@@ -14,7 +14,7 @@ decision-makers: Waqas Sharif
 
 The operator ranks the kinds of role he wants: agentic AI first, then LLM and applied AI, then traditional AI and ML, then software engineering. The title pool already lists its 79 terms under those four headings, in that order, and the order decides which term a title is credited to when it matches more than one.
 
-ADR-0010 says at line 39: "We will perform no scoring, no ranking, and no model-based classification of any posting. Every rule that admits or drops a posting will be a deterministic, readable predicate whose verdict can be explained by naming the rule. We will order the display by date only."
+ADR-0010 says at line 39 *(line 41 since `dc02b0f` added two frontmatter lines on 2026-09-18)*: "We will perform no scoring, no ranking, and no model-based classification of any posting. Every rule that admits or drops a posting will be a deterministic, readable predicate whose verdict can be explained by naming the rule. We will order the display by date only."
 
 A preference ordering over kinds of role sounds like exactly what that record forbids. It is worth being precise about why it is not, because this is the shape scoring would arrive in: a label, then an order over labels, then a number derived from the order, then a model that assigns the number.
 
@@ -93,3 +93,4 @@ ADR-0031 covers why the family list is configuration. The pool's headings and th
 |---|---|---|
 | 2026-09-18 | The term-to-family map is built | `load_title_pool` read the pool's four headings and discarded them, so no family label could reach a row. `load_term_families` in `src/filters.py` now maps all 79 terms to their heading, and `TitleMatcher.family_of` exposes it. Built for ADR-0044's third star attribute; the views this record describes are still unbuilt, and still wait on the writer |
 | 2026-09-23 | The label's home is named: a pipeline-owned `Family` field on `Jobs`, single line text | ADR-0035 requires a new field to be classified before the writer sends it. The label is a lookup from the matched term, recomputed every run, so nothing of the operator's is at risk. Text rather than a select, because the connector cannot add a choice to an existing field. The operator's decision, 2026-09-23 |
+| 2026-09-24 | The reference to ADR-0010's line 39 annotated as line 41 | `dc02b0f` moved every record's lines down by two on 2026-09-18. Annotated by the implementing seat under ADR-RULES, which allows a stale or wrong fact to be annotated unasked; the Decision Outcome is untouched. Found by the corpus audit of 2026-09-23 |

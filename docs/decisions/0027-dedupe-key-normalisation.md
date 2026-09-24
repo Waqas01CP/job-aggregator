@@ -56,7 +56,7 @@ We will record the normalised title alongside the original, never replacing it. 
 
 ### Consequences
 
-Speechify contributes 8 rows rather than 1086, which is the difference between a usable display and an unusable one.
+Speechify contributes 8 rows rather than 1086, which is the difference between a usable display and an unusable one. *(Annotated 2026-09-24, measured: on 2026-09-17 Speechify's postings made 11 keys, not 8, per the vertical-slice row of `logs/README.md`; the 318 Speechify postings stored on `data` at `a5abc3b` make 5.)*
 
 Deduplication normalisation and title matching are now two separate rules on the same field. ADR-0021 governs what is admitted; this governs what is considered the same posting. They must not be merged, because admitting and deduplicating are different questions.
 
@@ -93,3 +93,9 @@ Extends ADR-0001, whose deduplication key stands. This adds normalisation before
 Evidence is the spike follow-up of 2026-09-15, checks 1 and 2.
 
 The `updated_at` finding bears on ADR-0018, which carries its own Changes row.
+
+## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-09-24 | Speechify's row count annotated with its measurements | 11 keys on 2026-09-17 and 5 on 2026-09-24, where the record estimated 8. Annotated by the implementing seat under ADR-RULES, which allows a stale or wrong fact to be annotated unasked; the Decision Outcome is untouched. Found by the corpus audit of 2026-09-23 |
