@@ -128,6 +128,19 @@ class TestWorkflow(unittest.TestCase):
         self.assertEqual(mapping, {"0 0 * * *": "morning", "0 13 * * *": "evening"})
         self.assertIn("'manual'", line)
 
+    def test_the_other_branch_is_fetched_for_the_count_and_never_pushed(self):
+        """G7: the month's Airtable calls are counted from both branches, so
+        the other mode's branch must be on the runner before the run, and
+        must never be written back."""
+        m = re.search(r"OTHER_BRANCH:\s*\$\{\{\s*inputs\.test_mode\s*&&\s*'([^']+)'"
+                      r"\s*\|\|\s*'([^']+)'\s*\}\}", self.text)
+        self.assertIsNotNone(m, "no OTHER_BRANCH chosen from test_mode")
+        self.assertEqual((m.group(1), m.group(2)),
+                         (storage.data_branch(False), storage.data_branch(True)))
+        fetched = self.text.index('"refs/heads/$OTHER_BRANCH:refs/heads/$OTHER_BRANCH"')
+        self.assertLess(fetched, self.text.index("python -m src.run"))
+        self.assertNotRegex(self.text, r"git push[^\n]*OTHER_BRANCH")
+
     def test_no_waiting_run_is_ever_cancelled(self):
         """GitHub keeps one pending run per concurrency group by default and
         cancels it when a third arrives, and the contract check shares this
@@ -144,7 +157,7 @@ class TestWorkflow(unittest.TestCase):
         push and nothing comes after it."""
         steps = [i for i, l in enumerate(self.text.splitlines()) if l.strip().startswith("- name:")]
         names = [self.text.splitlines()[i].strip() for i in steps]
-        self.assertEqual(names[-1], "- name: Fail the run if the display has failed three runs in a row")
+        self.assertEqual(names[-1], "- name: Fail the run if it needs attention")
         self.assertEqual(names[-2], "- name: Push the data branch")
         tail = self.text[self.text.index(names[-1]):]
         self.assertIn("if: steps.fetch.outputs.escalate == 'true'", tail)

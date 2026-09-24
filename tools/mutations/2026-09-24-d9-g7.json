@@ -1,0 +1,38 @@
+[
+  {
+    "label": "public rows are withheld too when the private store cannot be read",
+    "path": "src/projection.py",
+    "find": "        kept = [r for r in rows if is_publishable(r.source)]",
+    "replace": "        kept = []"
+  },
+  {
+    "label": "aggregator rows are projected when the private store cannot be read",
+    "path": "src/projection.py",
+    "find": "        kept = [r for r in rows if is_publishable(r.source)]",
+    "replace": "        kept = rows"
+  },
+  {
+    "label": "the run never asks for public rows only",
+    "path": "src/run.py",
+    "find": "public_only=bool(restore_failure))",
+    "replace": "public_only=False)"
+  },
+  {
+    "label": "a private-store failure waits for three runs",
+    "path": "src/run.py",
+    "find": "\"escalate\": streak >= ESCALATE_AFTER or at_once}",
+    "replace": "\"escalate\": streak >= ESCALATE_AFTER}"
+  },
+  {
+    "label": "the month counts only the run's own branch",
+    "path": "src/run.py",
+    "find": "for mode in (test_mode, not test_mode)}",
+    "replace": "for mode in (test_mode,)}"
+  },
+  {
+    "label": "the other branch is never fetched",
+    "path": ".github/workflows/fetch.yml",
+    "find": "            0) git fetch --no-tags --depth=1 origin \"refs/heads/$OTHER_BRANCH:refs/heads/$OTHER_BRANCH\" ;;",
+    "replace": "            0) true ;;"
+  }
+]

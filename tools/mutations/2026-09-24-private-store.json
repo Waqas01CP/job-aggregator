@@ -12,12 +12,6 @@
     "replace": "                if False:"
   },
   {
-    "label": "the projection runs without the private outcome stores",
-    "path": "src/run.py",
-    "find": "        if restore_failure:\n            raise projection.ProjectionError(",
-    "replace": "        if False:\n            raise projection.ProjectionError("
-  },
-  {
     "label": "a failed push stops the projection",
     "path": "src/run.py",
     "find": "project_display(run, args.no_commit, test_mode, restore_failure)",

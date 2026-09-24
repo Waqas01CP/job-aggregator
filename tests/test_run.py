@@ -745,7 +745,11 @@ class TestMain(unittest.TestCase):
         """ADR-0047's check that can fail: a store the run cannot reach. The
         run must say so, never report a clean fetch with no aggregator rows
         stored. D6, 2026-09-24: exit 2, the public fetch committed, and the
-        aggregator not asked, because nothing it returned could be kept."""
+        aggregator not asked, because nothing it returned could be kept. D9,
+        the same day: the public rows still reach the display, and the run is
+        marked failed at once."""
+        os.environ["GITHUB_OUTPUT"] = os.path.join(self.dir, "github_output")
+        open(os.environ["GITHUB_OUTPUT"], "w").close()
         run_module.load_boards = lambda: [GH, HIM]
         run_module.make_private_store = lambda test_mode: self.private_store(
             test_mode, url=file_url(os.path.join(self.dir, "nowhere.git")))
@@ -760,11 +764,29 @@ class TestMain(unittest.TestCase):
         self.assertEqual(him["status"], "skipped")
         self.assertFalse(any("himalayas" in url for s in self.sessions for url in s.calls),
                          "the aggregator was asked with nowhere to keep its rows")
-        # Its outcome stores are unknown, so projecting could bring back a
-        # role the operator retired.
-        self.assertEqual(self.airtable, [], "projected without the private stores")
-        self.assertIn("private store could not be restored", log["airtable"]["failure"])
+        # D9: the public rows always update.
+        self.assertEqual([r["Identity"] for r in self.airtable[0].sent], ["greenhouse:1000"])
+        self.assertIsNone(log["airtable"]["failure"])
+        self.assertEqual(log["attention"], {"failed_in_a_row": 1, "escalate": True})
+        self.assertIn("escalate=true", read_text(os.environ["GITHUB_OUTPUT"]))
         self.assertEqual(self.private_branches(), [])
+
+    def test_aggregator_rows_are_withheld_when_the_private_store_cannot_be_read(self):
+        """D9: a run whose restore failed may still hold aggregator rows on
+        this machine. They are withheld and counted, never projected against
+        stores it could not read; the public rows go as usual."""
+        run_module.load_boards = lambda: [GH, HIM]
+        run_module.make_private_store = self.private_store
+        self.assertEqual(self.main()[0], EXIT_OK)
+        self.assertIn("himalayas:https://x.test/h1",
+                      {r["Identity"] for r in self.airtable[-1].sent})
+        run_module.make_private_store = lambda test_mode: self.private_store(
+            test_mode, url=file_url(os.path.join(self.dir, "nowhere.git")))
+        self.assertEqual(self.main()[0], EXIT_STOPPED_RESUMABLE)
+        log = self.last_run_log()
+        self.assertEqual([r["Identity"] for r in self.airtable[-1].sent], ["greenhouse:1000"])
+        self.assertEqual(log["projection"]["aggregator_rows_withheld"], 1)
+        self.assertIsNone(log["airtable"]["failure"])
 
     def test_a_failed_restore_never_writes(self):
         """A push after a failed restore would replace the stored history
@@ -813,16 +835,24 @@ class TestMain(unittest.TestCase):
         self.assertEqual(len(self.airtable[0].sent), 2)
         self.assertEqual(self.identities("data"), ["greenhouse:1000"])
 
-    def test_a_private_store_failing_run_after_run_counts_toward_escalation(self):
-        """A failed push, so the projection succeeds and only the private
-        store's block can be what the count reads."""
+    def test_a_private_store_failure_marks_the_run_failed_at_once(self):
+        """D9, 2026-09-24: the operator is told on the first failure. A
+        failed push, so the projection succeeds and only the private store's
+        block can be what escalates; the count still runs."""
+        os.environ["GITHUB_OUTPUT"] = os.path.join(self.dir, "github_output")
+        open(os.environ["GITHUB_OUTPUT"], "w").close()
         run_module.load_boards = lambda: [GH, HIM]
         self.refusing_pushes()
-        self.main()
-        self.main()
+        code, _, err = self.main()
+        self.assertEqual(code, EXIT_STOPPED_RESUMABLE)
         log = self.last_run_log()
         self.assertIsNone(log["airtable"]["failure"])
-        self.assertEqual(log["attention"]["failed_in_a_row"], 2)
+        self.assertEqual(log["attention"], {"failed_in_a_row": 1, "escalate": True})
+        self.assertIn("escalate=true", read_text(os.environ["GITHUB_OUTPUT"]))
+        self.assertIn("the private store failed", err)
+        self.assertEqual(self.identities("data"), ["greenhouse:1000"])
+        self.main()
+        self.assertEqual(self.last_run_log()["attention"]["failed_in_a_row"], 2)
 
     def test_a_retired_aggregator_role_stays_out_of_the_display(self):
         """ADR-0046 across ADR-0047: an identity in the private store's
@@ -885,6 +915,19 @@ class TestMain(unittest.TestCase):
         self.assertEqual(self.airtable_asked[0][0], True)
         self.main()
         self.assertEqual(self.airtable_asked[1][0], False)
+
+    def test_the_month_so_far_counts_both_branches(self):
+        """G7: the allowance is per workspace, so a production run counts the
+        calls test runs spent, and a test run counts production's."""
+        self.main("--test-mode")
+        self.fresh_machine()
+        self.main()
+        self.fresh_machine()
+        self.main("--test-mode")
+        self.assertEqual([used for _, used in self.airtable_asked],
+                         [0, FakeAirtable.CALLS, 2 * FakeAirtable.CALLS])
+        self.assertEqual(self.last_run_log(True)["airtable"]["month_to_date_by_branch"],
+                         {"data-test": FakeAirtable.CALLS, "data": FakeAirtable.CALLS})
 
     def test_the_month_so_far_reaches_the_next_runs_client(self):
         """ADR-0034: a budget counted per month. A runner restores no run

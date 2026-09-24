@@ -53,6 +53,9 @@ jobs:
     # set on the Fetch step only.
     env:
       DATA_BRANCH: ${{ inputs.test_mode && 'data-test' || 'data' }}
+      # The other mode's branch, fetched only so the run can count the
+      # month's Airtable calls across the workspace. Never pushed.
+      OTHER_BRANCH: ${{ inputs.test_mode && 'data' || 'data-test' }}
 
     # Action versions are the lowest majors that run on Node 24. Run
     # 35179218050 warned that checkout@v4 and setup-python@v5 target Node 20
@@ -91,6 +94,21 @@ jobs:
             0) git fetch --no-tags --depth=1 origin "refs/heads/$DATA_BRANCH:refs/heads/$DATA_BRANCH" ;;
             2) echo "origin has no $DATA_BRANCH branch yet; this run starts it" ;;
             *) echo "::error::could not ask origin whether $DATA_BRANCH exists"; exit 1 ;;
+          esac
+
+      # Airtable's monthly allowance is per workspace, and test runs spend it
+      # too, so the run reads the month's run logs from both branches. The
+      # operator's go of 2026-09-24, G7. Read only: nothing here pushes it.
+      - name: Fetch the other data branch, for the month's Airtable count
+        run: |
+          set +e
+          git ls-remote --exit-code --heads origin "refs/heads/$OTHER_BRANCH" >/dev/null
+          found=$?
+          set -e
+          case "$found" in
+            0) git fetch --no-tags --depth=1 origin "refs/heads/$OTHER_BRANCH:refs/heads/$OTHER_BRANCH" ;;
+            2) echo "origin has no $OTHER_BRANCH branch; the count covers this branch only" ;;
+            *) echo "::error::could not ask origin whether $OTHER_BRANCH exists"; exit 1 ;;
           esac
 
       # The secrets reach this step and no other. Set at job level they would
@@ -143,13 +161,14 @@ jobs:
             echo "no $DATA_BRANCH branch was written, so nothing to push"
           fi
 
-      # The operator's decision of 2026-09-24. A failed projection exits 2 and
-      # shows green, so one that repeats would look healthy. On the third run
-      # in a row the run has committed and the step above has pushed; only
-      # then is the run marked failed. It must stay the last step, after the
+      # The operator's decisions of 2026-09-24. A failed projection exits 2
+      # and shows green, so one that repeats would look healthy: on the third
+      # run in a row it is marked failed. A private-store failure is marked
+      # failed on the first (D9), since it needs fixing. Either way the run has
+      # committed and the step above has pushed before this runs. It must stay the last step, after the
       # push, so marking a run failed can never cost it its data.
-      - name: Fail the run if the display has failed three runs in a row
+      - name: Fail the run if it needs attention
         if: steps.fetch.outputs.escalate == 'true'
         run: |
-          echo "::error::the projection to Airtable, or the private store, has failed on three runs in a row; the data is committed and pushed, and the run log names the failure"
+          echo "::error::the private store failed on this run, or the projection to Airtable has failed three runs in a row; the data is committed and pushed, and the run log names the failure"
           exit 1

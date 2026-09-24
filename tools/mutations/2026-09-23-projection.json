@@ -68,8 +68,8 @@
   {
     "label": "the month so far is not read",
     "path": "src/run.py",
-    "find": "used = month_to_date(storage.read_month_run_logs(month, test_mode), now_iso)",
-    "replace": "used = 0"
+    "find": "client = make_airtable_client(test_mode, sum(by_branch.values()))",
+    "replace": "client = make_airtable_client(test_mode, 0)"
   },
   {
     "label": "matched term from the raw title",

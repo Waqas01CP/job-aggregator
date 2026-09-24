@@ -61,3 +61,9 @@ The slice is confirmed when a scheduled run completes unattended, writes rows to
 ## More Information
 
 Adapter order after the slice is pending, blocked on feasibility spikes for Ashby, Workable, SmartRecruiters, JazzHR and Manatal. Spike form follows `test_linkedin_scraper.py`: thresholds fixed in advance, machine verdict of PROCEED or INVESTIGATE.
+
+## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-09-24 | Confirmation met | Scheduled runs complete unattended and write the raw and filtered layers and the display, and the operator found roles in `Jobs` he had not seen by hand: "GenAI Analyst" at ActiveFence and "Network Monitoring & Automation Engineer" at Unisys, both through Himalayas, and "Forward Deployed Engineer" at Veeam Software, which he may have seen once. Read back through the connector the same day. Recorded by the implementing seat under ADR-RULES as a fact; the Decision Outcome is untouched |

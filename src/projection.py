@@ -29,6 +29,7 @@ from datetime import datetime, timezone
 
 from . import storage
 from .airtable import PIPELINE_FIELDS
+from .config import is_publishable
 from .dedupe import group
 from .filters import apply_chain
 from .normalise import Row, loads
@@ -161,12 +162,21 @@ def plan(rows, now_iso, matcher, stored, stages=None):
     return records
 
 
-def project(paths, now_iso, matcher, client, private_texts, stages):
+def project(paths, now_iso, matcher, client, private_texts, stages, public_only=False):
     """All five stages. `private_texts` are the private repository's copies
     of the same stores, from private_store_texts. `stages` is filled as each
     stage completes, so a failure part way still leaves a count of how far it
-    got."""
+    got.
+
+    **`public_only`: the private store could not be read.** The operator's
+    decision of 2026-09-24, D9: the public rows always update. The aggregator
+    rows are withheld, because the private stores that would keep a retired
+    one out are unknown, and they are counted so the withholding shows."""
     rows = load_rows(paths)
+    if public_only:
+        kept = [r for r in rows if is_publishable(r.source)]
+        stages["aggregator_rows_withheld"] = len(rows) - len(kept)
+        rows, private_texts = kept, []
     stored = identities_in(public_store_texts(paths) + list(private_texts))
     stages["stored_identities"] = len(stored)
     records = plan(rows, now_iso, matcher, stored, stages)

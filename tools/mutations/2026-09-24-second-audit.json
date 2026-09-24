@@ -2,7 +2,7 @@
   {
     "label": "unreadable previous run logs raise before the commit",
     "path": "src/run.py",
-    "find": "    try:\n        previous = storage.read_recent_run_logs(ESCALATE_AFTER - 1, test_mode)\n    except Exception as e:\n        return {\"failed_in_a_row\": 1, \"escalate\": False,\n                \"note\": \"previous run logs unreadable: %s\" % type(e).__name__}",
+    "find": "    try:\n        previous = storage.read_recent_run_logs(ESCALATE_AFTER - 1, test_mode)\n    except Exception as e:\n        return {\"failed_in_a_row\": 1, \"escalate\": at_once,\n                \"note\": \"previous run logs unreadable: %s\" % type(e).__name__}",
     "replace": "    previous = storage.read_recent_run_logs(ESCALATE_AFTER - 1, test_mode)"
   },
   {

@@ -392,3 +392,47 @@ API and a scratch clone of `data-test`. Both succeeded, so GitHub accepted
   platforms committed to `data-test` under `logs-contract/`, with
   `contract/fingerprint.json` beside it: Greenhouse 258 postings, Lever 16,
   Himalayas 20.
+
+## ADR-0009 met, the sweep's timing asked, and D9 and G7 built
+
+**Y1, ADR-0009's Confirmation, met.** The operator named roles in `Jobs` he
+had not seen while searching by hand, read back through the connector
+`[VERIFIED]`: "GenAI Analyst" at ActiveFence and "Network Monitoring &
+Automation Engineer" at Unisys, both through Himalayas, and "Forward
+Deployed Engineer" at Veeam Software from Greenhouse, which he may have seen
+once. Two of the three came through Himalayas, which bears on its trial
+review on 2026-10-07. ADR-0009 gained a Changes section to record it.
+
+**Y4, his question.** He set a few `Status` values and they have not reached
+the classification tables. They cannot yet: copying is the sweep's first
+step, and the sweep is unbuilt. Once built, ADR-0046 runs it daily, so a row
+reaches its table within a day of being marked. Running the copy with every
+fetch, twice a day, would roughly halve that wait for about 60 more calls a
+month [INFERRED from ADR-0046's call table]. For the sweep brief.
+
+**D9, the operator's decision:** "jobs should and always must update its
+public row even if the private store fails ... one thing is that it fails
+then there should be some form of notification so that it can be fixed."
+Built:
+
+- When the restore fails, the projection runs on the public rows and
+  withholds the aggregator ones, counted as `aggregator_rows_withheld`. His
+  premise holds `[VERIFIED]`: Himalayas is the only source the private store
+  holds.
+- A private-store failure now marks the run failed on its first occurrence,
+  still after the push, so GitHub's failed-run email reaches him at once.
+  D2 ruled that email is not a notification system. A projection failure
+  keeps D1's three in a row. The seat chose this over waiting for three
+  because a token or repository fault does not clear on its own.
+- The workflow's last step is renamed "Fail the run if it needs attention".
+
+**G7, go.** Each run counts the month's Airtable calls from both branches'
+run logs, and the workflow fetches the other mode's branch read-only for
+that. The run log carries the count per branch.
+
+Tests prove each part: public rows sent and a local Himalayas row withheld
+after a failed restore; escalation on the first private-store failure; the
+count across branches; the other branch fetched before the run and never
+pushed. D9 reversed one guarantee in `2026-09-24-private-store.json`, "the
+projection runs without the private outcome stores", so that mutation is
+removed. Two older mutations were re-expressed against the new lines.

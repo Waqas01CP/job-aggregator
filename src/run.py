@@ -93,26 +93,38 @@ def needs_attention(run_log):
     return False
 
 
+def private_store_failed(run_log):
+    block = run_log.get("private_store") if isinstance(run_log, dict) else None
+    return isinstance(block, dict) and bool(block.get("failure"))
+
+
 def attention(run_log, test_mode, no_commit):
     """How many runs in a row, this one included, have needed attention, and
-    whether that reaches ESCALATE_AFTER. Reads the previous logs from the
-    branch; a no-commit run neither reads the branch nor escalates. Never
-    raises: failing to count must not cost the run its commit."""
+    whether the workflow should mark this one failed. Reads the previous logs
+    from the branch; a no-commit run neither reads the branch nor escalates.
+    Never raises: failing to count must not cost the run its commit.
+
+    **A private-store failure escalates at once.** The operator's decision of
+    2026-09-24, D9: he wants to hear so it can be fixed, and its causes, an
+    expired or revoked token or a moved repository, do not clear on their
+    own. A projection failure still waits for ESCALATE_AFTER runs, because
+    Airtable's own errors often do."""
     if not needs_attention(run_log):
         return {"failed_in_a_row": 0, "escalate": False}
+    at_once = private_store_failed(run_log)
     if no_commit:
         return {"failed_in_a_row": 1, "escalate": False}
     try:
         previous = storage.read_recent_run_logs(ESCALATE_AFTER - 1, test_mode)
     except Exception as e:
-        return {"failed_in_a_row": 1, "escalate": False,
+        return {"failed_in_a_row": 1, "escalate": at_once,
                 "note": "previous run logs unreadable: %s" % type(e).__name__}
     streak = 1
     for log in reversed(previous):
         if not needs_attention(log):
             break
         streak += 1
-    return {"failed_in_a_row": streak, "escalate": streak >= ESCALATE_AFTER}
+    return {"failed_in_a_row": streak, "escalate": streak >= ESCALATE_AFTER or at_once}
 
 
 def tell_the_workflow(name, value):
@@ -199,10 +211,22 @@ def project_display(run, no_commit, test_mode, restore_failure=None):
     raises: a failed projection is recorded, the run still commits, and the
     caller exits 2.
 
-    **A private store that could not be restored fails the projection.** Its
-    outcome stores are unknown, and projecting as though they were empty
-    would bring back every aggregator role the operator retired, and any
-    group whose stored member was one.
+    **A private store that could not be restored withholds only the
+    aggregator rows.** The operator's decision of 2026-09-24, D9: the public
+    rows always update. Until then the whole projection failed, the seat's
+    first design, so one expired token froze the display. The private
+    outcome stores are unknown, so the aggregator rows are held back rather
+    than projected against stores that might retire them. A group mixing a
+    public row with an aggregator one retired only in the private store would
+    come back. ADR-0001's key includes the publication date and an
+    aggregator stamps its own, which is why the Motive role sits in `Jobs`
+    twice rather than merged, so such a group is not expected; none has been
+    looked for.
+
+    **The month's Airtable calls are counted from both branches.** The
+    allowance is per workspace and both modes spend it. The operator's go of
+    2026-09-24, G7: before it, production counted 5 calls while the workspace
+    had spent 22.
 
     **A no-commit run reaches no base and no private store.** It plans the
     projection from the local files and sends nothing, so the counts can be
@@ -220,16 +244,16 @@ def project_display(run, no_commit, test_mode, restore_failure=None):
             return stages, {"calls_used": 0, "rows_sent": 0, "failure": None,
                             "would_send": len(records)}, None
 
-        if restore_failure:
-            raise projection.ProjectionError(
-                "the private store could not be restored, so the outcome stores that keep "
-                "retired aggregator roles out of the display are unknown")
         month = now_iso[:7].replace("-", "")
-        used = month_to_date(storage.read_month_run_logs(month, test_mode), now_iso)
-        client = make_airtable_client(test_mode, used)
+        by_branch = {storage.data_branch(mode): month_to_date(
+            storage.read_month_run_logs(month, mode), now_iso)
+            for mode in (test_mode, not test_mode)}
+        client = make_airtable_client(test_mode, sum(by_branch.values()))
         projection.project(run.paths, now_iso, run.matcher, client,
-                           projection.private_store_texts(run.paths), stages)
-        return stages, dict(client.counters(), failure=None), None
+                           projection.private_store_texts(run.paths), stages,
+                           public_only=bool(restore_failure))
+        return stages, dict(client.counters(), failure=None,
+                            month_to_date_by_branch=by_branch), None
     except Exception as e:
         failure = "%s: %s" % (type(e).__name__, e)
         if client is not None:
@@ -667,9 +691,11 @@ def main(argv=None):
     if run_log["attention"]["escalate"]:
         # Only after the commit: the workflow pushes, then fails the run.
         tell_the_workflow("escalate", "true")
-        print("the display or the private store has failed on %d runs in a row; this "
-              "run is committed and the workflow will mark it failed after pushing"
-              % run_log["attention"]["failed_in_a_row"], file=sys.stderr)
+        why = ("the private store failed" if private_store_failed(run_log) else
+               "the display has failed on %d runs in a row"
+               % run_log["attention"]["failed_in_a_row"])
+        print("%s; this run is committed and the workflow will mark it failed after "
+              "pushing, so it can be fixed" % why, file=sys.stderr)
     if private_failure:
         print("the private store could not be restored or written; the public fetch is "
               "stored and the aggregator rows wait for the next run: %s" % private_failure,
