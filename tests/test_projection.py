@@ -257,6 +257,19 @@ class TestTheSkip(Harness):
         client, _ = self.project(private)
         self.assertEqual(client.sent, [])
 
+    def test_the_private_stores_working_copies_are_where_the_restore_puts_them(self):
+        """Each of the three, and never the public directory: a private
+        store read from the public path would read as empty."""
+        for name in projection.CLASSIFICATION_STORES:
+            with self.subTest(store=name):
+                shutil.rmtree("data", ignore_errors=True)
+                storage.write_atomic("%s/%s" % (self.paths["local_outcomes_dir"], name),
+                                     dumps([{"identity": "himalayas:7"}]))
+                self.write_filtered([], local=[make_row(7, source="himalayas")])
+                client, _ = self.project(projection.private_store_texts(self.paths))
+                self.assertEqual(client.sent, [])
+        self.assertNotEqual(self.paths["local_outcomes_dir"], self.paths["outcomes_dir"])
+
     def test_absent_stores_read_as_empty(self):
         """No sweep has written a store yet. Absent from the branch or from a
         reachable private repository counts as empty."""

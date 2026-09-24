@@ -112,10 +112,12 @@ jobs:
           echo "exit_code=$code" >> "$GITHUB_OUTPUT"
           # Three exit codes, and only one of them is a failure.
           #   0 finished
-          #   2 resumable: the budget was reached, the circuit opened, or the
-          #     projection to Airtable failed. The run log names which, the
-          #     fetch is committed, and the next run picks it up; the next
-          #     projection sends the whole layer again.
+          #   2 resumable: the budget was reached, the circuit opened, the
+          #     projection to Airtable failed, or the private store could not
+          #     be restored or written (ADR-0047, the operator's D6). The run
+          #     log names which, the public fetch is committed, and the next
+          #     run picks it up; the next projection sends the whole layer
+          #     again.
           #   1 failed: either it could not start, or it fetched and could not
           #     store the result. The run's own output above says which.
           if [ "$code" -eq 1 ]; then
@@ -123,7 +125,7 @@ jobs:
             exit 1
           fi
           if [ "$code" -eq 2 ]; then
-            echo "::warning::the run is resumable: it stopped early on the request budget or the circuit breaker, or its projection to Airtable failed; the run log says which"
+            echo "::warning::the run is resumable: it stopped early on the request budget or the circuit breaker, its projection to Airtable failed, or the private store could not be restored or written; the run log says which"
           fi
           exit 0
 

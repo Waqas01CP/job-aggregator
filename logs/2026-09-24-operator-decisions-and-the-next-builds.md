@@ -157,3 +157,54 @@ the reset test now checks the count after fail, fail, success, fail, and the
 no-commit test fails the plan itself, since a failing Airtable client is
 never reached by a run that only plans. `tools/mutations/2026-09-24-accents-slots-escalation.json`,
 ten mutations, all caught.
+
+## Built: the private store, and the test classification tables
+
+**G2, ADR-0047's write path.** `src/private_store.py` holds one run's session
+with the private repository. The repository gets one branch per mode, `data`
+and `data-test`, with ADR-0020's public layout: `fetch-all/<source>.json`,
+`filtered.json`, `seen.json`, `outcomes/`. A committing run opens it after
+the public restore and before any fetch, and replaces the aggregator working
+copies with the branch's. It pushes them back as a fast-forward once the
+fetch is written, before the projection. Nothing reads the repository's
+default branch any more. GitHub makes the first branch pushed to an empty
+repository its default. Brief 6's reader read that branch, so once the write
+path existed, a test run pushing first would have given production the test
+branch's stores. The projection now reads the private outcome stores from the
+restored working copies, and `storage.read_private_files` is removed.
+
+Three rules, each with a test and a mutation:
+
+- **A run that could not restore never writes.** It holds no store object
+  after a failed restore. The test replaces the restore with one that fails
+  and the push with a recorder, and the recorder stays empty.
+- **A failed restore skips the aggregator boards and fails the projection.**
+  Nothing they returned could be kept, and the private outcome stores are
+  unknown, so projecting could bring back a role the operator retired. A
+  failed push fails neither: the stores were read, so the display is sent.
+- **D6: exit 2, the public fetch committed.** The run log's `private_store`
+  block names the failure, and it counts toward the three-in-a-row
+  escalation. `CLAUDE.md`'s exit-code line and ADR-0047's Changes carry it.
+
+Offline, against a local bare repository through a file URL, so git itself
+runs: a first write creates the branch and a fresh machine continues from it;
+the public branch holds no Himalayas identity; test mode writes `data-test`
+only; a push racing another is refused, not forced; and a stored
+`accepted.json` keeps its role out of the display. Thirteen mutations, all
+caught `[VERIFIED]`: `tools/mutations/2026-09-24-private-store.json`. The run
+tests that do not look at the store use an in-memory stand-in, because real
+git on every run took this machine's `test_run.py` from about 30 to 84
+seconds.
+
+**Not yet shown live:** that the token can write. Every run so far has only
+read the repository. The operator's test-mode dispatch proves it. Then the
+first scheduled morning run is ADR-0047's Confirmation: the public branch
+holds no aggregator file or identity, and the run log's `private_store` block
+reads `pushed`.
+
+**D7, the test classification tables.** `rejected-not-a-fit test`,
+`rejected-poor-filtering test` and `accepted test` were created through the
+connector with the originals' fields, descriptions and choices `[VERIFIED]`
+from the connector's answers. `Classified` is created time, which
+`create_table` cannot make, so it was added afterwards with `create_field`.
+The sweep needs a secret for each table ID, which its brief names.

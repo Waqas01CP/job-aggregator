@@ -7,8 +7,10 @@ proportional to genuinely new postings rather than to board size.
 **One file per source.** ADR-0020. `fetch-all/greenhouse.json`,
 `fetch-all/lever.json`. A row's provenance is its filename, so no routing bug
 can misfile a row into the wrong store. Aggregator sources write to local files
-that are never committed, and the split is by directory so that moving a source
-later is a file move rather than a transformation. That covers every store, not
+that are never committed to this repository, and the split is by directory so
+that moving a source later is a file move rather than a transformation.
+*(2026-09-24: ADR-0047 gives those files a private repository, which
+`src/private_store.py` restores them from and pushes them to.)* That covers every store, not
 only the raw one: an aggregator's filtered rows and seen-store entries are local
 too, because a filtered row is a row and a seen entry carries the posting's URL
 and publication date.
@@ -70,7 +72,8 @@ DATA_ROOT = "data"
 TEST_SUBDIR = "test"          # a test run writes beside production, never over it
 
 RAW_DIR = "fetch-all"
-# ADR-0020: aggregator rows live here and are never committed or pushed.
+# ADR-0020: aggregator rows live here and never reach this repository.
+# ADR-0047 pushes them to a private one, `src/private_store.py`.
 LOCAL_RAW_DIR = "fetch-all-local"
 # The same rule for the filtered layer and the seen store. A separate directory
 # from LOCAL_RAW_DIR because that one is the raw layer's local twin and already
@@ -123,6 +126,9 @@ def layout(test_mode=False):
         "local_seen": "%s/%s/%s" % (root, LOCAL_DIR, SEEN_FILE),
         "runlog_dir": "%s/%s" % (root, RUNLOG_DIR),
         "outcomes_dir": "%s/%s" % (root, OUTCOMES_DIR),
+        # ADR-0047: the private repository's copies of the outcome stores,
+        # restored beside the other aggregator working copies.
+        "local_outcomes_dir": "%s/%s/%s" % (root, LOCAL_DIR, OUTCOMES_DIR),
     }
 
 
@@ -387,85 +393,6 @@ def _scrub(text, secrets):
         if secret:
             text = re.sub(re.escape(secret), "<private>", text, flags=re.IGNORECASE)
     return text
-
-
-def read_private_files(repo, token, paths, run=subprocess.run,
-                       timeout=PRIVATE_STORE_TIMEOUT):
-    """Read files from the private aggregator repository. Returns
-    {path: text}, with None for a file the repository does not hold.
-
-    **Absent is empty; unreachable is a failure.** The operator's decision of
-    2026-09-23: no sweep has written a store yet, so a store file missing from
-    a repository the run can reach counts as empty, and an empty repository
-    holds nothing yet. A repository the run cannot reach at all raises.
-
-    **The token never reaches a command line's error text.** It travels in an
-    HTTP header set on each git call, errors carry git's exit code and a
-    scrubbed stderr, and the repository's name is scrubbed too, because this
-    text can reach a run log on the public data branch."""
-    repo, token = (repo or "").strip(), (token or "").strip()
-    if not repo or not token:
-        raise PrivateStoreUnreachable(
-            "%s or %s is empty or unset" % (PRIVATE_STORE_REPO_ENV, PRIVATE_STORE_TOKEN_ENV))
-    if not re.fullmatch(r"[\w.-]+/[\w.-]+", repo) or repo.endswith(".git"):
-        raise PrivateStoreUnreachable(
-            "%s must be owner/name only: no scheme, no .git, no trailing slash"
-            % PRIVATE_STORE_REPO_ENV)
-
-    url = "https://github.com/%s.git" % repo
-    basic = private_store_basic(token)
-    secrets = (token, basic, repo)
-    auth = ["-c", "credential.helper=",
-            "-c", "http.extraHeader=Authorization: Basic %s" % basic]
-    env = dict(os.environ, GIT_TERMINAL_PROMPT="0", GCM_INTERACTIVE="never")
-    work = tempfile.mkdtemp(prefix="private-store-")
-
-    def git(args, what):
-        try:
-            p = run(["git"] + args, cwd=work, env=env, capture_output=True,
-                    timeout=timeout)
-        except subprocess.TimeoutExpired:
-            raise PrivateStoreUnreachable("the private store timed out while %s" % what)
-        return p
-
-    def fail(p, what):
-        detail = _scrub(p.stderr.decode("utf-8", "replace").strip(), secrets)
-        raise PrivateStoreUnreachable("the private store could not be reached while %s "
-                                      "(git exit %d): %s" % (what, p.returncode, detail))
-
-    # No ref is named on either command: ls-remote lists every ref, which is
-    # nothing for an empty repository, and a fetch from a URL with no refspec
-    # takes the remote's default branch into FETCH_HEAD. Checked against real
-    # git on 2026-09-23. It also keeps git's word for that branch out of a
-    # string literal, where ADR-0031's audit reads it as a seniority word.
-    try:
-        p = git(auth + ["ls-remote", url], "listing it")
-        if p.returncode != 0:
-            fail(p, "listing it")
-        if not p.stdout.strip():
-            return {path: None for path in paths}
-        p = git(["init", "-q"], "preparing a scratch repository")
-        if p.returncode != 0:
-            fail(p, "preparing a scratch repository")
-        p = git(auth + ["fetch", "-q", "--depth", "1", "--no-tags", url],
-                "fetching it")
-        if p.returncode != 0:
-            # Reached and listed, so not unreachable in the ordinary sense. An
-            # unborn default branch beside other branches fails exactly here,
-            # found by the audit of 2026-09-24; the message says so rather
-            # than blaming the network or the token.
-            detail = _scrub(p.stderr.decode("utf-8", "replace").strip(), secrets)
-            raise PrivateStoreUnreachable(
-                "the private store was reached and listed, but its default branch "
-                "could not be fetched (git exit %d); an unborn default branch is "
-                "one cause: %s" % (p.returncode, detail))
-        out = {}
-        for path in paths:
-            p = git(["show", "FETCH_HEAD:%s" % path], "reading a file")
-            out[path] = p.stdout.decode("utf-8") if p.returncode == 0 else None
-        return out
-    finally:
-        shutil.rmtree(work, ignore_errors=True)
 
 
 def commit_files(files, message, branch=DATA_BRANCH):

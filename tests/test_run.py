@@ -27,6 +27,7 @@ from src.config import Board, ConfigError
 from src.normalise import dumps
 from src.filters import TitleMatcher
 from src.http_client import HttpClient
+from src.private_store import PrivateStore
 from src.run import EXIT_OK, EXIT_STOPPED_RESUMABLE, Run, summarise
 
 def read_text(path):
@@ -40,6 +41,17 @@ MATCHER = TitleMatcher()
 GH = Board(platform="greenhouse", slug="careem")
 GH2 = Board(platform="greenhouse", slug="globalli")
 LV = Board(platform="lever", slug="spreetail", employer_alias="Spreetail")
+HIM = Board(platform="himalayas", slug="browse")
+
+
+def him_payload(guids):
+    return {"jobs": [{"guid": "https://x.test/%s" % g, "title": "AI Engineer",
+                      "applicationLink": "https://x.test/%s" % g, "pubDate": 1789141813}
+                     for g in guids], "nextCursor": None}
+
+
+def file_url(path):
+    return "file:///" + path.replace(os.sep, "/").lstrip("/")
 
 
 def gh_payload(titles, start=0):
@@ -98,6 +110,30 @@ class FakeAirtable:
 
     def redact(self, text):
         return text
+
+
+class MemoryStore:
+    """Stands in for PrivateStore in the run's tests that do not look at it:
+    reachable, holding nothing, and recording what it is asked to push. Real
+    git on every run nearly tripled this file's time on Windows. The tests of
+    the private store itself, in TestMain and test_private_store.py, use a
+    real bare repository."""
+
+    def __init__(self):
+        self.pushed = []
+
+    def open(self):
+        return self
+
+    def restore(self, paths):
+        return []
+
+    def commit_and_push(self, files, message):
+        self.pushed.append(files)
+        return "commit"
+
+    def close(self):
+        pass
 
 
 def client_for(routes, **kw):
@@ -430,15 +466,21 @@ class TestMain(unittest.TestCase):
         os.chdir(self.dir)
         self.real = (storage.REPO_ROOT, storage.commit_files, storage.restore_from_branch,
                      run_module.load_boards, run_module.HttpClient,
-                     run_module.make_airtable_client, run_module.read_private_stores)
+                     run_module.make_airtable_client, run_module.make_private_store)
         storage.REPO_ROOT = self.dir
         subprocess.run(["git", "init", "-q"], cwd=self.dir)
         self.payload = gh_payload(["AI Engineer"])
         run_module.load_boards = lambda: [GH]
-        run_module.HttpClient = lambda **kw: client_for({"careem": self.payload})
+        self.him = him_payload(["h1"])
+        self.sessions = []
+
+        def http(**kw):
+            client = client_for({"careem": self.payload, "himalayas": self.him})
+            self.sessions.append(client._session)
+            return client
+        run_module.HttpClient = http
         # A committing run now projects. No test may reach a live base, so the
-        # client is a fake that records what it is given, and the private
-        # store is an empty reachable one.
+        # client is a fake that records what it is given.
         self.airtable = []
         self.airtable_asked = []
 
@@ -448,12 +490,17 @@ class TestMain(unittest.TestCase):
             self.airtable.append(client)
             return client
         run_module.make_airtable_client = fake_client
-        run_module.read_private_stores = lambda: []
+        # ADR-0047. Tests that look at the private store switch to a local
+        # bare repository reached through a file URL, so git itself is
+        # exercised and nothing can reach GitHub; the rest get MemoryStore.
+        self.private = os.path.join(self.dir, "private.git")
+        subprocess.run(["git", "init", "-q", "--bare", self.private], check=True)
+        run_module.make_private_store = lambda test_mode: MemoryStore()
 
     def tearDown(self):
         (storage.REPO_ROOT, storage.commit_files, storage.restore_from_branch,
          run_module.load_boards, run_module.HttpClient,
-         run_module.make_airtable_client, run_module.read_private_stores) = self.real
+         run_module.make_airtable_client, run_module.make_private_store) = self.real
         os.environ.pop("TEST_MODE", None)
         if self.env_test_mode is not None:
             os.environ["TEST_MODE"] = self.env_test_mode
@@ -462,6 +509,22 @@ class TestMain(unittest.TestCase):
             os.environ["GITHUB_OUTPUT"] = self.env_output
         os.chdir(self.cwd)
         shutil.rmtree(self.dir, ignore_errors=True)
+
+    def private_store(self, test_mode, url=None):
+        url = url or file_url(self.private)
+        return PrivateStore("someone/private-thing", "github_pat_FAKE0123456789",
+                            test_mode=test_mode, url_for=lambda repo: url)
+
+    def in_private(self, branch, path):
+        p = subprocess.run(["git", "--git-dir", self.private, "show", "%s:%s" % (branch, path)],
+                           capture_output=True, text=True, encoding="utf-8")
+        self.assertEqual(p.returncode, 0, "private %s:%s is missing" % (branch, path))
+        return json.loads(p.stdout)
+
+    def private_branches(self):
+        p = subprocess.run(["git", "--git-dir", self.private, "branch",
+                            "--format=%(refname:short)"], capture_output=True, text=True)
+        return sorted(p.stdout.split())
 
     def main(self, *argv):
         out, err = io.StringIO(), io.StringIO()
@@ -636,16 +699,136 @@ class TestMain(unittest.TestCase):
                          "the fetch was not committed")
         self.assertIn("AIRTABLE_TOKEN", self.last_run_log()["airtable"]["failure"])
 
-    def test_an_unreachable_private_store_fails_the_projection_visibly(self):
-        """ADR-0047's rule: a store the run cannot reach fails the run and
-        says so, rather than projecting as though it held nothing."""
-        def unreachable():
-            raise storage.PrivateStoreUnreachable("the private store could not be reached")
-        run_module.read_private_stores = unreachable
+    # --------------------------------------------------------- private store
+    def test_aggregator_rows_go_to_the_private_store_and_come_back(self):
+        """ADR-0047's Confirmation, offline: the private branch holds the
+        Himalayas raw file and kept rows with the counts the run log states,
+        the public branch holds no Himalayas identity anywhere, and a fresh
+        machine continues from the private store instead of first contact."""
+        run_module.load_boards = lambda: [GH, HIM]
+        run_module.make_private_store = self.private_store
+        self.assertEqual(self.main()[0], EXIT_OK)
+        log = self.last_run_log()
+        him = next(b for b in log["boards"] if b["board"] == "himalayas:browse")
+        self.assertEqual(len(self.in_private("data", "fetch-all/himalayas.json")), him["fetched"])
+        self.assertEqual(len(self.in_private("data", "filtered.json")), him["kept"])
+        self.assertIn("himalayas:https://x.test/h1", self.in_private("data", "seen.json"))
+        self.assertTrue(log["private_store"]["pushed"])
+        for path in ("fetch-all/greenhouse.json", "filtered.json", "seen.json"):
+            self.assertNotIn("himalayas", self.on_branch("data", path),
+                             "an aggregator row reached the public branch in %s" % path)
+        self.assertNotEqual(self.git("cat-file", "-e", "data:fetch-all/himalayas.json")[0], 0)
+
+        self.fresh_machine()
+        self.him = him_payload(["h1", "h2"])
+        self.assertEqual(self.main()[0], EXIT_OK)
+        log = self.last_run_log()
+        self.assertEqual(log["private_store"]["restored"], 3)
+        self.assertEqual(next(b for b in log["boards"] if b["board"] == "himalayas:browse")["new"],
+                         1, "the second run did not know what the private store held")
+        self.assertEqual(len(self.in_private("data", "fetch-all/himalayas.json")), 2)
+
+    def test_test_mode_writes_the_private_test_branch_only(self):
+        run_module.load_boards = lambda: [GH, HIM]
+        run_module.make_private_store = self.private_store
+        self.assertEqual(self.main("--test-mode")[0], EXIT_OK)
+        self.assertEqual(self.private_branches(), ["data-test"])
+
+    def test_an_unreachable_private_store_keeps_the_public_fetch_and_exits_2(self):
+        """ADR-0047's check that can fail: a store the run cannot reach. The
+        run must say so, never report a clean fetch with no aggregator rows
+        stored. D6, 2026-09-24: exit 2, the public fetch committed, and the
+        aggregator not asked, because nothing it returned could be kept."""
+        run_module.load_boards = lambda: [GH, HIM]
+        run_module.make_private_store = lambda test_mode: self.private_store(
+            test_mode, url=file_url(os.path.join(self.dir, "nowhere.git")))
+        code, _, err = self.main()
+        self.assertEqual(code, EXIT_STOPPED_RESUMABLE)
+        self.assertIn("private store could not be restored or written", err)
+        self.assertEqual(self.identities("data"), ["greenhouse:1000"],
+                         "the public fetch was not committed")
+        log = self.last_run_log()
+        self.assertIn("PrivateStoreUnreachable", log["private_store"]["failure"])
+        him = next(b for b in log["boards"] if b["board"] == "himalayas:browse")
+        self.assertEqual(him["status"], "skipped")
+        self.assertFalse(any("himalayas" in url for s in self.sessions for url in s.calls),
+                         "the aggregator was asked with nowhere to keep its rows")
+        # Its outcome stores are unknown, so projecting could bring back a
+        # role the operator retired.
+        self.assertEqual(self.airtable, [], "projected without the private stores")
+        self.assertIn("private store could not be restored", log["airtable"]["failure"])
+        self.assertEqual(self.private_branches(), [])
+
+    def test_a_failed_restore_never_writes(self):
+        """A push after a failed restore would replace the stored history
+        with one run's snapshot, ADR-0003's failure."""
+        pushes = []
+        make = self.private_store
+
+        def half_broken(test_mode):
+            store = make(test_mode)
+
+            def restore(paths):
+                raise storage.PrivateStoreUnreachable("listed but could not be read")
+
+            def push(files, message):
+                pushes.append(files)
+            store.restore, store.commit_and_push = restore, push
+            return store
+        run_module.load_boards = lambda: [GH, HIM]
+        run_module.make_private_store = half_broken
+        self.assertEqual(self.main()[0], EXIT_STOPPED_RESUMABLE)
+        self.assertEqual(pushes, [], "a run that could not restore pushed")
+        self.assertIn("could not be read", self.last_run_log()["private_store"]["failure"])
+
+    def refusing_pushes(self):
+        make = self.private_store
+
+        def refusing(test_mode):
+            store = make(test_mode)
+
+            def push(files, message):
+                raise storage.PrivateStoreUnreachable("the private store failed while pushing")
+            store.commit_and_push = push
+            return store
+        run_module.make_private_store = refusing
+
+    def test_a_failed_push_exits_2_and_still_projects(self):
+        """Only a failed restore leaves the private outcome stores unknown. A
+        failed push leaves them known, so the display is still sent."""
+        run_module.load_boards = lambda: [GH, HIM]
+        self.refusing_pushes()
         code, _, _ = self.main()
         self.assertEqual(code, EXIT_STOPPED_RESUMABLE)
-        self.assertEqual(self.airtable[0].sent, [], "projected without the private stores")
-        self.assertIn("could not be reached", self.last_run_log()["airtable"]["failure"])
+        log = self.last_run_log()
+        self.assertIn("while pushing", log["private_store"]["failure"])
+        self.assertIsNone(log["airtable"]["failure"])
+        self.assertEqual(len(self.airtable[0].sent), 2)
+        self.assertEqual(self.identities("data"), ["greenhouse:1000"])
+
+    def test_a_private_store_failing_run_after_run_counts_toward_escalation(self):
+        """A failed push, so the projection succeeds and only the private
+        store's block can be what the count reads."""
+        run_module.load_boards = lambda: [GH, HIM]
+        self.refusing_pushes()
+        self.main()
+        self.main()
+        log = self.last_run_log()
+        self.assertIsNone(log["airtable"]["failure"])
+        self.assertEqual(log["attention"]["failed_in_a_row"], 2)
+
+    def test_a_retired_aggregator_role_stays_out_of_the_display(self):
+        """ADR-0046 across ADR-0047: an identity in the private store's
+        accepted.json is skipped, read from the restored working copy."""
+        run_module.load_boards = lambda: [GH, HIM]
+        run_module.make_private_store = self.private_store
+        seed = self.private_store(False).open()
+        seed.commit_and_push({"outcomes/accepted.json":
+                              dumps([{"identity": "himalayas:https://x.test/h1"}])}, "sweep")
+        seed.close()
+        self.assertEqual(self.main()[0], EXIT_OK)
+        self.assertEqual([r["Identity"] for r in self.airtable[0].sent], ["greenhouse:1000"])
+        self.assertEqual(self.last_run_log()["projection"]["groups_skipped_by_store"], 1)
 
     def test_a_failure_quoting_a_secret_is_scrubbed_before_it_is_logged(self):
         """The run log is committed to a public branch. The case built to
@@ -681,7 +864,7 @@ class TestMain(unittest.TestCase):
         def forbidden(*args, **kwargs):
             raise AssertionError("a no-commit run reached for a live service")
         run_module.make_airtable_client = forbidden
-        run_module.read_private_stores = forbidden
+        run_module.make_private_store = forbidden
         code, _, _ = self.main("--no-commit")
         self.assertEqual(code, EXIT_OK)
         log = self.last_run_log()

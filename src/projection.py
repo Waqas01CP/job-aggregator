@@ -45,24 +45,30 @@ class ProjectionError(Exception):
     pass
 
 
-def store_paths():
-    """Branch-relative paths of the stores the skip reads, the same in the
-    public data branch and the private repository (ADR-0047)."""
-    return ["%s/%s" % (storage.OUTCOMES_DIR, name) for name in CLASSIFICATION_STORES]
+def _store_texts(directory, label):
+    out = []
+    for name in CLASSIFICATION_STORES:
+        path = "%s/%s" % (directory, name)
+        try:
+            with open(path, encoding="utf-8") as f:
+                out.append(("%s %s" % (label, name), f.read()))
+        except FileNotFoundError:
+            out.append(("%s %s" % (label, name), None))
+    return out
 
 
 def public_store_texts(paths):
     """The restored working copies of the public stores. A store the branch
     does not hold yet reads as absent, which is empty."""
-    out = []
-    for name in CLASSIFICATION_STORES:
-        path = "%s/%s" % (paths["outcomes_dir"], name)
-        try:
-            with open(path, encoding="utf-8") as f:
-                out.append(("public %s" % name, f.read()))
-        except FileNotFoundError:
-            out.append(("public %s" % name, None))
-    return out
+    return _store_texts(paths["outcomes_dir"], "public")
+
+
+def private_store_texts(paths):
+    """The working copies of the private repository's stores (ADR-0047),
+    restored with the other aggregator files. The caller reads them only
+    after a restore that succeeded: before one, an absent file would read as
+    an empty store when the truth is unknown."""
+    return _store_texts(paths["local_outcomes_dir"], "private")
 
 
 def identities_in(texts):
@@ -119,8 +125,8 @@ def fields_for(g, matcher):
     " - <city>" equal to the row's own location. The raw title is never lost
     where the pipeline stores anything: the raw and filtered layers on the
     branch keep `title` beside `title_normalised`. `Jobs` shows only the
-    normalised one, and aggregator rows are stored nowhere until ADR-0047's
-    write path exists."""
+    normalised one. Aggregator rows keep both in the private repository,
+    ADR-0047, from 2026-09-24."""
     rep = g.representative
     term = matcher.match(rep.title_normalised)
     values = {
@@ -157,8 +163,9 @@ def plan(rows, now_iso, matcher, stored, stages=None):
 
 def project(paths, now_iso, matcher, client, private_texts, stages):
     """All five stages. `private_texts` are the private repository's copies
-    of the same stores. `stages` is filled as each stage completes, so a
-    failure part way still leaves a count of how far it got."""
+    of the same stores, from private_store_texts. `stages` is filled as each
+    stage completes, so a failure part way still leaves a count of how far it
+    got."""
     rows = load_rows(paths)
     stored = identities_in(public_store_texts(paths) + list(private_texts))
     stages["stored_identities"] = len(stored)

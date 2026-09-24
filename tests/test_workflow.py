@@ -134,6 +134,7 @@ class TestWorkflow(unittest.TestCase):
     def test_the_exit_2_warning_names_the_projection(self):
         warning = next(l for l in self.text.splitlines() if "::warning::" in l)
         self.assertIn("projection", warning)
+        self.assertIn("private store", warning)
         self.assertIn("budget", warning)
         self.assertIn("breaker", warning)
 

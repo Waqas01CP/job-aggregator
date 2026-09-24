@@ -133,7 +133,11 @@ kind and was reported as the first. **A failed projection to Airtable exits
 2, not 1**: the fetch is committed, the run log records the failure, and the
 next run re-projects the whole layer. Exit 1 would stop the push and lose the
 fetch for a display failure. The operator's decision, 2026-09-23, in
-ADR-0034's Changes. **On the third such failure in a row** the run still
+ADR-0034's Changes. **So does a private store that cannot be restored or
+written** (ADR-0047): the public fetch is committed, and when the restore
+failed the aggregator boards are not polled, since nothing they returned
+could be kept. The operator's decision, 2026-09-24, in ADR-0047's Changes.
+**On the third failure of either in a row** the run still
 commits and the workflow still pushes, and only then does the workflow's last
 step mark the run failed, so a failure that repeats cannot look healthy and
 marking it can never cost data. The operator's decision, 2026-09-24.

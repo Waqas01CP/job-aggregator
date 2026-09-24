@@ -4,7 +4,8 @@ Exit codes, because the orchestrator needs to tell three things apart:
 
   0  finished
   1  could not start, or fetched and could not store the result
-  2  stopped deliberately and resumable, or the projection to Airtable failed
+  2  stopped deliberately and resumable, the projection to Airtable failed,
+     or the private store could not be restored or written
 
 Exit 1 has two causes because CLAUDE.md fixes the codes at three, and a
 completed fetch that cannot be stored is neither a clean finish nor a
@@ -17,6 +18,13 @@ not start" because nothing distinguished the two.
 which would lose the run's fetched data for a display failure, while ADR-0040
 re-projects the whole layer every run, so the next run repairs the display by
 construction. The run records the failure in its log, commits, and exits 2.
+
+**So does a private store that cannot be restored or written.** The
+operator's decision of 2026-09-24, D6: the public fetch is kept, the run log's
+`private_store` block names the failure, and the aggregator boards are not
+polled, because nothing they returned could be kept. ADR-0047's "fail
+visibly" is the run log, the workflow's warning, and after three runs in a row
+a failed run.
 
 Two runs a day, early PKT morning and early PKT evening. ADR-0006.
 
@@ -36,7 +44,7 @@ import sys
 import traceback
 from datetime import datetime, timezone
 
-from . import envfile, projection, storage
+from . import envfile, private_store, projection, storage
 from .adapters import greenhouse, himalayas, lever
 from .airtable import (BASE_ENV, RUN_LOG_KEY, TABLE_ENV, TEST_TABLE_ENV, TOKEN_ENV,
                        AirtableClient, month_to_date)
@@ -117,13 +125,50 @@ def make_airtable_client(test_mode, used_this_month):
     return AirtableClient.from_env(test_mode, used_this_month=used_this_month)
 
 
-def read_private_stores():
-    """The private repository's copies of the classification stores, as
-    (label, text or None) pairs. ADR-0047. Tests replace it."""
-    texts = storage.read_private_files(os.environ.get(storage.PRIVATE_STORE_REPO_ENV),
-                                       os.environ.get(storage.PRIVATE_STORE_TOKEN_ENV),
-                                       projection.store_paths())
-    return [("private %s" % path, text) for path, text in texts.items()]
+def make_private_store(test_mode):
+    """The one place the run builds its private store. Tests replace it with
+    a local bare repository, so no unit test can reach GitHub."""
+    return private_store.PrivateStore(os.environ.get(storage.PRIVATE_STORE_REPO_ENV),
+                                      os.environ.get(storage.PRIVATE_STORE_TOKEN_ENV),
+                                      test_mode=test_mode)
+
+
+def open_private_store(paths, test_mode):
+    """Open the private store and restore the aggregator working copies from
+    it. ADR-0047. Returns (the store or None, the run log's block).
+
+    Never raises. On any failure it returns no store, so the run has nothing
+    to write with: **a run that could not restore never writes**, since
+    pushing after a failed restore would replace the stored history with one
+    run's snapshot, ADR-0003's failure."""
+    block = {"branch": storage.data_branch(test_mode), "restored": 0, "pushed": None,
+             "failure": None}
+    store = None
+    try:
+        store = make_private_store(test_mode)
+        store.open()
+        block["restored"] = len(store.restore(paths))
+        return store, block
+    except Exception as e:
+        if store is not None:
+            store.close()
+        block["failure"] = redact_secrets("%s: %s" % (type(e).__name__, e))
+        return None, block
+
+
+def save_private_store(store, block, paths, run_at):
+    """Commit and push the run's aggregator files. Never raises; a failure is
+    recorded in the block and the run exits 2. Closes the store."""
+    if store is None:
+        return
+    try:
+        files = private_store.files_to_push(paths)
+        block["files"] = len(files)
+        block["pushed"] = bool(files and store.commit_and_push(files, "run %s" % run_at))
+    except Exception as e:
+        block["failure"] = redact_secrets("%s: %s" % (type(e).__name__, e))
+    finally:
+        store.close()
 
 
 def redact_secrets(text, environ=None):
@@ -143,12 +188,17 @@ def redact_secrets(text, environ=None):
     return text
 
 
-def project_display(run, no_commit, test_mode):
+def project_display(run, no_commit, test_mode, restore_failure=None):
     """Project the filtered layer to `Jobs`, or to `Jobs test` in test mode.
 
     Returns (projection stages, the airtable block, failure or None). Never
     raises: a failed projection is recorded, the run still commits, and the
     caller exits 2.
+
+    **A private store that could not be restored fails the projection.** Its
+    outcome stores are unknown, and projecting as though they were empty
+    would bring back every aggregator role the operator retired, and any
+    group whose stored member was one.
 
     **A no-commit run reaches no base and no private store.** It plans the
     projection from the local files and sends nothing, so the counts can be
@@ -161,15 +211,20 @@ def project_display(run, no_commit, test_mode):
             stages["mode"] = "dry run: a no-commit run reaches no base and no private store"
             records = projection.plan(projection.load_rows(run.paths), now_iso, run.matcher,
                                       projection.identities_in(
-                                          projection.public_store_texts(run.paths)), stages)
+                                          projection.public_store_texts(run.paths)
+                                          + projection.private_store_texts(run.paths)), stages)
             return stages, {"calls_used": 0, "rows_sent": 0, "failure": None,
                             "would_send": len(records)}, None
 
+        if restore_failure:
+            raise projection.ProjectionError(
+                "the private store could not be restored, so the outcome stores that keep "
+                "retired aggregator roles out of the display are unknown")
         month = now_iso[:7].replace("-", "")
         used = month_to_date(storage.read_month_run_logs(month, test_mode), now_iso)
         client = make_airtable_client(test_mode, used)
         projection.project(run.paths, now_iso, run.matcher, client,
-                           read_private_stores(), stages)
+                           projection.private_store_texts(run.paths), stages)
         return stages, dict(client.counters(), failure=None), None
     except Exception as e:
         failure = "%s: %s" % (type(e).__name__, e)
@@ -183,7 +238,8 @@ def project_display(run, no_commit, test_mode):
 
 
 class Run:
-    def __init__(self, boards, client, now=None, test_mode=False, matcher=None, slot=None):
+    def __init__(self, boards, client, now=None, test_mode=False, matcher=None, slot=None,
+                 private_unavailable=None):
         self.boards = boards
         self.client = client
         self.now = now or datetime.now(timezone.utc)
@@ -195,6 +251,10 @@ class Run:
         # ADR-0048: which scheduled slot this run is, from the workflow. None
         # for a dispatch or a local run, which polls every board.
         self.slot = slot
+        # ADR-0047: why the private store is unavailable, or None. An
+        # aggregator polled without it would keep nothing and be first
+        # contact next time too, so it is not polled.
+        self.private_unavailable = private_unavailable
 
     # ------------------------------------------------------------ per board
     def poll(self, board, seen_first_seen):
@@ -285,6 +345,14 @@ class Run:
                         "new": 0, "kept": 0, "drops": {}, "status": "skipped",
                         "detail": "polled on the %s run only (ADR-0048); this is the %s run"
                                   % (" and ".join(board.poll_slots), self.slot)})
+                    continue
+                if self.private_unavailable and not is_publishable(board.source):
+                    self.board_logs.append({
+                        "board": board.board_id, "fetched": 0, "parse_problems": 0,
+                        "new": 0, "kept": 0, "drops": {}, "status": "skipped",
+                        "detail": "the private store could not be restored, so nothing "
+                                  "fetched here could be kept (ADR-0047); the run log's "
+                                  "private_store block says why"})
                     continue
                 rows = self.poll(board, first_seen)
                 reached.add(board.board_id)
@@ -435,6 +503,13 @@ def summarise(run_log):
         lines.append("  airtable: %d call(s), %d row(s) sent%s"
                      % (a.get("calls_used", 0), a.get("rows_sent", 0),
                         "  FAILED: %s" % a["failure"] if a.get("failure") else ""))
+    ps = run_log.get("private_store")
+    if ps is not None:
+        lines.append("  private store (%s): %d file(s) restored, %s%s"
+                     % (ps.get("branch"), ps.get("restored", 0),
+                        {True: "pushed", False: "nothing changed"}.get(ps.get("pushed"),
+                                                                       "not pushed"),
+                        "  FAILED: %s" % ps["failure"] if ps.get("failure") else ""))
     at = run_log.get("attention") or {}
     if at.get("failed_in_a_row"):
         lines.append("  attention: failed %d run(s) in a row%s"
@@ -448,7 +523,8 @@ def files_to_commit(run_log, paths, log_path, test_mode):
 
     **An aggregator's raw file never does.** ADR-0020: two feeds prohibit
     redistribution and a branch inherits its repository's visibility, so those
-    rows stay in a local directory. This is the last gate before a push, and
+    rows stay in a local directory, which ADR-0047 pushes to a private
+    repository instead. This is the last gate before a push, and
     it selects by source class rather than by filename, because a filename
     convention is one rename away from leaking.
 
@@ -526,23 +602,43 @@ def main(argv=None):
         print("state: %s" % ("%d file(s) restored from the %s branch" % (len(restored), branch)
                              if restored else "no %s branch, starting from local files" % branch))
 
+    # ADR-0047. After the public restore, which can stop the run, and before
+    # any fetch. A failure here does not stop the run: D6 keeps the public
+    # fetch and exits 2.
+    store, private_block = (None, None)
+    if not args.no_commit:
+        store, private_block = open_private_store(storage.layout(test_mode), test_mode)
+
     client = HttpClient(**({"budget": args.budget} if args.budget else {}))
     # The workflow names the slot from the cron that fired it. Anything else,
     # a dispatch or a local run, is not a slot and polls every board.
     slot = os.environ.get("RUN_SLOT") or None
-    run = Run(boards, client, test_mode=test_mode, matcher=matcher, slot=slot)
+    # A failed restore and a failed push differ: only the first leaves the
+    # private outcome stores unknown, so only the first stops the projection.
+    restore_failure = private_block and private_block["failure"]
+    run = Run(boards, client, test_mode=test_mode, matcher=matcher, slot=slot,
+              private_unavailable=restore_failure)
     try:
         run_log = run.execute()
     except Exception:
+        if store is not None:
+            store.close()
         traceback.print_exc()
         print("could not complete the run: the exception above was raised before "
               "anything was committed", file=sys.stderr)
         return EXIT_CANNOT_START
 
+    # The data first: the aggregator files go to the private store before
+    # anything is sent to the display. Never raises.
+    if private_block is not None:
+        save_private_store(store, private_block, run.paths, run_log["run_at"])
+        run_log["private_store"] = private_block
+    private_failure = private_block and private_block["failure"]
+
     # After the files are written, before the run log is: the log records the
     # outcome. Never raises; a failure is recorded and the run still commits.
     run_log["projection"], run_log[RUN_LOG_KEY], projection_failure = \
-        project_display(run, args.no_commit, test_mode)
+        project_display(run, args.no_commit, test_mode, restore_failure)
     run_log["attention"] = attention(run_log, test_mode, args.no_commit)
 
     print(summarise(run_log))
@@ -567,12 +663,17 @@ def main(argv=None):
     if run_log["attention"]["escalate"]:
         # Only after the commit: the workflow pushes, then fails the run.
         tell_the_workflow("escalate", "true")
-        print("the display has failed on %d runs in a row; this run is committed and "
-              "the workflow will mark it failed after pushing"
+        print("the display or the private store has failed on %d runs in a row; this "
+              "run is committed and the workflow will mark it failed after pushing"
               % run_log["attention"]["failed_in_a_row"], file=sys.stderr)
+    if private_failure:
+        print("the private store could not be restored or written; the public fetch is "
+              "stored and the aggregator rows wait for the next run: %s" % private_failure,
+              file=sys.stderr)
     if projection_failure:
         print("the projection to Airtable failed; the fetch is stored and the next run "
               "re-projects: %s" % projection_failure, file=sys.stderr)
+    if private_failure or projection_failure:
         return EXIT_STOPPED_RESUMABLE
     return run.exit_code()
 

@@ -1,0 +1,80 @@
+[
+  {
+    "label": "a failed restore still leaves a store to write with",
+    "path": "src/run.py",
+    "find": "        return None, block",
+    "replace": "        return store, block"
+  },
+  {
+    "label": "aggregators are polled without the private store",
+    "path": "src/run.py",
+    "find": "                if self.private_unavailable and not is_publishable(board.source):",
+    "replace": "                if False:"
+  },
+  {
+    "label": "the projection runs without the private outcome stores",
+    "path": "src/run.py",
+    "find": "        if restore_failure:\n            raise projection.ProjectionError(",
+    "replace": "        if False:\n            raise projection.ProjectionError("
+  },
+  {
+    "label": "a failed push stops the projection",
+    "path": "src/run.py",
+    "find": "project_display(run, args.no_commit, test_mode, restore_failure)",
+    "replace": "project_display(run, args.no_commit, test_mode, private_failure)"
+  },
+  {
+    "label": "a private store failure exits 0",
+    "path": "src/run.py",
+    "find": "    if private_failure or projection_failure:",
+    "replace": "    if projection_failure:"
+  },
+  {
+    "label": "the escalation ignores the private store",
+    "path": "src/run.py",
+    "find": "    for block in (run_log.get(RUN_LOG_KEY), run_log.get(\"private_store\")):",
+    "replace": "    for block in (run_log.get(RUN_LOG_KEY),):"
+  },
+  {
+    "label": "the private block never reaches the run log",
+    "path": "src/run.py",
+    "find": "        run_log[\"private_store\"] = private_block",
+    "replace": "        pass"
+  },
+  {
+    "label": "the restore leaves an existing local copy",
+    "path": "src/private_store.py",
+    "find": "            write_atomic(local, text)\n            written.append(local)",
+    "replace": "            if not os.path.exists(local):\n                write_atomic(local, text)\n            written.append(local)"
+  },
+  {
+    "label": "the push is forced",
+    "path": "src/private_store.py",
+    "find": "\"%s:refs/heads/%s\" % (commit, self.branch)",
+    "replace": "\"+%s:refs/heads/%s\" % (commit, self.branch)"
+  },
+  {
+    "label": "a later write drops the files it does not rewrite",
+    "path": "src/private_store.py",
+    "find": "        if self.tip:\n            self._git([\"read-tree\", self.tip]",
+    "replace": "        if False:\n            self._git([\"read-tree\", self.tip]"
+  },
+  {
+    "label": "test mode writes production's private branch",
+    "path": "src/private_store.py",
+    "find": "        self.branch = data_branch(test_mode)",
+    "replace": "        self.branch = data_branch(False)"
+  },
+  {
+    "label": "git's stderr is not scrubbed",
+    "path": "src/private_store.py",
+    "find": "detail = _scrub(p.stderr.decode(\"utf-8\", \"replace\").strip(), self._secrets)",
+    "replace": "detail = p.stderr.decode(\"utf-8\", \"replace\").strip()"
+  },
+  {
+    "label": "the private stores are read from the public directory",
+    "path": "src/projection.py",
+    "find": "return _store_texts(paths[\"local_outcomes_dir\"], \"private\")",
+    "replace": "return _store_texts(paths[\"outcomes_dir\"], \"private\")"
+  }
+]
