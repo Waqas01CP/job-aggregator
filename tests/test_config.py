@@ -121,6 +121,18 @@ class TestDefeatCases(unittest.TestCase):
             [{"platform": "greenhouse", "slug": "speechify",
               "normalisations": ["strip_location_sufix"]}], "not one of")
 
+    def test_a_misspelled_poll_slot_is_rejected(self):
+        """ADR-0048. A typo would never match the run's slot, and the source
+        would be skipped on every scheduled run, silently."""
+        self.assert_rejected(
+            [{"platform": "himalayas", "slug": "browse", "poll_slots": ["mornign"]}],
+            "not one of")
+
+    def test_poll_slots_must_be_a_list(self):
+        self.assert_rejected(
+            [{"platform": "himalayas", "slug": "browse", "poll_slots": "morning"}],
+            "expected a list")
+
     def test_url_in_the_slug_field_is_rejected(self):
         """A URL here builds a nonsense endpoint that 404s, which reads like a
         dead board rather than a config error."""

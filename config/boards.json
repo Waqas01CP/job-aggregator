@@ -75,6 +75,7 @@
       "platform": "himalayas",
       "slug": "browse",
       "normalisations": [],
+      "poll_slots": ["morning"],
       "note": "Aggregator feed, not an employer board. ADR-0019 conditional. Browse endpoint only: the search endpoint is not recency-ordered and ignores the cursor. The slug is a placeholder because the endpoint takes none."
     }
   ]

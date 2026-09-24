@@ -367,6 +367,14 @@ class TestSeniority(unittest.TestCase):
             kept, drop = keep(title=title)
             self.assertTrue(kept, "%s dropped by %s" % (title, drop and drop["rule"]))
 
+    def test_an_accented_senior_word_is_dropped_too(self):
+        """Production's first projection put "Fullstack Developer | Sênior
+        (13593)" in Jobs on 2026-09-24. The operator decided accents are
+        stripped before matching; this is that title."""
+        kept, drop = keep(title="Fullstack Developer | Sênior (13593)")
+        self.assertFalse(kept)
+        self.assertEqual(drop["rule"], "seniority")
+
     def test_senior_with_level_one_is_still_dropped(self):
         """Careem's "Senior Software Engineer I": the operator accepted that a
         senior word drops it whatever level follows."""

@@ -332,6 +332,23 @@ def restore_from_branch(test_mode=False):
     return written
 
 
+def read_recent_run_logs(count, test_mode=False):
+    """The last `count` run logs on the branch, oldest first, whatever month
+    they fall in. For counting failures in a row across a month boundary."""
+    branch = data_branch(test_mode)
+    if count <= 0 or not branch_exists(branch):
+        return []
+    listed = sorted(p for p in _git(["ls-tree", "--name-only", branch, RUNLOG_DIR + "/"]).splitlines()
+                    if p.endswith(".json"))
+    logs = []
+    for path in listed[-count:]:
+        text = read_branch_file(path, branch)
+        if text is None:
+            raise StorageError("%s:%s is listed but could not be read" % (branch, path))
+        logs.append(loads(text))
+    return logs
+
+
 def read_month_run_logs(yyyymm, test_mode=False):
     """This month's run logs from the branch, as dicts.
 

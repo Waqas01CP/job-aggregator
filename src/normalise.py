@@ -124,14 +124,35 @@ _SEPARATORS = re.compile(r"[-‐‑‒–—_/]")
 _SPACE = re.compile(r"\s+")
 
 
+def strip_latin_marks(text):
+    """Remove accents from Latin letters, and only from them.
+
+    "Sênior" reached `Jobs` on 2026-09-24 because "sênior" is not "senior";
+    the operator decided accents are stripped before matching. Only a mark
+    that follows an ASCII letter is removed, so the marks that carry meaning
+    in other scripts, a Japanese voicing mark or a Greek accent, survive.
+    Composing again afterwards returns everything else to NFKC, so a string
+    with no Latin accent folds exactly as it did before."""
+    out = []
+    for ch in unicodedata.normalize("NFKD", text):
+        if unicodedata.combining(ch) and out and out[-1].isascii():
+            continue
+        out.append(ch)
+    return unicodedata.normalize("NFC", "".join(out))
+
+
 def fold(text):
-    """Lowercase, separators to spaces, punctuation gone, whitespace collapsed.
+    """Lowercase, separators to spaces, punctuation gone, whitespace collapsed,
+    Latin accents removed.
 
     ADR-0021 specifies this for title matching. The deduplication key uses the
-    same fold so that "Senior Engineer" and "senior  engineer" are one key."""
+    same fold so that "Senior Engineer" and "senior  engineer" are one key.
+    Accent stripping was added 2026-09-24 on the operator's decision, after a
+    comparison over 1,458 distinct stored titles changed one verdict, the
+    "Sênior" title it was meant to catch, and merged no two dedupe keys."""
     if not text:
         return ""
-    text = unicodedata.normalize("NFKC", str(text))
+    text = strip_latin_marks(unicodedata.normalize("NFKC", str(text)))
     text = _SEPARATORS.sub(" ", text.lower())
     text = _PUNCT.sub("", text)
     return _SPACE.sub(" ", text).strip()

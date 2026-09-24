@@ -53,6 +53,12 @@ class ConfigError(Exception):
     """Raised when a board entry cannot be trusted. Never repaired silently."""
 
 
+# ADR-0048: a source is polled no faster than its feed refreshes, configured
+# per source. The workflow names the run's slot from the cron that fired it;
+# a manual dispatch or a local run is neither slot and polls every source.
+SLOTS = ("morning", "evening")
+
+
 @dataclass(frozen=True)
 class Board:
     platform: str
@@ -60,6 +66,12 @@ class Board:
     normalisations: tuple = ()
     employer_alias: str = None
     note: str = ""
+    poll_slots: tuple = ()      # empty means every slot
+
+    def polled_on(self, slot):
+        """Whether a run in this slot asks this board. A run that is not a
+        scheduled slot, a dispatch or a local run, asks every board."""
+        return slot not in SLOTS or not self.poll_slots or slot in self.poll_slots
 
     @property
     def source_class(self):
@@ -116,8 +128,15 @@ def _validate(entry, index, seen):
     if alias is not None and (not isinstance(alias, str) or not alias.strip()):
         raise ConfigError("%s: employer_alias %r is empty or not a string" % (where, alias))
 
+    slots = entry.get("poll_slots", [])
+    if not isinstance(slots, list):
+        raise ConfigError("%s: poll_slots is %s, expected a list" % (where, type(slots).__name__))
+    for s in slots:
+        if s not in SLOTS:
+            raise ConfigError("%s: poll_slot %r is not one of %s" % (where, s, list(SLOTS)))
+
     return Board(platform=platform, slug=slug, normalisations=tuple(norms),
-                 employer_alias=alias, note=entry.get("note", ""))
+                 employer_alias=alias, note=entry.get("note", ""), poll_slots=tuple(slots))
 
 
 def load_boards(path=None):

@@ -66,6 +66,51 @@ SECRET_ENVS = (TOKEN_ENV, BASE_ENV, TABLE_ENV, TEST_TABLE_ENV,
                storage.PRIVATE_STORE_TOKEN_ENV, storage.PRIVATE_STORE_REPO_ENV)
 
 
+# The operator's decision of 2026-09-24: a failure that is resumable exits 2
+# and shows as a green run, so one that repeats would look healthy for a week.
+# On the third run in a row the run still commits and pushes, then the
+# workflow's last step marks it failed. A single failure stays quiet.
+ESCALATE_AFTER = 3
+
+
+def needs_attention(run_log):
+    """A run whose display or private store failed, which exit 2 hides."""
+    for block in (run_log.get(RUN_LOG_KEY), run_log.get("private_store")):
+        if isinstance(block, dict) and block.get("failure"):
+            return True
+    return False
+
+
+def attention(run_log, test_mode, no_commit):
+    """How many runs in a row, this one included, have needed attention, and
+    whether that reaches ESCALATE_AFTER. Reads the previous logs from the
+    branch; a no-commit run neither reads the branch nor escalates. Never
+    raises: failing to count must not cost the run its commit."""
+    if not needs_attention(run_log):
+        return {"failed_in_a_row": 0, "escalate": False}
+    if no_commit:
+        return {"failed_in_a_row": 1, "escalate": False}
+    try:
+        previous = storage.read_recent_run_logs(ESCALATE_AFTER - 1, test_mode)
+    except Exception as e:
+        return {"failed_in_a_row": 1, "escalate": False,
+                "note": "previous run logs unreadable: %s" % type(e).__name__}
+    streak = 1
+    for log in reversed(previous):
+        if not needs_attention(log):
+            break
+        streak += 1
+    return {"failed_in_a_row": streak, "escalate": streak >= ESCALATE_AFTER}
+
+
+def tell_the_workflow(name, value):
+    """A step output for the workflow, when running inside one."""
+    path = os.environ.get("GITHUB_OUTPUT")
+    if path:
+        with open(path, "a", encoding="utf-8") as f:
+            f.write("%s=%s\n" % (name, value))
+
+
 def make_airtable_client(test_mode, used_this_month):
     """The one place the run builds its Airtable client. Tests replace it with
     a fake transport, so no unit test can reach a live base."""
@@ -138,7 +183,7 @@ def project_display(run, no_commit, test_mode):
 
 
 class Run:
-    def __init__(self, boards, client, now=None, test_mode=False, matcher=None):
+    def __init__(self, boards, client, now=None, test_mode=False, matcher=None, slot=None):
         self.boards = boards
         self.client = client
         self.now = now or datetime.now(timezone.utc)
@@ -147,6 +192,9 @@ class Run:
         self.paths = storage.layout(test_mode)
         self.board_logs = []
         self.stopped = None
+        # ADR-0048: which scheduled slot this run is, from the workflow. None
+        # for a dispatch or a local run, which polls every board.
+        self.slot = slot
 
     # ------------------------------------------------------------ per board
     def poll(self, board, seen_first_seen):
@@ -229,6 +277,15 @@ class Run:
         all_rows, reached = [], set()
         try:
             for board in self.boards:
+                if not board.polled_on(self.slot):
+                    # ADR-0048: skipped, and said so, so a skipped source is
+                    # visible rather than absent and never reads as broken.
+                    self.board_logs.append({
+                        "board": board.board_id, "fetched": 0, "parse_problems": 0,
+                        "new": 0, "kept": 0, "drops": {}, "status": "skipped",
+                        "detail": "polled on the %s run only (ADR-0048); this is the %s run"
+                                  % (" and ".join(board.poll_slots), self.slot)})
+                    continue
                 rows = self.poll(board, first_seen)
                 reached.add(board.board_id)
                 all_rows.extend(rows)
@@ -378,6 +435,11 @@ def summarise(run_log):
         lines.append("  airtable: %d call(s), %d row(s) sent%s"
                      % (a.get("calls_used", 0), a.get("rows_sent", 0),
                         "  FAILED: %s" % a["failure"] if a.get("failure") else ""))
+    at = run_log.get("attention") or {}
+    if at.get("failed_in_a_row"):
+        lines.append("  attention: failed %d run(s) in a row%s"
+                     % (at["failed_in_a_row"], ", the run will be marked failed"
+                        if at.get("escalate") else ""))
     return "\n".join(lines)
 
 
@@ -465,7 +527,10 @@ def main(argv=None):
                              if restored else "no %s branch, starting from local files" % branch))
 
     client = HttpClient(**({"budget": args.budget} if args.budget else {}))
-    run = Run(boards, client, test_mode=test_mode, matcher=matcher)
+    # The workflow names the slot from the cron that fired it. Anything else,
+    # a dispatch or a local run, is not a slot and polls every board.
+    slot = os.environ.get("RUN_SLOT") or None
+    run = Run(boards, client, test_mode=test_mode, matcher=matcher, slot=slot)
     try:
         run_log = run.execute()
     except Exception:
@@ -478,6 +543,7 @@ def main(argv=None):
     # outcome. Never raises; a failure is recorded and the run still commits.
     run_log["projection"], run_log[RUN_LOG_KEY], projection_failure = \
         project_display(run, args.no_commit, test_mode)
+    run_log["attention"] = attention(run_log, test_mode, args.no_commit)
 
     print(summarise(run_log))
 
@@ -498,6 +564,12 @@ def main(argv=None):
               "failed, so nothing was committed" % stage, file=sys.stderr)
         return EXIT_CANNOT_START
 
+    if run_log["attention"]["escalate"]:
+        # Only after the commit: the workflow pushes, then fails the run.
+        tell_the_workflow("escalate", "true")
+        print("the display has failed on %d runs in a row; this run is committed and "
+              "the workflow will mark it failed after pushing"
+              % run_log["attention"]["failed_in_a_row"], file=sys.stderr)
     if projection_failure:
         print("the projection to Airtable failed; the fetch is stored and the next run "
               "re-projects: %s" % projection_failure, file=sys.stderr)

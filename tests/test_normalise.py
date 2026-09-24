@@ -10,6 +10,7 @@ routes storage by it.
 import json
 import os
 import sys
+import unicodedata
 import unittest
 from datetime import datetime, timedelta, timezone
 
@@ -162,6 +163,29 @@ class TestFold(unittest.TestCase):
 
     def test_punctuation_is_deleted_and_space_collapsed(self):
         self.assertEqual(fold("Engineer, Core (Remote).  Sr.:"), "engineer core remote sr")
+
+    def test_latin_accents_are_stripped(self):
+        """The operator's decision of 2026-09-24, after "Sênior" reached Jobs
+        because "sênior" is not "senior"."""
+        self.assertEqual(fold("Sênior"), "senior")
+        self.assertEqual(fold("São Paulo"), "sao paulo")
+        self.assertEqual(fold("Iași, Timișoara, Gdańsk"), "iasi timisoara gdansk")
+        self.assertEqual(fold("Orthopädie"), "orthopadie")
+
+    def test_marks_that_carry_meaning_in_other_scripts_survive(self):
+        """Only a mark on an ASCII letter goes. The Japanese voicing mark turns
+        カ into ガ, and a Greek accent is part of the spelling."""
+        self.assertEqual(fold("ガ"), "ガ")
+        self.assertEqual(fold("ά"), "ά")
+        self.assertEqual(fold("й"), "й")
+
+    def test_a_string_without_latin_accents_folds_as_before(self):
+        """NFC after NFKD is NFKC, so nothing but the accents changed."""
+        for text in ("Senior AI Engineer", "ﬁnance", "ＡＩ Engineer", "ø æ ß ł"):
+            with self.subTest(text=text):
+                self.assertEqual(fold(text), fold(unicodedata.normalize("NFKC", text)))
+        self.assertEqual(fold("ﬁnance"), "finance")
+        self.assertEqual(fold("ø æ ß ł"), "ø æ ß ł")
 
 
 class TestDedupeKey(unittest.TestCase):

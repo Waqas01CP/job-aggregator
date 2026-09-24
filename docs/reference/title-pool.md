@@ -16,10 +16,11 @@ A posting is admitted to the display only if its normalised title contains one o
 
 Applied to the title and to every term, identically, before matching.
 
-1. Lowercase.
-2. Replace hyphen, en-dash, em-dash, underscore and forward slash with a single space. This is what makes `AI-Agent` match `ai agent`, and turns `AI/ML` into `ai ml`.
-3. Delete commas, parentheses, periods and colons.
-4. Collapse repeated whitespace, then trim.
+1. Remove accents from Latin letters, so `Sênior` becomes `senior` and `São Paulo` becomes `sao paulo`. Only a mark on a plain Latin letter goes; marks that belong to another script's spelling stay. Added 2026-09-24 on the operator's decision.
+2. Lowercase.
+3. Replace hyphen, en-dash, em-dash, underscore and forward slash with a single space. This is what makes `AI-Agent` match `ai agent`, and turns `AI/ML` into `ai ml`.
+4. Delete commas, parentheses, periods and colons.
+5. Collapse repeated whitespace, then trim.
 
 URL-encoded characters are decoded before step 1, where the title arrives from a URL slug.
 
@@ -107,3 +108,4 @@ Recorded so that the choice to keep these terms is revisited with evidence rathe
 | 2026-09-17 | Version 3. Terms regrouped into the operator's four role families, in order of precedence. Added `backend developer`, `back end developer`, `full stack`, `fullstack developer`, `fullstack engineer`, `mobile developer`, `data engineer`, `automation engineer`, `software developer`, `software engineer`. 51 terms to 61 | Decided by the operator, who is open to software engineering roles with AI taking precedence. Each added term was previewed against 796 production postings with `tools/title_pool_report.py`. `back end developer`, `fullstack developer` and `fullstack engineer` are the spelling variants ADR-0021 requires to be listed explicitly. Senior titles these terms admit are dropped by the seniority rule, version 1 |
 | 2026-09-17 | Corrected the note claiming `software engineer i` matches "Software Engineer II" and "III" | It never did; checked against the compiled pattern |
 | 2026-09-18 | Version 4. Added eighteen AI terms: `agent developer`, `autonomous agent`, `gen ai`, `ai engineering`, `prompt engineering`, `context engineering`, `ai research`, `ai researcher`, `applied scientist`, `ai specialist`, `ai architect`, `ai integration`, `ai consultant`, `ai infrastructure`, `ml engineer`, `ml ops`, `computer vision`, `data science`. 61 terms to 79 | Decided by the operator, who is moving toward AI roles first and wants the terms in place before the boards that carry them are added. Every one was previewed against the 796 production postings; none matches anything there yet, which is the point. Bare `research engineer` was rejected under ADR-0021's `ai red team` precedent |
+| 2026-09-24 | Normalisation step 1 added: Latin accents removed before matching. No term changed | A Himalayas title reading "Sênior" reached Jobs because "sênior" is not "senior". The operator decided accents are stripped, with care. Over 1,458 distinct stored titles the change altered one verdict, that title, merged no two dedupe keys, and left every employer name as it was; logs/2026-09-24-operator-decisions-and-the-next-builds.md |

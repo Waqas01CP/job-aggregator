@@ -117,6 +117,46 @@ class RunHarness(unittest.TestCase):
         shutil.rmtree(self.dir, ignore_errors=True)
 
 
+class TestPollSlots(RunHarness):
+    """ADR-0048: a source polled no faster than its feed refreshes. Himalayas
+    is asked on the morning run only; the evening run skips it and says so."""
+
+    HIM = Board(platform="himalayas", slug="browse", poll_slots=("morning",))
+
+    def run_in(self, slot):
+        client = client_for({"careem": gh_payload(["AI Engineer"])})
+        log = Run([GH, self.HIM], client, now=NOW, matcher=MATCHER, slot=slot).execute()
+        asked = [u for u in client._session.calls if "himalayas" in u]
+        entry = next(b for b in log["boards"] if b["board"] == "himalayas:browse")
+        return entry, asked, log
+
+    def test_the_evening_run_skips_it_and_says_so(self):
+        entry, asked, log = self.run_in("evening")
+        self.assertEqual(asked, [], "the evening run asked Himalayas")
+        self.assertEqual(entry["status"], "skipped")
+        self.assertIn("morning run only", entry["detail"])
+        self.assertEqual(log["totals"]["fetched"], 1, "the other board was still polled")
+
+    def test_the_morning_run_asks_it(self):
+        entry, asked, _ = self.run_in("morning")
+        self.assertTrue(asked)
+        self.assertNotEqual(entry["status"], "skipped")
+
+    def test_a_dispatch_or_local_run_asks_every_board(self):
+        for slot in (None, "manual"):
+            with self.subTest(slot=slot):
+                entry, asked, _ = self.run_in(slot)
+                self.assertTrue(asked)
+                self.assertNotEqual(entry["status"], "skipped")
+
+    def test_the_real_config_polls_himalayas_on_the_morning_run_only(self):
+        from src.config import load_boards
+        [him] = [b for b in load_boards() if b.platform == "himalayas"]
+        self.assertEqual(him.poll_slots, ("morning",))
+        others = [b for b in load_boards() if b.platform != "himalayas"]
+        self.assertTrue(all(b.polled_on("evening") for b in others))
+
+
 class TestNormalRun(RunHarness):
     def test_writes_both_layers_and_logs_every_board(self):
         client = client_for({"careem": gh_payload(["AI Engineer", "Chief Happiness Officer"]),
@@ -381,6 +421,9 @@ class TestMain(unittest.TestCase):
         # step saw TEST_MODE=1 and seven of these tests failed on GitHub while
         # passing on every machine without it.
         self.env_test_mode = os.environ.pop("TEST_MODE", None)
+        # Inside the workflow's test step GITHUB_OUTPUT is set; a test must
+        # never write that step's outputs.
+        self.env_output = os.environ.pop("GITHUB_OUTPUT", None)
         self.dir = tempfile.mkdtemp()
         self.cwd = os.getcwd()
         os.chdir(self.dir)
@@ -413,6 +456,9 @@ class TestMain(unittest.TestCase):
         os.environ.pop("TEST_MODE", None)
         if self.env_test_mode is not None:
             os.environ["TEST_MODE"] = self.env_test_mode
+        os.environ.pop("GITHUB_OUTPUT", None)
+        if self.env_output is not None:
+            os.environ["GITHUB_OUTPUT"] = self.env_output
         os.chdir(self.cwd)
         shutil.rmtree(self.dir, ignore_errors=True)
 
@@ -657,6 +703,55 @@ class TestMain(unittest.TestCase):
         self.main()
         self.assertEqual(self.airtable_asked[0][1], 0)
         self.assertEqual(self.airtable_asked[1][1], FakeAirtable.CALLS)
+
+    # ------------------------------------------------------------ escalation
+    def outputs(self):
+        with open(os.environ["GITHUB_OUTPUT"], encoding="utf-8") as f:
+            return f.read()
+
+    def failing_projection(self):
+        def refuse(test_mode, used_this_month):
+            raise AirtableConfigError("empty or unset: AIRTABLE_TOKEN")
+        run_module.make_airtable_client = refuse
+
+    def test_the_third_failure_in_a_row_escalates_after_the_commit(self):
+        """The operator's decision of 2026-09-24. Each run still commits and
+        exits 2; only the third asks the workflow to mark the run failed."""
+        os.environ["GITHUB_OUTPUT"] = os.path.join(self.dir, "github_output")
+        open(os.environ["GITHUB_OUTPUT"], "w").close()
+        self.failing_projection()
+        for expected in (1, 2):
+            self.assertEqual(self.main()[0], EXIT_STOPPED_RESUMABLE)
+            self.assertEqual(self.last_run_log()["attention"]["failed_in_a_row"], expected)
+            self.assertNotIn("escalate", self.outputs())
+        code, _, err = self.main()
+        self.assertEqual(code, EXIT_STOPPED_RESUMABLE)
+        self.assertEqual(self.last_run_log()["attention"],
+                         {"failed_in_a_row": 3, "escalate": True})
+        self.assertIn("escalate=true", self.outputs())
+        self.assertIn("3 runs in a row", err)
+        self.assertEqual(self.git("rev-list", "--count", "refs/heads/data", "--")[1], "3",
+                         "every failing run must still have committed")
+
+    def test_a_success_in_between_resets_the_count(self):
+        os.environ["GITHUB_OUTPUT"] = os.path.join(self.dir, "github_output")
+        open(os.environ["GITHUB_OUTPUT"], "w").close()
+        self.failing_projection()
+        self.main()
+        self.main()
+        run_module.make_airtable_client = lambda test_mode, used_this_month: FakeAirtable()
+        self.main()
+        self.failing_projection()
+        self.main()
+        self.main()
+        self.assertEqual(self.last_run_log()["attention"]["failed_in_a_row"], 2)
+        self.assertNotIn("escalate", self.outputs())
+
+    def test_a_no_commit_run_never_escalates(self):
+        self.failing_projection()
+        for _ in range(3):
+            self.main("--no-commit")
+        self.assertFalse(self.last_run_log()["attention"]["escalate"])
 
     def test_an_unreadable_branch_stops_the_run_before_any_fetch(self):
         def unreadable(test_mode=False):

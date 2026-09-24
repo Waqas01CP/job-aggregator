@@ -107,6 +107,30 @@ class TestWorkflow(unittest.TestCase):
         """The names the workflow passes are the names the run reads."""
         self.assertEqual(sorted(SECRET_NAMES), sorted(run_module.SECRET_ENVS))
 
+    def test_the_run_slot_is_named_from_the_crons_the_workflow_schedules(self):
+        """ADR-0048. RUN_SLOT maps each cron to a slot; if a cron were edited
+        and the mapping not, every run would be 'manual' and Himalayas would
+        be polled twice a day again, with nothing failing."""
+        crons = re.findall(r"-\s*cron:\s*\"([^\"]+)\"", self.text)
+        self.assertEqual(len(crons), 2)
+        line = next(l for l in self.text.splitlines() if l.strip().startswith("RUN_SLOT:"))
+        mapping = dict((c, s) for c, s in re.findall(r"github\.event\.schedule == '([^']+)' && '(\w+)'", line))
+        self.assertEqual(set(mapping), set(crons))
+        self.assertEqual(sorted(mapping.values()), ["evening", "morning"])
+        self.assertIn("'manual'", line)
+
+    def test_the_escalation_step_is_last_and_after_the_push(self):
+        """The operator's decision of 2026-09-24: marking a run failed must
+        never cost it its data, so the step that fails it comes after the
+        push and nothing comes after it."""
+        steps = [i for i, l in enumerate(self.text.splitlines()) if l.strip().startswith("- name:")]
+        names = [self.text.splitlines()[i].strip() for i in steps]
+        self.assertEqual(names[-1], "- name: Fail the run if the display has failed three runs in a row")
+        self.assertEqual(names[-2], "- name: Push the data branch")
+        tail = self.text[self.text.index(names[-1]):]
+        self.assertIn("if: steps.fetch.outputs.escalate == 'true'", tail)
+        self.assertIn("exit 1", tail)
+
     def test_the_exit_2_warning_names_the_projection(self):
         warning = next(l for l in self.text.splitlines() if "::warning::" in l)
         self.assertIn("projection", warning)

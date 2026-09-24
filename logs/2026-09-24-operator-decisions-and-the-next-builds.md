@@ -93,3 +93,46 @@ for disabling workflows: "In a public repository, scheduled workflows are
 automatically disabled when no repository activity has occurred in 60 days."
 The page does not define activity. Whether the pipeline's own pushes to
 `data` count stays unknown.
+
+## Built: the Title description, accents, one Himalayas poll a day, and escalation
+
+**G3, the `Title` field's description** on `Jobs` and `Jobs test`, through
+the connector `[VERIFIED]` `success: true` on both: it now says the title is
+normalised, why, and that the raw title is kept in the stored layers.
+
+**D4, accents.** Before any code changed, every title and employer the seat
+could reach was folded both ways `[VERIFIED]`: 3,308 records from the `data`
+and `data-test` raw layers, the local archive holding 500 Himalayas rows, the
+Himalayas cassette, and the production title that started it. 1,458 distinct
+titles, 56 with any non-ASCII character. **21 titles fold differently and one
+verdict changes**, "Fullstack Developer | Sênior (13593)", now dropped by the
+seniority rule; the other twenty are city names or titles no term matched
+either way. **No employer folds differently, and no two of the 1,001 stored
+normalised titles merge into one dedupe key.** The strip touches only a mark
+that follows a plain Latin letter, so a Japanese voicing mark or a Greek
+accent survives, and a string with no Latin accent folds exactly as before,
+since NFC after NFKD is NFKC; tests pin all three. `docs/reference/title-pool.md`
+gains the rule as normalisation step 1. ADR-0021 specifies the fold, so this
+is for the chat to record.
+
+**G1, ADR-0048.** A board may carry `poll_slots`; Himalayas carries
+`["morning"]`. The workflow names the slot from the cron that fired the run,
+`0 0` morning and `0 13` evening, and a dispatch or a local run is neither and
+polls every board, so test runs still see Himalayas. On an evening run the
+board is logged `skipped` with its reason, never absent. Tests prove the
+evening run never asks for it, the morning run does, a misspelt slot is
+refused by the config loader, and the workflow's mapping names exactly the
+two crons it schedules. The record's Confirmation needs the first evening
+run after the push; its check that can fail needs Himalayas' identities
+stored, which waits on G2.
+
+**D1, escalation.** The run log gains an `attention` block: how many runs in
+a row, this one included, have had a failed projection. On the third the run
+commits as usual, writes `escalate=true` to the workflow's step outputs, and a
+new last step, after the push, fails the run. A success resets the count, a
+no-commit run never escalates, and failing to read the previous logs never
+costs the run its commit. Tests prove the third failure escalates and the
+first two do not, that all three committed, that a success in between resets
+it, and that the escalation step is the workflow's last, after the push.
+`CLAUDE.md`'s exit-code line and ADR-0034's Changes carry it; exit codes are
+unchanged.
