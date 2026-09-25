@@ -30,6 +30,11 @@ on:
 # without it GitHub keeps one pending run per group and cancels it when a
 # third arrives, which the contract check sharing this group made likelier.
 # The audit of 2026-09-24, F3, against GitHub's concurrency documentation.
+# With queue: max GitHub holds up to 100 pending runs and cancels only beyond
+# that (its workflow-syntax page, read 2026-09-25), so a fourth or fifth run
+# waits its turn. The operator's decision, 2026-09-25: no run is ever dropped
+# to make room for another. queue: max may not be combined with
+# cancel-in-progress: true, which GitHub refuses as invalid.
 concurrency:
   group: fetch
   cancel-in-progress: false

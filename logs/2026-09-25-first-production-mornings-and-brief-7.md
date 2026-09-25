@@ -364,3 +364,81 @@ asked the seat to name it. It is now this seat's own handoff file, with a
 header saying what in it is stale, and `CLAUDE.md`'s briefs section names
 it. The report to the architecture chat and a new audit brief are in
 `briefs/`.
+
+## The operator's answers, the same evening
+
+Quoted as he wrote them. Each ranks first under `CLAUDE.md`, and each goes
+to the architecture chat in part 2 of the report in `briefs/architecture.md`.
+
+**The 12 unjudgeable Himalayas rows: he will set a `Status` on each.**
+They then take the ordinary path, and no rule of their own is needed.
+They are the rows of 2026-09-24 03:27Z that he had not yet marked, read
+through the connector `[VERIFIED]`:
+- GenAI Analyst, ActiveFence;
+- Network Monitoring & Automation Engineer (SolarWinds + Meraki), Unisys;
+- AI Platform Engineer (Global), Accelerant;
+- Data Scientist, Inetum;
+- Data Scientist, Thirdwave;
+- Databricks Data Engineer, Joyful Craftsmen AG;
+- MS Fabric Data Engineer, QHR;
+- HIL Test Automation Engineer, Terabase Energy;
+- Back End Developer - Elixir -Phoenix, Darren Caddle;
+- Full-Stack Software Engineer (2+ years experience: Canada), Wanderlog;
+- Software Developer Co-op (May 2027 | 12-16 months), Vena Solutions;
+- GTM AI Engineer -Deal Desk, Motive, the Himalayas copy of the Greenhouse
+  posting.
+
+**The six design choices of Brief 7: all approved.** "1. correct. 2.
+correct. 3. this is correct and it should be like that. 4. yes, this is
+correct and should be done like that. 5. also correct. 6. also correct."
+The sweep needs no change.
+
+**Conflict 2, ADR-0016 against ADR-0011: descriptions are to be saved.**
+- **His words:** "description is something that is to be saved. the
+  reasoning is that there is a possibility that some fo the posts might
+  not have description fetched due to any X reason such as incorrect
+  fetch or maybe the job description is not in the fetch so that is why
+  i am collecting every bit of data and only using some. wherever
+  description is present then it is to be saved and any other form of
+  data."
+- **Nothing is built for it.** Today no description is stored anywhere
+  `[VERIFIED]`:
+  - `src/adapters/greenhouse.py` never sends `?content=true`, which it
+    says adds 9.5 times the payload size;
+  - every adapter keeps only the fields it consumes.
+- **Where they are stored is open.** The seat recommends the private store
+  of ADR-0047. That saves everything and keeps ADR-0011's reason, a public
+  repository that never republishes an employer's text. It is asked of
+  the operator.
+- **It needs the architecture chat** to amend ADR-0011 or ADR-0016 and to
+  brief the build.
+- **Until then**, a posting that leaves its board takes its description
+  with it.
+
+**GitHub's 60-day shutoff: disregarded.** "the 60 day rule can be
+disregarded as my rahzaan project pipeline is running for the past 3
+months or more." His evidence is outside this repository.
+
+**`queue: max`: kept, and to be recorded.**
+- **His words:** "this has to be recorded meaning the queue:max issue as
+  i do not want anything to be dropped and properly handled even if a
+  fourth or a fifth arrives."
+- **GitHub's workflow-syntax page**, read on 2026-09-25 `[VERIFIED]`:
+  - under `queue: max`, "Up to 100 jobs or workflow runs can be
+    `pending`", and only runs beyond that are cancelled;
+  - under the default, `single`, a new run cancels the one waiting;
+  - `queue: max` with `cancel-in-progress: true` is a validation error.
+- **So a fourth or fifth run waits its turn.** `fetch.yml`'s comment now
+  says so and names his decision. `tests/test_workflow.py` already pins
+  `queue: max` on both workflows.
+- **The record** is the architecture chat's to write.
+
+**Himalayas' page cap: watch it.**
+- **His words:** "note it for a few days like is it being hit on a daily
+  basis and are jobs missed and if this continue then we will come up with
+  simple solutions like divide it into two runs which does a first half
+  and later half."
+- **The watch.** Each morning run from 2026-09-26 logs Himalayas' fetched
+  count and `oldest_published`. A run that fetched 500 and whose oldest
+  posting is newer than the previous poll hit the cap and left a gap. The
+  gap's length says roughly how much was missed.
