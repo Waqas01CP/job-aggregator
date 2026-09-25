@@ -58,7 +58,7 @@ We will record the normalised title alongside the original, never replacing it. 
 
 Speechify contributes 8 rows rather than 1086, which is the difference between a usable display and an unusable one. *(Annotated 2026-09-24, measured: on 2026-09-17 Speechify's postings made 11 keys, not 8, per the vertical-slice row of `logs/README.md`; the 318 Speechify postings stored on `data` at `a5abc3b` make 5.)*
 
-Deduplication normalisation and title matching are now two separate rules on the same field. ADR-0021 governs what is admitted; this governs what is considered the same posting. They must not be merged, because admitting and deduplicating are different questions.
+Deduplication normalisation and title matching are now two separate rules on the same field. ADR-0021 governs what is admitted; this governs what is considered the same posting. They must not be merged, *(Measured 2026-09-25: they share one `fold`, and over the 345 stored rows the shared fold changes no verdict. See Changes.)* because admitting and deduplicating are different questions.
 
 A per-source configuration is more work than a global rule and will grow as boards are added. That cost is accepted: the sources genuinely differ, and the alternative merges postings that are not the same.
 
@@ -99,3 +99,4 @@ The `updated_at` finding bears on ADR-0018, which carries its own Changes row.
 | Date | Change | Reason |
 |---|---|---|
 | 2026-09-24 | Speechify's row count annotated with its measurements | 11 keys on 2026-09-17 and 5 on 2026-09-24, where the record estimated 8. Annotated by the implementing seat under ADR-RULES, which allows a stale or wrong fact to be annotated unasked; the Decision Outcome is untouched. Found by the corpus audit of 2026-09-23 |
+| 2026-09-25 | The shared fold is measured against this clause and left as it is | The title rule matches on `title_normalised`, which carries this record's per-source normalisation, and since 2026-09-23 the display shows that string too, so the implementation audit asked whether the two rules had been merged. Measured by the chat over all 345 rows of `filtered.json` at `data` head `def4f935`: 299 rows differ between the raw and the normalised title, and the matched term, the admission verdict and ADR-0038's family are identical for every one of them, in both directions. The rules stay two: `fold` is one function used by both, which `fold`'s own docstring records, while what admits and what counts as the same posting remain separate predicates. The risk the clause names is real for a future per-source normalisation that removes a pool term, so the check above is the one to repeat when a board is added |

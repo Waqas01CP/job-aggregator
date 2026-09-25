@@ -18,7 +18,7 @@ Two things about that have since become clear.
 
 The unmatched bucket duplicates a safety net that already exists elsewhere. ADR-0001 stores every fetched posting raw and permanently. A role missed by a narrow allowlist is still on disk, and widening the allowlist and re-running recovers it. The bucket was providing that same protection a second time, in the display, which is the one place where volume is the problem the project exists to solve.
 
-Polling large employers returns their entire boards. Careem, S&P Global and EY carry hundreds of finance, sales and operations roles. Under three-way classification every one of those lands in the display as unmatched.
+Polling large employers returns their entire boards. Careem, S&P Global and EY carry hundreds of finance, sales and operations roles. *(Corrected 2026-09-25: EY is not a board this pipeline polls. ADR-0029 records it as a corporate careers site that was never probed and is out. The example stands on Careem and S&P Global, and the reasoning is unaffected.)* Under three-way classification every one of those lands in the display as unmatched.
 
 The blocklist existed only to clean up that bucket. With the bucket gone it has nothing to do: an Accountant title simply never matches an allowlist term.
 
@@ -51,7 +51,7 @@ We will admit a posting only if its normalised title matches a term in the title
 
 We will maintain no blocklist. It is unnecessary once unmatched rows are dropped. *(Annotated 2026-09-17: **reversed in one respect by ADR-0032**, which adds a seniority rule the operator owns. This sentence was written about ADR-0008's unmatched bucket, which this record removed, and not about seniority. What it still forbids stands: a list that deletes rows on a machine's judgement of category. ADR-0031 records why an operator-owned word list in a versioned file is configuration rather than that. See Changes.)*
 
-We will normalise the title and every term identically before matching: lowercase, replace hyphens, dashes, underscores and slashes with spaces, delete commas, parentheses, periods and colons, collapse whitespace.
+We will normalise the title and every term identically before matching: lowercase, replace hyphens, dashes, underscores and slashes with spaces, delete commas, parentheses, periods and colons, collapse whitespace. *(Extended 2026-09-24: Latin accents are removed first. See Changes.)*
 
 We will match on word boundaries, never raw substring, because substring matching turns "storage" into a RAG match.
 
@@ -111,3 +111,4 @@ The pool itself: `docs/reference/title-pool.md`.
 |---|---|---|
 | 2026-09-17 | The no-blocklist clause is reversed in one respect | ADR-0032 adds a seniority rule the operator owns, and ADR-0031 records why a versioned preference file is configuration rather than the machine judgement this clause forbids. The clause was written about ADR-0008's unmatched bucket, which this record removed, not about seniority |
 | 2026-09-17 | The Confirmation case set is re-run, not replaced | Run against the current chain on 2026-09-17: all eight cases produce the verdict this record requires. 'Software Engineer II' is still not admitted, but the mechanism changed, since the pool now matches it and the seniority rule drops it. 'Non-AI Systems Analyst' is admitted by 'ai system', which this record named as the one to watch, and it is a live false positive |
+| 2026-09-24 | The normalisation gains a first step: a combining mark following an ASCII character is removed, so an accented letter folds to its plain form | The operator's decision, D4, after production projected "Fullstack Developer \| Sênior (13593)" and the seniority rule never saw it: NFKC keeps the circumflex, so `senior` did not match. Measured before shipping over 1,458 distinct stored titles: 21 folds changed, one verdict changed, which is that title, now dropped; no employer changed and no two dedupe keys merged. A mark on a non-ASCII Latin letter is left alone, so the rule is narrower than "strip every accent". `docs/reference/title-pool.md` carries it as normalisation step 1 |
