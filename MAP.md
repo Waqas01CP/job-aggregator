@@ -105,6 +105,7 @@ supersedes and superseded-by links, deliberately not duplicated here.
 | `logs/2026-09-22-speechify-rotation-and-the-writer-check.md` | The two anomalous runs of 2026-09-22 explained as Speechify rotating its city copies, not a board fault; the corrected writer how-to checked cold against its records; the heredoc guard seen running, with a working-directory defect; and step 1 of the writer, the Airtable client and the shared retry module, built and proved by mutation. | current |
 | `logs/2026-09-23-the-projection.md` | Brief 6. The Airtable client reshaped to one upsert of exactly ten fields with no read path, the projection built and wired into every committing run, the outcome stores restored and read from the private repository, a failed projection exiting 2, and a .env reader. Offline-verified over real data; the live checks wait on a push and a test-mode dispatch. | current |
 | `logs/2026-09-24-operator-decisions-and-the-next-builds.md` | The operator's decisions of 2026-09-24 while the architecture chat was unavailable, the implementing seat's own backlog cleared, and the builds those decisions released, with the evidence gathered for the next brief. | current |
+| `logs/2026-09-25-first-production-mornings-and-brief-7.md` | The first production runs with the private store, the contract check and the workspace count verified; the stamp gate widened; the sweep's timing asked; and Brief 7 read against its records before any build. | current |
 
 ## decision
 
@@ -198,4 +199,4 @@ Grouped by topic, in the order the pipeline runs. A record appears under exactly
 | `docs/deferred/rozee-pk.md` | Adding Rozee.pk as a source. Deferred until the display works and until more ATS sources are added, either of which may remove the need for it. | current |
 | `docs/deferred/similarity-matching.md` | Ranking postings by similarity to accepted roles. Deferred because ADR-0010 forbids it and the deterministic star was built instead; revisit when the accepted store holds fifty rows or when the operator stops reading every row. | current |
 
-Files listed: 93
+Files listed: 94
