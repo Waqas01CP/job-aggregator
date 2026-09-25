@@ -6,6 +6,11 @@ status: current
 
 # Retention
 
+**The flow is ADR-0050 as of 2026-09-25.** It supersedes ADR-0046, which the
+citations below name because it decided each item at the time. ADR-0050 adds a
+third fifteen-day period, for a posting that has closed, and moves the copy
+step to every fetch.
+
 One period, fifteen days, applied twice on two different clocks. Neither clock
 is the posting's publication date or its first-seen date, because neither of
 those moves when a classification changes.

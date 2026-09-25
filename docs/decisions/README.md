@@ -57,9 +57,11 @@ Records are written at the moment a decision concludes. A record's factual error
 | 0043 | Three outcome stores | Accepted |
 | 0044 | The priority star, on named attributes only | Accepted |
 | 0045 | The classification flow | Superseded by 0046 |
-| 0046 | Classification by status, and the fifteen-day retention | Accepted, supersedes 0045 |
+| 0046 | Classification by status, and the fifteen-day retention | Superseded by 0050 |
 | 0047 | Aggregator data lives in private destinations | Accepted, reverses one clause of 0020 |
 | 0048 | A source is polled no faster than its feed refreshes | Accepted, extends 0006 |
+| 0049 | Architectural rules are guarded by fitness functions, not by prose | Accepted |
+| 0050 | The classification flow, consolidated | Accepted, supersedes 0046 |
 | RULES | How records are resolved, amended and retired | Accepted |
 
 ## Pending
@@ -88,7 +90,7 @@ Records 0004 and 0008 were wrongly stamped superseded on 2026-09-09 and correcte
 
 ADR-0008 was then genuinely superseded by ADR-0021 on 2026-09-11, this time by the criteria: more than half its Decision Outcome was replaced. Its Changes table records both events, which is the point of keeping one.
 
-**Changes that are not supersessions are logged in a `## Changes` table at the bottom of the record.** As of 2026-09-22, 52 Changes rows sit across 27 records, ADR-RULES included, and every table is the last section of its record. Sixteen records had it above More Information until 2026-09-22 and were moved; the move changed no text.
+**Changes that are not supersessions are logged in a `## Changes` table at the bottom of the record.** As of 2026-09-25, 92 Changes rows sit across 40 records, ADR-RULES included, and every table is the last section of its record. Sixteen records had it above More Information until 2026-09-22 and were moved; the move changed no text.
 
 A record stays under 200 lines, and its Changes table stays under eight rows. Reaching eight rows is itself a supersession trigger: a decision amended eight times is no longer the decision that was made.
 

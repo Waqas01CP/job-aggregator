@@ -9,6 +9,11 @@ status: current
 Rebuilt 2026-09-18 in the base the MCP now reaches, and verified by reading
 every schema back rather than trusting the create calls' replies.
 
+**The flow these tables serve is ADR-0050 as of 2026-09-25**, which supersedes
+ADR-0046. The citations below name ADR-0046 where it decided the item at the
+time. ADR-0050 adds a pipeline-owned `Closed` date field on `Jobs`, which does
+not yet exist.
+
 **No identifier appears in this file.** Base, table and field IDs are the
 operator's secrets and this repository is public. They live in his secrets and
 in the session that built them.

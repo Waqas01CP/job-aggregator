@@ -78,7 +78,8 @@ statement by the source that the operator is not eligible:
 
 **Keywords never reject.** Normalised location keywords tag a row's
 reachability and nothing more. A tag orders and groups the display; it never
-removes a row. This is the part of the rule that must not drift: the moment a
+removes a row. *(Narrowed 2026-09-25: a tag may filter or group a view and
+never order one. Ordering is by date alone. See Changes.)* This is the part of the rule that must not drift: the moment a
 keyword drops a row, the rule has become the location matcher this record
 rejected, and it will drop "Karachi, Punjab, Pakistan" for being misspelled.
 
@@ -161,3 +162,9 @@ an eligibility field.
 ADR-0016 defers description matching, which the text half waits on. ADR-0010
 forbids scoring, and a reachability tag is a label, not a score, on the same
 reasoning ADR-0038 sets out for role families.
+
+## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-09-25 | "A tag orders and groups the display" is narrowed: a reachability tag may **filter or group a view, and never order one**. Ordering stays by date alone | ADR-0010 orders the display by date and nothing else, and ADR-0038 forbids a sort that mixes families in one ordered list, so ordering rows by a derived label is the ranking the scope floor excludes, whatever the label is called. This record's own More Information already argues the tag is a label and not a score; the word "orders" contradicted that. The operator's decision, 2026-09-25: "the main ordering will always be date and the families and others can be views or something else." Nothing is built on the old wording: the tag itself is unbuilt, and the field it needs does not exist |
