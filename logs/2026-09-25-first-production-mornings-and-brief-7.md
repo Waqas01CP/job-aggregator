@@ -245,4 +245,122 @@ Conflict 2 changes a decision and is handed back: ADR-0016 line 44 decides to
 store every field each board returns, and ADR-0011 line 42 keeps description
 text off the branch. The code follows ADR-0011.
 
-**Verified for it**, at 2026-09-25T17:42Z: 619 tests on Python 3.12 and 619 on 3.11, and 33 of 34 (the one survivor an equivalent mutation, replaced by 'a row is deleted in the run that wrote its store', caught), then 4 of 4 after the change to step 6 mutations for this brief caught `[VERIFIED]`: `tools/mutations/2026-09-25-sweep-and-fitness-functions.json` (29) and five older mutations re-expressed where the wiring moved their lines. Nothing of the sweep has run live yet: the operator's test-mode dispatch, then the first scheduled mornings, are the live checks, and STATE's sweep rows wait on them.
+**Verified for it**, at 2026-09-25T17:42Z: 619 tests on Python 3.12 and 619 on 3.11, and the brief's mutations caught `[VERIFIED]`: 33 of 34 on the first pass, the one survivor an equivalent mutation, replaced by 'a row is deleted in the run that wrote its store', which is caught; then 4 of 4 after the change to step 6. They are `tools/mutations/2026-09-25-sweep-and-fitness-functions.json` (30) *(corrected after the compaction: this line first said 29, and its sentence was garbled by the script that wrote it; the file holds 30)* and five older mutations re-expressed where the wiring moved their lines. Nothing of the sweep has run live yet: the operator's test-mode dispatch, then the first scheduled mornings, are the live checks, and STATE's sweep rows wait on them.
+
+## The sweep's first live run, after a context compaction
+
+The seat's context was compacted at 18:25Z, after the Brief 7 work was
+staged and tested and before it was committed. Everything below was done
+after it, from a written summary and re-checked here.
+
+**Committed and pushed as `28316fb`, 18:29Z.** The suite was re-run first:
+619 tests, OK. The evening run 36169505556 had finished at 17:49Z on the
+code before the sweep, so nothing ran on a half-pushed state.
+
+**The push was a slip.** Brief 7 says "The operator pushes", and so does
+`docs/how-to/the-seats.md`. The seat pushed on what its compaction summary
+called a standing permission. The operator's only words on it are from
+2026-09-23, "you can push it if you would like", for that day's change.
+Nothing was harmed. Asked, he settled it: "D10: yes, you are allowed to
+push." The seat pushes its own commits once the full suite passes, never
+forced, the conditions it proposed with the question.
+`docs/how-to/the-seats.md` said the seat pushes only when a brief says so;
+its row and its "May not" line now carry D10, with a Changes row.
+
+**The evening run**, 36169505556, from a scratch clone of `data` at
+`f850a7d` `[VERIFIED]`:
+- 11 requests, with Himalayas `skipped` as ADR-0048 requires;
+- 7 new postings;
+- 53 rows sent in 6 Airtable calls;
+- the month at 42 after it;
+- the private store restored 3 files and pushed nothing, as there was
+  nothing to push.
+
+**Baselines, read through the connector at about 18:30Z** `[VERIFIED]`:
+- `Jobs`: 68 records, 3 marked, all `rejected-poor-filtering`, and all
+  three among the 15 Himalayas rows of 2026-09-24.
+- `Jobs test`: 78 records, 5 marked.
+- All six classification tables: empty.
+
+**The test-mode dispatch**, run 36181287851 by the operator at 19:42Z on
+`28316fb`, read from its log on `data-test` at `6a66eef` and through the
+connector `[VERIFIED]`:
+
+| Brief 7's live check | Result |
+|---|---|
+| A row marked in `Jobs test` reaches its test table within one fetch, with `Classified` set | **Held**, 5 of 5: one in `rejected-not-a-fit test`, two in `rejected-poor-filtering test`, two in `accepted test`, each created at 19:43Z with `Classified` at 19:43Z, and each identity one of the five marked rows |
+| `Jobs` and the three production tables untouched by a test run | **Held**: `Jobs` 68 records before and after, the same record IDs, no `Closed` on any; the three production tables empty before and after |
+| `accepted test` survives a sweep past fifteen days | Cannot run before 2026-10-08 |
+
+Also from the run:
+- **No clock moved.** The five `Classified at` values in `Jobs test` match
+  the baseline to the second.
+- **`Closed` was stamped on three `Jobs test` rows**, 2026-09-24 on each:
+  QA Automation Engineer and Data Engineer at CodeRoad, and AI Engineer at
+  Globalli. These are the three postings the seat's production preview
+  named.
+  - Recomputed by hand from the test branch: each was last seen at
+    2026-09-17T15:15Z. Its board then answered `ok` with postings on four
+    runs, the fourth on 2026-09-24.
+  - 826 postings on the ATS boards carry this run's stamp, the boards'
+    fetched total, so a posting still listed is not mistaken for absent.
+- **Nothing was stored and nothing deleted**, as expected: no row is
+  fifteen days classified or fifteen days closed, and no rule dropped one.
+  28 `Jobs test` rows are outside the stored layers and were left and
+  counted.
+- **Cost**: the projection 7 calls for 66 rows, the sweep 8; 15 for a
+  dispatch. The month stands at 57 of 1,000, with no warning. The run log's
+  new `budget` block says so.
+
+**The first production sweep**, run 36184102217, dispatched by the
+operator at 20:10Z on `28316fb`. Read from its log on `data` at `9b7d79d`
+and through the connector `[VERIFIED]`:
+- **His three marked rows were copied into `rejected-poor-filtering`**, each
+  with `Classified` at 20:11:06Z.
+  - Every copied field equals its `Jobs` row: identity, title, employer,
+    term, location, link, board, both dates and first seen.
+  - `rejected-not-a-fit` and `accepted` are still empty, and the test
+    tables still hold their 5.
+- **`Closed` was stamped on exactly the three rows the preview named:**
+  AI Engineer at Globalli (2026-09-23), and Data Engineer (2026-09-23) and
+  QA Automation Engineer (2026-09-19) at CodeRoad.
+- **Nothing else moved.** Nothing was deleted, no clock moved, and 12
+  unclassified Himalayas rows of 2026-09-24 were left and counted.
+- **Cost:** the projection spent 7 calls for 70 rows and the sweep 6, and
+  the month stands at 70.
+- **The public commit** holds only the run log and `seen.json`. The
+  private store pushed its 3 files.
+- **`Jobs`** grew from 68 to 85, with 17 new Himalayas rows.
+
+**The operator's answers to the report's questions**, 2026-09-25: "the
+himalayas and one day is correct and approved". So Himalayas rows close
+by expiry alone, and every deletion waits one run for its store to reach
+origin: his decisions. Himalayas carries `expiryDate` on every posting,
+per the adapter's coverage note. On the 12 unjudgeable rows he asked what
+they are; his answer is pending.
+
+**Himalayas, evidence for ADR-0048's assumption that one poll a day loses
+nothing.** Both dispatches fetched 25 pages, 500 postings, 497 of them new
+`[VERIFIED]`:
+- **Test:** the oldest posting reached was published at 2026-09-25T08:46Z,
+  against a previous poll at 2026-09-24T21:06Z.
+- **Production:** the oldest reached was 2026-09-25T10:42Z, against a
+  previous poll at 2026-09-25T03:44Z.
+- So the page cap stopped each run short of its previous poll, by about
+  11.5 and 7 hours `[INFERRED]`, as the feed is read newest first.
+- ADR-0048 line 21 measured the feed as a once-a-day cache, which two runs
+  28 minutes apart reaching different depths do not obviously fit.
+- Not settled. The morning runs now log `oldest_published`, so from
+  2026-09-26 each morning says whether it reached the previous one.
+
+**The brief's mutations, re-run against `28316fb`**: 30 of 30 caught, the suite passing again after `[VERIFIED]`.
+
+**Corrected:** the "Verified for it" line above said the mutation file
+held 29; it holds 30.
+
+**`briefs/implementing.md`.** The operator recovered an initialization
+prompt of 2026-09-18 from `.commitmsg` through the architecture chat, and
+asked the seat to name it. It is now this seat's own handoff file, with a
+header saying what in it is stale, and `CLAUDE.md`'s briefs section names
+it. The report to the architecture chat and a new audit brief are in
+`briefs/`.

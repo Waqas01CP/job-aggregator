@@ -289,7 +289,9 @@ If the hook blocks you, read the reason. Do not bypass it with `--no-verify`.
 
 The latest brief to each other seat is kept in `briefs/`, one file per seat:
 today `briefs/architecture.md` and `briefs/audit.md`, and a seat added later
-gets its own. Its life has three steps:
+gets its own. `briefs/implementing.md` is this seat's own: the handoff that
+initializes its next session, written at session close. The operator's
+decision, 2026-09-25. Each file's life has three steps:
 
 1. **Unexecuted:** the box on its first line is empty, and each addendum is
    appended to the same file.
