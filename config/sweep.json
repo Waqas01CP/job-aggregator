@@ -1,0 +1,12 @@
+{
+  "source": "ADR-0050, 2026-09-25. Numbers are configuration under ADR-0031, not constants.",
+  "closed_after_polled_runs": 4,
+  "closed_after_polled_runs_note": "A posting has closed when absent from its board on this many consecutive runs that polled it. The chat's starting value, approved by the operator 2026-09-25, unmeasured.",
+  "retire_after_days": 15,
+  "retire_after_days_note": "Classified rows are stored and leave Jobs, rejection copies are deleted, and closed rows are retired this many days after their clock starts. The operator's figure, carried from ADR-0046.",
+  "run_log_window": 60,
+  "run_log_window_note": "How many recent run logs the closure test reads: thirty days at two runs a day.",
+  "budget_warning_share": 0.6,
+  "budget_warning_before_day": 15,
+  "budget_warning_note": "Say so loudly when the month's Airtable calls pass this share of the allowance before this day of the month. ADR-0050's guard; ADR-0004 says why the warning must be ours."
+}

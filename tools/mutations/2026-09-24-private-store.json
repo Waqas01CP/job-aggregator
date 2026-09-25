@@ -14,20 +14,20 @@
   {
     "label": "a failed push stops the projection",
     "path": "src/run.py",
-    "find": "project_display(run, args.no_commit, test_mode, restore_failure)",
-    "replace": "project_display(run, args.no_commit, test_mode, private_failure)"
+    "find": "project_display(run, args.no_commit, test_mode, restore_failure, retired=retired)",
+    "replace": "project_display(run, args.no_commit, test_mode, private_failure, retired=retired)"
   },
   {
     "label": "a private store failure exits 0",
     "path": "src/run.py",
-    "find": "    if private_failure or projection_failure:",
-    "replace": "    if projection_failure:"
+    "find": "    if private_failure or projection_failure or sweep_failure:",
+    "replace": "    if projection_failure or sweep_failure:"
   },
   {
     "label": "the escalation ignores the private store",
     "path": "src/run.py",
-    "find": "    for block in (run_log.get(RUN_LOG_KEY), run_log.get(\"private_store\")):",
-    "replace": "    for block in (run_log.get(RUN_LOG_KEY),):"
+    "find": "    for block in (run_log.get(RUN_LOG_KEY), run_log.get(\"private_store\"),",
+    "replace": "    for block in (run_log.get(RUN_LOG_KEY), None,"
   },
   {
     "label": "the private block never reaches the run log",

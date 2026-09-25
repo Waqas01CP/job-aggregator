@@ -14,8 +14,8 @@
   {
     "label": "the run never asks for public rows only",
     "path": "src/run.py",
-    "find": "public_only=bool(restore_failure))",
-    "replace": "public_only=False)"
+    "find": "public_only=bool(restore_failure), retired=retired)",
+    "replace": "public_only=False, retired=retired)"
   },
   {
     "label": "a private-store failure waits for three runs",

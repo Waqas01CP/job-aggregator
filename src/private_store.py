@@ -68,8 +68,8 @@ def local_path_for(stored, paths):
 
 def files_to_push(paths):
     """The run's aggregator files, keyed by their path on the private branch:
-    every raw file, the filtered rows and the seen entries. The outcome stores
-    are restored and read but never written here; the sweep writes them."""
+    every raw file, the filtered rows, the seen entries, and the outcome
+    stores the sweep writes for aggregator rows (ADR-0050)."""
     files = {}
     raw_dir = paths["local_raw_dir"]
     if os.path.isdir(raw_dir):
@@ -79,6 +79,11 @@ def files_to_push(paths):
     for stored, key in ((FILTERED_FILE, "local_filtered"), (SEEN_FILE, "local_seen")):
         if os.path.exists(paths[key]):
             files[stored] = paths[key]
+    outcomes = paths["local_outcomes_dir"]
+    if os.path.isdir(outcomes):
+        for name in sorted(os.listdir(outcomes)):
+            if name.endswith(".json"):
+                files["%s/%s" % (OUTCOMES_DIR, name)] = os.path.join(outcomes, name)
     out = {}
     for stored, local in files.items():
         with open(local, encoding="utf-8") as f:

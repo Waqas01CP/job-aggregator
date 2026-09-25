@@ -292,5 +292,45 @@ class TestTheSkip(Harness):
             self.project()
 
 
+class TestRetiredClosedGroups(Harness):
+    def test_a_group_retired_as_closed_is_not_sent_and_an_open_one_is(self):
+        """ADR-0050: a closed row does not return "because the closure test
+        still holds". Without the skip, the filtered layer, which keeps every
+        row it admitted, would send it straight back after retirement."""
+        rows = [make_row(1), make_row(2, title="Data Engineer", employer="Globex")]
+        stages = {}
+        records = projection.plan(rows, NOW, MATCHER, set(), stages,
+                                  retired=lambda g: g.representative.identity == "greenhouse:1")
+        self.assertEqual([r["Identity"] for r in records], ["greenhouse:2"])
+        self.assertEqual(stages["groups_retired_closed"], 1)
+
+
+class TestTheSkipOnARealGroup(unittest.TestCase):
+    def test_one_non_representative_member_in_a_store_suppresses_a_whole_speechify_group(self):
+        """Brief 7's member-level check on real data: the largest admitted
+        group in the saved Speechify response, 138 members, one of which,
+        not the representative, is in a store. The whole group is skipped.
+        The 170-member group the brief names is production's; this is the
+        cassette's."""
+        from src.adapters import greenhouse
+        from src.dedupe import group
+        from src.filters import apply_chain
+        from tests.test_adapters import cassette
+        rows = normalise(greenhouse.parse(cassette("greenhouse-speechify-titles.json"),
+                                          SPEECHIFY).postings, SPEECHIFY, NORMALISE_NOW)
+        kept, _ = apply_chain(rows, NOW, matcher=MATCHER)
+        biggest = max(group([r for r, _ in kept]), key=lambda g: len(g.members))
+        self.assertGreater(len(biggest.members), 100)
+        member = next(m for m in biggest.members
+                      if m.identity != biggest.representative.identity)
+        stages = {}
+        sent = {r["Identity"] for r in projection.plan(rows, NOW, MATCHER, {member.identity},
+                                                        stages)}
+        self.assertNotIn(biggest.representative.identity, sent)
+        self.assertEqual(stages["groups_skipped_by_store"], 1)
+        unskipped = {r["Identity"] for r in projection.plan(rows, NOW, MATCHER, set(), {})}
+        self.assertIn(biggest.representative.identity, unskipped)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

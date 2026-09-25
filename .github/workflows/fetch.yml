@@ -128,6 +128,14 @@ jobs:
           AIRTABLE_TEST_TABLE_ID: ${{ secrets.AIRTABLE_TEST_TABLE_ID }}
           AGGREGATOR_STORE_TOKEN: ${{ secrets.AGGREGATOR_STORE_TOKEN }}
           AGGREGATOR_STORE_REPO: ${{ secrets.AGGREGATOR_STORE_REPO }}
+          # ADR-0050's sweep: the three classification tables, production and
+          # test. A run reads only its own mode's three.
+          AIRTABLE_NOT_A_FIT_TABLE_ID: ${{ secrets.AIRTABLE_NOT_A_FIT_TABLE_ID }}
+          AIRTABLE_POOR_FILTERING_TABLE_ID: ${{ secrets.AIRTABLE_POOR_FILTERING_TABLE_ID }}
+          AIRTABLE_ACCEPTED_TABLE_ID: ${{ secrets.AIRTABLE_ACCEPTED_TABLE_ID }}
+          AIRTABLE_NOT_A_FIT_TEST_TABLE_ID: ${{ secrets.AIRTABLE_NOT_A_FIT_TEST_TABLE_ID }}
+          AIRTABLE_POOR_FILTERING_TEST_TABLE_ID: ${{ secrets.AIRTABLE_POOR_FILTERING_TEST_TABLE_ID }}
+          AIRTABLE_ACCEPTED_TEST_TABLE_ID: ${{ secrets.AIRTABLE_ACCEPTED_TEST_TABLE_ID }}
         run: |
           set +e
           python -m src.run

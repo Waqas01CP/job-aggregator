@@ -1,18 +1,14 @@
 ---
 type: reference
-description: The Airtable display's five tables and their fields as actually built, the choices they carry, the one field change ADR-0046 still requires, and the five things the Airtable MCP cannot do.
+description: The Airtable display's eight tables and their fields as actually built, who owns each field, the choices they carry, and the five things the Airtable MCP cannot do.
 status: current
 ---
 
 # Airtable schema, as built
 
 Rebuilt 2026-09-18 in the base the MCP now reaches, and verified by reading
-every schema back rather than trusting the create calls' replies.
-
-**The flow these tables serve is ADR-0050 as of 2026-09-25**, which supersedes
-ADR-0046. The citations below name ADR-0046 where it decided the item at the
-time. ADR-0050 adds a pipeline-owned `Closed` date field on `Jobs`, which does
-not yet exist.
+every schema back rather than trusting the create calls' replies. Brought
+current 2026-09-25T16:12Z for ADR-0050, which supersedes ADR-0046.
 
 **No identifier appears in this file.** Base, table and field IDs are the
 operator's secrets and this repository is public. They live in his secrets and
@@ -21,89 +17,101 @@ in the session that built them.
 **An earlier base was built on 2026-09-17 and is stranded.** It held `Jobs` and
 `Jobs test` with thirteen fields. The MCP was later authorised on a different
 account, so that base is not reachable from a session and its tables are not
-the ones the pipeline will use. Whichever base `AIRTABLE_BASE_ID` names is the
+the ones the pipeline uses. Whichever base `AIRTABLE_BASE_ID` names is the
 one that counts, and it must be this one.
 
-**One change ADR-0046 requires is not built.** `Status` needs three more
-choices, and the connector cannot add them, so it is the operator's to make by
-hand as step 4 of `docs/how-to/airtable-token-and-secrets.md`. It is marked
-**pending** below. Everything else in this file was read back from the base.
+**Every field has an owner, and the Owner column below is read by a test.**
+ADR-0035: the pipeline writes only what it owns, because an upsert or an
+update overwrites every field it sends. `tests/test_fitness.py` holds each
+writer's field set to this column (ADR-0049), so a field added to the base
+must be added here with its owner before the suite passes.
 
-## The five tables
+- **pipeline**: written by the projection or the sweep, and recomputed, so a
+  wrong value costs a wrong value and nothing else.
+- **operator**: set by hand, read by the sweep, never written by the
+  pipeline. Losing one loses a judgement that cannot be reconstructed.
+- **Airtable**: set by Airtable itself, a clock.
+
+## The eight tables
 
 | Table | Holds | Deletion |
 |---|---|---|
-| `Jobs` | Production rows projected from the filtered layer | Rows that fell out of the current rules, per ADR-0040, and classified rows fifteen days after classification, per ADR-0046 |
+| `Jobs` | Production rows projected from the filtered layer | Per ADR-0050: a classified row fifteen days after `Classified at`, a closed row fifteen days after `Closed`, a row the current rules drop at the next sweep, each only once its store holds it |
 | `Jobs test` | Rows from a `--test-mode` run only | Same, against its own table |
-| `rejected-not-a-fit` | Correctly surfaced, operator passed | Auto, fifteen days after `Classified`. The outcome reached its store when the row left `Jobs` |
-| `rejected-poor-filtering` | Should not have been surfaced. The defect log | Auto, fifteen days after `Classified`. The outcome reached its store when the row left `Jobs` |
+| `rejected-not-a-fit` | Correctly surfaced, operator passed | Fifteen days after `Classified`, once the store holds the outcome |
+| `rejected-poor-filtering` | Should not have been surfaced. The defect log | Fifteen days after `Classified`, once the store holds the outcome |
 | `accepted` | Shortlisted or applied to | **By no clock. A tool the operator runs deletes from Airtable alone, never from the store** |
+| `rejected-not-a-fit test`, `rejected-poor-filtering test`, `accepted test` | The sweep's test-mode copies, created 2026-09-24 on the operator's decision D7 | As their production twins |
 
-`Jobs test` is not one of the four the brief named. It is built because
-`AIRTABLE_TEST_TABLE_ID` is one of the repository secrets and ADR-0033
-requires a test run to be incapable of touching production state. Without it
-that secret points at nothing and test mode has nowhere to write.
+`Jobs test` and the three test tables exist because ADR-0033 requires a test
+run to be incapable of touching production state. Each has its own secret,
+and a test ID equal to a production one is refused.
 
-## `Jobs` and `Jobs test`, twelve fields
+## `Jobs` and `Jobs test`, fourteen fields
 
 `Title` is the primary field. Airtable requires one and it cannot be removed,
 only renamed.
 
-| Field | Type | Holds |
-|---|---|---|
-| Title | single line text | The posting's title as the board states it. *(From 2026-09-23 the projection sends the normalised title, on the operator's decision: a trailing " - <city>" equal to the row's own location is removed, because Location already lists every city in the group. The raw title stays in every layer on the data branch as `title`. The field's own description in the base still reads "as the board states it")* |
-| Employer | single line text | ADR-0026 records how it is derived per source |
-| Location | long text | The board's raw location text, which varies in form |
-| Link | URL | Canonical URL, given or constructed, per ADR-0026 |
-| Published | date with time | The board's stated publication date. Empty where the platform exposes none |
-| First seen | date with time | When the pipeline first recorded the posting |
-| Order date | date with time | Publication date where one exists, else first seen. ADR-0007. Sort on this |
-| Board | single line text | Source and board, for example `greenhouse:careem` |
-| Matched term | single line text | The pool term that admitted the row, per ADR-0021 |
-| Identity | single line text | The pipeline's identity. What ADR-0035's upsert matches on |
-| Status | single select | The operator's classification. See the choices below |
-| Classified at | last modified time, watching `Status` alone | When the classification was last set. The clock `Jobs` retires rows on. Empty until a status is set, and it moves when the status changes |
+| Field | Type | Owner | Holds |
+|---|---|---|---|
+| Title | single line text | pipeline | The normalised title, on the operator's decision of 2026-09-23: a trailing " - <city>" equal to the row's own location is removed, because Location lists every city in the group. The raw title stays in the stored layers as `title` |
+| Employer | single line text | pipeline | ADR-0026 records how it is derived per source |
+| Location | long text | pipeline | Every member's location, one per line. ADR-0037 |
+| Link | URL | pipeline | Canonical URL, given or constructed, per ADR-0026 |
+| Published | date with time | pipeline | The board's stated publication date. Empty where the platform exposes none |
+| First seen | date with time | pipeline | When the pipeline first recorded the posting |
+| Order date | date with time | pipeline | Publication date where one exists, else first seen. ADR-0007. Sort on this |
+| Board | single line text | pipeline | Source and board, for example `greenhouse:careem` |
+| Matched term | single line text | pipeline | The pool term that admitted the row, per ADR-0021 |
+| Identity | single line text | pipeline | The pipeline's identity. What ADR-0035's upsert matches on |
+| Family | single line text | pipeline | The role family of the matched term, ADR-0038. Created 2026-09-24 |
+| Closed | date | pipeline | The date the pipeline first saw the posting closed, ADR-0050; empty while open. The sweep writes it and nothing else touches it. Created 2026-09-25 |
+| Status | single select | operator | The operator's classification. See the choices below |
+| Classified at | last modified time, watching `Status` alone | Airtable | When the classification was last set or changed, a clear included. The clock `Jobs` retires classified rows on |
 
 `Classified at` was created on 2026-09-20 on both tables and verified by
 reading the schema back: its `referencedFieldIds` holds the `Status` field and
-nothing else.
+nothing else. Read again on 2026-09-25 after `Closed` was created: still
+`Status` alone.
 
 Watching `Status` alone is not a detail. A last-modified field watching every
 field would move on every projection write, restarting the retention clock
-twice a day, and nothing in `Jobs` would ever be deleted.
+twice a day, and nothing in `Jobs` would ever be deleted. `Closed` is a field
+of its own for the same reason.
 
 Like the three `Classified` fields, it displays in the viewer's local zone on
 a 12 hour clock and the connector offers no way to change that. The stored
 value is a real timestamp returned in ISO, so the sweep's arithmetic is
 unaffected.
 
-**Two fields were dropped from the earlier thirteen.** `Pipeline reason` and
-`Choice reason` live on the classification table each belongs to, so a reason
-has one home. ADR-0046 carries that forward unchanged from ADR-0045. On day
-15 the sweep reads the reason from the copy and writes it to the store with
-the row; a status change discards the old copy's reason. `Stage` on the
-`accepted` copy travels the same way. ADR-0046, Changes rows of 2026-09-22.
-
 ## The three classification tables
 
-All three carry the same ten identifying fields as `Jobs`, minus `Status`,
-because the table a row is copied into is named for the status it carries.
-Each then carries the one reason field that applies to it, and a `Classified`
-field.
+All three, and their test copies, carry the ten identifying fields the sweep
+copies from `Jobs`, then the one operator field that applies, then
+`Classified`. A reason has one home: on day 15 the sweep reads it from the
+copy and writes it to the store with the row, and a status change discards
+the old copy with its reason. ADR-0050.
 
-| Table | Its reason field | Choices |
+| Field | Owner | Holds |
+|---|---|---|
+| Title | pipeline | Copied from `Jobs` |
+| Employer | pipeline | Copied from `Jobs` |
+| Location | pipeline | Copied from `Jobs` |
+| Link | pipeline | Copied from `Jobs` |
+| Published | pipeline | Copied from `Jobs` |
+| First seen | pipeline | Copied from `Jobs` |
+| Order date | pipeline | Copied from `Jobs` |
+| Board | pipeline | Copied from `Jobs` |
+| Matched term | pipeline | Copied from `Jobs` |
+| Identity | pipeline | Copied from `Jobs`; what the store is keyed on and the verify checks |
+| Choice reason, Pipeline reason or Stage | operator | The one that applies to the table, below |
+| Classified | Airtable | Created time: when the copy arrived. The fifteen-day clock of the two rejection tables |
+
+| Table | Its operator field | Choices |
 |---|---|---|
 | `rejected-not-a-fit` | Choice reason | employer, compensation, stack, recently applied to this employer, seniority in substance |
 | `rejected-poor-filtering` | Pipeline reason | wrong title match, location wrong, expired at surfacing, experience level, duplicate |
 | `accepted` | Stage | shortlisted, applied |
-
-**`Classified` is a `createdTime` field**, set by Airtable when the record is
-created in that table. Under ADR-0046 the sweep creates it, at the first run
-after the operator sets a status, so `Classified` is when the classification
-reached this table: not when the posting was published and not when it was
-surfaced. It was chosen over a hand-set date field because nothing sets it by
-hand, so it cannot be forgotten or backdated. A status the operator changes
-deletes the old copy and creates a new one, which resets it.
 
 `Stage` on `accepted` is the operator's own distinction. Both values feed
 ADR-0044's star and nothing automated reads the difference.
@@ -123,21 +131,17 @@ it later as an inconsistency somebody chose.
 
 ## The choices
 
-- **Status**, on `Jobs` and `Jobs test`. As built it carries ADR-0014's four
-  values, checked against ADR-0014 lines 49 to 52 before the field was
-  created: `applied`, `rejected_pipeline`, `rejected_choice`,
-  `expired_before_review`. **Pending, per ADR-0046:** the field carries
-  exactly three choices, `not fit`, `poor filtering` and `accepted`, all set
-  by the operator. **`expired_before_review` is retired**, 2026-09-23: the
-  pipeline never writes `Status`, and the event that value named is recorded
-  by the sweep in `outcomes/removed_unreviewed.json`. The four values as built
-  can all be deleted, because no row carries one. These three names are what
-  the sweep matches on, so they are exact. Empty means not yet reviewed, and
-  that is what the `To review` view filters on.
-  **Checked 2026-09-23 through the connector: still the four old values on
-  both tables.** Step 4 of `docs/how-to/airtable-token-and-secrets.md`.
-- **Pipeline reason** and **Choice reason**: as the table above lists, each on
-  its own classification table.
+- **Status**, on `Jobs` and `Jobs test`: `rejected-not-a-fit`,
+  `rejected-poor-filtering` and `accepted`, the names of the tables they
+  feed, set by the operator only. Renamed from ADR-0014's `rejected_choice`,
+  `rejected_pipeline` and `applied` by the operator in the browser on
+  2026-09-24, and `expired_before_review` deleted; read back that day: each
+  choice kept its ID, every marked row its meaning, and no `Classified at`
+  moved. ADR-0046's `not fit` and `poor filtering` never reached the base.
+  Empty means not yet reviewed, and that is what the `To review` view filters
+  on.
+- **Choice reason**, **Pipeline reason** and **Stage**: as the table above
+  lists, each on its own classification table.
 
 ## What the Airtable MCP cannot do
 
@@ -171,15 +175,6 @@ operator rather than a value in the choice list.
 as the example for an IANA identifier; Airtable's API rejects `"UTC"` with a
 422 and accepts `"utc"`.
 
-## What this file does not settle
-
-The writer is unbuilt. The token and the seven Airtable secrets exist; the
-eighth, ADR-0047's token for the private aggregator store, does not, and
-neither do ADR-0046's three `Status` choices. ADR-0034 decides the writer
-gets its own client, ADR-0035 that it upserts on `Identity` and writes only
-pipeline-owned fields, ADR-0040 that the current rules filter the projection,
-and ADR-0046 the classification flow the three tables serve.
-
 ## Changes
 
 | Date | Change | Reason |
@@ -192,3 +187,4 @@ and ADR-0046 the classification flow the three tables serve.
 | 2026-09-20 | Deletion column rewritten for ADR-0046's fifteen-day clocks; two pending field changes recorded; the `To review` view recorded as existing; the ADR-0045 and four-secret references brought current | ADR-0046 superseded ADR-0045: classification is a status the operator sets rather than a row he moves, so `Jobs` now deletes classified rows and needs a clock of its own. The pending marks exist because this file describes what was read back from the base, and neither change has been made yet |
 | 2026-09-17 | File created. Two tables, `Jobs` and `Jobs test`, thirteen fields each | The schema was built through the MCP and verified by reading it back |
 | 2026-09-18 | Rebuilt in a different base, now five tables, and the main table drops two fields | The MCP was authorised on another account, so the 2026-09-17 base is unreachable and stranded; the new base is the one the pipeline will use. The three classification tables are ADR-0043's stores given a surface, and ADR-0045 makes classification a move rather than a status edit, which is why `Pipeline reason` and `Choice reason` moved out of the main table to the table each belongs to. A fourth MCP limit was found: a `createdTime` field's display format cannot be set |
+| 2026-09-25 | Rebuilt for ADR-0050: eight tables, fourteen fields on `Jobs`, `Family` and `Closed` added, an Owner column for every field, the `Status` choices as renamed, and the stale "not yet built" passages removed | ADR-0050 superseded ADR-0046 and adds `Closed`; Brief 7 asked for `Closed` to be recorded here. The Owner column makes ADR-0035's ownership a property a test reads (ADR-0049), so a field added later must declare its owner. `Closed` was created on both tables through the connector and read back |

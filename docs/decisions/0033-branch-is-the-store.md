@@ -54,7 +54,7 @@ A run that cannot reach the branch must fail rather than proceed, because procee
 
 `--no-commit` runs can diverge from the branch, which is the point, and their output is not evidence about production state.
 
-Aggregator history exists only where a run was executed. On a runner that means it does not persist at all, which is a live question for the architecture chat and is not settled here.
+Aggregator history exists only where a run was executed. On a runner that means it does not persist at all, which is a live question for the architecture chat and is not settled here. *(Settled by ADR-0047 on 2026-09-19, and built 2026-09-24: a committing run restores the aggregator working copies from the private repository before it fetches, as this record requires of the public branch, and pushes them back after.)*
 
 Two branches exist publicly, `data` and `data-test`, and `data-test` accumulates whatever tests have been run.
 
@@ -85,3 +85,9 @@ Answers question 5 of the 2026-09-17 architecture brief in full.
 ADR-0020 decides the routing these paths implement. ADR-0003 is why the branch stays fetchable. ADR-0006 sets the cadence that makes a discarded runner the normal case.
 
 The five defects that produced these invariants are recorded in `2026-09-17-runner-safe-data-branch.md`.
+
+## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-09-25 | ADR-0047 named where it settled this record's open question | The corpus audit listed this among records changed by a later one without naming it, and believed ADR-0047 never said a run restores from the private store. The restore is now built and tested. Annotated by the implementing seat under ADR-RULES, on Brief 7's corpus work; the Decision Outcome is untouched. |

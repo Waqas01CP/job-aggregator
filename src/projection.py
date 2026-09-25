@@ -146,8 +146,14 @@ def fields_for(g, matcher):
     return {name: values[name] for name in PIPELINE_FIELDS}
 
 
-def plan(rows, now_iso, matcher, stored, stages=None):
-    """Stages 2 to 4. Returns the records to send; fills `stages`."""
+def plan(rows, now_iso, matcher, stored, stages=None, retired=None):
+    """Stages 2 to 4. Returns the records to send; fills `stages`.
+
+    `retired(group)` says whether a group closed more than ADR-0050's
+    fifteen days ago. Such a group is not sent: the sweep has retired its
+    row, and ADR-0050 keeps it out "because the closure test still holds".
+    Without this it would come straight back, since the filtered layer keeps
+    every row it ever admitted."""
     stages = {} if stages is None else stages
     stages["rows_read"] = len(rows)
     kept, _ = apply_chain(rows, now_iso, matcher=matcher)
@@ -157,12 +163,17 @@ def plan(rows, now_iso, matcher, stored, stages=None):
     stages["groups"] = len(groups)
     send = [g for g in groups if not any(m.identity in stored for m in g.members)]
     stages["groups_skipped_by_store"] = len(groups) - len(send)
+    if retired is not None:
+        still_open = [g for g in send if not retired(g)]
+        stages["groups_retired_closed"] = len(send) - len(still_open)
+        send = still_open
     records = [fields_for(g, matcher) for g in send]
     stages["rows_to_send"] = len(records)
     return records
 
 
-def project(paths, now_iso, matcher, client, private_texts, stages, public_only=False):
+def project(paths, now_iso, matcher, client, private_texts, stages, public_only=False,
+            retired=None):
     """All five stages. `private_texts` are the private repository's copies
     of the same stores, from private_store_texts. `stages` is filled as each
     stage completes, so a failure part way still leaves a count of how far it
@@ -179,7 +190,7 @@ def project(paths, now_iso, matcher, client, private_texts, stages, public_only=
         rows, private_texts = kept, []
     stored = identities_in(public_store_texts(paths) + list(private_texts))
     stages["stored_identities"] = len(stored)
-    records = plan(rows, now_iso, matcher, stored, stages)
+    records = plan(rows, now_iso, matcher, stored, stages, retired=retired)
     client.upsert(records)
     stages["rows_sent"] = client.rows_sent
     return stages

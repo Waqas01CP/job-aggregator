@@ -79,6 +79,9 @@ TEST_TABLE_ENV = "AIRTABLE_TEST_TABLE_ID"
 # Where a run log carries this client's counters, and where month_to_date
 # reads them back. ADR-0034: the run log reports both budgets.
 RUN_LOG_KEY = "airtable"
+# Where a run log carries the sweep's client's counters (ADR-0050). The month's
+# count sums both, since the allowance is one per workspace.
+SWEEP_LOG_KEY = "sweep"
 
 
 class AirtableConfigError(Exception):
@@ -128,8 +131,9 @@ def month_to_date(run_logs, now_iso):
     for log in run_logs:
         if str(log.get("run_at", ""))[:7] != month:
             continue
-        section = log.get(RUN_LOG_KEY) or {}
-        total += int(section.get("calls_used") or 0)
+        for key in (RUN_LOG_KEY, SWEEP_LOG_KEY):
+            section = log.get(key) or {}
+            total += int(section.get("calls_used") or 0)
     return total
 
 

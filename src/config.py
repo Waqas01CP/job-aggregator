@@ -162,6 +162,57 @@ def load_boards(path=None):
     return [_validate(e, i, seen) for i, e in enumerate(entries)]
 
 
+SWEEP_PATH = os.path.join(REPO_ROOT, "config", "sweep.json")
+
+
+@dataclass(frozen=True)
+class SweepConfig:
+    """ADR-0050's numbers. Configuration under ADR-0031, never constants."""
+    closed_after_polled_runs: int
+    retire_after_days: int
+    run_log_window: int
+    budget_warning_share: float
+    budget_warning_before_day: int
+
+
+def load_sweep_config(path=None):
+    """Read and validate the sweep's numbers. Raises ConfigError naming the
+    field: a closure count of zero would close every posting on the next run,
+    and a retirement of zero days would delete a classification the moment
+    it was made."""
+    path = path or SWEEP_PATH
+    try:
+        with open(path, encoding="utf-8") as f:
+            doc = json.load(f)
+    except FileNotFoundError:
+        raise ConfigError("sweep config not found at %s" % path)
+    except json.JSONDecodeError as e:
+        raise ConfigError("sweep config at %s is not valid JSON: %s" % (path, e))
+    if not isinstance(doc, dict):
+        raise ConfigError("sweep config at %s is not an object" % path)
+
+    def whole(name, low):
+        value = doc.get(name)
+        if isinstance(value, bool) or not isinstance(value, int) or value < low:
+            raise ConfigError("sweep config: %s must be a whole number of at least %d, "
+                              "got %r" % (name, low, value))
+        return value
+
+    share = doc.get("budget_warning_share")
+    if isinstance(share, bool) or not isinstance(share, (int, float)) or not 0 < share < 1:
+        raise ConfigError("sweep config: budget_warning_share must be between 0 and 1, "
+                          "got %r" % (share,))
+    day = whole("budget_warning_before_day", 1)
+    if day > 31:
+        raise ConfigError("sweep config: budget_warning_before_day must be a day of the "
+                          "month, got %r" % day)
+    return SweepConfig(closed_after_polled_runs=whole("closed_after_polled_runs", 1),
+                       retire_after_days=whole("retire_after_days", 1),
+                       run_log_window=whole("run_log_window", 1),
+                       budget_warning_share=float(share),
+                       budget_warning_before_day=day)
+
+
 def boards_missing_employer_alias(boards):
     """Boards whose platform returns no employer and which carry no alias.
     ADR-0026: such a row records its employer as unresolved rather than

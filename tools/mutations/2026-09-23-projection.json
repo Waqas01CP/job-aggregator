@@ -56,8 +56,8 @@
   {
     "label": "a failed projection exits 1",
     "path": "src/run.py",
-    "find": "    if private_failure or projection_failure:\n        return EXIT_STOPPED_RESUMABLE",
-    "replace": "    if private_failure or projection_failure:\n        return EXIT_CANNOT_START"
+    "find": "    if private_failure or projection_failure or sweep_failure:\n        return EXIT_STOPPED_RESUMABLE",
+    "replace": "    if private_failure or projection_failure or sweep_failure:\n        return EXIT_CANNOT_START"
   },
   {
     "label": "the run's secret scrub does nothing",

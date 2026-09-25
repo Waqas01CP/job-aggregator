@@ -38,7 +38,7 @@ Greenhouse and Lever are the only platforms whose endpoints are documented and v
 
 Chosen option: "deploy a vertical slice, then add adapters".
 
-We will build and deploy a slice covering Greenhouse and Lever only, eleven boards, with all hard filters, the title classification of ADR-0016, the schedule of ADR-0006, and real writes to every storage layer. We will add remaining platform adapters incrementally against the running system, in an order fixed after the feasibility spikes.
+We will build and deploy a slice covering Greenhouse and Lever only, eleven boards, *(Changed by ADR-0019, which added Himalayas inside the slice on condition, 2026-09-17. The corpus audit's conflict 4; neither record named the other.)* with all hard filters, the title classification of ADR-0016, the schedule of ADR-0006, and real writes to every storage layer. We will add remaining platform adapters incrementally against the running system, in an order fixed after the feasibility spikes.
 
 ### Consequences
 
@@ -60,10 +60,11 @@ The slice is confirmed when a scheduled run completes unattended, writes rows to
 
 ## More Information
 
-Adapter order after the slice is pending, blocked on feasibility spikes for Ashby, Workable, SmartRecruiters, JazzHR and Manatal. Spike form follows `test_linkedin_scraper.py`: thresholds fixed in advance, machine verdict of PROCEED or INVESTIGATE.
+Adapter order after the slice is pending, blocked on feasibility spikes for Ashby, Workable, SmartRecruiters, JazzHR and Manatal. *(Stale: ADR-0029 settled the adapter order and closed this item.)* Spike form follows `test_linkedin_scraper.py`: thresholds fixed in advance, machine verdict of PROCEED or INVESTIGATE.
 
 ## Changes
 
 | Date | Change | Reason |
 |---|---|---|
 | 2026-09-24 | Confirmation met | Scheduled runs complete unattended and write the raw and filtered layers and the display, and the operator found roles in `Jobs` he had not seen by hand: "GenAI Analyst" at ActiveFence and "Network Monitoring & Automation Engineer" at Unisys, both through Himalayas, and "Forward Deployed Engineer" at Veeam Software, which he may have seen once. Read back through the connector the same day. Recorded by the implementing seat under ADR-RULES as a fact; the Decision Outcome is untouched |
+| 2026-09-25 | ADR-0019 named where it widened the slice, and ADR-0029 where it closed the adapter order | The corpus audit's conflict 4 and its unmarked amendments: ADR-0019 put Himalayas inside the slice this record limited to Greenhouse and Lever, and ADR-0029 closed the item this record left pending. Both later decisions stand. Annotated by the implementing seat under ADR-RULES, on Brief 7's corpus work; the Decision Outcome is untouched. |

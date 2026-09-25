@@ -1,0 +1,182 @@
+[
+  {
+    "label": "a per-source normalisation strips a word a pool term needs",
+    "path": "src/normalise.py",
+    "find": "        return title[:-len(suffix)].strip()",
+    "replace": "        return title[:-len(suffix)].strip().split(\" \", 1)[-1]"
+  },
+  {
+    "label": "a shipped module hard-codes a pool term",
+    "path": "src/closure.py",
+    "find": "def history(run_logs):",
+    "replace": "PROBE = [\"ai engineer\"]\n\n\ndef history(run_logs):"
+  },
+  {
+    "label": "the sweep may write Status",
+    "path": "src/airtable_sweep.py",
+    "find": "WRITES = {JOBS: (\"Closed\",)}",
+    "replace": "WRITES = {JOBS: (\"Closed\", \"Status\")}"
+  },
+  {
+    "label": "the verify trusts any store",
+    "path": "src/sweep.py",
+    "find": "        return identity in self.durable.get((where, name), set())",
+    "replace": "        return True"
+  },
+  {
+    "label": "a row is deleted in the run that wrote its store",
+    "path": "src/sweep.py",
+    "find": "                                                       classified_at=f.get(\"Classified at\")))\n            self.report[\"waiting_for_the_store\"] += 1",
+    "replace": "                                                       classified_at=f.get(\"Classified at\")))\n            self.report[\"waiting_for_the_store\"] += 1\n            delete_jobs.append(r[\"id\"])"
+  },
+  {
+    "label": "accepted is deleted at fifteen days",
+    "path": "src/sweep.py",
+    "find": "REJECTION_TABLES = (\"rejected-not-a-fit\", \"rejected-poor-filtering\")",
+    "replace": "REJECTION_TABLES = (\"rejected-not-a-fit\", \"rejected-poor-filtering\", \"accepted\")"
+  },
+  {
+    "label": "a rejection copy goes before its store holds it",
+    "path": "src/sweep.py",
+    "find": "                elif self.stores.durable_has(where, STORE_FOR[t], identity):",
+    "replace": "                elif True:"
+  },
+  {
+    "label": "the reason is not carried to the store",
+    "path": "src/sweep.py",
+    "find": "            reason = held[0][\"fields\"].get(OPERATOR_FIELD[status]) if held else None",
+    "replace": "            reason = None"
+  },
+  {
+    "label": "the copy step makes a second copy",
+    "path": "src/sweep.py",
+    "find": "                if t == status and not held:",
+    "replace": "                if t == status:"
+  },
+  {
+    "label": "a changed status keeps its old copy",
+    "path": "src/sweep.py",
+    "find": "                elif t != status and held:",
+    "replace": "                elif False:"
+  },
+  {
+    "label": "a cleared status is not seen on a copy-only run",
+    "path": "src/sweep.py",
+    "find": "        read_tables = daily or since is None or bool(moved)",
+    "replace": "        read_tables = daily or since is None"
+  },
+  {
+    "label": "runs that did not poll the board count",
+    "path": "src/closure.py",
+    "find": "            if not board or board.get(\"status\") != \"ok\" or not board.get(\"fetched\"):",
+    "replace": "            if not board:"
+  },
+  {
+    "label": "a paginated run counts without reaching the posting",
+    "path": "src/closure.py",
+    "find": "            if paginated:",
+    "replace": "            if False:"
+  },
+  {
+    "label": "closure needs one run fewer",
+    "path": "src/closure.py",
+    "find": "            if counted >= self._runs_needed:",
+    "replace": "            if counted >= self._runs_needed - 1:"
+  },
+  {
+    "label": "a group closes when any member closes",
+    "path": "src/closure.py",
+    "find": "            if day is None:\n                return None",
+    "replace": "            if day is None:\n                continue"
+  },
+  {
+    "label": "a returned posting keeps its Closed mark",
+    "path": "src/sweep.py",
+    "find": "            elif not closed and marked and removal is None:",
+    "replace": "            elif False:"
+  },
+  {
+    "label": "a classified row is marked closed",
+    "path": "src/sweep.py",
+    "find": "            if not identity or f.get(\"Status\"):",
+    "replace": "            if not identity:"
+  },
+  {
+    "label": "a row a rule dropped is kept",
+    "path": "src/sweep.py",
+    "find": "        return None, \"dropped by the %s rule\" % rule",
+    "replace": "        return None, None"
+  },
+  {
+    "label": "a row no longer its group's display row is kept",
+    "path": "src/sweep.py",
+    "find": "                return None, \"no longer its group's display row\"",
+    "replace": "                return self.closure.group_closed_on(g.members), None"
+  },
+  {
+    "label": "a retired closed group is sent again",
+    "path": "src/projection.py",
+    "find": "        still_open = [g for g in send if not retired(g)]",
+    "replace": "        still_open = list(send)"
+  },
+  {
+    "label": "the evening run runs the daily steps",
+    "path": "src/run.py",
+    "find": "    daily = slot != \"evening\"",
+    "replace": "    daily = True"
+  },
+  {
+    "label": "the budget line never warns",
+    "path": "src/run.py",
+    "find": "    if spent > config.budget_warning_share * allowance and now.day < config.budget_warning_before_day:",
+    "replace": "    if False:"
+  },
+  {
+    "label": "the month count ignores the sweep",
+    "path": "src/airtable.py",
+    "find": "        for key in (RUN_LOG_KEY, SWEEP_LOG_KEY):",
+    "replace": "        for key in (RUN_LOG_KEY,):"
+  },
+  {
+    "label": "public outcomes are not committed",
+    "path": "src/run.py",
+    "find": "    if os.path.isdir(paths[\"outcomes_dir\"]):",
+    "replace": "    if False:"
+  },
+  {
+    "label": "aggregator outcomes are not pushed privately",
+    "path": "src/private_store.py",
+    "find": "    if os.path.isdir(outcomes):",
+    "replace": "    if False:"
+  },
+  {
+    "label": "a sweep failure exits 0",
+    "path": "src/run.py",
+    "find": "    if private_failure or projection_failure or sweep_failure:",
+    "replace": "    if private_failure or projection_failure:"
+  },
+  {
+    "label": "a failed sweep is not counted toward escalation",
+    "path": "src/run.py",
+    "find": "                  run_log.get(\"sweep\")):",
+    "replace": "                  None):"
+  },
+  {
+    "label": "test mode's accepted table is production's",
+    "path": "src/airtable_sweep.py",
+    "find": "           \"accepted\": \"AIRTABLE_ACCEPTED_TEST_TABLE_ID\"},",
+    "replace": "           \"accepted\": \"AIRTABLE_ACCEPTED_TABLE_ID\"},"
+  },
+  {
+    "label": "a create is retried after an unknown outcome",
+    "path": "src/airtable_sweep.py",
+    "find": "            payload = self._call(\"POST\", table, target, repeatable=False,",
+    "replace": "            payload = self._call(\"POST\", table, target, repeatable=True,"
+  },
+  {
+    "label": "a row the stored layers do not hold is removed",
+    "path": "src/sweep.py",
+    "find": "            self.report[\"not_in_the_stored_layers\"] += 1\n            return None, None",
+    "replace": "            return None, \"absent from the stored layers\""
+  }
+]

@@ -23,7 +23,7 @@ One fact changes the sizing entirely: **a posting's publication date does not ch
 ## Decision Drivers
 
 - These are free endpoints belonging to other people, polled twice daily indefinitely.
-- Six platforms, roughly 20 registry boards, are unreachable without a policy.
+- Six platforms, roughly 20 registry boards, are unreachable without a policy. *(Unmeasured in this repository: the count comes from the operator's registry, which lives outside it.)*
 - A runaway loop must not be able to issue unbounded requests.
 - Per the standard, a number stated without a basis is a guess and does not belong in a decision.
 
@@ -103,3 +103,9 @@ Extends ADR-0005, whose complete-board-output rule governs the list endpoint. A 
 Extends ADR-0003, whose seen-identifier structure is what makes once-only fetching possible.
 
 Evidence is the platform spikes of 2026-09-11, 15 and 16.
+
+## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-09-25 | An unsourced board count marked, and this record's extensions of ADR-0003 and ADR-0005 noted in those records | The corpus audit found "roughly 20 registry boards" with no basis here, and found ADR-0003 and ADR-0005 did not name this record, which extends both. Annotated by the implementing seat under ADR-RULES, on Brief 7's corpus work; the Decision Outcome is untouched. |

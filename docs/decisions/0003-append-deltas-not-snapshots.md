@@ -28,7 +28,7 @@ Some fields change over time. A posting's last-seen date and closure status are 
 
 - A posting record serialises to roughly 2 KB. Estimated from field count; not measured.
 - Roughly one thousand postings are fetched per run. **Falsified 2026-09-15.** Eleven boards returned 1646. See Changes.
-- Genuinely new postings arrive at twenty to fifty a day. Estimated; not measured, and the figure most likely to be wrong.
+- Genuinely new postings arrive at twenty to fifty a day. Estimated; not measured, and the figure most likely to be wrong. *(Measured 2026-09-25 from the run logs on `data`: on the eleven ATS boards, 0 to 21 a day across seven days with two runs, 80 on the day Speechify rotated its city copies, and 804 on first contact. The estimate was high.)*
 
 On those assumptions, snapshots cost roughly 1.4 GB of repository growth a year and deltas roughly 36 MB. The ratio, not the absolute figures, is what carries the decision.
 
@@ -67,3 +67,4 @@ Measure data-branch size monthly for the first three months and compare against 
 |---|---|---|
 | 2026-09-15 | The postings-per-run assumption is falsified and the snapshot cost projection rises | Eleven boards returned 1646 postings, so the snapshot cost at measured volume is 2.40 GB a year rather than 1.4 GB. **The decision is unaffected.** The argument was the ratio between snapshots and deltas, and the delta cost does not depend on postings per run at all. A higher fetch volume makes snapshots worse, not deltas |
 | 2026-09-17 | Confirmed compatible with ADR-0030's backfill | A backfill appends records absent from the filtered file and rewrites nothing, which is exactly what this record permits. 'We will never rewrite an existing record and never write a full snapshot' is unaffected |
+| 2026-09-25 | The estimate of new postings a day measured, and ADR-0028 named as extending this record | The corpus audit found the figure with no basis. ADR-0028 extends this record and was not named here. Annotated by the implementing seat under ADR-RULES, on Brief 7's corpus work; the Decision Outcome is untouched. |

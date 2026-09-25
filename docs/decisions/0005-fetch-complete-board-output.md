@@ -66,3 +66,4 @@ Does not apply to search APIs or aggregators, which are out of scope as sources 
 |---|---|---|
 | 2026-09-10 | Consequences said "ADR-0008 and ADR-0016 govern", now names ADR-0016 only | ADR-0008 was already extended by ADR-0016 when this was written, so naming both implied a retired record still governed |
 | 2026-09-24 | The five-to-fifty assumption annotated as falsified, and aggregators' scope annotated as stale | ADR-0001 measured the distribution on 2026-09-15, and ADR-0019 brought aggregators in. Annotated by the implementing seat under ADR-RULES, which allows a stale or wrong fact to be annotated unasked; the Decision Outcome is untouched. Found by the corpus audit of 2026-09-23 |
+| 2026-09-25 | ADR-0028 named as extending this record | ADR-0028 says "Extends ADR-0005"; the corpus audit found this record did not name it. Annotated by the implementing seat under ADR-RULES, on Brief 7's corpus work; the Decision Outcome is untouched. |

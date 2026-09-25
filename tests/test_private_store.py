@@ -143,15 +143,18 @@ class TestRestore(Harness):
             with self.subTest(stored=stored):
                 self.assertIsNone(local_path_for(stored, self.paths))
 
-    def test_what_is_pushed_is_the_runs_aggregator_files_and_not_the_outcomes(self):
+    def test_what_is_pushed_is_the_runs_aggregator_files_and_their_outcomes(self):
+        """The raw, filtered and seen files, and from ADR-0050 the outcome
+        stores the sweep writes for aggregator rows. Never a public file."""
         storage.write_atomic("data/fetch-all-local/himalayas.json", "[\"raw\"]\n")
         storage.write_atomic(self.paths["local_filtered"], "[\"kept\"]\n")
         storage.write_atomic(self.paths["local_seen"], "{}\n")
         storage.write_atomic("data/local/outcomes/accepted.json", "[]\n")
         storage.write_atomic(self.paths["filtered"], "[\"public\"]\n")
+        storage.write_atomic("data/outcomes/accepted.json", "[\"public\"]\n")
         self.assertEqual(files_to_push(self.paths), {
             "fetch-all/himalayas.json": "[\"raw\"]\n", "filtered.json": "[\"kept\"]\n",
-            "seen.json": "{}\n"})
+            "seen.json": "{}\n", "outcomes/accepted.json": "[]\n"})
 
 
 class TestTestModeIsolation(Harness):

@@ -95,3 +95,4 @@ Extended by ADR-RULES, which puts reality above every document for what is true 
 | Date | Change | Reason |
 |---|---|---|
 | 2026-09-11 | Added level 8, anything from outside the repository | The order covered seven kinds of repository file and said nothing about Claude Code's Auto Memory, which is injected into every session and cannot be inspected. The one input a session cannot show the operator had no stated rank |
+| 2026-09-25 | ADR-0025 and ADR-RULES named as extending this record | ADR-0025 extends the authority order and ADR-RULES added two ranks, which this record recorded only in More Information. The corpus audit found neither in Changes. Annotated by the implementing seat under ADR-RULES, on Brief 7's corpus work; the Decision Outcome is untouched. |

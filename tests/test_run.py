@@ -15,7 +15,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -28,6 +28,8 @@ from src.normalise import dumps
 from src.filters import TitleMatcher
 from src.http_client import HttpClient
 from src.private_store import PrivateStore
+from src.airtable_sweep import CLASSIFICATION_TABLES, JOBS, SweepClient
+from tests.fake_airtable import FakeBase
 from src.run import EXIT_OK, EXIT_STOPPED_RESUMABLE, Run, summarise
 
 def read_text(path):
@@ -470,7 +472,8 @@ class TestMain(unittest.TestCase):
         os.chdir(self.dir)
         self.real = (storage.REPO_ROOT, storage.commit_files, storage.restore_from_branch,
                      run_module.load_boards, run_module.HttpClient,
-                     run_module.make_airtable_client, run_module.make_private_store)
+                     run_module.make_airtable_client, run_module.make_private_store,
+                     run_module.make_sweep_client)
         storage.REPO_ROOT = self.dir
         subprocess.run(["git", "init", "-q"], cwd=self.dir)
         self.payload = gh_payload(["AI Engineer"])
@@ -500,11 +503,27 @@ class TestMain(unittest.TestCase):
         self.private = os.path.join(self.dir, "private.git")
         subprocess.run(["git", "init", "-q", "--bare", self.private], check=True)
         run_module.make_private_store = lambda test_mode: MemoryStore()
+        # ADR-0050's sweep reaches a base with nothing in it. The tests of
+        # the sweep itself, in test_sweep.py, seed one.
+        self.base = FakeBase(jobs_tables={"tblJOBSFAKE000001"})
+        self.swept = []
+
+        def fake_sweep_client(test_mode, used_this_month):
+            tables = {JOBS: "tblJOBSFAKE000001"}
+            tables.update({t: "tblCOPY%s" % str(i).zfill(10) for i, t in
+                           enumerate(CLASSIFICATION_TABLES)})
+            client = SweepClient("patFAKE.0000", "appFAKEBASE000001", tables,
+                                 used_this_month=used_this_month, session=self.base,
+                                 min_interval=0, sleep=lambda s: None)
+            self.swept.append((test_mode, used_this_month))
+            return client
+        run_module.make_sweep_client = fake_sweep_client
 
     def tearDown(self):
         (storage.REPO_ROOT, storage.commit_files, storage.restore_from_branch,
          run_module.load_boards, run_module.HttpClient,
-         run_module.make_airtable_client, run_module.make_private_store) = self.real
+         run_module.make_airtable_client, run_module.make_private_store,
+         run_module.make_sweep_client) = self.real
         os.environ.pop("TEST_MODE", None)
         if self.env_test_mode is not None:
             os.environ["TEST_MODE"] = self.env_test_mode
@@ -920,23 +939,27 @@ class TestMain(unittest.TestCase):
         """G7: the allowance is per workspace, so a production run counts the
         calls test runs spent, and a test run counts production's."""
         self.main("--test-mode")
+        per_run = FakeAirtable.CALLS + self.last_run_log(True)["sweep"]["calls_used"]
         self.fresh_machine()
         self.main()
         self.fresh_machine()
         self.main("--test-mode")
         self.assertEqual([used for _, used in self.airtable_asked],
-                         [0, FakeAirtable.CALLS, 2 * FakeAirtable.CALLS])
+                         [0, per_run, 2 * per_run])
         self.assertEqual(self.last_run_log(True)["airtable"]["month_to_date_by_branch"],
-                         {"data-test": FakeAirtable.CALLS, "data": FakeAirtable.CALLS})
+                         {"data-test": per_run, "data": per_run})
 
     def test_the_month_so_far_reaches_the_next_runs_client(self):
         """ADR-0034: a budget counted per month. A runner restores no run
         logs, so the count must come back from the branch."""
         self.main()
+        swept = self.last_run_log()["sweep"]["calls_used"]
         self.fresh_machine()
         self.main()
         self.assertEqual(self.airtable_asked[0][1], 0)
-        self.assertEqual(self.airtable_asked[1][1], FakeAirtable.CALLS)
+        # The projection's calls and, from ADR-0050, the sweep's.
+        self.assertGreater(swept, 0)
+        self.assertEqual(self.airtable_asked[1][1], FakeAirtable.CALLS + swept)
 
     # ------------------------------------------------------------ escalation
     def outputs(self):
@@ -1049,6 +1072,95 @@ class TestMain(unittest.TestCase):
         self.assertIn("could not start", err)
         self.assertFalse(os.path.exists("data/fetch-all/greenhouse.json"),
                          "the run fetched without its state")
+
+
+class TestTheSweepInTheRun(unittest.TestCase):
+    """ADR-0050's sweep as the run drives it: after the projection, daily
+    except in the evening, its outcomes committed, its failures loud. It
+    borrows TestMain's harness rather than subclassing it, which would run
+    every TestMain test twice."""
+
+    setUp, tearDown = TestMain.setUp, TestMain.tearDown
+    main, git, on_branch = TestMain.main, TestMain.git, TestMain.on_branch
+    identities, last_run_log = TestMain.identities, TestMain.last_run_log
+    fresh_machine, private_store = TestMain.fresh_machine, TestMain.private_store
+
+    def jobs_row(self, identity, status, days):
+        fields = {"Identity": identity, "Title": "AI Engineer", "Board": "greenhouse:careem",
+                  "Status": status}
+        return self.base.seed("tblJOBSFAKE000001", fields,
+                              classified_at=self.base.now - timedelta(days=days))
+
+    def test_the_daily_steps_skip_the_evening_and_run_otherwise(self):
+        for slot, daily in (("evening", False), ("morning", True), (None, True)):
+            with self.subTest(slot=slot):
+                os.environ.pop("RUN_SLOT", None)
+                if slot:
+                    os.environ["RUN_SLOT"] = slot
+                self.main()
+                self.assertIs(self.last_run_log()["sweep"]["daily"], daily)
+
+    def test_an_outcome_is_committed_then_its_row_leaves_jobs_on_the_next_run(self):
+        """The two-run verify, end to end: day 15 writes the store and the
+        commit carries it; the next run restores it from the branch and only
+        then deletes the row."""
+        self.base.now = datetime.now(timezone.utc)
+        self.jobs_row("greenhouse:1000", "rejected-poor-filtering", 16)
+        self.assertEqual(self.main()[0], EXIT_OK)
+        stored = json.loads(self.on_branch("data", "outcomes/rejected_poor_filtering.json"))
+        self.assertEqual([r["identity"] for r in stored], ["greenhouse:1000"])
+        self.assertEqual(len(self.base.rows("tblJOBSFAKE000001")), 1)
+        self.fresh_machine()
+        self.assertEqual(self.main()[0], EXIT_OK)
+        self.assertEqual(self.base.rows("tblJOBSFAKE000001"), [])
+
+    def test_an_aggregator_outcome_can_never_reach_the_public_branch(self):
+        """ADR-0020's commit guard reads every outcome record's source."""
+        storage.write_atomic("data/outcomes/accepted.json",
+                             dumps([{"identity": "himalayas:x", "source": "himalayas"}]))
+        code, _, err = self.main()
+        self.assertEqual(code, 1)
+        self.assertIn("refusing to commit outcomes/accepted.json", err)
+
+    def test_a_failed_sweep_is_recorded_exits_2_and_counts(self):
+        def broken(test_mode, used_this_month):
+            raise AirtableConfigError("empty or unset: AIRTABLE_ACCEPTED_TABLE_ID")
+        run_module.make_sweep_client = broken
+        code, _, err = self.main()
+        self.assertEqual(code, EXIT_STOPPED_RESUMABLE)
+        log = self.last_run_log()
+        self.assertIn("AIRTABLE_ACCEPTED_TABLE_ID", log["sweep"]["failure"])
+        self.assertEqual(log["attention"]["failed_in_a_row"], 1)
+        self.assertIn("the sweep failed", err)
+        self.assertEqual(self.identities("data"), ["greenhouse:1000"], "the fetch was lost")
+
+    def test_the_run_log_reports_the_month_and_each_board_its_reach(self):
+        self.main()
+        log = self.last_run_log()
+        self.assertIn("month_to_date", log["budget"])
+        board = next(b for b in log["boards"] if b["board"] == "greenhouse:careem")
+        self.assertEqual(board["oldest_published"], "2026-09-10T05:00:00Z")
+
+
+class TestBudgetLine(unittest.TestCase):
+    CONFIG = run_module.load_sweep_config()
+
+    def line(self, before, day, projection=5, sweep=4):
+        log = {"airtable": {"calls_used": projection, "monthly_ceiling": 1000},
+               "sweep": {"calls_used": sweep}}
+        return run_module.budget_line(log, {"data": before, "data-test": 0}, self.CONFIG,
+                                      datetime(2026, 10, day, 3, 40, tzinfo=timezone.utc))
+
+    def test_past_sixty_percent_before_the_fifteenth_says_so(self):
+        """ADR-0050's Confirmation: a month of logs past 60% before the
+        fifteenth, and the report says so."""
+        b = self.line(595, 12)
+        self.assertEqual(b["month_to_date"], 604)
+        self.assertIn("604 of 1000", b["warning"])
+
+    def test_at_the_line_or_after_the_fifteenth_is_quiet(self):
+        self.assertIsNone(self.line(591, 12)["warning"])
+        self.assertIsNone(self.line(800, 15)["warning"])
 
 
 class TestAttention(unittest.TestCase):

@@ -65,7 +65,7 @@ supersedes and superseded-by links, deliberately not duplicated here.
 | File | Holds | Status |
 | --- | --- | --- |
 | `docs/decisions/README.md` | Every architecture decision made on this project, one file per decision, with the reasoning that produced it and the conditions that would show it was wrong. | current |
-| `docs/reference/airtable-schema.md` | The Airtable display's five tables and their fields as actually built, the choices they carry, the one field change ADR-0046 still requires, and the five things the Airtable MCP cannot do. | current |
+| `docs/reference/airtable-schema.md` | The Airtable display's eight tables and their fields as actually built, who owns each field, the choices they carry, and the five things the Airtable MCP cannot do. | current |
 | `docs/reference/annotation-vendors.md` | The annotation and data-labelling vendors whose postings are dropped, why the list exists, what it is sourced from, and how thin that evidence is. | current |
 | `docs/reference/completed.md` | Every completed task, with the evidence that proved it and the log or record that carries the proof. Split out of STATE.md so a session reads what is unsettled first. | current |
 | `docs/reference/platform-fields.md` | Every field each ATS platform and aggregator returns, with its type, how often it is populated, and whether the pipeline reads it. The inventory that makes "use everything that is fetched" checkable. | current |

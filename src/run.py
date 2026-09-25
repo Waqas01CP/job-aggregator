@@ -45,11 +45,14 @@ import traceback
 from datetime import datetime, timezone
 
 from . import envfile, private_store, projection, storage
+from .airtable_sweep import SweepClient, TABLE_SECRETS
+from .closure import Closure
+from .sweep import Sweep, older_than
 from .adapters import greenhouse, himalayas, lever
 from .airtable import (BASE_ENV, RUN_LOG_KEY, TABLE_ENV, TEST_TABLE_ENV, TOKEN_ENV,
                        AirtableClient, month_to_date)
 from .backfill import backfill
-from .config import ConfigError, is_publishable, load_boards
+from .config import ConfigError, is_publishable, load_boards, load_sweep_config
 from .dedupe import counts as dedupe_counts
 from .dedupe import group, split_new
 from .filters import FilterError, TitleMatcher, apply_chain, drop_counts
@@ -71,7 +74,9 @@ MAX_PAGES = 25
 # committed to the public data branch. Scrubbed from any projection failure
 # before it is recorded, as a last line behind the clients' own discipline.
 SECRET_ENVS = (TOKEN_ENV, BASE_ENV, TABLE_ENV, TEST_TABLE_ENV,
-               storage.PRIVATE_STORE_TOKEN_ENV, storage.PRIVATE_STORE_REPO_ENV)
+               storage.PRIVATE_STORE_TOKEN_ENV, storage.PRIVATE_STORE_REPO_ENV) + tuple(
+    name for mode in (False, True) for key, name in sorted(TABLE_SECRETS[mode].items())
+    if key != "jobs")
 
 
 # The operator's decision of 2026-09-24: a failure that is resumable exits 2
@@ -82,12 +87,14 @@ ESCALATE_AFTER = 3
 
 
 def needs_attention(run_log):
-    """A run whose display or private store failed, which exit 2 hides. A
-    log that is not an object needs none, so attention() can never raise on
-    one: it runs before the commit."""
+    """A run whose display, sweep or private store failed, which exit 2
+    hides. A log that is not an object needs none, so attention() can never
+    raise on one: it runs before the commit. The sweep counts because a
+    sweep that silently does nothing lets `Jobs` fill to the record cap."""
     if not isinstance(run_log, dict):
         return False
-    for block in (run_log.get(RUN_LOG_KEY), run_log.get("private_store")):
+    for block in (run_log.get(RUN_LOG_KEY), run_log.get("private_store"),
+                  run_log.get("sweep")):
         if isinstance(block, dict) and block.get("failure"):
             return True
     return False
@@ -172,19 +179,21 @@ def open_private_store(paths, test_mode):
         return None, block
 
 
-def save_private_store(store, block, paths, run_at):
+def save_private_store(store, block, paths, run_at, key="pushed"):
     """Commit and push the run's aggregator files. Never raises; a failure is
-    recorded in the block and the run exits 2. Closes the store."""
+    recorded in the block and the run exits 2. Called twice: once after the
+    fetch, so the data goes first, and once after the sweep, for the
+    aggregator outcomes it wrote, recorded under `key`. The caller closes
+    the store."""
     if store is None:
         return
     try:
         files = private_store.files_to_push(paths)
-        block["files"] = len(files)
-        block["pushed"] = bool(files and store.commit_and_push(files, "run %s" % run_at))
+        if key == "pushed":
+            block["files"] = len(files)
+        block[key] = bool(files and store.commit_and_push(files, "run %s" % run_at))
     except Exception as e:
         block["failure"] = redact_secrets("%s: %s" % (type(e).__name__, e))
-    finally:
-        store.close()
 
 
 def redact_secrets(text, environ=None):
@@ -204,7 +213,37 @@ def redact_secrets(text, environ=None):
     return text
 
 
-def project_display(run, no_commit, test_mode, restore_failure=None):
+def month_so_far(now_iso, test_mode):
+    """The month's Airtable calls per branch, projection and sweep together.
+    The allowance is per workspace, so both modes' branches count (G7)."""
+    month = now_iso[:7].replace("-", "")
+    return {storage.data_branch(mode): month_to_date(
+        storage.read_month_run_logs(month, mode), now_iso)
+        for mode in (test_mode, not test_mode)}
+
+
+def closure_for(run, boards, test_mode, no_commit, run_log, config):
+    """ADR-0050's closure test over this run's state: last seen from both
+    seen stores, and the recent run logs with this run's own appended. A
+    no-commit run reads no branch and judges from this run alone."""
+    seen = storage.SeenStore.load_many([run.paths["seen"], run.paths["local_seen"]])
+    last_seen = {k: v.get("last_seen") for k, v in seen.entries.items()}
+    logs = [] if no_commit else storage.read_recent_run_logs(config.run_log_window, test_mode)
+    paginated = {b.board_id: bool(getattr(ADAPTERS[b.platform], "PAGINATED", False))
+                 for b in boards}
+    return Closure(last_seen, logs + [run_log], lambda board_id: paginated.get(board_id, False),
+                   config.closed_after_polled_runs, iso(run.now))
+
+
+def retired_by(closure, config, now):
+    """Whether a display group closed more than the retirement span ago."""
+    def retired(g):
+        day = closure.group_closed_on(g.members)
+        return day is not None and older_than(day + "T00:00:00Z", config.retire_after_days, now)
+    return retired
+
+
+def project_display(run, no_commit, test_mode, restore_failure=None, retired=None):
     """Project the filtered layer to `Jobs`, or to `Jobs test` in test mode.
 
     Returns (projection stages, the airtable block, failure or None). Never
@@ -240,18 +279,16 @@ def project_display(run, no_commit, test_mode, restore_failure=None):
             records = projection.plan(projection.load_rows(run.paths), now_iso, run.matcher,
                                       projection.identities_in(
                                           projection.public_store_texts(run.paths)
-                                          + projection.private_store_texts(run.paths)), stages)
+                                          + projection.private_store_texts(run.paths)), stages,
+                                      retired=retired)
             return stages, {"calls_used": 0, "rows_sent": 0, "failure": None,
                             "would_send": len(records)}, None
 
-        month = now_iso[:7].replace("-", "")
-        by_branch = {storage.data_branch(mode): month_to_date(
-            storage.read_month_run_logs(month, mode), now_iso)
-            for mode in (test_mode, not test_mode)}
+        by_branch = month_so_far(now_iso, test_mode)
         client = make_airtable_client(test_mode, sum(by_branch.values()))
         projection.project(run.paths, now_iso, run.matcher, client,
                            projection.private_store_texts(run.paths), stages,
-                           public_only=bool(restore_failure))
+                           public_only=bool(restore_failure), retired=retired)
         return stages, dict(client.counters(), failure=None,
                             month_to_date_by_branch=by_branch), None
     except Exception as e:
@@ -263,6 +300,66 @@ def project_display(run, no_commit, test_mode, restore_failure=None):
                                                                     "rows_sent": 0}
         block["failure"] = failure
         return stages, block, failure
+
+
+def make_sweep_client(test_mode, used_this_month):
+    """The one place the run builds the sweep's client. Tests replace it."""
+    return SweepClient.from_env(test_mode, used_this_month=used_this_month)
+
+
+def previous_run_at(test_mode):
+    """When the previous run on this branch ran, or None. A copy-only sweep
+    reads the classification tables only if a status moved since."""
+    try:
+        logs = storage.read_recent_run_logs(1, test_mode)
+    except Exception:
+        return None
+    return logs[-1].get("run_at") if logs and isinstance(logs[-1], dict) else None
+
+
+def sweep_display(run, no_commit, test_mode, slot, private_ok, closure, config, used_before):
+    """ADR-0050's sweep. The copy step runs on every committing run; the
+    daily steps run except on the evening slot. Never raises: a failure is
+    recorded, the run still commits, and the caller exits 2.
+
+    **A no-commit run reaches no base.** It sweeps nothing."""
+    if no_commit:
+        return {"mode": "dry run: a no-commit run reaches no base", "calls_used": 0,
+                "failure": None}
+    daily = slot != "evening"
+    client = None
+    try:
+        client = make_sweep_client(test_mode, used_before)
+        report = Sweep(client, run.paths, run.now, run.matcher, closure, config,
+                       private_ok).run(daily, since=None if daily else previous_run_at(test_mode))
+        report.update(client.counters())
+        report["failure"] = None
+        return report
+    except Exception as e:
+        failure = "%s: %s" % (type(e).__name__, e)
+        if client is not None:
+            failure = client.redact(failure)
+        block = dict(client.counters()) if client is not None else {"calls_used": 0}
+        block.update(daily=daily, failure=redact_secrets(failure))
+        return block
+
+
+def budget_line(run_log, by_branch, config, now):
+    """ADR-0050's guard: the month to date, and a loud line once it passes
+    the configured share of the allowance before the configured day. Airtable
+    warns of nothing, and its grace period is available once ever (ADR-0004).
+    """
+    spent = sum(by_branch.values())
+    for key in (RUN_LOG_KEY, "sweep"):
+        spent += int((run_log.get(key) or {}).get("calls_used") or 0)
+    allowance = int((run_log.get(RUN_LOG_KEY) or {}).get("monthly_ceiling") or 1000)
+    block = {"month_to_date": spent, "allowance": allowance,
+             "share": round(spent / allowance, 3), "warning": None}
+    if spent > config.budget_warning_share * allowance and now.day < config.budget_warning_before_day:
+        block["warning"] = ("the month's Airtable calls are at %d of %d, past %d%% before day %d"
+                            % (spent, allowance, round(config.budget_warning_share * 100),
+                               config.budget_warning_before_day))
+    return block
 
 
 class Run:
@@ -328,6 +425,11 @@ class Run:
         log["fetched"] = len(parsed.postings)
         log["parse_problems"] = len(parsed.problems)
         rows = normalise(parsed.postings, board, self.now, seen=seen_first_seen)
+        # ADR-0050's closure test: a paginated feed read only to its stop did
+        # not look at anything older than this, so an absence there is not
+        # evidence of closure.
+        published = [r.published_at for r in rows if r.published_at]
+        log["oldest_published"] = min(published) if published else None
         self.board_logs.append(log)
         self._log_for = log
         return rows
@@ -526,6 +628,21 @@ def summarise(run_log):
                         p.get("groups", "-"), p.get("groups_skipped_by_store", "-"),
                         p.get("rows_to_send", "-"),
                         "  [%s]" % p["mode"] if p.get("mode") else ""))
+    sw = run_log.get("sweep")
+    if sw is not None:
+        lines.append("  sweep: %s%s" % (
+            sw.get("mode") or "%s, %d call(s), copied %s, deleted from Jobs %s, Closed marked %s, "
+            "waiting for the store %s" % ("daily" if sw.get("daily") else "copy only",
+                                          sw.get("calls_used", 0), sw.get("copied", {}),
+                                          sw.get("deleted_from_jobs", 0),
+                                          sw.get("closed_marked", 0),
+                                          sw.get("waiting_for_the_store", 0)),
+            "  FAILED: %s" % sw["failure"] if sw.get("failure") else ""))
+    b = run_log.get("budget")
+    if b is not None:
+        lines.append("  airtable month to date: %d of %d%s" % (
+            b["month_to_date"], b["allowance"],
+            "  WARNING: %s" % b["warning"] if b.get("warning") else ""))
     a = run_log.get(RUN_LOG_KEY)
     if a is not None:
         lines.append("  airtable: %d call(s), %d row(s) sent%s"
@@ -577,6 +694,15 @@ def files_to_commit(run_log, paths, log_path, test_mode):
         if os.path.exists(path):
             with open(path, encoding="utf-8") as f:
                 files[storage.branch_path(path, test_mode)] = f.read()
+    # ADR-0050: the sweep's public outcome stores. The guard below reads each
+    # record's source, so an aggregator's outcome can no more reach the
+    # branch than its row can.
+    if os.path.isdir(paths["outcomes_dir"]):
+        for name in sorted(os.listdir(paths["outcomes_dir"])):
+            if name.endswith(".json"):
+                path = "%s/%s" % (paths["outcomes_dir"], name)
+                with open(path, encoding="utf-8") as f:
+                    files[storage.branch_path(path, test_mode)] = f.read()
     for committed_path, text in sorted(files.items()):
         if committed_path.startswith(storage.RUNLOG_DIR + "/"):
             continue
@@ -612,6 +738,7 @@ def main(argv=None):
     try:
         boards = load_boards()
         matcher = TitleMatcher()
+        sweep_config = load_sweep_config()
     except (ConfigError, FilterError) as e:
         print("could not start: %s" % e, file=sys.stderr)
         return EXIT_CANNOT_START
@@ -665,8 +792,42 @@ def main(argv=None):
 
     # After the files are written, before the run log is: the log records the
     # outcome. Never raises; a failure is recorded and the run still commits.
+    try:
+        closure = closure_for(run, boards, test_mode, args.no_commit, run_log, sweep_config)
+        retired = retired_by(closure, sweep_config, run.now)
+    except Exception as e:
+        closure, retired = None, None
+        run_log["closure_failure"] = redact_secrets("%s: %s" % (type(e).__name__, e))
     run_log["projection"], run_log[RUN_LOG_KEY], projection_failure = \
-        project_display(run, args.no_commit, test_mode, restore_failure)
+        project_display(run, args.no_commit, test_mode, restore_failure, retired=retired)
+
+    # ADR-0050's sweep, after the projection so a row it just sent is read
+    # back with the rest. Its aggregator outcomes need the private store to
+    # have been restored and written this run.
+    by_branch = {} if args.no_commit else month_so_far(iso(run.now), test_mode)
+    if closure is None:
+        run_log["sweep"] = {"calls_used": 0, "failure": "the closure test could not be built: "
+                            "%s" % run_log["closure_failure"]}
+    else:
+        run_log["sweep"] = sweep_display(
+            run, args.no_commit, test_mode, slot,
+            private_ok=bool(store is not None and not (private_block and private_block["failure"])),
+            closure=closure, config=sweep_config,
+            used_before=sum(by_branch.values())
+            + int((run_log[RUN_LOG_KEY] or {}).get("calls_used") or 0))
+    sweep_failure = run_log["sweep"].get("failure")
+    if private_block is not None and store is not None and not private_block["failure"]:
+        # The second push: the aggregator outcomes the sweep just wrote.
+        save_private_store(store, private_block, run.paths, run_log["run_at"],
+                           key="outcomes_pushed")
+        private_failure = private_block["failure"]
+    if store is not None:
+        store.close()
+    if not args.no_commit:
+        run_log["budget"] = budget_line(run_log, by_branch, sweep_config, run.now)
+        if run_log["budget"]["warning"]:
+            # A workflow annotation, and it stays in the committed log.
+            print("::warning::%s" % run_log["budget"]["warning"])
     run_log["attention"] = attention(run_log, test_mode, args.no_commit)
 
     print(summarise(run_log))
@@ -703,7 +864,10 @@ def main(argv=None):
     if projection_failure:
         print("the projection to Airtable failed; the fetch is stored and the next run "
               "re-projects: %s" % projection_failure, file=sys.stderr)
-    if private_failure or projection_failure:
+    if sweep_failure:
+        print("the sweep failed; nothing it had not verified was deleted, and the next "
+              "run sweeps again: %s" % sweep_failure, file=sys.stderr)
+    if private_failure or projection_failure or sweep_failure:
         return EXIT_STOPPED_RESUMABLE
     return run.exit_code()
 

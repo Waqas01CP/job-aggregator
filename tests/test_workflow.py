@@ -23,7 +23,10 @@ from src import storage
 WORKFLOW = os.path.join(ROOT, ".github", "workflows", "fetch.yml")
 CONTRACT = os.path.join(ROOT, ".github", "workflows", "contract.yml")
 SECRET_NAMES = ("AIRTABLE_TOKEN", "AIRTABLE_BASE_ID", "AIRTABLE_TABLE_ID",
-                "AIRTABLE_TEST_TABLE_ID", "AGGREGATOR_STORE_TOKEN", "AGGREGATOR_STORE_REPO")
+                "AIRTABLE_TEST_TABLE_ID", "AGGREGATOR_STORE_TOKEN", "AGGREGATOR_STORE_REPO",
+                "AIRTABLE_NOT_A_FIT_TABLE_ID", "AIRTABLE_POOR_FILTERING_TABLE_ID",
+                "AIRTABLE_ACCEPTED_TABLE_ID", "AIRTABLE_NOT_A_FIT_TEST_TABLE_ID",
+                "AIRTABLE_POOR_FILTERING_TEST_TABLE_ID", "AIRTABLE_ACCEPTED_TEST_TABLE_ID")
 
 
 def workflow():
