@@ -7222,5 +7222,26 @@
   "url_provenance": "payload",
   "stated_experience": null,
   "expires_at": null
+ },
+ {
+  "identity": "lever:f89e6031-8ab0-4cb7-94b8-02544567966e",
+  "source": "lever",
+  "board_id": "lever:smart-working-solutions",
+  "external_id": "f89e6031-8ab0-4cb7-94b8-02544567966e",
+  "employer": "Smart Working Solutions",
+  "employer_provenance": "slug",
+  "title": "Data Engineer (On-site, Full-Time) [AS023]",
+  "title_normalised": "Data Engineer (On-site, Full-Time) [AS023]",
+  "location": "Kingswinford",
+  "published_at": "2026-09-25T01:22:16.751000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-09-25T19:42:34.938604Z",
+  "ordering_date": "2026-09-25T01:22:16.751000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/smart-working-solutions/f89e6031-8ab0-4cb7-94b8-02544567966e",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null
  }
 ]
