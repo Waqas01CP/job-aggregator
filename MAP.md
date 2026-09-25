@@ -167,7 +167,8 @@ Grouped by topic, in the order the pipeline runs. A record appears under exactly
 | `docs/decisions/0043-three-outcome-stores.md` | **ADR-0043: Three outcome stores, and what each is for.** Three append-only outcome corpora, one per kind of outcome, and what each one is allowed to feed back into. Reverses ADR-0014's single-file clause. | accepted |
 | `docs/decisions/0044-priority-star.md` | **ADR-0044: The priority star, and the line it must not cross.** A posting is starred when it shares one of three named attributes with an accepted role. The deterministic answer to "show me more like this", and the line it must not cross. | accepted |
 | `docs/decisions/0045-classification-flow.md` | **ADR-0045: The classification flow.** The operator classifies by moving a row to one of three tables; the sweep writes it to its store, verifies the write, then deletes. Supersedes ADR-0014's sweep. Accepted is never deleted automatically. | superseded by ADR-0046 |
-| `docs/decisions/0046-classification-by-status-and-fifteen-day-retention.md` | **ADR-0046: Classification by status, and the fifteen-day retention.** The operator classifies by setting one status in Jobs; the sweep copies the row out, then writes, verifies and deletes it at fifteen days. A stored outcome keeps a row out of the projection. Supersedes ADR-0045. | accepted |
+| `docs/decisions/0046-classification-by-status-and-fifteen-day-retention.md` | **ADR-0046: Classification by status, and the fifteen-day retention.** Superseded by ADR-0050, which consolidates this flow and its eight amendments. The operator classifies by setting one status in Jobs; the sweep copies the row out, then writes, verifies and deletes it at fifteen days. Supersedes ADR-0045. | superseded by ADR-0050 |
+| `docs/decisions/0050-the-classification-flow-consolidated.md` | **ADR-0050: The classification flow, consolidated.** The whole classification flow in one record: one status in Jobs, the copy on every fetch, fifteen days on two clocks, closed postings marked and retired, and what keeps a classified row out of the display. Supersedes ADR-0046. | accepted |
 
 ### Measurement and evidence
 
@@ -186,13 +187,15 @@ Grouped by topic, in the order the pipeline runs. A record appears under exactly
 | `docs/decisions/0023-context-artifact-set.md` | **ADR-0023: Context artifact set and onboarding order.** The artifact set a session reads to start, and the order it reads them in. | accepted |
 | `docs/decisions/0024-session-log-format.md` | **ADR-0024: Session log format.** What a session log must contain: tagged claims, evidence behind each one, and what was not done. | accepted |
 | `docs/decisions/0025-auto-memory-not-authoritative.md` | **ADR-0025: Auto Memory is not authoritative.** Auto Memory ranks below every document in this repository and nothing is designed around it. | accepted |
+| `docs/decisions/0049-fitness-functions-guard-architectural-rules.md` | **ADR-0049: Architectural rules are guarded by fitness functions, not by prose.** Every architectural rule that code can break silently gets a test that fails when it is broken, named for the record it guards and proved by a mutation. | accepted |
 | `docs/decisions/ADR-RULES.md` | **ADR-RULES: how records are resolved, amended and retired.** How records are resolved, amended and retired. Two ranks the authority order lacks, the difference between stale and wrong, and what a seat may correct without asking. Read through, not in sequence. | accepted |
 
 ## deferred
 
 | File | Holds | Status |
 | --- | --- | --- |
+| `docs/deferred/employer-alias-map.md` | Deduplicating one role that arrives from two source classes, which needs an employer alias map. Deferred while one instance exists; revisit at the second or third, or when an accepted row turns out to have a twin. | current |
 | `docs/deferred/rozee-pk.md` | Adding Rozee.pk as a source. Deferred until the display works and until more ATS sources are added, either of which may remove the need for it. | current |
 | `docs/deferred/similarity-matching.md` | Ranking postings by similarity to accepted roles. Deferred because ADR-0010 forbids it and the deterministic star was built instead; revisit when the accepted store holds fifty rows or when the operator stops reading every row. | current |
 
-Files listed: 90
+Files listed: 93
