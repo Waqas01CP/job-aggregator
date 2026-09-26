@@ -1,0 +1,56 @@
+[
+  {
+    "label": "a cleared status removes a copy",
+    "path": "src/sweep.py",
+    "find": "                elif not status:\n                    # A clear is no new",
+    "replace": "                elif False:\n                    # A clear is no new"
+  },
+  {
+    "label": "a status change deletes an accepted copy",
+    "path": "src/sweep.py",
+    "find": "                    self._problem(\"the accepted copy of %s is kept although its status is now %s; \"\n                                  \"set Delete on it to remove it from Airtable\"\n                                  % (masked(identity), status))",
+    "replace": "                    self.client.delete(\"accepted\", [c[\"id\"] for c in held])"
+  },
+  {
+    "label": "a superseded copy is deleted before it is saved",
+    "path": "src/sweep.py",
+    "find": "                elif self.stores.copy_saved(where, c[\"id\"]):",
+    "replace": "                elif True:"
+  },
+  {
+    "label": "Delete is ignored",
+    "path": "src/sweep.py",
+    "find": "            if f.get(DELETE_FIELD) != DELETE_YES:",
+    "replace": "            if True:"
+  },
+  {
+    "label": "a Delete-marked copy goes before its records are on origin",
+    "path": "src/sweep.py",
+    "find": "            if saved and stored:",
+    "replace": "            if True:"
+  },
+  {
+    "label": "Delete leaves the Jobs row behind",
+    "path": "src/sweep.py",
+    "find": "                    delete_jobs.append(row[\"id\"])",
+    "replace": "                    pass"
+  },
+  {
+    "label": "Delete skips the accepted store for a row still in Jobs",
+    "path": "src/sweep.py",
+    "find": "            stored = not row_accepted or self.stores.durable_has(where, STORE_FOR[\"accepted\"],\n                                                                 identity)",
+    "replace": "            stored = True"
+  },
+  {
+    "label": "a row due twice is named twice in one delete",
+    "path": "src/sweep.py",
+    "find": "        delete_jobs = list(dict.fromkeys(delete_jobs))",
+    "replace": "        pass"
+  },
+  {
+    "label": "the removed-copies record drops the operator's reason",
+    "path": "src/sweep.py",
+    "find": "                           reason=f.get(OPERATOR_FIELD[table]), classified=copy.get(\"createdTime\"),",
+    "replace": "                           reason=None, classified=copy.get(\"createdTime\"),"
+  }
+]

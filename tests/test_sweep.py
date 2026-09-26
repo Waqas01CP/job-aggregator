@@ -128,35 +128,88 @@ class TestStep1Copy(Harness):
         self.sweep(daily=False)
         self.assertEqual(len(self.copies("accepted")), 1)
 
-    def test_a_status_change_moves_the_copy_and_resets_its_clock(self):
-        """ADR-0050 step 1: the old copy goes, with its reason, and the new
-        one's `Classified` starts now."""
+    def test_a_status_changed_away_from_accepted_keeps_its_copy(self):
+        """D12: an `accepted` copy is never removed by a status change. The
+        new copy is made, its `Classified` starting now, and the old one is
+        reported for the operator to remove with `Delete`."""
         r = make_row(1)
         self.store_rows([r])
         record_id = self.in_jobs(r, status="accepted", classified_days_ago=5)
         old = self.base.seed(TABLES["accepted"], {"Identity": "greenhouse:1", "Stage": "applied"},
                              created=NOW - timedelta(days=5))
         self.base.table(TABLES[JOBS])[record_id]["fields"]["Status"] = "rejected-not-a-fit"
-        self.sweep(daily=False)
-        self.assertNotIn(old, {c["_id"] for c in self.copies("accepted")})
-        self.assertEqual(self.copies("accepted"), [])
+        report = self.sweep(daily=False)
+        self.sweep()
+        [kept] = self.copies("accepted")
+        self.assertEqual((kept["_id"], kept["Stage"]), (old, "applied"))
         [new] = self.copies("rejected-not-a-fit")
         self.assertEqual(new["_created"], stamp(NOW))
+        self.assertTrue([p for p in report["problems"] if "set Delete" in p])
 
-    def test_a_cleared_status_removes_the_copy_on_the_next_fetch(self):
-        """The operator clears `Status` in the browser. `Classified at`
-        records the change, so even an evening run sees it."""
+    def test_a_cleared_status_removes_no_copy(self):
+        """D12: the operator clears `Status`, perhaps by a stray keystroke.
+        `Classified at` records it, so even an evening run reads the tables,
+        and nothing is removed from any of them, daily steps included."""
+        r1, r2 = make_row(1), make_row(2)
+        self.store_rows([r1, r2])
+        ids = [self.in_jobs(r1, status="accepted", classified_days_ago=5),
+               self.in_jobs(r2, status="rejected-not-a-fit", classified_days_ago=5)]
+        self.base.seed(TABLES["accepted"], {"Identity": "greenhouse:1", "Stage": "applied"},
+                       created=NOW - timedelta(days=5))
+        self.base.seed(TABLES["rejected-not-a-fit"], {"Identity": "greenhouse:2",
+                                                      "Choice reason": "salary"},
+                       created=NOW - timedelta(days=5))
+        for record_id in ids:
+            fields = self.base.table(TABLES[JOBS])[record_id]["fields"]
+            fields.pop("Status")
+            fields["Classified at"] = stamp(NOW - timedelta(hours=1))
+        report = self.sweep(daily=False, since=stamp(NOW - timedelta(hours=12)))
+        self.sweep()
+        self.assertTrue(report["tables_read"])
+        self.assertEqual(report["kept_after_a_clear"], 2)
+        self.assertEqual([c["Stage"] for c in self.copies("accepted")], ["applied"])
+        self.assertEqual([c["Choice reason"] for c in self.copies("rejected-not-a-fit")],
+                         ["salary"])
+        self.assertEqual([c for c in self.base.calls if c["method"] == "DELETE"], [])
+
+    def test_a_superseded_rejection_copy_is_saved_before_it_goes(self):
+        """D12: a rejection copy whose row was reclassified keeps its reason
+        in `removed_copies.json`, and is deleted only on a later run, once
+        that store holds it. Until then both copies stand."""
         r = make_row(1)
         self.store_rows([r])
-        record_id = self.in_jobs(r, status="accepted", classified_days_ago=5)
-        self.base.seed(TABLES["accepted"], {"Identity": "greenhouse:1"},
+        record_id = self.in_jobs(r, status="rejected-not-a-fit", classified_days_ago=5)
+        old = self.base.seed(TABLES["rejected-not-a-fit"],
+                             {"Identity": "greenhouse:1", "Choice reason": "salary"},
+                             created=NOW - timedelta(days=5))
+        self.base.table(TABLES[JOBS])[record_id]["fields"]["Status"] = "rejected-poor-filtering"
+        first = self.sweep(daily=False)
+        self.assertEqual([c["_id"] for c in self.copies("rejected-not-a-fit")], [old])
+        self.assertEqual(len(self.copies("rejected-poor-filtering")), 1)
+        [saved] = self.store("removed_copies.json")
+        self.assertEqual((saved["copy_id"], saved["table"], saved["reason"], saved["identity"]),
+                         (old, "rejected-not-a-fit", "salary", "greenhouse:1"))
+        self.assertIn("rejected-poor-filtering", saved["why"])
+        self.assertEqual(first["stale_copies_deleted"], {})
+        second = self.sweep(daily=False)
+        self.assertEqual(self.copies("rejected-not-a-fit"), [])
+        self.assertEqual(second["stale_copies_deleted"], {"rejected-not-a-fit": 1})
+
+    def test_a_superseded_copy_waits_while_its_record_is_not_on_origin(self):
+        """The push that should have carried the record failed: the file
+        is gone at the next run, so the copy stays and the record is
+        written again."""
+        r = make_row(1)
+        self.store_rows([r])
+        record_id = self.in_jobs(r, status="rejected-not-a-fit", classified_days_ago=5)
+        self.base.seed(TABLES["rejected-not-a-fit"], {"Identity": "greenhouse:1"},
                        created=NOW - timedelta(days=5))
-        fields = self.base.table(TABLES[JOBS])[record_id]["fields"]
-        fields.pop("Status")
-        fields["Classified at"] = stamp(NOW - timedelta(hours=1))
-        report = self.sweep(daily=False, since=stamp(NOW - timedelta(hours=12)))
-        self.assertTrue(report["tables_read"])
-        self.assertEqual(self.copies("accepted"), [])
+        self.base.table(TABLES[JOBS])[record_id]["fields"]["Status"] = "accepted"
+        self.sweep(daily=False)
+        os.remove("%s/removed_copies.json" % self.paths["outcomes_dir"])
+        self.sweep(daily=False)
+        self.assertEqual(len(self.copies("rejected-not-a-fit")), 1)
+        self.assertEqual(len(self.store("removed_copies.json")), 1)
 
     def test_with_no_previous_run_the_tables_are_always_read(self):
         r = make_row(1)
@@ -256,6 +309,92 @@ class TestStep3RejectionTables(Harness):
         self.sweep()
         self.assertEqual(len(self.copies("accepted")), 1)
         self.assertEqual(len(self.store("accepted.json")), 1)
+
+    def test_an_accepted_copy_marked_delete_is_stored_then_removed(self):
+        """D12: the operator sets `Delete` to yes on a copy whose row has
+        already left `Jobs`. The first sweep writes its record, `Stage` as it
+        stands now; the copy leaves Airtable on the next, once origin holds
+        it. The accepted store is never touched."""
+        r = make_row(1)
+        self.store_rows([r])
+        storage.write_atomic("%s/accepted.json" % self.paths["outcomes_dir"],
+                             dumps([{"identity": "greenhouse:1", "reason": "shortlisted"}]))
+        copy_id = self.base.seed(TABLES["accepted"], dict(
+            {k: v for k, v in fields_for(group([r])[0], MATCHER).items() if k in COPY_FIELDS},
+            Stage="applied", Delete="yes"), created=NOW - timedelta(days=40))
+        first = self.sweep()
+        self.assertEqual(len(self.copies("accepted")), 1, "removed before its record was stored")
+        [saved] = self.store("removed_copies.json")
+        self.assertEqual((saved["copy_id"], saved["reason"], saved["table"]),
+                         (copy_id, "applied", "accepted"))
+        self.assertEqual(first["waiting_for_the_store"], 1)
+        second = self.sweep()
+        self.assertEqual(self.copies("accepted"), [])
+        self.assertEqual(second["copies_deleted"], {"accepted": 1})
+        self.assertEqual(len(self.store("accepted.json")), 1)
+
+    def test_delete_on_a_row_still_in_jobs_stores_it_and_removes_both(self):
+        """Marked before its fifteen days: the accepted store gets the row
+        with its `Stage`, and once origin holds both records the copy and its
+        `Jobs` row go together, or step 1 would copy the row straight back."""
+        r = make_row(1)
+        self.store_rows([r])
+        self.in_jobs(r, status="accepted", classified_days_ago=3)
+        self.base.seed(TABLES["accepted"], {"Identity": "greenhouse:1", "Stage": "shortlisted",
+                                            "Delete": "yes"}, created=NOW - timedelta(days=3))
+        self.sweep()
+        self.assertEqual(len(self.jobs()), 1)
+        self.assertEqual(len(self.copies("accepted")), 1)
+        [stored] = self.store("accepted.json")
+        self.assertEqual((stored["identity"], stored["reason"]), ("greenhouse:1", "shortlisted"))
+        report = self.sweep()
+        self.assertEqual(self.jobs(), [])
+        self.assertEqual(self.copies("accepted"), [])
+        self.assertEqual(report["deleted_from_jobs"], 1)
+
+    def test_a_row_due_twice_is_deleted_once(self):
+        """Past its fifteen days and its copy marked `Delete`, both records
+        on origin: steps 2 and 3 each qualify the `Jobs` row, and it is named
+        once in the one delete."""
+        r = make_row(1)
+        self.store_rows([r])
+        self.in_jobs(r, status="accepted", classified_days_ago=20)
+        copy_id = self.base.seed(TABLES["accepted"], {"Identity": "greenhouse:1", "Delete": "yes"},
+                                 created=NOW - timedelta(days=20))
+        storage.write_atomic("%s/accepted.json" % self.paths["outcomes_dir"],
+                             dumps([{"identity": "greenhouse:1"}]))
+        storage.write_atomic("%s/removed_copies.json" % self.paths["outcomes_dir"],
+                             dumps([{"copy_id": copy_id, "identity": "greenhouse:1"}]))
+        report = self.sweep()
+        self.assertEqual((self.jobs(), self.copies("accepted")), ([], []))
+        self.assertEqual(report["deleted_from_jobs"], 1)
+        [jobs_delete] = [c for c in self.base.calls
+                         if c["method"] == "DELETE" and c["table"] == TABLES[JOBS]]
+        self.assertEqual(len([k for k, _ in jobs_delete["params"] if k == "records[]"]), 1)
+
+    def test_delete_waits_while_its_record_is_not_on_origin(self):
+        r = make_row(1)
+        self.store_rows([r])
+        storage.write_atomic("%s/accepted.json" % self.paths["outcomes_dir"],
+                             dumps([{"identity": "greenhouse:1"}]))
+        self.base.seed(TABLES["accepted"], {"Identity": "greenhouse:1", "Delete": "yes"},
+                       created=NOW - timedelta(days=40))
+        self.sweep()
+        os.remove("%s/removed_copies.json" % self.paths["outcomes_dir"])
+        self.sweep()
+        self.assertEqual(len(self.copies("accepted")), 1)
+
+    def test_an_accepted_copy_without_delete_is_never_removed(self):
+        r = make_row(1)
+        self.store_rows([r])
+        storage.write_atomic("%s/accepted.json" % self.paths["outcomes_dir"],
+                             dumps([{"identity": "greenhouse:1"}]))
+        self.base.seed(TABLES["accepted"], {"Identity": "greenhouse:1", "Stage": "applied"},
+                       created=NOW - timedelta(days=400))
+        self.sweep()
+        self.sweep()
+        self.assertEqual(len(self.copies("accepted")), 1)
+        self.assertEqual(self.store("removed_copies.json"), [])
 
     def test_a_rejection_copy_goes_at_fifteen_days_only_once_stored(self):
         r = make_row(1)
@@ -437,10 +576,15 @@ class TestTheAuditOf20260925(Harness):
         r = make_row(1)
         self.store_rows([r])
         self.in_jobs(r, status="accepted", classified_days_ago=1)
-        self.base.seed(TABLES["rejected-not-a-fit"], {"Identity": "greenhouse:1"},
-                       created=NOW - timedelta(days=20))
+        copy_id = self.base.seed(TABLES["rejected-not-a-fit"], {"Identity": "greenhouse:1"},
+                                 created=NOW - timedelta(days=20))
         storage.write_atomic("%s/rejected_not_a_fit.json" % self.paths["outcomes_dir"],
                              dumps([{"identity": "greenhouse:1"}]))
+        # Under D12 step 1 deletes a superseded copy only once its record is
+        # on origin; here it is, so step 1 deletes it and step 3, which read
+        # the table first, would reach for it too.
+        storage.write_atomic("%s/removed_copies.json" % self.paths["outcomes_dir"],
+                             dumps([{"copy_id": copy_id, "identity": "greenhouse:1"}]))
         report = self.sweep()
         self.assertEqual(report["stale_copies_deleted"], {"rejected-not-a-fit": 1})
         self.assertEqual(report["copies_deleted"], {})

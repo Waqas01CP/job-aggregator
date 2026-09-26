@@ -144,3 +144,119 @@ do.
   sweep changed under them: 30 of 30 caught `[VERIFIED]`.
 - **The widened stamp gate**, run directly in a scratch clone, as above
   `[VERIFIED]`.
+
+## The operator's answers, and D12 and D11 built
+
+**D12, the audit's F1: `accepted` copies.**
+- **His words:** "the not fit and poor filtering has different meaning being
+  deleted but after saving them and then deleting, correct? now this takes us
+  back to the main question that the accepted is ever deleted and the answer
+  is yes. you can say that it is option A but improvised meaning that there
+  will be an additional row which says delete and there will be a single
+  option of yes and null will be considered no so when i deem that this job
+  should be deleted then i will just select yes but that does not mean it will
+  be permanently deleted but rather from the airtable. i still expect that the
+  local copy or the storage to have all the 5 storage meaning raw, jobs, not
+  fit, poor filtering and accepted."
+- **His premise was half right, and the seat said so.** A rejection copy was
+  deleted at fifteen days only after its outcome was stored. But one
+  superseded by a status change was deleted with its reason unsaved, as
+  ADR-0050 line 71 reads. The build makes the rest match what he expected.
+
+**Built, in `src/sweep.py`** `[VERIFIED]` by tests, and each rule by a
+mutation:
+- **A cleared `Status` removes nothing**, from any table.
+- **An `accepted` copy stays whatever its row's status becomes**, reported
+  in the run log.
+- **A superseded rejection copy is saved first.** Its reason goes to a new
+  store, `removed_copies.json`, keyed by the copy's record ID. The copy is
+  deleted on a later run once origin holds the record, the same write,
+  verify, delete as everywhere else.
+- **An `accepted` copy leaves Airtable only when he sets `Delete` to yes.**
+  - The next daily sweep saves it, `Stage` as it stands then, to
+    `removed_copies.json`, and to the accepted store if its row is still in
+    `Jobs`.
+  - A later sweep removes it once both are read back, with its `Jobs` row if
+    there is one; left there, step 1 would copy the row straight back.
+  - Nothing leaves a store.
+- **Not a classification store.** `removed_copies.json` is not one, so the
+  projection never reads it and nothing in it hides a row.
+
+**In Airtable, through the connector `[VERIFIED]`:**
+- `Delete`, a single select whose one choice is yes, created on `accepted`
+  and `accepted test` and read back.
+- The stale descriptions the audit named (F8) rewritten for ADR-0050 and
+  D12: the `Jobs` table, `Status` and `Classified at` on both `Jobs` tables,
+  the three classification tables, and all six `Classified` fields.
+
+**Recorded:** `docs/reference/airtable-schema.md` and
+`docs/reference/retention.md`, with Changes rows.
+
+**Not recorded:** ADR-0050 line 71 is now contradicted by his decision, and
+recording that is the architecture chat's. Brief 7 said the seat must add no
+Changes row there in the record's first week.
+
+**D11, conflict 2: where descriptions go.**
+- **His words:** "the only reason i would save the description and other data
+  on private repo is because of their terms and conditions otherwise i see no
+  reason to save it on the public and make the work easier but if there
+  really is not a difference in either saving on private vs public and there
+  is no hassle then i will choose public otherwise private is reasonable and
+  you can proceed automatically if that the data there is stored properly.
+  you should store something of description if you go the private repo way
+  and fetch back to recheck that the saving is done properly."
+- **The two differ on the concern he named**, republishing employers' text
+  and the personal data inside it, publicly and for good. So by his own rule
+  it is private.
+
+**Built** `[VERIFIED]` by tests and each guarantee by a mutation:
+- **What is saved.** Every posting a run fetches, as its board returned it,
+  description and all:
+  - Greenhouse is now asked for `?content=true`;
+  - Lever and Himalayas already sent everything.
+- **Where.** On the private repository's own `data-full` branch (test mode
+  `data-test-full`), one file per run.
+- **No run downloads what earlier runs saved.** A partial fetch brings
+  commits and trees only; a probe on a local bare repository took 1.4 KB for
+  a branch holding 270 KB.
+- **The read-back.** After the push, a second fresh partial fetch must list
+  the file with exactly the content hash written, or the save fails. Two
+  tests give it the cases built to defeat it: a branch listing different
+  content, and a branch missing the file.
+- **Only then are the postings marked saved**, in both seen stores.
+  - A failed save is the private store's failure: exit 2, the fetch
+    committed, the run marked failed at once (D9).
+  - An ATS posting is saved by the next run that still sees it listed.
+  - A Himalayas posting is not fetched again, so a failed run loses its
+    full record, reported.
+- **The first production run saves everything currently listed**, about
+  800 ATS postings and one morning's Himalayas, about 10 MB `[INFERRED]` from
+  today's sizes.
+- **Nothing of it reaches the public branch:** a test greps the public
+  branch for the description it planted and finds nothing.
+- **The contract check is unaffected.** It fingerprints only consumed
+  fields, and `content` is not one.
+
+**Answered without a build:**
+- **`Published` against `First seen`.** Read through the connector: all 101
+  `Jobs` rows. Every date field in all five tables displays in UTC.
+  - `First seen` is never before `Published`.
+  - `Order date` equals `Published` on every row, as ADR-0007 intends when a
+    board gives a date. Each is the board's own date, never the fetch time.
+  - The 346 stored public rows agree.
+  - Old postings appear because ADR-0007 ingests everything still listed
+    and orders by date. "At most a week old" is therefore a view, not a rule.
+- **Himalayas' location restrictions.** Its feed carries
+  `locationRestrictions`, which `Location` already shows, and
+  `timezoneRestrictions`. On one page of 20, 17 were restricted to countries
+  without Pakistan and 3 were unrestricted. A rule is his to set (D13).
+
+**Verified for it**, at 2026-09-26T10:58Z: 643 tests on Python 3.12 and 3.11, and the mutation files for D12 and D11, and every older file their code touches, still running at this commit; the results follow in the next `[VERIFIED]`. Nothing of D11 has run on GitHub yet: the first run after the push is the live check, and the first thing it proves is that the private store's token may create the new branch.
+
+**The 11 stale mutations re-expressed.** In the 2026-09-17 and 2026-09-18 files, edited in place so each file keeps its own formatting:
+- six backfill mutations follow their code from `tools/backfill.py` to `src/backfill.py`;
+- three restore mutations get enough context to be unique, or the tuple as it now reads;
+- one run-log-report mutation matches the call as it now reads;
+- the pool-order mutation swaps sections 3 and 4 of today's pool.
+
+Every find in every mutation file now matches exactly once `[VERIFIED]`. Whether the suite still catches them follows in the next commit.

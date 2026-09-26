@@ -11,9 +11,13 @@ re-derived here:
   location         `location.name`    100%
   publication      `first_published`  100%, ISO-8601 with offset
 
-`?content=true` is never sent. It adds the employer's description text at 9.5
-times the payload size, and ADR-0011 keeps description text out of this
-repository entirely.
+`?content=true` is sent, since 2026-09-26: the operator's D11 keeps every
+field a board returns, descriptions included (ADR-0016). It makes the
+response larger, 6.7 times on Careem's board measured that day and 9.5 times
+where this was first measured, for the same one request. The description is
+never parsed and never reaches this repository: the run saves each posting
+whole to the private store's full branch only, which keeps ADR-0011's public
+branch metadata-only.
 
 `updated_at` is present and is never used. It is written in bulk, not on edit:
 Greenhouse rewrote roughly 265 Speechify postings on each of four dates.
@@ -42,7 +46,7 @@ CONSUMED = ("id", "title", "absolute_url", PUBLISHED_FIELD, "application_deadlin
 
 
 def url_for(board):
-    return BASE % board.slug
+    return (BASE % board.slug) + "?content=true"
 
 
 def _parse_iso(value):
@@ -121,5 +125,6 @@ def parse(payload, board):
             url_provenance="payload",
             location=location_name or None,
             expires_at=expires_at,
+            raw=entry,
         ))
     return result

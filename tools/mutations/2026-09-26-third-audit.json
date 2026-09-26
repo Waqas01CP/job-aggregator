@@ -26,7 +26,7 @@
   {
     "label": "step 3 deletes a copy step 1 already removed",
     "path": "src/sweep.py",
-    "find": "                copies[t][:] = [c for c in copies[t] if c[\"id\"] not in gone]",
+    "find": "                copies[t][:] = [c for c in copies[t] if c[\"id\"] not in removed]",
     "replace": "                pass"
   },
   {

@@ -54,6 +54,11 @@ COPY_FIELDS = ("Title", "Employer", "Location", "Link", "Published", "First seen
 OPERATOR_FIELD = {"rejected-not-a-fit": "Choice reason",
                   "rejected-poor-filtering": "Pipeline reason",
                   "accepted": "Stage"}
+# The operator's mark on an `accepted` copy he wants out of Airtable: a
+# single select whose one choice is "yes", empty meaning no. The sweep reads
+# it and never writes it. The operator's D12, 2026-09-26.
+DELETE_FIELD = "Delete"
+DELETE_YES = "yes"
 # What the sweep may write, per table. Nothing else leaves this module.
 WRITES = {JOBS: ("Closed",)}
 WRITES.update({table: COPY_FIELDS for table in CLASSIFICATION_TABLES})

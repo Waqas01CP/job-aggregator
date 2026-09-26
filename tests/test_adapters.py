@@ -37,14 +37,21 @@ class TestGreenhouse(unittest.TestCase):
     def setUp(self):
         self.payload = cassette("greenhouse-careem.json")
 
-    def test_url_is_the_documented_endpoint(self):
+    def test_url_is_the_documented_endpoint_with_descriptions(self):
+        """The operator's D11, 2026-09-26: every field a board returns is
+        kept, so the description is asked for. It goes to the private full
+        branch only."""
         self.assertEqual(greenhouse.url_for(GH_BOARD),
-                         "https://boards-api.greenhouse.io/v1/boards/careem/jobs")
+                         "https://boards-api.greenhouse.io/v1/boards/careem/jobs?content=true")
 
-    def test_url_never_requests_content(self):
-        """`?content=true` adds description text at 9.5x payload, which
-        ADR-0011 keeps out of this repository."""
-        self.assertNotIn("content=true", greenhouse.url_for(GH_BOARD))
+    def test_each_posting_carries_its_entry_whole_and_uncompared(self):
+        result = greenhouse.parse(self.payload, GH_BOARD)
+        first = result.postings[0]
+        self.assertIs(first.raw, self.payload["jobs"][0])
+        other = greenhouse.parse(self.payload, GH_BOARD).postings[0]
+        other.raw = {"changed": True}
+        self.assertEqual(first, other, "the raw entry must not change equality")
+        self.assertNotIn(", raw=", repr(first))
 
     def test_parses_every_posting_with_no_problems(self):
         result = greenhouse.parse(self.payload, GH_BOARD)

@@ -196,6 +196,41 @@ def save_private_store(store, block, paths, run_at, key="pushed"):
         block["failure"] = redact_secrets("%s: %s" % (type(e).__name__, e))
 
 
+def save_full_postings(run, store, block, run_at):
+    """D11: every posting this run fetched that the private full branch does
+    not hold yet, saved whole, descriptions included, as one file, and read
+    back. Only then are the postings marked saved in both seen stores, so
+    a failed save is retried by the next run that sees them listed. Never
+    raises: a failure is the private store's failure, recorded in its block,
+    so the run exits 2 and is marked failed at once (D9)."""
+    pending = run.full_pending
+    out = {"pending": len(pending), "saved": 0, "file": None, "verified": False,
+           "failure": None}
+    block["full"] = out
+    if store is None:
+        out["held"] = "the private store could not be restored; the next run saves them"
+        return
+    if not pending:
+        return
+    path = "%s/%s.json" % (storage.FULL_DIR,
+                           run_at.replace(":", "").replace("-", ""))
+    text = dumps(pending)
+    try:
+        store.save_full(path, text, "full postings %s" % run_at)
+    except Exception as e:
+        out["failure"] = redact_secrets("%s: %s" % (type(e).__name__, e))
+        block["failure"] = block["failure"] or (
+            "the full postings could not be saved: %s" % out["failure"])
+        return
+    saved = {r["identity"] for r in pending}
+    for key in ("seen", "local_seen"):
+        seen = storage.SeenStore.load(run.paths[key])
+        for identity in saved & set(seen.entries):
+            seen.mark_full_saved(identity, run_at)
+        seen.save(run.paths[key])
+    out.update(saved=len(pending), file=path, verified=True, bytes=len(text.encode("utf-8")))
+
+
 def redact_secrets(text, environ=None):
     """Every secret the run holds, scrubbed, including the private store's
     token in the encoded form git sends it in. The audit of 2026-09-24 put an
@@ -379,6 +414,10 @@ class Run:
         self.paths = storage.layout(test_mode)
         self.board_logs = []
         self.stopped = None
+        # D11: each posting as the board returned it, by identity, and the ones
+        # the private full branch does not hold yet.
+        self.full = {}
+        self.full_pending = []
         # ADR-0048: which scheduled slot this run is, from the workflow. None
         # for a dispatch or a local run, which polls every board.
         self.slot = slot
@@ -431,6 +470,16 @@ class Run:
         log["fetched"] = len(parsed.postings)
         log["parse_problems"] = len(parsed.problems)
         rows = normalise(parsed.postings, board, self.now, seen=seen_first_seen)
+        # D11: the posting whole, for the private full branch. Keyed the way
+        # the normaliser keys a row, so only what became a row is kept.
+        raw = {"%s:%s" % (p.source, p.external_id): p.raw
+               for p in parsed.postings if p.raw is not None}
+        for row in rows:
+            if row.identity in raw:
+                self.full[row.identity] = {"identity": row.identity, "source": row.source,
+                                           "board_id": row.board_id,
+                                           "fetched_at": iso(self.now),
+                                           "posting": raw[row.identity]}
         # ADR-0050's closure test: a paginated feed read only to its stop did
         # not look at anything older than this, so an absence there is not
         # evidence of closure.
@@ -555,6 +604,11 @@ class Run:
         for row in all_rows:
             seen.record(row)
             seen.mark_seen(row.identity, iso(self.now))
+        # D11: every posting fetched whose full record the private branch does
+        # not hold yet. An ATS board returns every listed posting each run, so
+        # one whose save failed is saved by the next run that still sees it.
+        self.full_pending = [self.full[i] for i in sorted(self.full)
+                             if not seen.full_saved(i)]
         public_seen, local_seen = seen.partition(is_publishable)
         public_seen.save(self.paths["seen"])
         local_seen.save(self.paths["local_seen"])
@@ -792,8 +846,10 @@ def main(argv=None):
         return EXIT_CANNOT_START
 
     # The data first: the aggregator files go to the private store before
-    # anything is sent to the display. Never raises.
+    # anything is sent to the display. Never raises. The full postings (D11)
+    # go before them, so both seen stores record what was saved.
     if private_block is not None:
+        save_full_postings(run, store, private_block, run_log["run_at"])
         save_private_store(store, private_block, run.paths, run_log["run_at"])
         run_log["private_store"] = private_block
     private_failure = private_block and private_block["failure"]
@@ -883,8 +939,9 @@ def main(argv=None):
         print("%s; this run is committed and the workflow will mark it failed after "
               "pushing, so it can be fixed" % why, file=sys.stderr)
     if private_failure:
-        print("the private store could not be restored or written; the public fetch is "
-              "stored and the aggregator rows wait for the next run: %s" % private_failure,
+        print("the private store could not be restored or written, or the full postings "
+              "could not be saved; the public fetch is stored and the next run tries "
+              "again: %s" % private_failure,
               file=sys.stderr)
     if projection_failure:
         print("the projection to Airtable failed; the fetch is stored and the next run "

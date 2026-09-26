@@ -1,37 +1,37 @@
 [
  {
   "label": "backfill: ADR-0020's split removed, everything written to the public file",
-  "path": "tools/backfill.py",
+  "path": "src/backfill.py",
   "find": "    public = [r for r in missing if is_publishable(r.source)]\n    local = [r for r in missing if not is_publishable(r.source)]",
   "replace": "    public = list(missing)\n    local = []"
  },
  {
   "label": "backfill: the local filtered file is not consulted when finding the gap",
-  "path": "tools/backfill.py",
+  "path": "src/backfill.py",
   "find": "    for key in (\"filtered\", \"local_filtered\"):\n        held.update(r.get(\"identity\") for r in storage.read_records(paths[key]))",
   "replace": "    held.update(r.get(\"identity\") for r in storage.read_records(paths[\"filtered\"]))"
  },
  {
   "label": "backfill: the aggregator raw directory is never read",
-  "path": "tools/backfill.py",
+  "path": "src/backfill.py",
   "find": "    for key in (\"raw_dir\", \"local_raw_dir\"):\n        out.extend(sorted(glob.glob(os.path.join(paths[key], \"*.json\"))))",
   "replace": "    out.extend(sorted(glob.glob(os.path.join(paths[\"raw_dir\"], \"*.json\"))))"
  },
  {
   "label": "backfill: a raw record that cannot be read is skipped silently",
-  "path": "tools/backfill.py",
+  "path": "src/backfill.py",
   "find": "            except TypeError as exc:\n                raise BackfillError(\"%s holds a record this code cannot read: %s\"\n                                    % (path, exc))",
   "replace": "            except TypeError:\n                continue"
  },
  {
   "label": "backfill: dry run writes anyway",
-  "path": "tools/backfill.py",
+  "path": "src/backfill.py",
   "find": "    if dry_run:\n        return result",
   "replace": "    if False:\n        return result"
  },
  {
   "label": "backfill: withheld identities are ignored, so the check cannot fail",
-  "path": "tools/backfill.py",
+  "path": "src/backfill.py",
   "find": "            if record.get(\"identity\") in withheld:\n                continue",
   "replace": "            if False:\n                continue"
  }

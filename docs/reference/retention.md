@@ -20,15 +20,24 @@ those moves when a classification changes.
 | `Jobs` | `Classified at`, a `lastModifiedTime` field watching `Status` | **15 days** | The sweep writes the row to its ADR-0043 store, with its reason, or for an accepted row its `Stage`, read from the matching copy in the same run, verifies the write, then deletes the row from `Jobs` |
 | `rejected-not-a-fit` | `Classified`, a `createdTime` field | **15 days** | The sweep deletes the row. Its outcome is already in the store |
 | `rejected-poor-filtering` | `Classified`, a `createdTime` field | **15 days** | The sweep deletes the row. Its outcome is already in the store |
-| `accepted` | none | never | Nothing. See below |
+| `accepted` | none | never | Nothing, unless the operator sets `Delete`. See below |
 
 **`accepted` is deleted by no clock.** Its rows are written to the accepted
 store on the same 15-day clock as the others, so ADR-0044's star can read
-them, but nothing removes them from Airtable. A separate tool, run by the
-operator when he chooses, deletes accepted rows from Airtable alone so the
-base stays under its record cap. It never touches the store.
+them. No clock, no status change and no clear removes one from Airtable.
+**The operator removes one by setting its `Delete` to yes** (D12,
+2026-09-26). The next morning sweep saves the row, `Stage` as it stands
+then, to `removed_copies.json`, and to the accepted store if it is not
+there yet. A later sweep removes it from Airtable once both are read back
+from GitHub, with its `Jobs` row if that is still there. That is the
+tool the base's record cap needs. It never touches the store.
 
-**Nothing deletes from a store.** The three outcome stores, the filtered layer
+**A copy removed any other way is saved first, and a clear removes
+nothing** (D12). A rejection copy whose row the operator reclassified goes
+to `removed_copies.json` with its reason, then is deleted on a later run.
+A cleared `Status` leaves every copy where it is.
+
+**Nothing deletes from a store.** The three outcome stores, the removed-unreviewed and removed-copies stores, the filtered layer
 and the raw layer stay append-only. The accepted store is the file the
 operator opens in other software, and it stays complete whether or not the
 Airtable rows do.
@@ -122,6 +131,7 @@ below, never a code change.
 
 | Date | Change | Reason |
 |---|---|---|
+| 2026-09-26 | `accepted` rows leave Airtable on the operator's `Delete`, saved first; a superseded rejection copy is saved before it goes; a clear removes nothing | The operator's D12, answering the audit of 2026-09-25's F1, which found a clear or a status change deleting an `accepted` copy and its `Stage`. The separate tool this file named is the `Delete` field |
 | 2026-09-23 | A fourth removal added, on no clock: unreviewed rows the chain no longer admits, stored with the rule that dropped them | ADR-0046 step 4, on the operator's decision. It closes ADR-0040's unowned removal and preserves the `expired_before_review` signal, which ADR-0046 retired as a status |
 | 2026-09-22 | An accepted row carries its `Stage` to the store the same way | The operator's decision; ADR-0046 extended |
 | 2026-09-22 | The `Jobs` row and a new paragraph say where the stored reason comes from: the matching copy, read in the same run | ADR-0046's step 2 read only `Jobs`, where no reason lives, so no reason would have reached a store. Closed in ADR-0046 on the operator's decision |

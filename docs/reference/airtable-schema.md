@@ -89,8 +89,12 @@ unaffected.
 All three, and their test copies, carry the ten identifying fields the sweep
 copies from `Jobs`, then the one operator field that applies, then
 `Classified`. A reason has one home: on day 15 the sweep reads it from the
-copy and writes it to the store with the row, and a status change discards
-the old copy with its reason. ADR-0050.
+copy and writes it to the store with the row. What leaves Airtable any
+other way is saved first, the operator's D12 of 2026-09-26: a rejection
+copy superseded by a status change goes to `removed_copies.json` with its
+reason, then is deleted; an `accepted` copy leaves only on its `Delete`,
+saved the same way. A cleared status removes nothing. ADR-0050, amended
+by D12 for the architecture chat to record.
 
 | Field | Owner | Holds |
 |---|---|---|
@@ -105,6 +109,7 @@ the old copy with its reason. ADR-0050.
 | Matched term | pipeline | Copied from `Jobs` |
 | Identity | pipeline | Copied from `Jobs`; what the store is keyed on and the verify checks |
 | Choice reason, Pipeline reason or Stage | operator | The one that applies to the table, below |
+| Delete | operator | `accepted` and `accepted test` only. A single select whose one choice is yes: the operator's mark to remove the row from Airtable, once it is saved. Empty means keep. The pipeline reads it and never writes it (D12) |
 | Classified | Airtable | Created time: when the copy arrived. The fifteen-day clock of the two rejection tables |
 
 | Table | Its operator field | Choices |
@@ -179,6 +184,7 @@ as the example for an IANA identifier; Airtable's API rejects `"UTC"` with a
 
 | Date | Change | Reason |
 |---|---|---|
+| 2026-09-26 | `Delete` on `accepted` and `accepted test`, created through the connector and read back; the copy rules restated | The operator's D12, answering the audit of 2026-09-25's F1: a status change or a clear no longer removes an `accepted` copy, a superseded rejection copy is saved before it goes, and an `accepted` copy leaves Airtable only on his `Delete`, saved first. The descriptions in the base were rewritten the same day (F8) |
 | 2026-09-23 | `Title` carries the normalised title | The operator's decision, answering the implementing seat's question after the first test-mode projection. A display row is a group whose Location lists every city, so a raw title naming one city misled; the raw title is kept in the store. Annotated in the table above rather than rewritten |
 | 2026-09-23 | The `Status` choices become three, and `expired_before_review` is retired | ADR-0046, on the operator's decision. The pipeline never writes `Status`, so no value on this field is the pipeline's. Field re-read through the connector the same day: the four ADR-0014 values are still what exists |
 | 2026-09-22 | `Stage` carried to the accepted store on day 15, like the reason | ADR-0046 extended on the operator's decision |

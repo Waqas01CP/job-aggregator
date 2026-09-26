@@ -119,5 +119,6 @@ def parse(payload, board):
             employer_provenance=employer_provenance,
             url_provenance="payload",
             location=location,
+            raw=entry,
         ))
     return result

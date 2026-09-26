@@ -236,5 +236,52 @@ class TestSecrets(Harness):
             self.assertNotIn("private-thing", str(caught.exception))
 
 
+class TestTheFullBranch(Harness):
+    """D11, 2026-09-26: every field a board returns, kept on the full branch,
+    one file per run, each read back after its push."""
+
+    def show(self, branch, path):
+        p = subprocess.run(["git", "--git-dir", self.bare, "show", "%s:%s" % (branch, path)],
+                           capture_output=True, text=True, encoding="utf-8")
+        return p.stdout if p.returncode == 0 else None
+
+    def test_each_file_lands_on_the_full_branch_beside_the_last(self):
+        s = self.store()
+        first = s.save_full("full/one.json", '[{"posting": 1}]\n', "one")
+        second = s.save_full("full/two.json", '[{"posting": 2}]\n', "two")
+        self.assertNotEqual(first, second)
+        self.assertEqual(self.show("data-full", "full/one.json"), '[{"posting": 1}]\n')
+        self.assertEqual(self.show("data-full", "full/two.json"), '[{"posting": 2}]\n')
+        self.assertEqual(self.branches(), ["data-full"], "the data branch was touched")
+
+    def test_test_mode_writes_its_own_full_branch(self):
+        self.store(test_mode=True).save_full("full/t.json", "[]\n", "t")
+        self.assertEqual(self.branches(), ["data-test-full"])
+
+    def test_the_read_back_refuses_a_file_the_branch_does_not_hold(self):
+        """The case built to defeat the check: the push appears to succeed,
+        and the branch read back lists the file under different content."""
+        def lying(args, **kw):
+            p = subprocess.run(args, **kw)
+            if "ls-tree" in args and "refs/remotes/readback" in args:
+                p.stdout = p.stdout.replace(p.stdout.split()[2], b"0" * 40)
+            return p
+        s = self.store(run=lying)
+        with self.assertRaises(PrivateStoreUnreachable) as caught:
+            s.save_full("full/x.json", '[{"posting": 3}]\n', "x")
+        self.assertIn("different content", str(caught.exception))
+
+    def test_the_read_back_refuses_a_file_missing_after_the_push(self):
+        def forgetful(args, **kw):
+            p = subprocess.run(args, **kw)
+            if "ls-tree" in args and "refs/remotes/readback" in args:
+                p.stdout = b""
+            return p
+        s = self.store(run=forgetful)
+        with self.assertRaises(PrivateStoreUnreachable) as caught:
+            s.save_full("full/y.json", "[]\n", "y")
+        self.assertIn("does not list", str(caught.exception))
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

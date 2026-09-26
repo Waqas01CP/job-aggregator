@@ -131,6 +131,7 @@ def parse(payload, board):
             url_provenance="payload",
             location=location,
             expires_at=expires.isoformat().replace("+00:00", "Z") if expires else None,
+            raw=entry,
         ))
     return result
 

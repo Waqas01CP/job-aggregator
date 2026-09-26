@@ -40,8 +40,8 @@ import tempfile
 
 from .storage import (COMMIT_IDENTITY, FILTERED_FILE, OUTCOMES_DIR, PRIVATE_STORE_REPO_ENV,
                       PRIVATE_STORE_TIMEOUT, PRIVATE_STORE_TOKEN_ENV, RAW_DIR, SEEN_FILE,
-                      PrivateStoreUnreachable, _scrub, data_branch, private_store_basic,
-                      write_atomic)
+                      PrivateStoreUnreachable, _scrub, data_branch, full_branch,
+                      private_store_basic, write_atomic)
 
 
 def github_url(repo):
@@ -106,6 +106,7 @@ class PrivateStore:
                 "%s must be owner/name only: no scheme, no .git, no trailing slash"
                 % PRIVATE_STORE_REPO_ENV)
         self.branch = data_branch(test_mode)
+        self.full_branch = full_branch(test_mode)
         self._url = url_for(repo)
         basic = private_store_basic(token)
         self._secrets = (token, basic, repo)
@@ -119,10 +120,10 @@ class PrivateStore:
         self.tip = None
 
     # ------------------------------------------------------------ internals
-    def _git(self, args, what, auth=False, stdin=None, env=None, check=True):
+    def _git(self, args, what, auth=False, stdin=None, env=None, check=True, cwd=None):
         full = dict(self._env, **(env or {}))
         try:
-            p = self._run(["git"] + (self._auth if auth else []) + args, cwd=self._work,
+            p = self._run(["git"] + (self._auth if auth else []) + args, cwd=cwd or self._work,
                           env=full, capture_output=True, timeout=self._timeout,
                           input=None if stdin is None else stdin.encode("utf-8"))
         except subprocess.TimeoutExpired:
@@ -209,6 +210,67 @@ class PrivateStore:
                   "pushing", auth=True)
         self.tip = commit
         return commit
+
+    def save_full(self, path, text, message):
+        """Add one file to this mode's full branch and read it back. The
+        operator's D11, 2026-09-26: every field a board returns is kept here,
+        and "fetch back to recheck that the saving is done properly".
+
+        **Nothing earlier runs saved is downloaded.** The branch is fetched
+        without file contents (a partial fetch: commits and trees only), the
+        new file is added on top of its tree, and the commit is pushed as a
+        fast-forward. Measured on a local bare repository on 2026-09-26: a
+        branch holding 270 KB came down as 1.4 KB.
+
+        **The read-back is a second, fresh partial fetch** of the branch after
+        the push. The branch must list `path` with exactly the hash of the
+        bytes written, which git computes from the content, so a file the
+        remote does not hold, or holds differently, is refused. Returns that
+        hash. Uses its own scratch repository, so the data branch's is never
+        made partial."""
+        work = tempfile.mkdtemp(prefix="private-full-")
+        try:
+            def git(args, what, **kw):
+                return self._git(args, what, cwd=work, **kw)
+
+            def out(args, what, **kw):
+                return git(args, what, **kw).stdout.decode("utf-8").strip()
+
+            git(["init", "-q"], "preparing a scratch repository for the full branch")
+            git(["remote", "add", "store", self._url], "naming the store")
+            ref = "refs/heads/%s" % self.full_branch
+            listing = out(["ls-remote", "--heads", "store"], "listing it", auth=True)
+            tip = None
+            if any(line.split("\t")[-1] == ref for line in listing.splitlines()):
+                git(["fetch", "-q", "--depth", "1", "--filter=blob:none", "--no-tags", "store",
+                     "%s:%s" % (ref, ref)], "fetching the full branch's tree", auth=True)
+                tip = out(["rev-parse", ref], "reading the full branch's tip")
+            env = {"GIT_INDEX_FILE": os.path.join(work, ".full-index")}
+            if tip:
+                git(["read-tree", tip], "reading the full branch's tree", env=env)
+            blob = out(["hash-object", "-w", "--stdin"], "storing the full file", stdin=text)
+            git(["update-index", "--add", "--cacheinfo", "100644,%s,%s" % (blob, path)],
+                "staging the full file", env=env)
+            tree = out(["write-tree"], "writing the full branch's tree", env=env)
+            args = ["commit-tree", tree, "-m", message] + (["-p", tip] if tip else [])
+            commit = out(args, "committing the full file", env=COMMIT_IDENTITY)
+            git(["push", "-q", "store", "%s:%s" % (commit, ref)], "pushing the full file",
+                auth=True)
+            git(["fetch", "-q", "--depth", "1", "--filter=blob:none", "--no-tags", "store",
+                 "%s:refs/remotes/readback" % ref], "reading the full branch back", auth=True)
+            listed = out(["ls-tree", "refs/remotes/readback", "--", path],
+                         "listing the file read back")
+            held = listed.split()[2] if len(listed.split()) >= 3 else None
+            if held is None:
+                raise PrivateStoreUnreachable(
+                    "the full branch, read back after the push, does not list %s" % path)
+            if held != blob:
+                raise PrivateStoreUnreachable(
+                    "the full branch, read back after the push, holds different content "
+                    "for %s than was written" % path)
+            return blob
+        finally:
+            shutil.rmtree(work, ignore_errors=True)
 
     def close(self):
         if self._work:

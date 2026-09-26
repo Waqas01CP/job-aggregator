@@ -56,8 +56,8 @@
   {
     "label": "a changed status keeps its old copy",
     "path": "src/sweep.py",
-    "find": "                elif t != status and held:",
-    "replace": "                elif False:"
+    "find": "                    superseded[t].extend((c, r[\"fields\"], status) for c in held)",
+    "replace": "                    pass"
   },
   {
     "label": "a cleared status is not seen on a copy-only run",

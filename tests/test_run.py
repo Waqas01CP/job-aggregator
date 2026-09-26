@@ -124,9 +124,14 @@ class MemoryStore:
 
     def __init__(self):
         self.pushed = []
+        self.full = []
 
     def open(self):
         return self
+
+    def save_full(self, path, text, message):
+        self.full.append((path, text))
+        return "blob"
 
     def restore(self, paths):
         return []
@@ -754,11 +759,67 @@ class TestMain(unittest.TestCase):
                          1, "the second run did not know what the private store held")
         self.assertEqual(len(self.in_private("data", "fetch-all/himalayas.json")), 2)
 
+    def test_every_posting_is_saved_whole_to_the_private_full_branch(self):
+        """The operator's D11, 2026-09-26: each posting as its board returned
+        it, description and all, on the private full branch and read back.
+        Not a word of it reaches the public branch. Both seen stores record
+        the save, so the next run saves nothing twice."""
+        self.payload["jobs"][0]["content"] = "A DESCRIPTION THAT MUST NEVER BE PUBLIC"
+        self.him["jobs"][0]["description"] = "AN AGGREGATOR DESCRIPTION"
+        run_module.load_boards = lambda: [GH, HIM]
+        run_module.make_private_store = self.private_store
+        self.assertEqual(self.main()[0], EXIT_OK)
+        full = self.last_run_log()["private_store"]["full"]
+        self.assertEqual((full["pending"], full["saved"], full["verified"], full["failure"]),
+                         (2, 2, True, None))
+        by_id = {r["identity"]: r for r in self.in_private("data-full", full["file"])}
+        self.assertEqual(by_id["greenhouse:1000"]["posting"]["content"],
+                         "A DESCRIPTION THAT MUST NEVER BE PUBLIC")
+        self.assertEqual(by_id["himalayas:https://x.test/h1"]["posting"]["description"],
+                         "AN AGGREGATOR DESCRIPTION")
+        code, found = self.git("grep", "-l", "DESCRIPTION", "data")
+        self.assertNotEqual(code, 0, "a description reached the public branch: %s" % found)
+        public_seen = json.loads(self.on_branch("data", "seen.json"))
+        self.assertTrue(public_seen["greenhouse:1000"]["full_saved_at"])
+        private_seen = self.in_private("data", "seen.json")
+        self.assertTrue(private_seen["himalayas:https://x.test/h1"]["full_saved_at"])
+        self.fresh_machine()
+        self.assertEqual(self.main()[0], EXIT_OK)
+        again = self.last_run_log()["private_store"]["full"]
+        self.assertEqual((again["pending"], again["file"]), (0, None))
+
+    def test_a_failed_full_save_is_retried_by_the_next_run(self):
+        """A full save that fails is the private store's failure: exit 2, the
+        fetch committed, the run marked failed at once (D9). Nothing is marked
+        saved, so the next run, seeing the posting still listed, saves it."""
+        run_module.load_boards = lambda: [GH]
+
+        class Refusing(MemoryStore):
+            def save_full(self, path, text, message):
+                raise RuntimeError("the push was refused")
+        run_module.make_private_store = lambda test_mode: Refusing()
+        code, _, err = self.main()
+        self.assertEqual(code, EXIT_STOPPED_RESUMABLE)
+        log = self.last_run_log()
+        self.assertIn("full postings could not be saved", log["private_store"]["failure"])
+        self.assertTrue(log["attention"]["escalate"])
+        self.assertEqual(self.identities("data"), ["greenhouse:1000"], "the fetch was lost")
+        self.assertNotIn("full_saved_at",
+                         json.loads(self.on_branch("data", "seen.json"))["greenhouse:1000"])
+        memory = MemoryStore()
+        run_module.make_private_store = lambda test_mode: memory
+        self.fresh_machine()
+        self.assertEqual(self.main()[0], EXIT_OK)
+        [(path, text)] = memory.full
+        self.assertIn("greenhouse:1000", text)
+
     def test_test_mode_writes_the_private_test_branch_only(self):
         run_module.load_boards = lambda: [GH, HIM]
         run_module.make_private_store = self.private_store
         self.assertEqual(self.main("--test-mode")[0], EXIT_OK)
-        self.assertEqual(self.private_branches(), ["data-test"])
+        # Its data branch and, since D11, its full branch: both the test
+        # mode's, never production's.
+        self.assertEqual(self.private_branches(), ["data-test", "data-test-full"])
 
     def test_an_unreachable_private_store_keeps_the_public_fetch_and_exits_2(self):
         """ADR-0047's check that can fail: a store the run cannot reach. The

@@ -112,6 +112,16 @@ def data_branch(test_mode=False):
     return TEST_DATA_BRANCH if test_mode else DATA_BRANCH
 
 
+# The operator's D11, 2026-09-26: every field a board returns, descriptions
+# included, is kept in the private repository, on a branch of its own so no
+# run ever downloads what earlier runs saved. One file per run under FULL_DIR.
+FULL_DIR = "full"
+
+
+def full_branch(test_mode=False):
+    return data_branch(test_mode) + "-full"
+
+
 def layout(test_mode=False):
     """Every path the pipeline writes, in one place so a test run cannot
     accidentally inherit a production path."""
@@ -267,6 +277,17 @@ class SeenStore:
         entry = self.entries.get(identity)
         if entry is not None:
             entry["last_seen"] = when
+
+    def full_saved(self, identity):
+        """Whether the posting's full record reached the private full branch
+        and was read back (D11). Unset until then, so a posting whose save
+        failed is saved again by the next run that still sees it listed."""
+        return bool((self.entries.get(identity) or {}).get("full_saved_at"))
+
+    def mark_full_saved(self, identity, when):
+        entry = self.entries.get(identity)
+        if entry is not None:
+            entry["full_saved_at"] = when
 
 
 # ------------------------------------------------------- the data branch

@@ -43,6 +43,13 @@ class Posting:
     url_provenance: str = "payload"
     location: str = None
     expires_at: str = None      # ISO date or None; read where the platform has one
+    # The posting exactly as the board returned it, description included.
+    # Carried, never read: the run saves it to the private store's full
+    # branch and nothing else looks inside (the operator's D11, 2026-09-26:
+    # every field a board returns is kept, ADR-0016). Out of equality and
+    # repr, so it never changes what two postings compare as or what a log
+    # prints.
+    raw: dict = field(default=None, compare=False, repr=False)
 
     def __post_init__(self):
         if self.employer_provenance is not None and self.employer_provenance not in PROVENANCE:

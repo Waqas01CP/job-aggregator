@@ -1,0 +1,56 @@
+[
+  {
+    "label": "Greenhouse is not asked for descriptions",
+    "path": "src/adapters/greenhouse.py",
+    "find": "    return (BASE % board.slug) + \"?content=true\"",
+    "replace": "    return BASE % board.slug"
+  },
+  {
+    "label": "a posting's entry is not carried",
+    "path": "src/adapters/greenhouse.py",
+    "find": "            expires_at=expires_at,\n            raw=entry,",
+    "replace": "            expires_at=expires_at,\n            raw=None,"
+  },
+  {
+    "label": "an aggregator posting's entry is not carried",
+    "path": "src/adapters/himalayas.py",
+    "find": "            raw=entry,",
+    "replace": "            raw=None,"
+  },
+  {
+    "label": "a failed full save passes silently",
+    "path": "src/run.py",
+    "find": "        block[\"failure\"] = block[\"failure\"] or (\n            \"the full postings could not be saved: %s\" % out[\"failure\"])",
+    "replace": "        pass"
+  },
+  {
+    "label": "a failed full save is marked saved",
+    "path": "src/run.py",
+    "find": "            \"the full postings could not be saved: %s\" % out[\"failure\"])\n        return\n",
+    "replace": "            \"the full postings could not be saved: %s\" % out[\"failure\"])\n"
+  },
+  {
+    "label": "the read-back accepts different content",
+    "path": "src/private_store.py",
+    "find": "            if held != blob:",
+    "replace": "            if False:"
+  },
+  {
+    "label": "the read-back accepts a missing file",
+    "path": "src/private_store.py",
+    "find": "            if held is None:",
+    "replace": "            if False:"
+  },
+  {
+    "label": "postings already saved are saved again",
+    "path": "src/run.py",
+    "find": "                             if not seen.full_saved(i)]",
+    "replace": "                             if True]"
+  },
+  {
+    "label": "the full save never runs",
+    "path": "src/run.py",
+    "find": "        save_full_postings(run, store, private_block, run_log[\"run_at\"])",
+    "replace": "        pass"
+  }
+]

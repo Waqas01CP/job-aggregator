@@ -1,11 +1,24 @@
 """The sweep. ADR-0050's six steps, in the record's order.
 
 1. **Copy.** Every row in `Jobs` with a status and no copy in the matching
-   table gets one. A copy in another table, left by a status since changed,
-   is deleted, which discards its reason with it.
+   table gets one. What happens to a copy its row's status no longer
+   matches is the operator's D12, 2026-09-26:
+   - **a cleared status removes nothing**, since a clear is no new
+     classification and one stray keystroke makes it;
+   - **an `accepted` copy stays** whatever the status becomes, reported, for
+     him to remove with `Delete`;
+   - **a superseded rejection copy is saved before it goes**: its reason is
+     written to `removed_copies.json`, and the copy is deleted only once that
+     store holds it, the same write, verify, delete as every other removal.
+     ADR-0050 line 71 discarded the reason; the operator's rule is that a
+     classification is always saved before it leaves Airtable.
 2. **Store, verify, delete from `Jobs`**, fifteen days after `Classified at`.
 3. **Delete from the two rejection tables**, fifteen days after `Classified`.
-   `accepted` is deleted by no clock.
+   `accepted` is deleted by no clock. **An `accepted` copy leaves Airtable
+   only when the operator sets `Delete` to yes**, and only once its record,
+   `Stage` and all, is in `removed_copies.json` and, while its row is still
+   in `Jobs`, in the accepted store, both read back from origin. It never
+   leaves a store. D12.
 4. **Mark what has closed** with `Closed`.
 5. **Retire what closed**, fifteen days after `Closed`.
 6. **Remove what a rule dropped**, at once. A row the stored layers do not
@@ -40,7 +53,8 @@ and `Stage` are read here and never sent; the client refuses them.
 from datetime import datetime, timedelta, timezone
 
 from . import storage
-from .airtable_sweep import CLASSIFICATION_TABLES, COPY_FIELDS, JOBS, OPERATOR_FIELD
+from .airtable_sweep import (CLASSIFICATION_TABLES, COPY_FIELDS, DELETE_FIELD, DELETE_YES, JOBS,
+                             OPERATOR_FIELD)
 from .config import is_publishable
 from .dedupe import group
 from .filters import apply_chain
@@ -52,6 +66,15 @@ STORE_FOR = {"rejected-not-a-fit": "rejected_not_a_fit.json",
              "accepted": "accepted.json"}
 REJECTION_TABLES = ("rejected-not-a-fit", "rejected-poor-filtering")
 JOBS_FIELDS = COPY_FIELDS + ("Status", "Classified at", "Closed")
+# Every copy the sweep removes from a classification table other than by the
+# fifteen-day clock, keyed by the copy's own record ID, since one posting can
+# be reclassified more than once. Not a classification store: the projection
+# never reads it, so nothing in it hides a row. D12.
+REMOVED_COPIES_STORE = "removed_copies.json"
+# What each classification table is read for. `accepted` is read whole, so a
+# copy whose row has left `Jobs` can still be stored from its own fields.
+READ_FIELDS = {t: ("Identity", OPERATOR_FIELD[t]) for t in REJECTION_TABLES}
+READ_FIELDS["accepted"] = COPY_FIELDS + (OPERATOR_FIELD["accepted"], DELETE_FIELD)
 
 
 def source_of(identity):
@@ -78,11 +101,15 @@ class Stores:
             self.dirs["private"] = paths["local_outcomes_dir"]
         names = tuple(STORE_FOR.values()) + (REMOVED_UNREVIEWED_STORE,)
         self.durable = {}
+        self.durable_copies = {}
         for where, directory in self.dirs.items():
             for name in names:
                 path = "%s/%s" % (directory, name)
                 self.durable[(where, name)] = {r.get("identity")
                                                for r in storage.read_records(path)}
+            self.durable_copies[where] = {
+                r.get("copy_id") for r in
+                storage.read_records("%s/%s" % (directory, REMOVED_COPIES_STORE))}
         self.written = {}
 
     def where(self, identity):
@@ -97,9 +124,13 @@ class Stores:
         return [n for n in STORE_FOR.values() if n != name
                 and identity in self.durable.get((where, n), set())]
 
-    def write(self, where, name, record):
+    def copy_saved(self, where, copy_id):
+        """Whether the removed-copies store restored from origin holds it."""
+        return copy_id in self.durable_copies.get(where, set())
+
+    def write(self, where, name, record, key="identity"):
         path = "%s/%s" % (self.dirs[where], name)
-        appended = storage.append_delta(path, [record])
+        appended = storage.append_delta(path, [record], key=key)
         key = "%s %s" % (where, name)
         self.written[key] = self.written.get(key, 0) + appended
         return appended
@@ -132,7 +163,8 @@ class Sweep:
         self.report = {"copied": {}, "stale_copies_deleted": {}, "deleted_from_jobs": 0,
                        "copies_deleted": {}, "closed_marked": 0, "closed_cleared": 0,
                        "waiting_for_the_store": 0, "held_private_unavailable": 0,
-                       "not_in_the_stored_layers": 0, "problems": []}
+                       "not_in_the_stored_layers": 0, "kept_after_a_clear": 0,
+                       "problems": []}
         self._load_rows()
 
     # ------------------------------------------------------------- the data
@@ -158,6 +190,15 @@ class Sweep:
         rec["swept_at"] = self.now_iso
         return rec
 
+    def copy_record(self, copy, table, why, fields):
+        """What `removed_copies.json` keeps of a copy about to leave Airtable:
+        the posting, as the stored layers or `fields` give it, and everything
+        the operator put on the copy."""
+        f = copy["fields"]
+        return self.record(f.get("Identity"), fields, copy_id=copy["id"], table=table,
+                           reason=f.get(OPERATOR_FIELD[table]), classified=copy.get("createdTime"),
+                           why=why)
+
     def _problem(self, text):
         self.report["problems"].append(text)
 
@@ -182,10 +223,10 @@ class Sweep:
         copies = {t: [] for t in CLASSIFICATION_TABLES}
         if read_tables:
             for t in CLASSIFICATION_TABLES:
-                copies[t] = self.client.list_records(t, ("Identity", OPERATOR_FIELD[t]))
+                copies[t] = self.client.list_records(t, READ_FIELDS[t])
             self.step1_copy(jobs, in_jobs, copies)
         if daily:
-            self.daily(jobs, copies)
+            self.daily(jobs, copies, in_jobs)
         self.report["stored_written"] = dict(self.stores.written)
         return self.report
 
@@ -197,7 +238,7 @@ class Sweep:
                 index[t].setdefault(c["fields"].get("Identity"), []).append(c)
         self.copy_index = index
         create = {t: [] for t in CLASSIFICATION_TABLES}
-        stale = {t: [] for t in CLASSIFICATION_TABLES}
+        superseded = {t: [] for t in REJECTION_TABLES}
         for r in jobs:
             identity, status = r["fields"].get("Identity"), r["fields"].get("Status")
             if not identity:
@@ -208,29 +249,53 @@ class Sweep:
                     create[t].append({name: r["fields"].get(name) for name in COPY_FIELDS})
                 elif t == status and len(held) > 1:
                     self._problem("%s has %d copies in %s" % (masked(identity), len(held), t))
-                elif t != status and held:
-                    # Its status changed or was cleared while it is still in
-                    # Jobs: the old copy goes, and its reason with it.
-                    stale[t].extend(c["id"] for c in held)
-        for t in CLASSIFICATION_TABLES:
-            if stale[t]:
-                self.client.delete(t, stale[t])
-                self._bump("stale_copies_deleted", t, len(stale[t]))
-                gone = set(stale[t])
-                for c in [c for c in copies[t] if c["id"] in gone]:
+                elif t == status or not held:
+                    continue
+                elif not status:
+                    # A clear is no new classification, and one stray
+                    # keystroke makes it: nothing is removed (D12).
+                    self.report["kept_after_a_clear"] += len(held)
+                elif t == "accepted":
+                    self._problem("the accepted copy of %s is kept although its status is now %s; "
+                                  "set Delete on it to remove it from Airtable"
+                                  % (masked(identity), status))
+                else:
+                    superseded[t].extend((c, r["fields"], status) for c in held)
+        for t in REJECTION_TABLES:
+            gone = []
+            for c, fields, status in superseded[t]:
+                where = self.stores.where(fields.get("Identity"))
+                if where is None:
+                    self.report["held_private_unavailable"] += 1
+                elif self.stores.copy_saved(where, c["id"]):
+                    gone.append(c["id"])
+                else:
+                    # Saved first, removed on a later run once origin holds
+                    # the record: the reason is the operator's (D12).
+                    self.stores.write(where, REMOVED_COPIES_STORE,
+                                      self.copy_record(c, t, "superseded: the status is now %s"
+                                                       % status, fields), key="copy_id")
+                    self.report["waiting_for_the_store"] += 1
+            if gone:
+                self.client.delete(t, gone)
+                self._bump("stale_copies_deleted", t, len(gone))
+                removed = set(gone)
+                for c in [c for c in copies[t] if c["id"] in removed]:
                     index[t].pop(c["fields"].get("Identity"), None)
                 # Out of the run's read too, or step 3 deletes it a second
                 # time and the whole daily sweep fails on the unconfirmed
                 # delete: the audit of 2026-09-25, F4.
-                copies[t][:] = [c for c in copies[t] if c["id"] not in gone]
+                copies[t][:] = [c for c in copies[t] if c["id"] not in removed]
+        for t in CLASSIFICATION_TABLES:
             if create[t]:
                 self.client.create_copies(t, create[t])
                 self._bump("copied", t, len(create[t]))
 
     # ----------------------------------------------------------- steps 2-6
-    def daily(self, jobs, copies):
+    def daily(self, jobs, copies, in_jobs=None):
         days = self.config.retire_after_days
         delete_jobs, closed_updates = [], []
+        in_jobs = in_jobs or {}
 
         # Step 2: classified rows, fifteen days on.
         for r in jobs:
@@ -276,6 +341,50 @@ class Sweep:
                 self.client.delete(t, gone)
                 self._bump("copies_deleted", t, len(gone))
 
+        # Step 3 for `accepted`: out of Airtable only on the operator's
+        # `Delete`, and only once origin holds its record (D12).
+        gone = []
+        for c in copies["accepted"]:
+            f = c["fields"]
+            if f.get(DELETE_FIELD) != DELETE_YES:
+                continue
+            identity = f.get("Identity")
+            where = self.stores.where(identity)
+            if where is None:
+                self.report["held_private_unavailable"] += 1
+                continue
+            row = in_jobs.get(identity)
+            row_accepted = row is not None and row["fields"].get("Status") == "accepted"
+            if row_accepted and self.stores.classified_elsewhere(where, STORE_FOR["accepted"],
+                                                                 identity):
+                self._problem("%s is already in another classification store; its accepted "
+                              "copy is kept" % masked(identity))
+                continue
+            saved = self.stores.copy_saved(where, c["id"])
+            stored = not row_accepted or self.stores.durable_has(where, STORE_FOR["accepted"],
+                                                                 identity)
+            if saved and stored:
+                gone.append(c["id"])
+                if row_accepted:
+                    # Its row goes with it: left alone, step 1 would copy it
+                    # straight back.
+                    delete_jobs.append(row["id"])
+                continue
+            if not saved:
+                self.stores.write(where, REMOVED_COPIES_STORE,
+                                  self.copy_record(c, "accepted", "the operator marked Delete",
+                                                   row["fields"] if row else f), key="copy_id")
+            if not stored:
+                rf = row["fields"]
+                self.stores.write(where, STORE_FOR["accepted"],
+                                  self.record(identity, rf, status="accepted",
+                                              reason=f.get(OPERATOR_FIELD["accepted"]),
+                                              classified_at=rf.get("Classified at")))
+            self.report["waiting_for_the_store"] += 1
+        if gone:
+            self.client.delete("accepted", gone)
+            self._bump("copies_deleted", "accepted", len(gone))
+
         # Steps 4 to 6: rows nobody classified.
         for r in jobs:
             f = r["fields"]
@@ -312,6 +421,9 @@ class Sweep:
 
         if closed_updates:
             self.client.set_closed(closed_updates)
+        # A row can qualify twice, by its fifteen days and by its accepted
+        # copy's `Delete`; Airtable refuses a record named twice in a call.
+        delete_jobs = list(dict.fromkeys(delete_jobs))
         if delete_jobs:
             self.client.delete(JOBS, delete_jobs)
             self.report["deleted_from_jobs"] += len(delete_jobs)
