@@ -19297,5 +19297,26 @@
   "url_provenance": "payload",
   "stated_experience": null,
   "expires_at": null
+ },
+ {
+  "identity": "greenhouse:4982768101",
+  "source": "greenhouse",
+  "board_id": "greenhouse:veeamsoftware",
+  "external_id": "4982768101",
+  "employer": "Veeam Software",
+  "employer_provenance": "payload",
+  "title": "Sr. Sales Systems Engineer",
+  "title_normalised": "Sr. Sales Systems Engineer",
+  "location": "Remote, United States",
+  "published_at": "2026-09-25T20:57:06Z",
+  "published_field": "first_published",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-09-26T03:50:36.142605Z",
+  "ordering_date": "2026-09-25T20:57:06Z",
+  "ordering_date_source": "publication",
+  "url": "https://job-boards.eu.greenhouse.io/veeamsoftware/jobs/4982768101",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null
  }
 ]
