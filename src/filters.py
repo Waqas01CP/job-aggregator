@@ -425,24 +425,33 @@ def _when(value):
 
 def rule_age(row, now_iso, eligibility, **kw):
     """D14, the operator's decision of 2026-09-26: "i do not want a job post
-    more than a week old". Measured from the ordering date, which is the
-    board's publication date where it has one (ADR-0007). Lever's `createdAt`
-    is not proven to mean publication, so a Lever posting first seen within
-    the limit is kept too: a fresh posting is never lost to a date that means
-    something else. A posting with no date at all is kept."""
-    now = _when(now_iso)
-    dated = _when(getattr(row, "ordering_date", None))
-    if now is None or dated is None:
-        return Verdict(True)
-    cutoff = now - timedelta(days=eligibility.max_age_days)
-    if dated >= cutoff:
-        return Verdict(True)
+    more than a week old".
+
+    **Judged once, at first sight, never again.** The operator's correction
+    the same day: a posting published no more than the limit before the
+    pipeline first saw it is admitted and then stays, however long it waits
+    in the table, because "the fetch will happen daily and i might not see
+    the table for a few days then it would mean some posts will be out
+    without my knowledge which i do not want". So the age is first seen minus
+    published, never the run's clock minus published, and a row re-judged by
+    a later projection or sweep gets the same answer every time. A posting
+    first seen already older than the limit never enters, a repost carrying
+    its original date included.
+
+    Lever's `createdAt` is not proven to mean publication, so a Lever
+    posting is never dropped for age: a fresh posting is never lost to a date
+    that means something else. A posting with no date is kept."""
     if getattr(row, "published_meaning_unconfirmed", False):
-        seen = _when(getattr(row, "first_seen", None))
-        if seen is not None and seen >= cutoff:
-            return Verdict(True)
-    return Verdict(False, "age", "dated %s, more than %d days before this run"
-                   % (row.ordering_date, eligibility.max_age_days))
+        return Verdict(True)
+    seen = _when(getattr(row, "first_seen", None)) or _when(now_iso)
+    dated = _when(getattr(row, "ordering_date", None))
+    if seen is None or dated is None:
+        return Verdict(True)
+    if seen - dated <= timedelta(days=eligibility.max_age_days):
+        return Verdict(True)
+    return Verdict(False, "age", "published %s, more than %d days before it was first seen at %s"
+                   % (row.ordering_date, eligibility.max_age_days,
+                      getattr(row, "first_seen", None)))
 
 
 # Location and age run last, after the title and seniority rules, so their

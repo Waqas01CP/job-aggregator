@@ -171,6 +171,14 @@ class TestTheLocationRule(unittest.TestCase):
             with self.subTest(location=location):
                 self.assertTrue(keep(location=location)[0])
 
+    def test_one_eligible_place_in_a_list_keeps_it(self):
+        """Dropped only when every place listed is closed: a list naming a
+        US city and a Pakistan one, or a European city and "Remote", stays."""
+        for location in ("San Jose, CA, USA; Lahore, Pakistan", "Lisbon, Portugal\nRemote",
+                         "Albuquerque, NM, USA\nIslamabad, Pakistan\nParis, France"):
+            with self.subTest(location=location):
+                self.assertTrue(keep(location=location)[0])
+
     def test_on_site_in_pakistan_is_only_karachi(self):
         """"any onsite post besides karachi, pakistan are automatically out".
         A Pakistan location that does not say on site is kept: that it is on
@@ -197,36 +205,52 @@ class TestTheLocationRule(unittest.TestCase):
 
 class TestTheAgeRule(unittest.TestCase):
     """D14, the operator's decision of 2026-09-26: "i do not want a job post
-    more than a week old". NOW is 2026-09-16."""
+    more than a week old", judged once, at first sight, and never again: "i
+    might not see the table for a few days then it would mean some posts will
+    be out without my knowledge which i do not want"."""
 
-    def row_dated(self, published, source="greenhouse", first_seen=None):
+    def row_dated(self, published, first_seen, source="greenhouse"):
         r = row()
         r.published_at = r.ordering_date = published
+        r.first_seen = first_seen
         r.published_meaning_unconfirmed = source == "lever"
-        if first_seen:
-            r.first_seen = first_seen
         return r
 
-    def test_a_week_old_is_kept_and_a_day_more_is_dropped(self):
-        kept, drops = apply_chain([self.row_dated("2026-09-09T12:00:00Z"),
-                                   self.row_dated("2026-09-09T11:59:00Z")],
-                                  NOW_ISO, matcher=MATCHER)
-        self.assertEqual(len(kept), 1)
-        self.assertEqual(drops[0]["rule"], "age")
+    def judged(self, r, now_iso=NOW_ISO):
+        kept, drops = apply_chain([r], now_iso, matcher=MATCHER)
+        return bool(kept), (drops[0]["rule"] if drops else None)
 
-    def test_a_lever_posting_first_seen_this_week_is_kept(self):
+    def test_seven_days_old_at_first_sight_is_kept_and_a_minute_more_is_not(self):
+        self.assertEqual(self.judged(self.row_dated("2026-09-02T12:00:00Z",
+                                                    "2026-09-09T12:00:00Z")), (True, None))
+        self.assertEqual(self.judged(self.row_dated("2026-09-02T11:59:00Z",
+                                                    "2026-09-09T12:00:00Z")), (False, "age"))
+
+    def test_admitted_once_it_stays_however_long_it_waits(self):
+        """His example: fresh when first seen, and still in the table days,
+        or months, later. Every later projection and sweep re-judges it, and
+        each must keep it."""
+        r = self.row_dated("2026-09-10T00:00:00Z", "2026-09-11T00:00:00Z")
+        for now in ("2026-09-16T12:00:00Z", "2026-09-30T00:00:00Z", "2026-12-31T00:00:00Z"):
+            with self.subTest(now=now):
+                self.assertEqual(self.judged(r, now), (True, None))
+
+    def test_a_repost_carrying_its_original_date_never_enters(self):
+        """Old requisitions reposted under a new ID keep their original
+        `first_published`: first seen today, published months ago."""
+        self.assertEqual(self.judged(self.row_dated("2026-07-15T00:00:00Z",
+                                                    "2026-09-16T00:00:00Z")), (False, "age"))
+
+    def test_a_lever_posting_is_never_dropped_for_age(self):
         """Lever's createdAt is not proven to mean publication; a fresh
         posting must not be lost to it. A Greenhouse date is trusted."""
-        lever = self.row_dated("2026-08-01T00:00:00Z", source="lever",
-                               first_seen="2026-09-15T00:00:00Z")
-        greenhouse = self.row_dated("2026-08-01T00:00:00Z", first_seen="2026-09-15T00:00:00Z")
-        kept, drops = apply_chain([lever, greenhouse], NOW_ISO, matcher=MATCHER)
-        self.assertEqual([r.published_meaning_unconfirmed for r, _ in kept], [True])
-        self.assertEqual([d["rule"] for d in drops], ["age"])
+        lever = self.row_dated("2026-08-01T00:00:00Z", "2026-09-15T00:00:00Z", source="lever")
+        greenhouse = self.row_dated("2026-08-01T00:00:00Z", "2026-09-15T00:00:00Z")
+        self.assertEqual(self.judged(lever), (True, None))
+        self.assertEqual(self.judged(greenhouse), (False, "age"))
 
     def test_a_posting_with_no_date_is_kept(self):
-        r = self.row_dated(None)
-        self.assertEqual(len(apply_chain([r], NOW_ISO, matcher=MATCHER)[0]), 1)
+        self.assertEqual(self.judged(self.row_dated(None, "2026-09-15T00:00:00Z")), (True, None))
 
     def test_the_limit_is_configuration(self):
         from src.filters import ELIGIBILITY

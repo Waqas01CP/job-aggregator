@@ -370,3 +370,58 @@ to be told if it would not.
 - Both are the architecture chat's to write.
 
 **Verified for it**, at 2026-09-26T12:24Z: 652 tests on Python 3.12 and 3.11; the mutation runs for D13, D14, D11, the private store and the files the chain change touched still going at this commit, results in the next `[VERIFIED]`. The mutation runs that were still going at `6ef16eb` are among them.
+
+## D14 corrected: age is judged once, at first sight
+
+**The operator's correction, the same day:**
+> "at the fetch or after the fetch it is checked that whether the posting is
+> more than a week old meaning 7th day old post is also valid ... the logic is
+> simple, the fetch will happen daily and i might not see the table for a few
+> days then it would mean some posts will be out without my knowledge which i
+> do not want."
+
+**The seat had built it wrong.** `rule_age` measured the run's clock against
+the publication date. Every projection and sweep re-applies the chain, so a
+row admitted fresh would have aged out of `Jobs` a week later, unseen.
+
+**Rebuilt:**
+- the age is first seen minus published, at most 7 days, and a row once
+  admitted gets the same answer however often it is re-judged;
+- a posting first seen already older never enters, reposts carrying their
+  original date included;
+- a Lever posting is never dropped for age, since its date is unproven.
+
+Tests pin the case he described: admitted fresh, then re-judged months
+later, and kept.
+
+**On today's `Jobs`**, re-applied `[VERIFIED]`:
+- 17 of 86 unclassified rows stay, not 13.
+- The two Joblogic roles MLOps Engineer and AI Evaluation Engineer, both
+  published and first seen on 2026-09-17, now stay.
+- 7 rows go for age alone. Each was already old at first contact: for
+  example Joblogic's AI/ML Engineer, published 2026-07-15 and first seen
+  2026-09-17.
+
+**His question on reposts, measured on `data`** `[VERIFIED]`:
+- 161 Greenhouse postings appeared after their board's first contact; 83 of
+  them were already more than a week old at first sight.
+- 60 of the 83 are one Speechify role, "Software Engineer, Platform",
+  first published in 2024 and reposted city by city.
+- Keeping the original date, which drops them, is what he suspected was
+  right. Nothing changed.
+
+**The other finding of the mutation run, closed.** "one closed place drops
+a posting that lists an eligible one" survived: no test listed a closed
+place and an eligible one on separate lines. One does now.
+
+**Himalayas' search endpoint, re-measured for his question "is it not
+possible that we trim it beforehand"** `[VERIFIED]`:
+- With `country=Pakistan&sort=recent&page=N` it returned 59 distinct
+  postings over three pages, all eligible under D13, 2,965 in total.
+- The order is newest first after four pinned items at the top.
+- Paging works through `page`. The 2026-09-16 measurement that rejected
+  search passed it a `cursor`, which the API documents only for browse.
+- About 92 eligible postings a day, about five pages a morning, against
+  25 pages of everything today, which reach about a third of the feed.
+- Switching reverses a measured decision and is his to approve.
+

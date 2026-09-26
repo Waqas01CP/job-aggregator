@@ -48,10 +48,22 @@
     "replace": "            location = \", \".join(str(r) for r in restrictions[:3])"
   },
   {
-    "label": "a posting past the week is kept",
+    "label": "a posting too old at first sight is kept",
     "path": "src/filters.py",
-    "find": "    if dated >= cutoff:",
+    "find": "    if seen - dated <= timedelta(days=eligibility.max_age_days):",
     "replace": "    if True:"
+  },
+  {
+    "label": "age is measured against the run's clock, not first sight",
+    "path": "src/filters.py",
+    "find": "    seen = _when(getattr(row, \"first_seen\", None)) or _when(now_iso)",
+    "replace": "    seen = _when(now_iso)"
+  },
+  {
+    "label": "a Lever posting is judged for age",
+    "path": "src/filters.py",
+    "find": "    if getattr(row, \"published_meaning_unconfirmed\", False):\n        return Verdict(True)",
+    "replace": "    if False:\n        return Verdict(True)"
   },
   {
     "label": "the Lever exception covers every board",
@@ -60,16 +72,10 @@
     "replace": "    if True:"
   },
   {
-    "label": "the Lever exception is lost",
-    "path": "src/filters.py",
-    "find": "        if seen is not None and seen >= cutoff:",
-    "replace": "        if False:"
-  },
-  {
     "label": "a posting with no date is dropped",
     "path": "src/filters.py",
-    "find": "    if now is None or dated is None:\n        return Verdict(True)",
-    "replace": "    if now is None or dated is None:\n        return Verdict(False, \"age\", \"no date\")"
+    "find": "    if seen is None or dated is None:\n        return Verdict(True)",
+    "replace": "    if seen is None or dated is None:\n        return Verdict(False, \"age\", \"no date\")"
   },
   {
     "label": "the age rule is out of the chain",
