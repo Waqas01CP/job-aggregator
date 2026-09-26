@@ -1,0 +1,38 @@
+[
+  {
+    "label": "the search asks for every country",
+    "path": "src/adapters/himalayas.py",
+    "find": "    return BASE % (quote(board.slug), cursor or 1)",
+    "replace": "    return BASE % (\"\", cursor or 1)"
+  },
+  {
+    "label": "a pinned old posting stops the walk",
+    "path": "src/adapters/himalayas.py",
+    "find": "    return bool(dated) and all(d <= high_water for d in dated)",
+    "replace": "    return bool(dated) and any(d <= high_water for d in dated)"
+  },
+  {
+    "label": "the walk never stops",
+    "path": "src/adapters/himalayas.py",
+    "find": "    return bool(dated) and all(d <= high_water for d in dated)",
+    "replace": "    return False"
+  },
+  {
+    "label": "the last page still asks for another",
+    "path": "src/adapters/himalayas.py",
+    "find": "    if limit <= 0 or offset + limit >= total:",
+    "replace": "    if limit <= 0:"
+  },
+  {
+    "label": "page numbers are off by one",
+    "path": "src/adapters/himalayas.py",
+    "find": "    return str(offset // limit + 2)",
+    "replace": "    return str(offset // limit + 1)"
+  },
+  {
+    "label": "the board is still the browse feed",
+    "path": "config/boards.json",
+    "find": "      \"slug\": \"pakistan\",",
+    "replace": "      \"slug\": \"browse\","
+  }
+]

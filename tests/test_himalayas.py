@@ -40,16 +40,32 @@ def cassette():
 
 
 class TestAdapter(unittest.TestCase):
-    def test_uses_the_browse_endpoint_and_never_search(self):
-        """Measured 2026-09-16: search is not recency-ordered and silently
-        ignores the cursor, returning a byte-identical page."""
-        url = himalayas.url_for(BOARD)
-        self.assertIn("himalayas.app/jobs/api", url)
-        self.assertNotIn("/search", url)
-        self.assertNotIn("sort=recent", url)
+    def test_searches_the_boards_country_newest_first(self):
+        """Since 2026-09-26, the operator's go: only postings open to the
+        board's country, worldwide ones included. The slug is the country."""
+        url = himalayas.url_for(Board(platform="himalayas", slug="pakistan"))
+        self.assertTrue(url.startswith("https://himalayas.app/jobs/api/search?"), url)
+        self.assertIn("country=pakistan", url)
+        self.assertIn("sort=recent", url)
+        self.assertIn("page=1", url)
 
-    def test_cursor_is_appended_for_later_pages(self):
-        self.assertIn("cursor=abc123", himalayas.url_for(BOARD, "abc123"))
+    def test_the_real_board_is_pakistan_on_the_morning_run(self):
+        from src.config import load_boards
+        [him] = [b for b in load_boards() if b.platform == "himalayas"]
+        self.assertEqual((him.board_id, him.poll_slots), ("himalayas:pakistan", ("morning",)))
+
+    def test_later_pages_go_by_number(self):
+        self.assertIn("page=3", himalayas.url_for(BOARD, "3"))
+        self.assertEqual(himalayas.next_cursor({"offset": 0, "limit": 20, "totalCount": 2965}),
+                         "2")
+        self.assertEqual(himalayas.next_cursor({"offset": 20, "limit": 20, "totalCount": 2965}),
+                         "3")
+
+    def test_the_last_page_has_no_next(self):
+        self.assertIsNone(himalayas.next_cursor({"offset": 2960, "limit": 20,
+                                                 "totalCount": 2965}))
+        self.assertIsNone(himalayas.next_cursor({"jobs": []}))
+        self.assertIsNone(himalayas.next_cursor({"offset": 0, "limit": 0, "totalCount": 5}))
 
     def test_parses_the_measured_fields(self):
         result = himalayas.parse(cassette(), BOARD)
@@ -105,11 +121,27 @@ class TestAdapter(unittest.TestCase):
             himalayas.parse([], BOARD)
 
 
+def page_of(*epochs):
+    return {"jobs": [{"guid": "https://x.test/%d" % i, "pubDate": e}
+                     for i, e in enumerate(epochs)]}
+
+
 class TestStopRule(unittest.TestCase):
-    def test_stops_when_a_page_reaches_what_is_already_stored(self):
+    def test_stops_when_every_posting_on_the_page_is_already_stored(self):
         payload = cassette()
-        newest = "2026-09-11T15:50:13Z"
-        self.assertTrue(himalayas.stop_after(payload, newest))
+        newest_on_page = max(j["pubDate"] for j in payload["jobs"])
+        mark = datetime.fromtimestamp(newest_on_page, timezone.utc).isoformat().replace(
+            "+00:00", "Z")
+        self.assertTrue(himalayas.stop_after(payload, mark))
+
+    def test_a_pinned_old_posting_does_not_stop_the_walk(self):
+        """The case built to defeat the old rule: search pins old postings at
+        the top of page one, one of them ten days old on 2026-09-26. One old
+        posting among new ones must not end the walk."""
+        pinned_old, new_1, new_2 = 1789539315, 1790389282, 1790385000
+        mark = "2026-09-25T00:00:00Z"
+        self.assertFalse(himalayas.stop_after(page_of(pinned_old, new_1, new_2), mark))
+        self.assertTrue(himalayas.stop_after(page_of(pinned_old, pinned_old), mark))
 
     def test_does_not_stop_on_first_contact(self):
         """No high-water mark means nothing is stored yet."""
@@ -160,13 +192,13 @@ class TestRunIntegration(unittest.TestCase):
                 return R()
         return HttpClient(session=Session(), sleep=lambda s: None, min_interval=0)
 
-    def test_pagination_follows_the_cursor_until_it_runs_out(self):
+    def test_pagination_follows_the_pages_until_they_run_out(self):
         page1 = {"jobs": [{"guid": "https://x.test/1", "title": "AI Engineer",
                            "applicationLink": "https://x.test/1", "pubDate": 1789141813}],
-                 "nextCursor": "c1"}
+                 "offset": 0, "limit": 20, "totalCount": 40}
         page2 = {"jobs": [{"guid": "https://x.test/2", "title": "Machine Learning Engineer",
                            "applicationLink": "https://x.test/2", "pubDate": 1789141800}],
-                 "nextCursor": None}
+                 "offset": 20, "limit": 20, "totalCount": 40}
         client = self._client([page1, page2])
         log = Run([BOARD], client, now=NOW, matcher=MATCHER).execute()
         self.assertEqual(log["totals"]["fetched"], 2)
@@ -323,10 +355,10 @@ class TestRunIntegration(unittest.TestCase):
         half would page to the cap on every run."""
         page1 = {"jobs": [{"guid": "https://x.test/1", "title": "AI Engineer",
                            "applicationLink": "https://x.test/1", "pubDate": 1789141813}],
-                 "nextCursor": "c1"}
+                 "offset": 0, "limit": 20, "totalCount": 40}
         page2 = {"jobs": [{"guid": "https://x.test/2", "title": "Data Scientist",
                            "applicationLink": "https://x.test/2", "pubDate": 1789141800}],
-                 "nextCursor": None}
+                 "offset": 20, "limit": 20, "totalCount": 40}
         first = self._client([page1, page2])
         Run([BOARD], first, now=NOW, matcher=MATCHER).execute()
         self.assertEqual(first.counters()["by_source"]["himalayas"], 2)
@@ -336,12 +368,12 @@ class TestRunIntegration(unittest.TestCase):
         self.assertEqual(second.counters()["by_source"]["himalayas"], 1)
         self.assertEqual(log["totals"]["new"], 0)
 
-    def test_paging_is_capped_even_with_an_endless_cursor(self):
-        """A feed of 100k postings behind a cursor that never ends must not
-        run until the request budget is gone."""
+    def test_paging_is_capped_even_with_endless_pages(self):
+        """A feed of 100k postings, pages that never end, must not run until
+        the request budget is gone."""
         endless = {"jobs": [{"guid": "https://x.test/1", "title": "AI Engineer",
                              "applicationLink": "https://x.test/1", "pubDate": 1789141813}],
-                   "nextCursor": "always"}
+                   "offset": 0, "limit": 20, "totalCount": 100000}
         client = self._client([endless])
         Run([BOARD], client, now=NOW, matcher=MATCHER).execute()
         from src.run import MAX_PAGES

@@ -44,7 +44,9 @@ class TestRealConfig(unittest.TestCase):
         ats = [b for b in self.boards if b.source_class == "ats"]
         aggregators = [b for b in self.boards if b.source_class == "aggregator"]
         self.assertEqual(len(ats), 11)
-        self.assertEqual([b.slug for b in aggregators], ["browse"])
+        # The search endpoint filtered to the operator's country, since
+        # 2026-09-26: the slug is the country.
+        self.assertEqual([b.slug for b in aggregators], ["pakistan"])
         self.assertEqual([b.platform for b in aggregators], ["himalayas"])
 
     def test_slugs_match_the_registry(self):

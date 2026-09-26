@@ -425,3 +425,51 @@ possible that we trim it beforehand"** `[VERIFIED]`:
   25 pages of everything today, which reach about a third of the feed.
 - Switching reverses a measured decision and is his to approve.
 
+## Himalayas moves to its search endpoint, filtered to Pakistan
+
+**The operator's go:** "himalays search: go. also do provide the results with
+explanation and your understanding."
+
+**Built:**
+- The adapter now asks `himalayas.app/jobs/api/search?country=<slug>&sort=recent&page=<n>`.
+- The board's slug is the country, so the board reads `himalayas:pakistan`,
+  still on the morning run only. Rows stored earlier keep
+  `himalayas:browse`; they close by their expiry date, as he approved.
+- Paging goes by page number, from the envelope's `offset`, `limit` and
+  `totalCount`.
+- **The stop rule reads the whole page.** Search pins old postings at the
+  top of page one, one of them ten days old, and the browse rule of
+  stopping at the first stored posting would have ended the walk there.
+  A page stops it only when none of its postings is newer than the stored
+  mark. A test gives it that pinned page.
+- D13's location rule still runs on every row, as a second guard.
+- **ADR-0031's fitness function caught the seat.** A drop reason naming
+  the country in code was flagged by `tools/preference_audit.py`; the
+  reason no longer names it.
+
+**Live, a test-mode run with `--no-commit`, 13:31Z** `[VERIFIED]`:
+- `himalayas:pakistan` fetched 497 postings and dropped none for
+  location. The title and seniority rules kept 38.
+- Browse, unfiltered, kept about 16 a morning, most of them then closed
+  to Pakistan.
+- It read to the 25-page cap only because this machine's test store holds
+  no Himalayas history, so every posting was new. With production's
+  history it stops after about two or three pages `[INFERRED]`, from
+  about 92 eligible postings a day.
+
+**The contract check will report one change.** The fingerprint now reads
+`offset`, `limit` and `totalCount` where it read `nextCursor`. That is
+expected, not a fault.
+
+**Mutations** `[VERIFIED]`, every file whose code this round touched:
+- D13 and D14, re-run against the first-sight age rule: 15 of 15, the one
+  that survived the first pass among them;
+- D11: 9 of 9;
+- the private store: 12 of 12;
+- the filter chain's older files (seniority and families, star and
+  families, vendor file): 13, 7 and 4 of the same;
+- the 10 older mutations re-expressed earlier: 10 of 10;
+- D9 and G7: 6 of 6;
+- the search change: running at this commit, its result in the next.
+
+**Verified for it**, at 2026-09-26T13:35Z: 658 tests on Python 3.12 and 3.11.

@@ -73,10 +73,10 @@
     },
     {
       "platform": "himalayas",
-      "slug": "browse",
+      "slug": "pakistan",
       "normalisations": [],
       "poll_slots": ["morning"],
-      "note": "Aggregator feed, not an employer board. ADR-0019 conditional. Browse endpoint only: the search endpoint is not recency-ordered and ignores the cursor. The slug is a placeholder because the endpoint takes none."
+      "note": "Aggregator feed, not an employer board. ADR-0019 conditional. Since 2026-09-26 the search endpoint filtered to this country, which is the slug: only postings open to someone in Pakistan, worldwide ones included. The operator's go; the adapter's docstring has the measurement."
     }
   ]
 }

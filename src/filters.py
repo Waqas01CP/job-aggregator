@@ -411,7 +411,7 @@ def rule_location(row, eligibility, **kw):
         return Verdict(True)
     parts = [p for p in _PARTS.split(str(text)) if p.strip()]
     if parts and all(classify_place(p, eligibility) == "closed" for p in parts):
-        return Verdict(False, "location", "every place listed is closed to Pakistan: %r"
+        return Verdict(False, "location", "every place listed is closed to the operator: %r"
                        % str(text).replace("\n", "; ")[:120])
     return Verdict(True)
 

@@ -1,12 +1,30 @@
 """Himalayas. An aggregator feed, not an employer board. ADR-0019.
 
-Browse endpoint only: `himalayas.app/jobs/api?limit=20`, cursor pagination.
+**The search endpoint, filtered to one country**, since 2026-09-26:
+`himalayas.app/jobs/api/search?country=<slug>&sort=recent&page=<n>`. The
+board's slug is the country, so the board reads `himalayas:pakistan`. The
+operator's go that day, after asking "is it not possible that we trim it
+beforehand to not fetch a lot?".
 
-The search endpoint is not used and must not be. Measured on 2026-09-16:
-`sort=recent` is not ordered by date, breaking at positions 3, 5 and 8 of 13,
-and it accepts a `cursor` parameter and silently ignores it, returning a
-byte-identical page. Browse is ordered by `pubDate` descending with no
-duplicates across 60 postings over three pages.
+**Why search, reversing 2026-09-16.** That measurement rejected search
+because `sort=recent` was out of order and a `cursor` was silently ignored.
+But the API documents `page` for search, not `cursor`, so the second finding
+tested the wrong parameter. Re-measured on 2026-09-26 with `page`:
+- three pages, 59 distinct postings, no repeats;
+- newest first, except four pinned postings at the top of page one;
+- all 59 eligible under the operator's D13, since the country filter keeps
+  worldwide postings too;
+- 2,965 in total, about 92 new a day.
+
+Browse, the whole feed, spent 25 pages a morning to reach about a third of
+Himalayas' 1,600 postings a day, of which 7% are open to Pakistan. Search
+reaches all of those in about five pages. D13's location rule still runs
+on every row, as a second guard.
+
+**The stop rule looks at the whole page.** A page stops the walk only when
+none of its postings is newer than what is stored: the pinned postings at
+the top are old, and the old "any posting" rule would have stopped on them
+after one page.
 
 Fields, measured on 20 postings:
 
@@ -29,19 +47,20 @@ orchestrator drives the loop through the shared HTTP module.
 """
 
 from datetime import datetime, timezone
+from urllib.parse import quote
 
 from .base import AdapterError, ParseResult, Posting, require_absolute
 
 PLATFORM = "himalayas"
 SOURCE_CLASS = "aggregator"
-BASE = "https://himalayas.app/jobs/api?limit=%d"
+BASE = "https://himalayas.app/jobs/api/search?country=%s&sort=recent&page=%s"
 PAGE_SIZE = 20
 
 PUBLISHED_FIELD = "pubDate"
 
 # ADR-0018: what parse() reads, and nothing else. The contract check
 # fingerprints exactly these, and tests/test_contract.py holds them to the code.
-CONSUMED_RESPONSE = ("jobs", "nextCursor")
+CONSUMED_RESPONSE = ("jobs", "offset", "limit", "totalCount")
 POSTINGS_AT = "jobs"
 CONSUMED = ("guid", "title", "applicationLink", PUBLISHED_FIELD, "expiryDate", "companyName",
             "locationRestrictions")
@@ -55,13 +74,22 @@ PAGINATED = True
 
 
 def url_for(board, cursor=None):
-    url = BASE % PAGE_SIZE
-    return "%s&cursor=%s" % (url, cursor) if cursor else url
+    """The search for postings open to the board's country; `cursor` is the
+    page number, the first page when absent."""
+    return BASE % (quote(board.slug), cursor or 1)
 
 
 def next_cursor(payload):
-    """The cursor for the following page, or None at the end of the feed."""
-    return payload.get("nextCursor") if isinstance(payload, dict) else None
+    """The following page's number, or None past the last. Search pages by
+    number: the envelope gives `offset`, `limit` and `totalCount`."""
+    if not isinstance(payload, dict):
+        return None
+    offset, limit, total = payload.get("offset"), payload.get("limit"), payload.get("totalCount")
+    if not all(isinstance(v, int) and not isinstance(v, bool) for v in (offset, limit, total)):
+        return None
+    if limit <= 0 or offset + limit >= total:
+        return None
+    return str(offset // limit + 2)
 
 
 def _parse_epoch_s(value):
@@ -139,18 +167,18 @@ def parse(payload, board):
 
 
 def stop_after(payload, high_water):
-    """True when this page has reached postings already stored.
+    """True when no posting on this page is newer than what is stored.
+
+    **The whole page, never one posting.** Search puts pinned postings at the
+    top of page one, one of them ten days old on 2026-09-26, and stopping on
+    the first old posting would end the walk there. A page whose every
+    posting is at or before the mark is past the new ones.
 
     `high_water` is the newest `pubDate` the pipeline has actually stored, as
     an ISO string, not the previous run's clock. Anchoring on the clock would
-    step over postings that reach this feed late, and the feed is known to
-    trail by at least 97.7 minutes."""
+    step over postings that reach the feed late, and it is known to trail."""
     if not high_water:
         return False
-    for entry in payload.get("jobs", []):
-        published = _parse_epoch_s(entry.get(PUBLISHED_FIELD))
-        if published is None:
-            continue
-        if published.isoformat().replace("+00:00", "Z") <= high_water:
-            return True
-    return False
+    dated = [_parse_epoch_s(e.get(PUBLISHED_FIELD)) for e in payload.get("jobs", [])]
+    dated = [d.isoformat().replace("+00:00", "Z") for d in dated if d is not None]
+    return bool(dated) and all(d <= high_water for d in dated)
