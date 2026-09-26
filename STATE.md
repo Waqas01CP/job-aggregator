@@ -6,6 +6,8 @@ status: current
 
 # STATE
 
+**Touched 2026-09-26T13:49Z by the implementing seat, for the search change's mutations only:** 6 of 6 caught in a scratch clone. No code changed. The line that follows stands.
+
 **Last verified 2026-09-26T13:35Z by the implementing seat, for D14's first-sight correction and Himalayas' move to search, against `main` at `4ff46dc` plus this commit's work.** Checked for it: the search endpoint measured live on 2026-09-26 and read by a live test-mode run with `--no-commit`; 658 tests on Python 3.12 and 3.11; every mutation file this round touched, all caught. The line that follows is the previous one.
 
 **Touched 2026-09-26T13:04Z by the implementing seat, for D14's correction only:** age is judged once, at first sight, so a row once admitted never ages out of `Jobs`; 655 tests on Python 3.12, the 3.11 run and the D13 and D14 mutations following. The line that follows stands.

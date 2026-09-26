@@ -470,6 +470,6 @@ expected, not a fault.
   families, vendor file): 13, 7 and 4 of the same;
 - the 10 older mutations re-expressed earlier: 10 of 10;
 - D9 and G7: 6 of 6;
-- the search change: running at this commit, its result in the next.
+- the search change: 6 of 6, recorded at 2026-09-26T13:49Z after `da6fe0b`: the country filter, the whole-page stop against a pinned page, the last page, the page numbers and the board's configuration.
 
 **Verified for it**, at 2026-09-26T13:35Z: 658 tests on Python 3.12 and 3.11.
