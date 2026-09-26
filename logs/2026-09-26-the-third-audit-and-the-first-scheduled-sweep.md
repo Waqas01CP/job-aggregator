@@ -455,7 +455,11 @@ explanation and your understanding."
 - It read to the 25-page cap only because this machine's test store holds
   no Himalayas history, so every posting was new. With production's
   history it stops after about two or three pages `[INFERRED]`, from
-  about 92 eligible postings a day.
+  about 92 eligible postings a day. *(Corrected 2026-09-26T16:20Z: about
+  four to six pages. 92 a day at 20 a page is five pages on its own, and
+  this log's own measurement above says "about five pages a morning"; the
+  walk then reads one more page to see that it is done. The next section
+  has the arithmetic.)*
 
 **The contract check will report one change.** The fingerprint now reads
 `offset`, `limit` and `totalCount` where it read `nextCursor`. That is
@@ -473,3 +477,29 @@ expected, not a fault.
 - the search change: 6 of 6, recorded at 2026-09-26T13:49Z after `da6fe0b`: the country filter, the whole-page stop against a pinned page, the last page, the page numbers and the board's configuration.
 
 **Verified for it**, at 2026-09-26T13:35Z: 658 tests on Python 3.12 and 3.11.
+
+## Search checked against browse, and the page estimate corrected
+
+**At 16:20Z, one page of each endpoint, read live** `[VERIFIED]`:
+- The three postings on both first pages carry the same `guid` and the
+  same `pubDate` on both. A posting's identity is `himalayas:` plus its
+  `guid`, whatever the board, so what browse stored is not new to
+  search: it is neither admitted twice nor re-dated.
+- Search's newest posting was still 2026-09-26T02:21Z, and its total
+  still 2,965, as at the morning's measurement. It looks like a snapshot
+  refreshed once a day, early in the UTC morning `[INFERRED]` from one
+  reading. That is ADR-0048's once-a-day cache, and the morning-only poll
+  after it loses nothing.
+
+**The page estimate** `[INFERRED]`. Page one's 19 dated postings span
+10.5 hours, about 45 a day; 2,965 over a month is about 92. At 20 a
+page that is three to five pages, plus the one that shows the walk is
+done. The stored mark is kept per source, not per board, so tomorrow's
+first search run stops at the newest posting browse stored this morning.
+
+**What that mark leaves behind.** Browse reached about a third of each
+day since 2026-09-17, so eligible postings of the past week that it
+never reached stay unfetched: search stops at browse's mark, and they
+are older than it. Reading back a week once, on the first search
+morning, would recover them, at 25 requests. That is the operator's to
+decide; nothing is built for it.
