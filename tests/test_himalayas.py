@@ -1,7 +1,8 @@
 """Himalayas, the conditional aggregator. ADR-0019.
 
-The brief: browse endpoint only, and the stop anchored on the newest pubDate
-actually stored rather than on clock time.
+Since 2026-09-26 the search endpoint filtered to one country. The stop is
+anchored on the newest pubDate the board actually stored, or on the age limit,
+rather than on clock time.
 """
 
 import json
@@ -25,6 +26,7 @@ from src.run import Run, files_to_commit, summarise
 
 NOW = datetime(2026, 9, 16, 12, 0, tzinfo=timezone.utc)
 BOARD = Board(platform="himalayas", slug="browse")
+SEARCH = Board(platform="himalayas", slug="pakistan")
 CASSETTES = os.path.join(os.path.dirname(os.path.abspath(__file__)), "cassettes")
 MATCHER = TitleMatcher()
 
@@ -378,6 +380,58 @@ class TestRunIntegration(unittest.TestCase):
         Run([BOARD], client, now=NOW, matcher=MATCHER).execute()
         from src.run import MAX_PAGES
         self.assertEqual(client.counters()["by_source"]["himalayas"], MAX_PAGES)
+
+    # The catch-up, the operator's yes of 2026-09-26: the search board reads
+    # back a week on its first walk instead of stopping at browse's mark.
+    def _two_pages(self, older):
+        page1 = {"jobs": [{"guid": "https://x.test/1", "title": "AI Engineer",
+                           "applicationLink": "https://x.test/1", "pubDate": 1789141813}],
+                 "offset": 0, "limit": 20, "totalCount": 60}
+        page2 = {"jobs": [{"guid": "https://x.test/2", "title": "Data Scientist",
+                           "applicationLink": "https://x.test/2", "pubDate": older}],
+                 "offset": 20, "limit": 20, "totalCount": 60}
+        page3 = {"jobs": [{"guid": "https://x.test/3", "title": "Machine Learning Engineer",
+                           "applicationLink": "https://x.test/3", "pubDate": 1789141700}],
+                 "offset": 40, "limit": 20, "totalCount": 60}
+        return [page1, page2, page3]
+
+    def test_a_board_is_not_stopped_by_another_boards_mark(self):
+        """The case built to defeat a mark kept per source: browse stored the
+        newest posting, and search, a different board of the same source,
+        must still read past it."""
+        pages = self._two_pages(1789141800)
+        Run([BOARD], self._client(pages), now=NOW, matcher=MATCHER).execute()
+        client = self._client(pages)
+        Run([SEARCH], client, now=NOW, matcher=MATCHER).execute()
+        self.assertEqual(client.counters()["by_source"]["himalayas"], 3)
+
+    def test_with_no_mark_the_walk_stops_at_the_age_limit(self):
+        """A page wholly older than a week before now holds nothing D14 could
+        admit, so it ends a first walk; without that, the walk reads on."""
+        client = self._client(self._two_pages(1788220800))      # 2026-09-01
+        Run([SEARCH], client, now=NOW, matcher=MATCHER).execute()
+        self.assertEqual(client.counters()["by_source"]["himalayas"], 2)
+
+    def test_a_posting_exactly_at_the_age_limit_does_not_end_the_walk(self):
+        """2026-09-09T12:00:00Z is exactly a week before NOW; the age rule
+        keeps it, so the page it is on is not past the week."""
+        client = self._client(self._two_pages(1788955200))
+        log = Run([SEARCH], client, now=NOW, matcher=MATCHER).execute()
+        self.assertEqual(client.counters()["by_source"]["himalayas"], 3)
+        self.assertEqual(log["totals"]["fetched"], 3)
+
+    def test_a_date_not_proven_to_mean_publication_sets_no_floor(self):
+        from src.run import walk_floor
+        self.assertIsNone(walk_floor("lever", NOW))
+        self.assertEqual(walk_floor("himalayas", NOW), "2026-09-09T11:59:59Z")
+
+    def test_the_cap_reaches_back_a_week(self):
+        """A first walk must reach the age limit before the cap. 92 eligible
+        postings a day is the higher of the two estimates of 2026-09-26, and
+        25 pages held only 6.4 days that day."""
+        from src.run import MAX_PAGES
+        self.assertGreaterEqual(MAX_PAGES * himalayas.PAGE_SIZE,
+                                7 * 92 + himalayas.PAGE_SIZE)
 
 
 if __name__ == "__main__":

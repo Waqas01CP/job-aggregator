@@ -174,9 +174,10 @@ def stop_after(payload, high_water):
     the first old posting would end the walk there. A page whose every
     posting is at or before the mark is past the new ones.
 
-    `high_water` is the newest `pubDate` the pipeline has actually stored, as
-    an ISO string, not the previous run's clock. Anchoring on the clock would
-    step over postings that reach the feed late, and it is known to trail."""
+    `high_water` is the newest `pubDate` this board has actually stored, as
+    an ISO string, not the previous run's clock, or the age limit when that
+    is later: the run passes whichever is. Anchoring on the clock would step
+    over postings that reach the feed late, and it is known to trail."""
     if not high_water:
         return False
     dated = [_parse_epoch_s(e.get(PUBLISHED_FIELD)) for e in payload.get("jobs", [])]

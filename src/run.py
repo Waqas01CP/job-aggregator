@@ -42,7 +42,7 @@ import argparse
 import os
 import sys
 import traceback
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from . import envfile, private_store, projection, storage
 from .airtable_sweep import SweepClient, TABLE_SECRETS
@@ -55,9 +55,9 @@ from .backfill import backfill
 from .config import ConfigError, is_publishable, load_boards, load_sweep_config
 from .dedupe import counts as dedupe_counts
 from .dedupe import group, split_new
-from .filters import FilterError, TitleMatcher, apply_chain, drop_counts
+from .filters import ELIGIBILITY, FilterError, TitleMatcher, apply_chain, drop_counts
 from .http_client import (BudgetExhausted, CircuitOpen, HttpClient, HttpError)
-from .normalise import dumps, iso, loads, normalise
+from .normalise import UNCONFIRMED_PUBLISHED, dumps, iso, loads, normalise
 
 EXIT_OK = 0
 EXIT_CANNOT_START = 1
@@ -66,9 +66,23 @@ EXIT_STOPPED_RESUMABLE = 2
 ADAPTERS = {"greenhouse": greenhouse, "lever": lever,
             "himalayas": himalayas}
 
-# A paginated feed is read until it reaches postings already stored. The cap is
-# a runaway guard on top of the stop rule, in the same spirit as ADR-0028.
-MAX_PAGES = 25
+# A paginated feed is read until it reaches postings already stored, or
+# postings too old for the age rule to admit. The cap is a runaway guard on top
+# of both, in the same spirit as ADR-0028. 40, not 25, since 2026-09-26: a
+# board's first walk reads back a week, and Himalayas' Pakistan search held 25
+# pages across 6.4 days that day, so a week is about 28 pages.
+MAX_PAGES = 40
+
+
+def walk_floor(source, now):
+    """The date a whole page must be older than to end a paginated walk on
+    age: a posting first seen now and published before it is never admitted
+    (D14). One second before the limit, so a posting exactly at it, which the
+    age rule keeps, never ends the walk. None for a source whose date is not
+    proven to mean publication, since the age rule never drops its rows."""
+    if source in UNCONFIRMED_PUBLISHED:
+        return None
+    return iso(now - timedelta(days=ELIGIBILITY.max_age_days, seconds=1))
 
 # Every value that must never reach a run log or the console: the run log is
 # committed to the public data branch. Scrubbed from any projection failure
@@ -491,17 +505,19 @@ class Run:
 
     def _fetch_pages(self, adapter, board, log):
         """Read a paginated feed newest-first until it reaches what is already
-        stored, then stop. The anchor is the newest publication date actually
-        stored for this source, never the previous run's clock: this feed is
-        known to trail by at least 97.7 minutes, so a clock anchor would step
-        over postings that arrive late and never look again."""
-        high_water = self.high_water.get(board.source)
+        stored, or what is too old to admit, then stop. The anchor is the
+        newest publication date actually stored by this board, never the
+        previous run's clock: this feed is known to trail by at least 97.7
+        minutes, so a clock anchor would step over postings that arrive late
+        and never look again."""
+        mark = max(self.high_water.get(board.board_id) or "",
+                   walk_floor(board.source, self.now) or "")
         merged, cursor, pages = {"jobs": []}, None, 0
         while pages < MAX_PAGES:
             payload = self.client.get_json(adapter.url_for(board, cursor), board.source)
             pages += 1
             merged["jobs"].extend(payload.get("jobs", []))
-            if adapter.stop_after(payload, high_water):
+            if adapter.stop_after(payload, mark):
                 break
             cursor = adapter.next_cursor(payload)
             if not cursor:
@@ -513,11 +529,17 @@ class Run:
     def execute(self):
         seen = storage.SeenStore.load_many([self.paths["seen"], self.paths["local_seen"]])
         first_seen = seen.first_seen_map()
+        # Per board, never per source. Himalayas' search board replaced browse
+        # on 2026-09-26, and browse reached about a third of each day; stopped
+        # at browse's mark, search would never fetch the eligible postings of
+        # the week that browse missed. Entries stored before boards were
+        # recorded set no mark, so a board's first walk reads back to the age
+        # floor. The operator's yes, 2026-09-26.
         self.high_water = {}
         for entry in seen.entries.values():
-            source, published = entry.get("source"), entry.get("published_at")
-            if source and published:
-                self.high_water[source] = max(self.high_water.get(source, ""), published)
+            board_id, published = entry.get("board_id"), entry.get("published_at")
+            if board_id and published:
+                self.high_water[board_id] = max(self.high_water.get(board_id, ""), published)
 
         all_rows, reached = [], set()
         try:

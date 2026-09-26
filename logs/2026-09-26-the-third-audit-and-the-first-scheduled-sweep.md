@@ -503,3 +503,43 @@ never reached stay unfetched: search stops at browse's mark, and they
 are older than it. Reading back a week once, on the first search
 morning, would recover them, at 25 requests. That is the operator's to
 decide; nothing is built for it.
+
+## The catch-up: search reads back a week on its first walk
+
+**The operator's yes:** "the postings browse missed, as you recommended
+should be fetch so the answer is yes."
+
+**Built:**
+- **The stop mark is kept per board, never per source.** A new seen entry
+  records the board that first stored it. Entries from before today carry
+  none, so the search board's first walk has no mark. Existing entries
+  are not rewritten, so the public seen file changes only by its new
+  postings.
+- **A paginated walk also stops at the age limit.** A page wholly older
+  than seven days before the run, less one second, ends it: nothing on
+  it could pass D14, and a posting exactly at the limit, which D14 keeps,
+  never ends it. A source whose date is not proven to mean publication
+  sets no limit; that is Lever, which is not paginated.
+- **`MAX_PAGES` from 25 to 40**, a runaway guard only. The board's mark
+  and the age limit end every normal walk.
+
+**Measured for it, the same evening** `[VERIFIED]`: page 25 of the Pakistan search
+reached back to 2026-09-19T17:25Z and page 35 to 09-18T16:11Z. So 25
+pages held 6.4 days, and a week is about 28 pages. At 25, the first walk
+would have stopped about half a day short of the week.
+
+**The first search morning, 2026-09-27** `[INFERRED]`: about 28 pages.
+D14 keeps what is within a week of first sight. What browse already
+stored is not new, because it has the same `guid` (checked above). The
+mornings after read four to six pages.
+
+**Tests:** five new, each built to fail without its part:
+- a board not stopped by another board's mark;
+- a first walk ending at the age limit;
+- a posting exactly at the limit not ending it;
+- no limit for Lever's date;
+- the cap reaching a week at the higher estimate of 92 a day.
+
+**Mutations** `[VERIFIED]`: 7 of 7 caught.
+
+**Verified for it**, at 2026-09-26T17:08Z: 663 tests on Python 3.12 and 3.11.

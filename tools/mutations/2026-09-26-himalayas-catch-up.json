@@ -1,0 +1,44 @@
+[
+  {
+    "label": "search stops at browse's mark",
+    "path": "src/run.py",
+    "find": "            board_id, published = entry.get(\"board_id\"), entry.get(\"published_at\")",
+    "replace": "            board_id, published = (\"himalayas:pakistan\" if entry.get(\"source\") == \"himalayas\" else entry.get(\"board_id\")), entry.get(\"published_at\")"
+  },
+  {
+    "label": "a new entry records no board, so no board ever has a mark",
+    "path": "src/storage.py",
+    "find": "                \"board_id\": row.board_id,\n",
+    "replace": ""
+  },
+  {
+    "label": "a first walk has no age floor",
+    "path": "src/run.py",
+    "find": "                   walk_floor(board.source, self.now) or \"\")",
+    "replace": "                   \"\")"
+  },
+  {
+    "label": "the floor sits exactly at the limit",
+    "path": "src/run.py",
+    "find": "    return iso(now - timedelta(days=ELIGIBILITY.max_age_days, seconds=1))",
+    "replace": "    return iso(now - timedelta(days=ELIGIBILITY.max_age_days))"
+  },
+  {
+    "label": "Lever's unproven date sets a floor",
+    "path": "src/run.py",
+    "find": "    if source in UNCONFIRMED_PUBLISHED:\n        return None\n",
+    "replace": ""
+  },
+  {
+    "label": "the cap stays at 25",
+    "path": "src/run.py",
+    "find": "MAX_PAGES = 40",
+    "replace": "MAX_PAGES = 25"
+  },
+  {
+    "label": "Lever's date is taken as publication",
+    "path": "src/normalise.py",
+    "find": "            published_meaning_unconfirmed=(p.source in UNCONFIRMED_PUBLISHED),",
+    "replace": "            published_meaning_unconfirmed=False,"
+  }
+]

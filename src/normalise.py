@@ -43,6 +43,12 @@ FIELDS = (
 )
 
 
+# Sources whose date field is not proven to mean publication: Lever's
+# `createdAt`. The age rule never drops their rows, and a paginated walk never
+# stops on their age.
+UNCONFIRMED_PUBLISHED = frozenset({"lever"})
+
+
 class NormaliseError(Exception):
     pass
 
@@ -209,7 +215,7 @@ def normalise(postings, board, now, seen=None):
             location=p.location,
             published_at=published_at,
             published_field=p.published_field,
-            published_meaning_unconfirmed=(p.source == "lever"),
+            published_meaning_unconfirmed=(p.source in UNCONFIRMED_PUBLISHED),
             first_seen=first_seen,
             ordering_date=ordering_date,
             ordering_date_source=ordering_source,

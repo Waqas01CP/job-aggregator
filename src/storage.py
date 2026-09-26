@@ -261,10 +261,14 @@ class SeenStore:
     def record(self, row):
         entry = self.entries.get(row.identity)
         if entry is None:
+            # The board that first stored it, which sets that board's stop
+            # mark. Only on a new entry: entries stored before 2026-09-26
+            # carry none, and rewriting every one would change the whole file.
             self.entries[row.identity] = {
                 "first_seen": row.first_seen,
                 "published_at": row.published_at,
                 "source": row.source,
+                "board_id": row.board_id,
                 "last_seen": row.first_seen,
             }
         else:
