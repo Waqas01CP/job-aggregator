@@ -119,17 +119,22 @@ fi
 # estimate written instead of running date -u, and fixing it once by hand
 # did not stop the next. This gate first read only the first "Last
 # verified" line, so on 2026-09-24 a "Touched" line in STATE.md and a note
-# in a log both carried a future stamp past it. It now reads every
-# minute-precision UTC stamp in a staged STATE.md or log. Compared as UTC
-# text, which sorts as time. The `|| true` keeps set -e from ending the
-# hook when a file has no stamp.
+# in a log both carried a future stamp past it. It now reads every UTC
+# stamp in a staged STATE.md or log, to the minute or with seconds and a
+# fraction, each cut to the minute before it is compared; the audit of
+# 2026-09-25 found the seconds form passing (nit 2). Compared as UTC text,
+# which sorts as time. A time with no date cannot be judged and is not
+# read. The `|| true` keeps set -e from ending the hook when a file has no
+# stamp.
 now=$(date -u +%Y-%m-%dT%H:%MZ)
 for file in $staged; do
   case "$file" in
     STATE.md|logs/*.md) ;;
     *) continue ;;
   esac
-  latest=$(git show ":$file" | grep -o '[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}T[0-9]\{2\}:[0-9]\{2\}Z' | sort | tail -1 || true)
+  latest=$(git show ":$file" \
+    | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}(:[0-9]{2}(\.[0-9]+)?)?Z' \
+    | cut -c1-16 | sed 's/$/Z/' | sort | tail -1 || true)
   if [ -n "$latest" ] && [[ "$latest" > "$now" ]]; then
     fail "$file carries the stamp $latest, but it is now $now UTC.
        Nothing written down can be later than the commit that records it.

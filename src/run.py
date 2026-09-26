@@ -317,23 +317,29 @@ def previous_run_at(test_mode):
     return logs[-1].get("run_at") if logs and isinstance(logs[-1], dict) else None
 
 
-def sweep_display(run, no_commit, test_mode, slot, private_ok, closure, config, used_before):
+def sweep_display(run, no_commit, test_mode, slot, private_ok, closure, config, used_before,
+                  closure_failure=None):
     """ADR-0050's sweep. The copy step runs on every committing run; the
     daily steps run except on the evening slot. Never raises: a failure is
     recorded, the run still commits, and the caller exits 2.
+
+    **The copy needs no closure test.** When it could not be built the copy
+    still runs and the daily steps do not, and the run fails as a sweep
+    failure so it is seen (the audit of 2026-09-25, nit 4).
 
     **A no-commit run reaches no base.** It sweeps nothing."""
     if no_commit:
         return {"mode": "dry run: a no-commit run reaches no base", "calls_used": 0,
                 "failure": None}
-    daily = slot != "evening"
+    daily = slot != "evening" and closure_failure is None
     client = None
     try:
         client = make_sweep_client(test_mode, used_before)
         report = Sweep(client, run.paths, run.now, run.matcher, closure, config,
                        private_ok).run(daily, since=None if daily else previous_run_at(test_mode))
         report.update(client.counters())
-        report["failure"] = None
+        report["failure"] = None if closure_failure is None else (
+            "the closure test could not be built, so only the copy ran: %s" % closure_failure)
         return report
     except Exception as e:
         failure = "%s: %s" % (type(e).__name__, e)
@@ -639,7 +645,9 @@ def summarise(run_log):
                                           sw.get("waiting_for_the_store", 0)),
             "  FAILED: %s" % sw["failure"] if sw.get("failure") else ""))
     b = run_log.get("budget")
-    if b is not None:
+    if b is not None and b.get("failure"):
+        lines.append("  airtable month to date: could not be counted: %s" % b["failure"])
+    elif b is not None:
         lines.append("  airtable month to date: %d of %d%s" % (
             b["month_to_date"], b["allowance"],
             "  WARNING: %s" % b["warning"] if b.get("warning") else ""))
@@ -804,17 +812,32 @@ def main(argv=None):
     # ADR-0050's sweep, after the projection so a row it just sent is read
     # back with the rest. Its aggregator outcomes need the private store to
     # have been restored and written this run.
-    by_branch = {} if args.no_commit else month_so_far(iso(run.now), test_mode)
-    if closure is None:
-        run_log["sweep"] = {"calls_used": 0, "failure": "the closure test could not be built: "
-                            "%s" % run_log["closure_failure"]}
+    #
+    # The month's calls: the projection's count when it reached the base,
+    # read again otherwise. A count that cannot be read must never cost the
+    # fetch, so it is caught here like every other display failure (the
+    # audit of 2026-09-25, F3); the sweep is then skipped, since its budget
+    # guard would be blind, and the run says why.
+    by_branch, count_failure = {}, None
+    if not args.no_commit:
+        by_branch = (run_log[RUN_LOG_KEY] or {}).get("month_to_date_by_branch")
+        if by_branch is None:
+            try:
+                by_branch = month_so_far(iso(run.now), test_mode)
+            except Exception as e:
+                by_branch = {}
+                count_failure = redact_secrets("%s: %s" % (type(e).__name__, e))
+    if count_failure is not None:
+        run_log["sweep"] = {"calls_used": 0, "failure": "the month's Airtable calls could not "
+                            "be counted, so the sweep did not run: %s" % count_failure}
     else:
         run_log["sweep"] = sweep_display(
             run, args.no_commit, test_mode, slot,
             private_ok=bool(store is not None and not (private_block and private_block["failure"])),
             closure=closure, config=sweep_config,
             used_before=sum(by_branch.values())
-            + int((run_log[RUN_LOG_KEY] or {}).get("calls_used") or 0))
+            + int((run_log[RUN_LOG_KEY] or {}).get("calls_used") or 0),
+            closure_failure=run_log.get("closure_failure") if closure is None else None)
     sweep_failure = run_log["sweep"].get("failure")
     if private_block is not None and store is not None and not private_block["failure"]:
         # The second push: the aggregator outcomes the sweep just wrote.
@@ -823,7 +846,9 @@ def main(argv=None):
         private_failure = private_block["failure"]
     if store is not None:
         store.close()
-    if not args.no_commit:
+    if not args.no_commit and count_failure is not None:
+        run_log["budget"] = {"month_to_date": None, "warning": None, "failure": count_failure}
+    elif not args.no_commit:
         run_log["budget"] = budget_line(run_log, by_branch, sweep_config, run.now)
         if run_log["budget"]["warning"]:
             # A workflow annotation, and it stays in the committed log.

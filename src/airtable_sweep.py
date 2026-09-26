@@ -90,6 +90,15 @@ class SweepClient(ResilientClient):
         for key, table_id in tables.items():
             if not (table_id or "").startswith("tbl"):
                 raise AirtableConfigError("the %s table ID must begin 'tbl'" % key)
+        # Four distinct tables, or nothing. One mis-pasted secret giving a
+        # classification table the Jobs table's ID makes every unmarked Jobs
+        # row look like a stale copy, and step 1 deletes them: the audit of
+        # 2026-09-25, F2, proved it. Named by key, never by value.
+        shared = sorted(key for key, table_id in tables.items()
+                        if list(tables.values()).count(table_id) > 1)
+        if shared:
+            raise AirtableConfigError("%s share one table ID; the sweep needs four distinct "
+                                      "tables" % ", ".join(shared))
         super().__init__(max_attempts=max_attempts, backoff_base=backoff_base,
                          breaker_threshold=breaker_threshold, min_interval=min_interval,
                          sleep=sleep, now=now, wait_floors={429: RATE_LIMIT_WAIT})
@@ -105,9 +114,10 @@ class SweepClient(ResilientClient):
     @classmethod
     def from_env(cls, test_mode, environ=None, **kw):
         """The token, the base and this mode's four tables. An empty secret is
-        refused by name and no value is ever echoed. In test mode a table ID
-        equal to any production table's is refused, so a test run cannot
-        reach production."""
+        refused by name and no value is ever echoed. A table ID equal to any
+        of the other mode's is refused, both ways, so a test run cannot reach
+        production and a production run cannot write the test tables. Four
+        distinct tables within the mode are the constructor's check."""
         environ = os.environ if environ is None else environ
 
         def value(name):
@@ -117,13 +127,12 @@ class SweepClient(ResilientClient):
         missing = [n for n in [TOKEN_ENV, BASE_ENV] + list(names.values()) if not value(n)]
         if missing:
             raise AirtableConfigError("empty or unset: %s" % ", ".join(missing))
-        if test_mode:
-            production = {value(n) for n in TABLE_SECRETS[False].values()} - {""}
-            clash = [n for n in names.values() if value(n) in production]
-            if clash:
-                raise AirtableConfigError(
-                    "%s equals a production table ID, so a test run would write "
-                    "production" % ", ".join(clash))
+        other = {value(n) for n in TABLE_SECRETS[not test_mode].values()} - {""}
+        clash = [n for n in names.values() if value(n) in other]
+        if clash:
+            raise AirtableConfigError(
+                "%s equals a %s table ID, so this run would write the other mode's tables"
+                % (", ".join(clash), "production" if test_mode else "test"))
         return cls(value(TOKEN_ENV), value(BASE_ENV),
                    {key: value(n) for key, n in names.items()}, **kw)
 

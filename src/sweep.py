@@ -21,6 +21,10 @@ The next daily sweep deletes the row only if the store it restored from
 origin holds the identity. A push that failed leaves the row where it was,
 and the store is written again. No row is deleted on the strength of another
 row's success, and none on a write nobody has read back from the branch.
+"Origin" holds on a runner, which checks the branch out fresh. A local
+committing run restores from the local `data` ref, which can carry commits
+never pushed, so there the verify is only as good as that ref (the audit of
+2026-09-25, nit 3). The workflow is the only place the sweep is meant to run.
 
 **Routing is exclusive, ADR-0043.** An identity already in one classification
 store is never written to another; the row is reported and left.
@@ -212,8 +216,13 @@ class Sweep:
             if stale[t]:
                 self.client.delete(t, stale[t])
                 self._bump("stale_copies_deleted", t, len(stale[t]))
-                for c in [c for c in copies[t] if c["id"] in set(stale[t])]:
+                gone = set(stale[t])
+                for c in [c for c in copies[t] if c["id"] in gone]:
                     index[t].pop(c["fields"].get("Identity"), None)
+                # Out of the run's read too, or step 3 deletes it a second
+                # time and the whole daily sweep fails on the unconfirmed
+                # delete: the audit of 2026-09-25, F4.
+                copies[t][:] = [c for c in copies[t] if c["id"] not in gone]
             if create[t]:
                 self.client.create_copies(t, create[t])
                 self._bump("copied", t, len(create[t]))

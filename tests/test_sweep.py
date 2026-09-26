@@ -414,6 +414,51 @@ class TestPrivateRows(Harness):
         self.assertEqual(len(self.jobs()), 1)
         self.assertGreater(report["held_private_unavailable"], 0)
 
+    def test_an_aggregator_identity_never_reaches_a_problem_line(self):
+        """The run log is public; an aggregator's identity is not (ADR-0020).
+        Its copy is past fifteen days with no stored outcome, so the sweep
+        reports it, masked. The audit of 2026-09-25, F5."""
+        r = make_row(7, source="himalayas")
+        self.store_rows([r])
+        self.base.seed(TABLES["rejected-not-a-fit"], {"Identity": "himalayas:7"},
+                       created=NOW - timedelta(days=16))
+        report = self.sweep()
+        self.assertTrue(report["problems"])
+        self.assertFalse([p for p in report["problems"] if "himalayas" in p], report["problems"])
+        self.assertTrue(all("<aggregator row>" in p for p in report["problems"]))
+
+
+class TestTheAuditOf20260925(Harness):
+    def test_a_copy_step_1_removed_is_not_deleted_again_by_step_3(self):
+        """F4: a row now `accepted` whose old `rejected-not-a-fit` copy is
+        past fifteen days and already stored. Step 1 deletes the stale copy;
+        step 3 read the table before that and must not delete it again, or
+        the unconfirmed delete fails the whole daily sweep."""
+        r = make_row(1)
+        self.store_rows([r])
+        self.in_jobs(r, status="accepted", classified_days_ago=1)
+        self.base.seed(TABLES["rejected-not-a-fit"], {"Identity": "greenhouse:1"},
+                       created=NOW - timedelta(days=20))
+        storage.write_atomic("%s/rejected_not_a_fit.json" % self.paths["outcomes_dir"],
+                             dumps([{"identity": "greenhouse:1"}]))
+        report = self.sweep()
+        self.assertEqual(report["stale_copies_deleted"], {"rejected-not-a-fit": 1})
+        self.assertEqual(report["copies_deleted"], {})
+        self.assertEqual(self.copies("rejected-not-a-fit"), [])
+        self.assertEqual(len([c for c in self.base.calls if c["method"] == "DELETE"]), 1)
+
+    def test_twenty_five_copies_go_ten_at_a_time(self):
+        """Airtable takes ten records a call (ADR-0050's Assumptions); the
+        in-memory base now refuses more, and every write here is counted."""
+        rows = [make_row(i) for i in range(1, 26)]
+        self.store_rows(rows)
+        for r in rows:
+            self.in_jobs(r, status="rejected-poor-filtering", classified_days_ago=1)
+        self.sweep(daily=False)
+        self.assertEqual(len(self.copies("rejected-poor-filtering")), 25)
+        posts = [len(c["json"]["records"]) for c in self.base.calls if c["method"] == "POST"]
+        self.assertEqual(posts, [10, 10, 5])
+
 
 class TestNoClockMoves(Harness):
     def test_neither_the_projection_nor_the_sweep_moves_a_clock(self):

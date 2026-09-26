@@ -1084,6 +1084,7 @@ class TestTheSweepInTheRun(unittest.TestCase):
     main, git, on_branch = TestMain.main, TestMain.git, TestMain.on_branch
     identities, last_run_log = TestMain.identities, TestMain.last_run_log
     fresh_machine, private_store = TestMain.fresh_machine, TestMain.private_store
+    in_private = TestMain.in_private
 
     def jobs_row(self, identity, status, days):
         fields = {"Identity": identity, "Title": "AI Engineer", "Board": "greenhouse:careem",
@@ -1140,6 +1141,64 @@ class TestTheSweepInTheRun(unittest.TestCase):
         self.assertIn("month_to_date", log["budget"])
         board = next(b for b in log["boards"] if b["board"] == "greenhouse:careem")
         self.assertEqual(board["oldest_published"], "2026-09-10T05:00:00Z")
+
+    def test_an_aggregator_outcome_reaches_the_private_repository(self):
+        """The second private push carries what the sweep wrote. Without it
+        an aggregator row's outcome never reaches origin, is never verified,
+        and the row never leaves `Jobs`. The audit of 2026-09-25, F5."""
+        run_module.make_private_store = self.private_store
+        self.base.now = datetime.now(timezone.utc)
+        identity = "himalayas:https://x.test/h9"
+        self.base.seed("tblJOBSFAKE000001",
+                       {"Identity": identity, "Title": "AI Engineer", "Board": "himalayas:browse",
+                        "Status": "rejected-poor-filtering"},
+                       classified_at=self.base.now - timedelta(days=16))
+        self.assertEqual(self.main()[0], EXIT_OK)
+        log = self.last_run_log()
+        self.assertIs(log["private_store"]["outcomes_pushed"], True)
+        stored = self.in_private("data", "outcomes/rejected_poor_filtering.json")
+        self.assertEqual([r["identity"] for r in stored], [identity])
+        code, _ = self.git("show", "data:outcomes/rejected_poor_filtering.json")
+        self.assertNotEqual(code, 0, "an aggregator outcome reached the public branch")
+
+    def test_a_month_that_cannot_be_counted_never_costs_the_fetch(self):
+        """The audit of 2026-09-25, F3: the count read in main() escaped every
+        guard, so the run exited 1 and the workflow skipped the push. Now the
+        sweep is skipped and says why, and the fetch is committed."""
+        real = storage.read_month_run_logs
+
+        def unreadable(month, test_mode):
+            raise storage.StorageError("logs-runs/x.json does not hold a list of records")
+        storage.read_month_run_logs = unreadable
+        try:
+            code, _, _ = self.main()
+        finally:
+            storage.read_month_run_logs = real
+        self.assertEqual(code, EXIT_STOPPED_RESUMABLE)
+        log = self.last_run_log()
+        self.assertIn("could not be counted", log["sweep"]["failure"])
+        self.assertEqual(log["sweep"]["calls_used"], 0)
+        self.assertIn("StorageError", log["budget"]["failure"])
+        self.assertEqual(self.identities("data"), ["greenhouse:1000"], "the fetch was lost")
+
+    def test_the_copy_runs_when_the_closure_test_cannot_be_built(self):
+        """The copy needs no closure test (the audit of 2026-09-25, nit 4). It
+        still runs, the daily steps do not, and the run says why."""
+        real = run_module.closure_for
+
+        def broken(*a, **kw):
+            raise ValueError("a run log without a boards list")
+        run_module.closure_for = broken
+        try:
+            self.jobs_row("greenhouse:1000", "accepted", 1)
+            code, _, _ = self.main()
+        finally:
+            run_module.closure_for = real
+        self.assertEqual(code, EXIT_STOPPED_RESUMABLE)
+        log = self.last_run_log()
+        self.assertEqual(log["sweep"]["copied"], {"accepted": 1})
+        self.assertIs(log["sweep"]["daily"], False)
+        self.assertIn("closure test could not be built", log["sweep"]["failure"])
 
 
 class TestBudgetLine(unittest.TestCase):

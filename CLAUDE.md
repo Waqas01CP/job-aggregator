@@ -138,11 +138,14 @@ written** (ADR-0047), with the public fetch committed: the operator's
 decision, 2026-09-24. When the restore failed, the aggregator boards are
 not polled and the aggregator rows are withheld from the display, but **the
 public rows always update**: the operator's decision, D9. Both are in
-ADR-0047's Changes. **The run is marked failed after its push**, so a
-failure cannot look healthy and marking it can never cost data: at once for
-a private-store failure, which needs fixing and does not clear on its own
-(D9), and on the third in a row for a projection failure (D1). The
-operator's decisions, 2026-09-24.
+ADR-0047's Changes. **So does a sweep that fails** (ADR-0050), with the
+fetch committed and nothing deleted on a write not yet read back: the
+operator approved it on 2026-09-25, the seat's decision 6 in the Brief 7
+report. **The run is marked failed after its push**, so a failure cannot
+look healthy and marking it can never cost data: at once for a
+private-store failure, which needs fixing and does not clear on its own
+(D9), and on the third in a row for a projection or sweep failure (D1). The
+operator's decisions, 2026-09-24 and 2026-09-25.
 
 **Log per board every run, including zero.** A board returning nothing for a
 week is a broken adapter. Without a zero logged it looks like a quiet market.

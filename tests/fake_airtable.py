@@ -13,6 +13,13 @@ two clocks the flow depends on, as Airtable keeps them:
 Reads honour `pageSize`, `offset` and `fields[]`, and omit an empty field, as
 Airtable does. Every call is recorded, so a test can count them or assert
 what was never sent.
+
+Writes refuse more than ten records a call, Airtable's documented limit, and
+a delete naming a record that is not there fails whole, nothing deleted. The
+audit of 2026-09-25 found the base accepting any batch and ignoring a missing
+record (F5, nit 1). The status codes are the base's choice; Airtable's exact
+answers to both are unverified. `fail`, when a test sets it, is asked about
+each call first and may answer in the base's place.
 """
 
 import itertools
@@ -21,6 +28,7 @@ from datetime import datetime, timedelta, timezone
 from urllib.parse import urlparse
 
 T0 = datetime(2026, 9, 1, tzinfo=timezone.utc)
+MAX_RECORDS = 10
 
 
 def stamp(dt):
@@ -45,6 +53,7 @@ class FakeBase:
         self.jobs_tables = set(jobs_tables)
         self.now = now or T0
         self.calls = []
+        self.fail = None
         self._ids = itertools.count(1)
 
     # ---------------------------------------------------------- test helpers
@@ -69,8 +78,14 @@ class FakeBase:
     # ------------------------------------------------------------------ wire
     def request(self, method, url, params=None, json=None, headers=None, timeout=None):
         table_id = urlparse(url).path.rstrip("/").split("/")[-1]
-        self.calls.append({"method": method, "table": table_id, "params": params,
-                           "json": json})
+        call = {"method": method, "table": table_id, "params": params, "json": json}
+        self.calls.append(call)
+        if self.fail is not None:
+            answer = self.fail(call)
+            if answer is not None:
+                return answer
+        if method in ("POST", "PATCH") and len((json or {}).get("records", [])) > MAX_RECORDS:
+            return Response(422, {"error": "more than %d records" % MAX_RECORDS})
         handler = {"GET": self._list, "POST": self._create, "PATCH": self._patch,
                    "DELETE": self._delete}[method]
         return handler(table_id, params or [], json or {})
@@ -148,8 +163,12 @@ class FakeBase:
     def _delete(self, table_id, params, body):
         ids = [v for k, v in (params.items() if isinstance(params, dict) else params)
                if k == "records[]"]
+        if len(ids) > MAX_RECORDS:
+            return Response(422, {"error": "more than %d records" % MAX_RECORDS})
+        if any(record_id not in self.table(table_id) for record_id in ids):
+            return Response(404, {"error": "NOT_FOUND"})
         out = []
         for record_id in ids:
-            if self.table(table_id).pop(record_id, None) is not None:
-                out.append({"id": record_id, "deleted": True})
+            self.table(table_id).pop(record_id)
+            out.append({"id": record_id, "deleted": True})
         return Response(200, {"records": out})

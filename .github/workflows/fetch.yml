@@ -149,11 +149,11 @@ jobs:
           # Three exit codes, and only one of them is a failure.
           #   0 finished
           #   2 resumable: the budget was reached, the circuit opened, the
-          #     projection to Airtable failed, or the private store could not
-          #     be restored or written (ADR-0047, the operator's D6). The run
-          #     log names which, the public fetch is committed, and the next
-          #     run picks it up; the next projection sends the whole layer
-          #     again.
+          #     projection to Airtable failed, the sweep failed (ADR-0050),
+          #     or the private store could not be restored or written
+          #     (ADR-0047, the operator's D6). The run log names which, the
+          #     public fetch is committed, and the next run picks it up; the
+          #     next projection sends the whole layer again.
           #   1 failed: either it could not start, or it fetched and could not
           #     store the result. The run's own output above says which.
           if [ "$code" -eq 1 ]; then
@@ -161,7 +161,7 @@ jobs:
             exit 1
           fi
           if [ "$code" -eq 2 ]; then
-            echo "::warning::the run is resumable: it stopped early on the request budget or the circuit breaker, its projection to Airtable failed, or the private store could not be restored or written; the run log says which"
+            echo "::warning::the run is resumable: it stopped early on the request budget or the circuit breaker, its projection to Airtable or its sweep failed, or the private store could not be restored or written; the run log says which"
           fi
           exit 0
 
@@ -174,14 +174,14 @@ jobs:
             echo "no $DATA_BRANCH branch was written, so nothing to push"
           fi
 
-      # The operator's decisions of 2026-09-24. A failed projection exits 2
-      # and shows green, so one that repeats would look healthy: on the third
-      # run in a row it is marked failed. A private-store failure is marked
+      # The operator's decisions of 2026-09-24. A failed projection or sweep
+      # exits 2 and shows green, so one that repeats would look healthy: on
+      # the third run in a row it is marked failed. A private-store failure is marked
       # failed on the first (D9), since it needs fixing. Either way the run has
       # committed and the step above has pushed before this runs. It must stay the last step, after the
       # push, so marking a run failed can never cost it its data.
       - name: Fail the run if it needs attention
         if: steps.fetch.outputs.escalate == 'true'
         run: |
-          echo "::error::the private store failed on this run, or the projection to Airtable has failed three runs in a row; the data is committed and pushed, and the run log names the failure"
+          echo "::error::the private store failed on this run, or the projection to Airtable or the sweep has failed three runs in a row; the data is committed and pushed, and the run log names the failure"
           exit 1

@@ -1,0 +1,80 @@
+[
+  {
+    "label": "two tables of one mode may share an ID",
+    "path": "src/airtable_sweep.py",
+    "find": "        if shared:\n            raise AirtableConfigError(",
+    "replace": "        if False:\n            raise AirtableConfigError("
+  },
+  {
+    "label": "a production run may take a test table's ID",
+    "path": "src/airtable_sweep.py",
+    "find": "        other = {value(n) for n in TABLE_SECRETS[not test_mode].values()} - {\"\"}",
+    "replace": "        other = ({value(n) for n in TABLE_SECRETS[False].values()} - {\"\"}) if test_mode else set()"
+  },
+  {
+    "label": "the month count in main() is unguarded",
+    "path": "src/run.py",
+    "find": "            try:\n                by_branch = month_so_far(iso(run.now), test_mode)\n            except Exception as e:\n                by_branch = {}\n                count_failure = redact_secrets(\"%s: %s\" % (type(e).__name__, e))",
+    "replace": "            by_branch = month_so_far(iso(run.now), test_mode)"
+  },
+  {
+    "label": "the summary crashes on a month that could not be counted",
+    "path": "src/run.py",
+    "find": "    if b is not None and b.get(\"failure\"):",
+    "replace": "    if False:"
+  },
+  {
+    "label": "step 3 deletes a copy step 1 already removed",
+    "path": "src/sweep.py",
+    "find": "                copies[t][:] = [c for c in copies[t] if c[\"id\"] not in gone]",
+    "replace": "                pass"
+  },
+  {
+    "label": "the daily steps run without a closure test",
+    "path": "src/run.py",
+    "find": "    daily = slot != \"evening\" and closure_failure is None",
+    "replace": "    daily = slot != \"evening\""
+  },
+  {
+    "label": "a closure that could not be built is not reported",
+    "path": "src/run.py",
+    "find": "        report[\"failure\"] = None if closure_failure is None else (\n            \"the closure test could not be built, so only the copy ran: %s\" % closure_failure)",
+    "replace": "        report[\"failure\"] = None"
+  },
+  {
+    "label": "masked() lets an aggregator identity into the public run log",
+    "path": "src/sweep.py",
+    "find": "    return identity if is_publishable(source_of(identity)) else \"<aggregator row>\"",
+    "replace": "    return identity"
+  },
+  {
+    "label": "the second private push never runs",
+    "path": "src/run.py",
+    "find": "        save_private_store(store, private_block, run.paths, run_log[\"run_at\"],\n                           key=\"outcomes_pushed\")",
+    "replace": "        pass"
+  },
+  {
+    "label": "the sweep sends fifty records a call, not ten",
+    "path": "src/airtable_sweep.py",
+    "find": "        for start in range(0, len(items), BATCH_SIZE):\n            yield items[start:start + BATCH_SIZE]",
+    "replace": "        for start in range(0, len(items), 50):\n            yield items[start:start + 50]"
+  },
+  {
+    "label": "a read that fails on page 2 or later returns the pages before it",
+    "path": "src/airtable_sweep.py",
+    "find": "            payload = self._call(\"GET\", table, \"airtable read %s, page %d\" % (table, page),\n                                 repeatable=True, params=params)",
+    "replace": "            try:\n                payload = self._call(\"GET\", table, \"airtable read %s, page %d\" % (table, page),\n                                     repeatable=True, params=params)\n            except Exception:\n                if page > 1:\n                    return records\n                raise"
+  },
+  {
+    "label": "a fitness function quotes a clause its record lacks",
+    "path": "tests/test_fitness.py",
+    "find": "\"No module hard-codes a\n        preference.\": the title pool,",
+    "replace": "\"no module hard-codes any of\n        them\": the title pool,"
+  },
+  {
+    "label": "the meta-test checks only that the record exists",
+    "path": "tests/test_fitness.py",
+    "find": "        if normalised(head.group(3)) not in normalised(f.read()):",
+    "replace": "        if False:"
+  }
+]

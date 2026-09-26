@@ -12,7 +12,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src.airtable import AirtableConfigError, CallBudgetExhausted, ResponseMismatch
 from src.airtable_sweep import (CLASSIFICATION_TABLES, COPY_FIELDS, JOBS, TABLE_SECRETS,
                                 SweepClient)
-from src.resilience import TransientError
+from src.resilience import HttpError, TransientError
 from tests.fake_airtable import FakeBase, Response
 
 TOKEN = "patFAKEFAKEFAKE.0123456789abcdef"
@@ -85,6 +85,32 @@ class TestTheTablesAMode(unittest.TestCase):
         self.assertIn("AIRTABLE_ACCEPTED_TEST_TABLE_ID", str(caught.exception))
         self.assertNotIn(PROD["accepted"], str(caught.exception))
 
+    def test_a_production_table_equal_to_a_test_one_is_refused(self):
+        """The reverse of the case above: a production run never writes the
+        test tables either."""
+        with self.assertRaises(AirtableConfigError) as caught:
+            SweepClient.from_env(False, environ=env(AIRTABLE_NOT_A_FIT_TABLE_ID=TEST["rejected-not-a-fit"]))
+        self.assertIn("AIRTABLE_NOT_A_FIT_TABLE_ID", str(caught.exception))
+        self.assertNotIn(TEST["rejected-not-a-fit"], str(caught.exception))
+
+    def test_two_tables_of_one_mode_sharing_an_id_are_refused(self):
+        """The audit of 2026-09-25, F2: `accepted` given the `Jobs` table's ID
+        made every unmarked `Jobs` row look like a stale copy, and step 1
+        deleted them. Any pair, either mode, refused before a request."""
+        keys = (JOBS,) + CLASSIFICATION_TABLES
+        for mode, tables in ((False, PROD), (True, TEST)):
+            for i, a in enumerate(keys):
+                for b in keys[i + 1:]:
+                    with self.subTest(mode=mode, pair=(a, b)):
+                        base = FakeBase({tables[JOBS]})
+                        with self.assertRaises(AirtableConfigError) as caught:
+                            client(base, tables=dict(tables, **{b: tables[a]}))
+                        self.assertIn(a, str(caught.exception))
+                        self.assertNotIn(tables[a], str(caught.exception))
+                        self.assertEqual(base.calls, [])
+        with self.assertRaises(AirtableConfigError):
+            SweepClient.from_env(False, environ=env(AIRTABLE_ACCEPTED_TABLE_ID=PROD[JOBS]))
+
     def test_a_missing_table_is_refused_by_name(self):
         with self.assertRaises(AirtableConfigError) as caught:
             SweepClient.from_env(False, environ=env(AIRTABLE_NOT_A_FIT_TABLE_ID=""))
@@ -130,10 +156,57 @@ class TestReadsAndWrites(unittest.TestCase):
         self.assertEqual(c.calls_used, 3)
 
     def test_an_unconfirmed_delete_is_a_mismatch(self):
+        """A 200 that confirms fewer deletions than were asked is not
+        success. The base now refuses a missing record outright, so the
+        short answer is given in its place."""
         base = FakeBase({PROD[JOBS]})
+        record_id = base.seed(PROD["accepted"], {"Identity": "greenhouse:1"})
+        base.fail = lambda call: (Response(200, {"records": []})
+                                  if call["method"] == "DELETE" else None)
         c = client(base)
         with self.assertRaises(ResponseMismatch):
+            c.delete("accepted", [record_id])
+
+    def test_a_delete_of_a_record_already_gone_fails(self):
+        base = FakeBase({PROD[JOBS]})
+        c = client(base)
+        with self.assertRaises(HttpError):
             c.delete("accepted", ["rec00000000000404"])
+
+    def test_every_write_goes_ten_records_a_call(self):
+        """ADR-0050's Assumptions give Airtable's limit as ten records a call;
+        the base refuses more. The audit of 2026-09-25, F5."""
+        base = FakeBase({PROD[JOBS]})
+        c = client(base)
+        c.create_copies("rejected-poor-filtering", [copy(i) for i in range(25)])
+        ids = [r["_id"] for r in base.rows(PROD["rejected-poor-filtering"])]
+        jobs = [base.seed(PROD[JOBS], {"Identity": "greenhouse:%d" % i}) for i in range(25)]
+        c.set_closed([(j, "2026-09-20") for j in jobs])
+        c.delete("rejected-poor-filtering", ids)
+        for method in ("POST", "PATCH", "DELETE"):
+            with self.subTest(method=method):
+                sizes = [len(call["json"]["records"]) if method != "DELETE" else
+                         len([k for k, _ in call["params"] if k == "records[]"])
+                         for call in base.calls if call["method"] == method]
+                self.assertEqual(sizes, [10, 10, 5])
+        self.assertEqual(base.rows(PROD["rejected-poor-filtering"]), [])
+
+    def test_a_read_that_fails_after_its_first_page_returns_nothing(self):
+        """A partial read is never acted on: a copy on the unread page would
+        otherwise be taken as missing, and its reason or `Stage` lost from the
+        store for good. The audit of 2026-09-25, F5."""
+        base = FakeBase({PROD[JOBS]})
+        for i in range(150):
+            base.seed(PROD["accepted"], {"Identity": "greenhouse:%d" % i})
+
+        def second_page(call):
+            params = call["params"] or []
+            if call["method"] == "GET" and any(k == "offset" for k, _ in params):
+                return Response(422, {"error": "INVALID_OFFSET_VALUE"})
+        base.fail = second_page
+        c = client(base)
+        with self.assertRaises(HttpError):
+            c.list_records("accepted", ("Identity",))
 
     def test_a_create_is_not_retried_after_an_unknown_outcome(self):
         """A 503 after a create may mean the copy was made. Retrying could
