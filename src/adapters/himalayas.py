@@ -110,7 +110,9 @@ def parse(payload, board):
         employer = (entry.get("companyName") or "").strip() or None
         restrictions = entry.get("locationRestrictions")
         if isinstance(restrictions, list) and restrictions:
-            location = ", ".join(str(r) for r in restrictions[:3])
+            # Every country, never the first three: D13's location rule keeps
+            # a posting that names Pakistan anywhere in its list, 2026-09-26.
+            location = ", ".join(str(r) for r in restrictions)
         else:
             # An empty array is not the same as an absent field, and what it
             # means was never established. It is recorded as unstated rather

@@ -1,6 +1,7 @@
 """The filter chain. Cheapest disqualifier first, every drop naming its rule.
 
-Order: expiry, stated experience, annotation vendors, title, seniority.
+Order: expiry, stated experience, annotation vendors, title, seniority,
+location, age.
 
 **Seniority runs after the title rule on purpose.** It drops a posting the
 pool admitted, so its count in the run log is the number of relevant roles
@@ -9,12 +10,14 @@ which keeps the drop log a clean record of what the pool is missing. The
 rule was decided by the operator on 2026-09-17; its words and evidence are in
 docs/reference/seniority-exclusions.md, and no record carries it yet.
 
-**There is no location filter.** The brief defers it to MVP 2. Location is
-recorded on every row and never used to drop, which is why a posting in
-"Karachi, Sindh" or "Karachi, Punjab, Pakistan" survives regardless of how the
-board spells it. ADR-0001's Confirmation and the architecture document's
-component list both still describe a location filter in the chain; neither has
-been updated, and that gap is reported rather than resolved here.
+**Location and age, the operator's decisions of 2026-09-26.** Until then there
+was no location filter, the brief having deferred it. D13 drops a posting
+only when every place it lists is closed to someone in Pakistan, and keeps
+anything unclear. D14 drops a posting more than a week old, which departs
+from ADR-0007's recency-as-a-view for the display; the raw layer still keeps
+everything fetched. Both lists and the limit live in `config/eligibility.json`
+under ADR-0031, and neither decision has a record yet: the architecture
+chat's to write.
 
 **Two rules in the chain have no definition anywhere in the records.**
 
@@ -39,9 +42,11 @@ the drop log is the only feedback signal that the pool is missing a term, so it
 records the title verbatim.
 """
 
+import json
 import os
 import re
 from dataclasses import dataclass
+from datetime import datetime, timedelta, timezone
 
 from .normalise import fold
 
@@ -208,6 +213,74 @@ def load_annotation_vendors(path=None):
 # program rather than quietly filtering nothing.
 ANNOTATION_VENDORS = tuple(load_annotation_vendors())
 
+ELIGIBILITY_PATH = os.path.join(REPO_ROOT, "config", "eligibility.json")
+# A part saying any of these is read as unclear, never as closed: "anywhere
+# except US" names a closed country and means the opposite.
+_NEGATIONS = re.compile(r"\b(except|excluding|excl|outside|not in|other than)\b")
+_PARTS = re.compile(r"[;\n|]| / ")
+
+
+@dataclass(frozen=True)
+class Eligibility:
+    """The operator's D13 and D14, from `config/eligibility.json`: where he
+    can work from and how old a posting may be. Every place is a compiled
+    whole-word pattern over folded text."""
+    max_age_days: int
+    home: tuple
+    onsite_home_city: tuple
+    onsite_markers: tuple
+    open: tuple
+    closed: tuple
+
+
+def _words(terms):
+    return tuple(re.compile(r"\b%s\b" % re.escape(fold(t))) for t in terms)
+
+
+def load_eligibility(path=None):
+    with open(path or ELIGIBILITY_PATH, encoding="utf-8") as f:
+        raw = json.load(f)
+    days = raw.get("max_age_days")
+    if not isinstance(days, int) or isinstance(days, bool) or days < 1:
+        raise FilterError("max_age_days must be a whole number of days, 1 or more")
+    lists = {}
+    for key in ("home", "onsite_home_city", "onsite_markers", "open", "closed"):
+        value = raw.get(key)
+        if not isinstance(value, list) or not value or not all(isinstance(v, str) and v.strip()
+                                                               for v in value):
+            raise FilterError("%s must be a non-empty list of places" % key)
+        lists[key] = _words(value)
+    if any(p.pattern in {q.pattern for q in lists["closed"]} for p in lists["home"]):
+        raise FilterError("a home place is also listed as closed")
+    return Eligibility(max_age_days=days, **lists)
+
+
+ELIGIBILITY = load_eligibility()
+
+
+def classify_place(part, eligibility):
+    """One location, alone: "eligible", "closed" or "unclear". D13's order:
+    a home place wins, unless it says on site outside the home city; then a
+    closed place; then remote or a region that can include Pakistan. A part
+    naming nothing known is unclear, which keeps the posting."""
+    text = fold(part)
+    if not text:
+        return "unclear"
+
+    def names(patterns):
+        return any(p.search(text) for p in patterns)
+    if _NEGATIONS.search(text):
+        return "unclear"
+    if names(eligibility.home):
+        if names(eligibility.onsite_markers) and not names(eligibility.onsite_home_city):
+            return "closed"
+        return "eligible"
+    if names(eligibility.closed):
+        return "closed"
+    if names(eligibility.open):
+        return "eligible"
+    return "unclear"
+
 
 def compile_terms(terms):
     """Word-boundary patterns with an optional plural suffix on the final word.
@@ -321,23 +394,82 @@ def rule_seniority(row, matcher=None, **kw):
     return Verdict(True)
 
 
+def rule_location(row, eligibility, **kw):
+    """D13, the operator's decision of 2026-09-26: "i do not want any jobs
+    shown in the table which i am not eligible to while at the same time i
+    do not want to miss any to which i am eligible to".
+
+    A location may list several places, one per line or separated by
+    semicolons. **The posting is dropped only when every place it lists is
+    closed**: a country other than Pakistan, a region without it, or a
+    Pakistan city other than Karachi that says it is on site. No location,
+    remote with no country, a region that can include Pakistan, or a place
+    this cannot name all keep it: an unrecognised spelling can only let a
+    posting through, never lose one."""
+    text = getattr(row, "location", None)
+    if not text or not str(text).strip():
+        return Verdict(True)
+    parts = [p for p in _PARTS.split(str(text)) if p.strip()]
+    if parts and all(classify_place(p, eligibility) == "closed" for p in parts):
+        return Verdict(False, "location", "every place listed is closed to Pakistan: %r"
+                       % str(text).replace("\n", "; ")[:120])
+    return Verdict(True)
+
+
+def _when(value):
+    try:
+        return datetime.fromisoformat(str(value).replace("Z", "+00:00")).astimezone(timezone.utc)
+    except (TypeError, ValueError):
+        return None
+
+
+def rule_age(row, now_iso, eligibility, **kw):
+    """D14, the operator's decision of 2026-09-26: "i do not want a job post
+    more than a week old". Measured from the ordering date, which is the
+    board's publication date where it has one (ADR-0007). Lever's `createdAt`
+    is not proven to mean publication, so a Lever posting first seen within
+    the limit is kept too: a fresh posting is never lost to a date that means
+    something else. A posting with no date at all is kept."""
+    now = _when(now_iso)
+    dated = _when(getattr(row, "ordering_date", None))
+    if now is None or dated is None:
+        return Verdict(True)
+    cutoff = now - timedelta(days=eligibility.max_age_days)
+    if dated >= cutoff:
+        return Verdict(True)
+    if getattr(row, "published_meaning_unconfirmed", False):
+        seen = _when(getattr(row, "first_seen", None))
+        if seen is not None and seen >= cutoff:
+            return Verdict(True)
+    return Verdict(False, "age", "dated %s, more than %d days before this run"
+                   % (row.ordering_date, eligibility.max_age_days))
+
+
+# Location and age run last, after the title and seniority rules, so their
+# counts in the run log are relevant roles lost to place and to age, and the
+# title rule's drop log stays the pool's whole feedback signal.
 CHAIN = (("expiry", rule_expiry),
          ("experience", rule_experience),
          ("annotation_vendor", rule_annotation_vendor),
          ("title", rule_title),
-         ("seniority", rule_seniority))
+         ("seniority", rule_seniority),
+         ("location", rule_location),
+         ("age", rule_age))
 
 
 def apply_chain(rows, now_iso, matcher=None, max_years=None,
-                vendors=ANNOTATION_VENDORS):
-    """Returns (kept, drops). Each drop names the rule that caused it."""
+                vendors=ANNOTATION_VENDORS, eligibility=None):
+    """Returns (kept, drops). Each drop names the rule that caused it.
+    `eligibility` is read at the call, not at import, so a test of another
+    mechanism can hold the operator's D13 and D14 aside explicitly."""
     matcher = matcher or TitleMatcher()
+    eligibility = eligibility or ELIGIBILITY
     kept, drops = [], []
     for row in rows:
         verdict, reason = Verdict(True), None
         for name, rule in CHAIN:
             verdict = rule(row, now_iso=now_iso, matcher=matcher,
-                           max_years=max_years, vendors=vendors)
+                           max_years=max_years, vendors=vendors, eligibility=eligibility)
             reason = verdict.reason or reason
             if not verdict.keep:
                 drops.append({"identity": row.identity, "rule": verdict.rule,

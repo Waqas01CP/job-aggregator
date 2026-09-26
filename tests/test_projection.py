@@ -21,6 +21,7 @@ from src.filters import TitleMatcher
 from src.normalise import Row, dumps, normalise
 from tests.test_normalise import NOW as NORMALISE_NOW
 from tests.test_normalise import SPEECHIFY, posting
+from tests.eligibility import rules_aside
 
 MATCHER = TitleMatcher()
 NOW = "2026-09-23T12:00:00.000000Z"
@@ -192,7 +193,10 @@ class TestTheRowSent(Harness):
         row = normalise([posting(title=raw, location="Lahore, Pakistan",
                                  board_id="greenhouse:speechify")], SPEECHIFY, NORMALISE_NOW)[0]
         storage.write_atomic(self.paths["filtered"], dumps([row.as_record()]))
-        client, _ = self.project()
+        # About the title sent, not the posting's age: the fixture is dated
+        # before the clock this projection runs on.
+        with rules_aside():
+            client, _ = self.project()
         self.assertEqual(client.sent[0]["Title"], normalised)
         stored = storage.read_records(self.paths["filtered"])[0]
         self.assertEqual(stored["title"], raw)
@@ -311,13 +315,18 @@ class TestTheSkipOnARealGroup(unittest.TestCase):
         group in the saved Speechify response, 138 members, one of which,
         not the representative, is in a store. The whole group is skipped.
         The 170-member group the brief names is production's; this is the
-        cassette's."""
+        cassette's. About grouping and the skip, so the operator's location
+        and age rules are held aside: most of Speechify's cities are outside
+        Pakistan and the saved response is weeks old."""
         from src.adapters import greenhouse
         from src.dedupe import group
         from src.filters import apply_chain
         from tests.test_adapters import cassette
         rows = normalise(greenhouse.parse(cassette("greenhouse-speechify-titles.json"),
                                           SPEECHIFY).postings, SPEECHIFY, NORMALISE_NOW)
+        aside = rules_aside()
+        aside.__enter__()
+        self.addCleanup(aside.__exit__, None, None, None)
         kept, _ = apply_chain(rows, NOW, matcher=MATCHER)
         biggest = max(group([r for r, _ in kept]), key=lambda g: len(g.members))
         self.assertGreater(len(biggest.members), 100)

@@ -35,12 +35,14 @@ def row(identity, title="AI Engineer", source="greenhouse", expires_at=None):
     return Row(identity=identity, source=source, board_id="%s:b" % source,
                external_id=identity.split(":")[-1], title=title,
                title_normalised=title, url="https://x.test/%s" % identity,
-               url_provenance="given", first_seen="2026-09-01T00:00:00.000000Z",
-               ordering_date="2026-09-01T00:00:00.000000Z",
+               url_provenance="given", first_seen="2026-09-15T00:00:00.000000Z",
+               ordering_date="2026-09-15T00:00:00.000000Z",
                ordering_date_source="publication", employer="E",
                employer_provenance="payload", location="Karachi",
-               published_at="2026-09-01T00:00:00.000000Z",
+               published_at="2026-09-15T00:00:00.000000Z",
                published_field="first_published", expires_at=expires_at)
+# Dated three days before NOW: the operator's D14 drops a posting more than a
+# week old, and these tests are about the gap, not about age.
 
 
 class BackfillCase(unittest.TestCase):

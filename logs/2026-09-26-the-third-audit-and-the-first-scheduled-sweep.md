@@ -260,3 +260,113 @@ Changes row there in the record's first week.
 - the pool-order mutation swaps sections 3 and 4 of today's pool.
 
 Every find in every mutation file now matches exactly once `[VERIFIED]`. Whether the suite still catches them follows in the next commit.
+
+## D13 and D14: eligibility and age, built
+
+**The operator's words, 2026-09-26.**
+- **D14:** "i do not want a job post more than a week old because after a week
+  the chances of getting a job form that is drastically less ... the main
+  intention for creating this entire system were two: 1. i appear first and
+  apply within the few hour when the posting goes live ... 2. that i get the
+  most recent of posts and not more than week old".
+- **D13:** "any onsite post besides karachi, pakistan are automatically out.
+  the for the remote work it is worldwide but ... you are either a resident
+  of a specific country or have working permission to that so those are out
+  as well automatically besides pakistan ... time zone is not an issue ... if
+  they say that they are hiring from anywhere like worldwide or lets say no
+  mention of a country i.e. null or the said restrictions then they should be
+  filtered in. the goal is simple, i do not want any jobs shown in the table
+  which i am not eligible to while at the same time i do not want to miss any
+  to which i am eligible to."
+
+**Measured before building** `[VERIFIED]`:
+- **Himalayas, 100 postings from five pages of its feed:**
+  - 93 restricted to named countries, none of them Pakistan;
+  - 7 with no restriction;
+  - every value a plain country name, no regions;
+  - lists of one country on 98, two on one, three on one;
+  - the adapter kept only the first three countries, so a list naming
+    Pakistan fourth would have read as closed.
+- **The ATS boards' locations are free text.** On the 346 stored public
+  rows they take a few shapes:
+  - "city, country", sometimes with a US state, sometimes a list;
+  - a bare "Remote";
+  - "United States - Remote";
+  - regions such as "Latin America".
+- **Lever's `createdAt`**, against when the pipeline first saw each posting
+  after its board's first contact:
+  - 22 postings, median lag 7.1 hours;
+  - but 6 first seen more than a week after their `createdAt`.
+- **Greenhouse:** 161 such postings, median lag 632 hours. These are old
+  requisitions reposted under new IDs with their original
+  `first_published`: what D14 is meant to remove.
+
+**Built** `[VERIFIED]` by tests, and each guarantee by a mutation:
+- **`rule_location`, D13.** A posting is dropped only when every place it
+  lists is closed:
+  - a country other than Pakistan;
+  - a region without it;
+  - a Pakistan city other than Karachi that says it is on site or hybrid.
+
+  Kept:
+  - no location, which is how Himalayas' empty restriction reads;
+  - "Remote" naming no country;
+  - a region that can include Pakistan;
+  - anything saying "except";
+  - any place the list cannot name.
+
+  An unrecognised spelling can only let a posting through, never lose one.
+- **`rule_age`, D14.** A posting whose publication date is more than 7 days
+  before the run is dropped. Two exceptions:
+  - A Lever posting first seen within the week is kept, since its date is
+    unproven.
+  - A posting with no date is kept.
+- **Both come last in the chain**, after title and seniority, so each count in
+  the run log is relevant roles lost to place or to age, and the title rule's
+  drop log stays the pool's feedback.
+- **The places and the week** live in `config/eligibility.json` under
+  ADR-0031.
+- **The Himalayas adapter now keeps every country.**
+- **Tests of other mechanisms**, on saved responses weeks old or fixtures
+  from before any clock, now hold the two rules aside explicitly through
+  `tests/eligibility.py`. The fixtures of the fetch, backfill and sweep tests
+  were re-dated within the week instead.
+
+**The effect on `Jobs`**, the 101 rows read through the connector at about
+12:10Z with both rules applied offline `[VERIFIED]`:
+- **The 15 classified rows are untouched.**
+- **Of the 86 unclassified rows, 13 stay:**
+  - 12 Himalayas roles with no restriction;
+  - one Lever role in "Kingswinford", a place the list cannot name, so kept.
+- **73 go:** 45 for location, 17 for both, 11 for age alone.
+- **The 11 age-only rows include four Pakistan roles:** MLOps Engineer and AI
+  Evaluation Engineer at Joblogic (9 days old), and AI/ML Engineer and QC
+  Automation Engineer, older.
+- **Nothing goes before it is saved.** The projection stops sending them at
+  the next run. The next daily sweep, 2026-09-27's morning, saves them to
+  the removed-unreviewed store. The one after removes them from `Jobs`. A row
+  the operator marks before then is untouched.
+
+**The call budget.** `Jobs` falls from 101 rows to about 28, so a projection
+costs about 3 calls again `[INFERRED]`. The Blocked row on the month's
+calls is mostly answered.
+
+**Himalayas' page cap does not go down with this**, and the operator asked
+to be told if it would not.
+- The cap limits what is fetched; the rules act on what was fetched.
+- On 2026-09-26's morning run, 499 new postings covered about 7.3 hours of
+  publications. That is about 1,600 a day against a cap of 500 a morning
+  `[INFERRED]`.
+- At the 7% unrestricted share measured above, and the 3% the title and
+  seniority rules keep, about two eligible, matching Himalayas roles a day go
+  unfetched `[INFERRED]`.
+- The options are his, and ADR-0048's; its assumption that one poll a day
+  loses nothing has now failed on three runs.
+
+**Records.** Neither decision has one.
+- D14 departs from ADR-0007's recency-as-a-view for the display. The raw
+  layer still keeps everything fetched.
+- D13 is the location filter ADR-0001's Confirmation always described.
+- Both are the architecture chat's to write.
+
+**Verified for it**, at 2026-09-26T12:24Z: 652 tests on Python 3.12 and 3.11; the mutation runs for D13, D14, D11, the private store and the files the chain change touched still going at this commit, results in the next `[VERIFIED]`. The mutation runs that were still going at `6ef16eb` are among them.

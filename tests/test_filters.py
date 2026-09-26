@@ -134,8 +134,10 @@ class TestTitleMatching(unittest.TestCase):
         self.assertIn("machine learning", kept[0][1])
 
 
-class TestNoLocationFilter(unittest.TestCase):
-    """The brief defers location to MVP 2. These are its named cases."""
+class TestTheLocationRule(unittest.TestCase):
+    """D13, the operator's decision of 2026-09-26: no posting he is not
+    eligible for, and none missed that he is. The brief's named cases of the
+    days before any location rule still hold."""
 
     def test_karachi_sindh_is_not_dropped(self):
         self.assertTrue(keep(location="Karachi, Sindh")[0])
@@ -152,9 +154,83 @@ class TestNoLocationFilter(unittest.TestCase):
     def test_an_absent_location_is_not_dropped(self):
         self.assertTrue(keep(location=None)[0])
 
-    def test_no_rule_in_the_chain_is_named_location(self):
-        from src.filters import CHAIN
-        self.assertNotIn("location", [name for name, _ in CHAIN])
+    def test_a_posting_only_for_another_country_is_dropped(self):
+        """"if there is an ai engineer post from usa and it says only us
+        people then i am out"."""
+        for location in ("United States", "Remote, United States", "United States - Remote",
+                         "San Jose, CA, USA", "Bangalore, India", "Latin America",
+                         "Remote (Europe)", "Lisbon, Portugal\nPrague, Czechia\nWarsaw, Poland"):
+            with self.subTest(location=location):
+                kept, drop = keep(location=location)
+                self.assertFalse(kept)
+                self.assertEqual(drop["rule"], "location")
+
+    def test_pakistan_anywhere_in_the_list_keeps_it(self):
+        for location in ("Pakistan", "Lahore, Punjab, Pakistan", "India, Pakistan",
+                         "United States, Pakistan", "Cairo; Islamabad; Karachi; Lahore"):
+            with self.subTest(location=location):
+                self.assertTrue(keep(location=location)[0])
+
+    def test_on_site_in_pakistan_is_only_karachi(self):
+        """"any onsite post besides karachi, pakistan are automatically out".
+        A Pakistan location that does not say on site is kept: that it is on
+        site cannot be read from it."""
+        self.assertFalse(keep(location="Hybrid - Lahore, Pakistan")[0])
+        self.assertFalse(keep(location="On-site, Islamabad, Pakistan")[0])
+        self.assertTrue(keep(location="On-site, Karachi, Pakistan")[0])
+        self.assertTrue(keep(location="Lahore, Pakistan")[0])
+
+    def test_anything_unclear_is_kept(self):
+        """An unrecognised place, or one saying "except", can only let a
+        posting through, never lose one."""
+        for location in ("Manila", "Kingswinford", "Hybrid - Vancouver",
+                         "Remote, anywhere except US", "EMEA", "Asia Pacific"):
+            with self.subTest(location=location):
+                self.assertTrue(keep(location=location)[0])
+
+    def test_a_word_is_never_matched_inside_another(self):
+        """"India" must not close "Indiana", nor "Oman" close "Romania"'s
+        neighbour: whole words only. Indiana is not listed, so it is unclear
+        and kept."""
+        self.assertTrue(keep(location="Indianapolis, Indiana")[0])
+
+
+class TestTheAgeRule(unittest.TestCase):
+    """D14, the operator's decision of 2026-09-26: "i do not want a job post
+    more than a week old". NOW is 2026-09-16."""
+
+    def row_dated(self, published, source="greenhouse", first_seen=None):
+        r = row()
+        r.published_at = r.ordering_date = published
+        r.published_meaning_unconfirmed = source == "lever"
+        if first_seen:
+            r.first_seen = first_seen
+        return r
+
+    def test_a_week_old_is_kept_and_a_day_more_is_dropped(self):
+        kept, drops = apply_chain([self.row_dated("2026-09-09T12:00:00Z"),
+                                   self.row_dated("2026-09-09T11:59:00Z")],
+                                  NOW_ISO, matcher=MATCHER)
+        self.assertEqual(len(kept), 1)
+        self.assertEqual(drops[0]["rule"], "age")
+
+    def test_a_lever_posting_first_seen_this_week_is_kept(self):
+        """Lever's createdAt is not proven to mean publication; a fresh
+        posting must not be lost to it. A Greenhouse date is trusted."""
+        lever = self.row_dated("2026-08-01T00:00:00Z", source="lever",
+                               first_seen="2026-09-15T00:00:00Z")
+        greenhouse = self.row_dated("2026-08-01T00:00:00Z", first_seen="2026-09-15T00:00:00Z")
+        kept, drops = apply_chain([lever, greenhouse], NOW_ISO, matcher=MATCHER)
+        self.assertEqual([r.published_meaning_unconfirmed for r, _ in kept], [True])
+        self.assertEqual([d["rule"] for d in drops], ["age"])
+
+    def test_a_posting_with_no_date_is_kept(self):
+        r = self.row_dated(None)
+        self.assertEqual(len(apply_chain([r], NOW_ISO, matcher=MATCHER)[0]), 1)
+
+    def test_the_limit_is_configuration(self):
+        from src.filters import ELIGIBILITY
+        self.assertEqual(ELIGIBILITY.max_age_days, 7)
 
 
 class TestExpiry(unittest.TestCase):

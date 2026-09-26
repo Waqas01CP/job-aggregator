@@ -195,3 +195,9 @@ The row below moved on 2026-09-26, resolved by the operator's D12 and built the 
 | Item | Blocked on | Who | Since |
 |---|---|---|---|
 | The `accepted` copy on a cleared or changed status | The audit of 2026-09-25, F1: step 1 deletes the old copy, `Stage` included, when a status is cleared or changed, as ADR-0050 line 71 reads, against the `accepted` table's own "deleted by hand only" and `retention.md`. Not yet triggered: production's `accepted` is empty. The operator's D12, then the architecture chat records it; the stale Airtable descriptions (F8) are rewritten with it | Operator, then architecture chat | 2026-09-26 |
+
+The row below moved on 2026-09-26, answered by the operator's D13 and built the same day: a posting is dropped only when every place it lists is closed to someone in Pakistan.
+
+| Item | Blocked on | Who | Since |
+|---|---|---|---|
+| A location rule for Himalayas | Its feed restricts most postings to named countries (17 of 20 on one page, none naming Pakistan) and time zones. Which places and zones the operator is reachable for is his to say (D13); a rule then needs a record | Operator, then architecture chat | 2026-09-26 |

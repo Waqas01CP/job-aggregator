@@ -1,0 +1,30 @@
+{
+  "source": "The operator's decisions of 2026-09-26: D14, no posting more than a week old; D13, no posting he is not eligible for, and none missed that he is. Preferences are configuration under ADR-0031. Every place below is matched as whole words on the folded location text, never as a substring.",
+  "max_age_days": 7,
+  "max_age_days_note": "D14: 'i do not want a job post more than a week old'. A posting whose publication date is older than this at the run is dropped. Where the board's date is unconfirmed as a publication date (Lever's createdAt), a posting first seen within this many days is kept too, so a fresh posting is never lost to a date that means something else.",
+  "home": ["pakistan", "karachi", "lahore", "islamabad", "rawalpindi", "faisalabad", "multan", "peshawar", "quetta", "sialkot", "gujranwala"],
+  "home_note": "Places in Pakistan. A location naming one is eligible. Hyderabad is left out on purpose: India has one too, and 'Hyderabad, India' must not read as Pakistan.",
+  "onsite_home_city": ["karachi"],
+  "onsite_home_city_note": "D13: 'any onsite post besides karachi, pakistan are automatically out'. A Pakistan location that says it is on site or hybrid is eligible only in these cities. One that says neither is kept, since whether it is on site cannot be read from it.",
+  "onsite_markers": ["on site", "onsite", "hybrid", "in office", "office based", "office"],
+  "open": ["remote", "anywhere", "worldwide", "global", "globally", "international", "work from anywhere", "asia", "south asia", "apac", "asia pacific", "emea", "mena", "middle east"],
+  "open_note": "A location naming only these is eligible: remote with no country named, and regions that can include Pakistan. D13: 'if they say that they are hiring from anywhere like worldwide or lets say no mention of a country then they should be filtered in'.",
+  "closed": [
+    "united states", "usa", "us", "america", "united kingdom", "uk", "great britain", "britain", "england", "scotland", "wales", "northern ireland",
+    "latin america", "latam", "north america", "south america", "central america", "americas", "europe", "european union", "eu", "africa", "oceania", "nordics", "scandinavia", "dach", "benelux", "caribbean", "balkans",
+    "afghanistan", "albania", "algeria", "andorra", "angola", "anguilla", "antigua and barbuda", "argentina", "armenia", "australia", "austria", "azerbaijan",
+    "bahamas", "bahrain", "bangladesh", "barbados", "belarus", "belgium", "belize", "benin", "bhutan", "bolivia", "bosnia and herzegovina", "bosnia", "botswana", "brazil", "brunei", "bulgaria", "burkina faso", "burundi",
+    "cambodia", "cameroon", "canada", "cape verde", "cabo verde", "central african republic", "chad", "chile", "china", "colombia", "comoros", "congo", "costa rica", "cote d ivoire", "ivory coast", "croatia", "cuba", "cyprus", "czechia", "czech republic",
+    "denmark", "djibouti", "dominica", "dominican republic", "ecuador", "egypt", "el salvador", "equatorial guinea", "eritrea", "estonia", "eswatini", "swaziland", "ethiopia",
+    "fiji", "finland", "france", "gabon", "gambia", "georgia", "germany", "ghana", "greece", "grenada", "guatemala", "guinea", "guinea bissau", "guyana",
+    "haiti", "honduras", "hong kong", "hungary", "iceland", "india", "indonesia", "iran", "iraq", "ireland", "israel", "italy", "jamaica", "japan", "jordan",
+    "kazakhstan", "kenya", "kiribati", "korea", "south korea", "north korea", "kosovo", "kuwait", "kyrgyzstan", "laos", "latvia", "lebanon", "lesotho", "liberia", "libya", "liechtenstein", "lithuania", "luxembourg",
+    "macau", "madagascar", "malawi", "malaysia", "maldives", "mali", "malta", "marshall islands", "mauritania", "mauritius", "mexico", "micronesia", "moldova", "monaco", "mongolia", "montenegro", "morocco", "mozambique", "myanmar", "burma",
+    "namibia", "nauru", "nepal", "netherlands", "the netherlands", "holland", "new zealand", "nicaragua", "niger", "nigeria", "north macedonia", "macedonia", "norway", "oman",
+    "palau", "palestine", "panama", "papua new guinea", "paraguay", "peru", "philippines", "poland", "portugal", "puerto rico", "qatar", "romania", "russia", "russian federation", "rwanda",
+    "saint kitts and nevis", "saint lucia", "saint vincent and the grenadines", "samoa", "san marino", "sao tome and principe", "saudi arabia", "ksa", "senegal", "serbia", "seychelles", "sierra leone", "singapore", "slovakia", "slovenia", "solomon islands", "somalia", "south africa", "south sudan", "spain", "sri lanka", "sudan", "suriname", "sweden", "switzerland", "syria",
+    "taiwan", "tajikistan", "tanzania", "thailand", "timor leste", "east timor", "togo", "tonga", "trinidad and tobago", "tunisia", "turkey", "turkiye", "turkmenistan", "tuvalu",
+    "uganda", "ukraine", "united arab emirates", "uae", "uruguay", "uzbekistan", "vanuatu", "vatican", "venezuela", "vietnam", "viet nam", "yemen", "zambia", "zimbabwe"
+  ],
+  "closed_note": "Countries other than Pakistan, their common short forms, and regions that cannot include it. A location every part of which names one of these, and no home place, is out: 'if there is an ai engineer post from usa and it says only us people then i am out'. A part naming nothing known is kept, so an unrecognised spelling can only let a posting through, never lose one."
+}

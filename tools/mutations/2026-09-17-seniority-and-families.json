@@ -2,14 +2,14 @@
  {
   "label": "chain: seniority rule removed",
   "path": "src/filters.py",
-  "find": "         (\"title\", rule_title),\n         (\"seniority\", rule_seniority))",
-  "replace": "         (\"title\", rule_title))"
+  "find": "         (\"title\", rule_title),\n         (\"seniority\", rule_seniority),\n",
+  "replace": "         (\"title\", rule_title),\n"
  },
  {
   "label": "chain: seniority runs before the title rule",
   "path": "src/filters.py",
-  "find": "         (\"title\", rule_title),\n         (\"seniority\", rule_seniority))",
-  "replace": "         (\"seniority\", rule_seniority),\n         (\"title\", rule_title))"
+  "find": "         (\"title\", rule_title),\n         (\"seniority\", rule_seniority),\n",
+  "replace": "         (\"seniority\", rule_seniority),\n         (\"title\", rule_title),\n"
  },
  {
   "label": "rule: never drops",

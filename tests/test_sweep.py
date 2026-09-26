@@ -39,12 +39,12 @@ TABLES = {JOBS: "tblPRODJOBS000001", "rejected-not-a-fit": "tblPRODNOTFIT0001",
           "rejected-poor-filtering": "tblPRODPOORFILT01", "accepted": "tblPRODACCEPT0001"}
 
 
-def make_row(i, title="AI Engineer", source="greenhouse", published="2026-09-20T10:00:00Z",
+def make_row(i, title="AI Engineer", source="greenhouse", published="2026-10-08T10:00:00Z",
              employer=None, expires=None, location="Lahore"):
     return Row(identity="%s:%d" % (source, i), source=source, board_id="%s:acme" % source,
                external_id=str(i), title=title, title_normalised=title,
                url="https://x.test/%d" % i, url_provenance="payload",
-               first_seen="2026-09-20T10:00:00Z", ordering_date=published,
+               first_seen=published, ordering_date=published,
                ordering_date_source="publication", employer=employer or "Acme %d" % i,
                location=location, published_at=published, published_field="first_published",
                expires_at=expires)
@@ -493,8 +493,8 @@ class TestStep6Removed(Harness):
     def test_a_row_no_longer_its_groups_display_row_is_removed(self):
         """A new member published earlier becomes the representative, the
         projection sends the group under it, and the old row is a duplicate."""
-        old = make_row(5, employer="Acme", published="2026-09-20T10:00:00Z")
-        earlier = make_row(3, employer="Acme", published="2026-09-20T10:00:00Z")
+        old = make_row(5, employer="Acme", published="2026-10-08T10:00:00Z")
+        earlier = make_row(3, employer="Acme", published="2026-10-08T10:00:00Z")
         self.store_rows([old, earlier])
         self.in_jobs(old)
         self.sweep()

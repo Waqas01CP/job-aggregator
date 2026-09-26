@@ -90,6 +90,16 @@ class TestAdapter(unittest.TestCase):
                              "pubDate": 1789141813, "locationRestrictions": []}]}
         self.assertIsNone(himalayas.parse(payload, BOARD).postings[0].location)
 
+    def test_every_country_is_kept_so_pakistan_fourth_still_counts(self):
+        """D13 keeps a posting that names Pakistan anywhere in its list. The
+        adapter once kept the first three countries only, which would have
+        dropped this one."""
+        payload = {"jobs": [{"guid": "https://x.test/1", "title": "AI Engineer",
+                             "applicationLink": "https://x.test/1", "pubDate": 1789141813,
+                             "locationRestrictions": ["United States", "Canada",
+                                                      "United Kingdom", "Pakistan"]}]}
+        self.assertIn("Pakistan", himalayas.parse(payload, BOARD).postings[0].location)
+
     def test_wrong_envelope_raises(self):
         with self.assertRaises(AdapterError):
             himalayas.parse([], BOARD)

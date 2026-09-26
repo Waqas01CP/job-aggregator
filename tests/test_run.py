@@ -38,6 +38,10 @@ def read_text(path):
 
 
 NOW = datetime(2026, 9, 16, 12, 0, tzinfo=timezone.utc)
+# The fetch fixtures' publication date: a day before the moment the suite
+# runs, since main() runs on the real clock and the operator's D14 drops a
+# posting more than a week old.
+RECENT = datetime.now(timezone.utc).replace(microsecond=0) - timedelta(days=1)
 MATCHER = TitleMatcher()
 
 GH = Board(platform="greenhouse", slug="careem")
@@ -49,7 +53,7 @@ HIM_MORNING = Board(platform="himalayas", slug="browse", poll_slots=("morning",)
 
 def him_payload(guids):
     return {"jobs": [{"guid": "https://x.test/%s" % g, "title": "AI Engineer",
-                      "applicationLink": "https://x.test/%s" % g, "pubDate": 1789141813}
+                      "applicationLink": "https://x.test/%s" % g, "pubDate": int(RECENT.timestamp())}
                      for g in guids], "nextCursor": None}
 
 
@@ -60,7 +64,7 @@ def file_url(path):
 def gh_payload(titles, start=0):
     return {"jobs": [{"id": 1000 + start + i, "title": t,
                       "absolute_url": "https://boards.test/%d" % (1000 + start + i),
-                      "first_published": "2026-09-10T05:00:00+00:00",
+                      "first_published": RECENT.isoformat(),
                       "company_name": "Careem",
                       "location": {"name": "Karachi"}}
                      for i, t in enumerate(titles)]}
@@ -1201,7 +1205,7 @@ class TestTheSweepInTheRun(unittest.TestCase):
         log = self.last_run_log()
         self.assertIn("month_to_date", log["budget"])
         board = next(b for b in log["boards"] if b["board"] == "greenhouse:careem")
-        self.assertEqual(board["oldest_published"], "2026-09-10T05:00:00Z")
+        self.assertEqual(board["oldest_published"], RECENT.strftime("%Y-%m-%dT%H:%M:%SZ"))
 
     def test_an_aggregator_outcome_reaches_the_private_repository(self):
         """The second private push carries what the sweep wrote. Without it

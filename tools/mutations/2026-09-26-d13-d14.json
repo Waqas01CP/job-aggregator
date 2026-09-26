@@ -1,0 +1,86 @@
+[
+  {
+    "label": "a posting closed to Pakistan is kept",
+    "path": "src/filters.py",
+    "find": "    if parts and all(classify_place(p, eligibility) == \"closed\" for p in parts):",
+    "replace": "    if False:"
+  },
+  {
+    "label": "one closed place drops a posting that lists an eligible one",
+    "path": "src/filters.py",
+    "find": "    if parts and all(classify_place(p, eligibility) == \"closed\" for p in parts):",
+    "replace": "    if parts and any(classify_place(p, eligibility) == \"closed\" for p in parts):"
+  },
+  {
+    "label": "a Pakistan place never wins",
+    "path": "src/filters.py",
+    "find": "    if names(eligibility.home):",
+    "replace": "    if False:"
+  },
+  {
+    "label": "on site outside Karachi is kept",
+    "path": "src/filters.py",
+    "find": "        if names(eligibility.onsite_markers) and not names(eligibility.onsite_home_city):",
+    "replace": "        if False:"
+  },
+  {
+    "label": "an unrecognised place drops the posting",
+    "path": "src/filters.py",
+    "find": "    if names(eligibility.open):\n        return \"eligible\"\n    return \"unclear\"",
+    "replace": "    if names(eligibility.open):\n        return \"eligible\"\n    return \"closed\""
+  },
+  {
+    "label": "an except is read as closed",
+    "path": "src/filters.py",
+    "find": "    if _NEGATIONS.search(text):\n        return \"unclear\"",
+    "replace": "    pass"
+  },
+  {
+    "label": "a place is matched inside another word",
+    "path": "src/filters.py",
+    "find": "    return tuple(re.compile(r\"\\b%s\\b\" % re.escape(fold(t))) for t in terms)",
+    "replace": "    return tuple(re.compile(re.escape(fold(t))) for t in terms)"
+  },
+  {
+    "label": "Himalayas keeps only three countries",
+    "path": "src/adapters/himalayas.py",
+    "find": "            location = \", \".join(str(r) for r in restrictions)",
+    "replace": "            location = \", \".join(str(r) for r in restrictions[:3])"
+  },
+  {
+    "label": "a posting past the week is kept",
+    "path": "src/filters.py",
+    "find": "    if dated >= cutoff:",
+    "replace": "    if True:"
+  },
+  {
+    "label": "the Lever exception covers every board",
+    "path": "src/filters.py",
+    "find": "    if getattr(row, \"published_meaning_unconfirmed\", False):",
+    "replace": "    if True:"
+  },
+  {
+    "label": "the Lever exception is lost",
+    "path": "src/filters.py",
+    "find": "        if seen is not None and seen >= cutoff:",
+    "replace": "        if False:"
+  },
+  {
+    "label": "a posting with no date is dropped",
+    "path": "src/filters.py",
+    "find": "    if now is None or dated is None:\n        return Verdict(True)",
+    "replace": "    if now is None or dated is None:\n        return Verdict(False, \"age\", \"no date\")"
+  },
+  {
+    "label": "the age rule is out of the chain",
+    "path": "src/filters.py",
+    "find": "         (\"location\", rule_location),\n         (\"age\", rule_age))",
+    "replace": "         (\"location\", rule_location),)"
+  },
+  {
+    "label": "the week is not the configured one",
+    "path": "config/eligibility.json",
+    "find": "  \"max_age_days\": 7,",
+    "replace": "  \"max_age_days\": 70,"
+  }
+]
