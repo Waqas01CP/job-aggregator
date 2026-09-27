@@ -1,6 +1,6 @@
 ---
 type: how-to
-description: The operator's steps for the Airtable token, the repository secrets, and the base changes ADR-0046 and ADR-0047 require. Steps 1 to 3 are done; steps 4 and 5 are not.
+description: The operator's steps for the Airtable token, the repository secrets, and the base changes ADR-0046 and ADR-0047 require. Every step is done, twelve secrets in all; the file stays as the procedure for replacing a token.
 status: current
 ---
 
@@ -9,6 +9,12 @@ status: current
 **Steps 1 to 3 are done.** The token exists, the seven Airtable secrets are
 set, and the `To review` view is created. Steps 4 and 5 are outstanding and
 come from ADR-0046 and ADR-0047, both written after this file.
+
+*(Annotated 2026-09-27: every step is done. Step 4 on 2026-09-24, step 5 on
+2026-09-24, and the three test tables' secrets on 2026-09-25, so twelve
+secrets are set: the ten Airtable ones below and the private repository's
+two. What this file still serves is replacing a token: the private store's
+expires on 2027-01-01, and step 5.2 is how to make its successor.)*
 
 **No identifier appears in this file.** The repository is public. The base and
 table IDs are given to the operator in the session that built the tables, and
@@ -73,6 +79,13 @@ on every run, which costs an API call against a budget ADR-0046 sizes at about
 36% of the allowance, and which breaks silently if a table is renamed. An ID
 is stable and free.
 
+*(Annotated 2026-09-27: three more, for the test copies of the classification
+tables the operator created on 2026-09-24, D7. Added by him on 2026-09-25:
+`AIRTABLE_NOT_A_FIT_TEST_TABLE_ID`, `AIRTABLE_POOR_FILTERING_TEST_TABLE_ID`
+and `AIRTABLE_ACCEPTED_TEST_TABLE_ID`, each the ID of the matching `test`
+table. Ten Airtable secrets in total; `.github/workflows/fetch.yml` names
+every one.)*
+
 **Secret names are exact and case-sensitive.** A typo produces an empty value
 at run time, not an error, which is the failure that looks like a bug in the
 writer.
@@ -95,6 +108,14 @@ holds exactly the rows whose `Status` you have not yet set.
 ## Step 4: the base changes ADR-0046 needs, by hand
 
 Not done. The sweep cannot be built until these exist.
+
+*(Annotated 2026-09-27: done 2026-09-24. The operator renamed the old
+choices rather than adding new ones, so every marked row kept its meaning:
+`applied` became `accepted`, `rejected_pipeline` became
+`rejected-poor-filtering`, `rejected_choice` became `rejected-not-a-fit`,
+and `expired_before_review` was removed. The names are the table names, not
+the `not fit` and `poor filtering` below. `docs/reference/airtable-schema.md`
+has the field as it stands.)*
 
 *(Annotated 2026-09-23: half done. Items 2 and 3 were done on 2026-09-20,
 when `Classified at` was created on `Jobs` and `Jobs test` watching `Status`
@@ -121,6 +142,12 @@ mapping to tables is in ADR-0046 and the clocks are in
 ## Step 5: the private aggregator repository, ADR-0047
 
 Not done. Himalayas rows are currently fetched and discarded.
+
+*(Annotated 2026-09-27: done 2026-09-24. The repository, the token and both
+secrets exist, and production runs have pushed to the private repository since
+2026-09-24. The token expires on 2027-01-01: make a new one as in 5.2 and
+replace `AGGREGATOR_STORE_TOKEN` before then. A run that cannot reach the
+store is marked failed at once, so an expired token shows on its first run.)*
 
 1. Create a **private** repository to hold aggregator-sourced data. No
    workflow runs in it, so it consumes no Actions minutes: GitHub charges
@@ -150,6 +177,11 @@ and a token pasted into a conversation is a token that has to be rotated.
 
 ## What happens next, in order
 
+*(Annotated 2026-09-27: all six are built and running, the last on
+2026-09-25. ADR-0009's confirmation was met on 2026-09-24, when the operator
+named roles in `Jobs` he had not found by hand. `STATE.md` has what is open
+now.)*
+
 1. The Airtable client (ADR-0034) and the projection that upserts on Identity
    (ADR-0035), writing only pipeline-owned fields.
 2. The projection filter (ADR-0040), so the display shows only what the
@@ -168,6 +200,7 @@ and a token pasted into a conversation is a token that has to be rotated.
 
 | Date | Change | Reason |
 |---|---|---|
+| 2026-09-27 | Steps 4 and 5 and the list of what happens next annotated as done; the three test-table secrets added beside step 2; the description made current | The file still said steps 4 and 5 were not done, three days after both were, and counted seven secrets where twelve are set. Found while updating `README.md`, which points here. Annotated rather than rewritten, as the row below did, so each original instruction survives beside what is true |
 | 2026-09-23 | Step 4 annotated as half done: `Classified at` exists, only the three `Status` choices remain | The step said "Not done" as a whole and still instructed creating `Classified at`, which was built on 2026-09-20. `STATE.md` and `airtable-schema.md` already said so, so the operator was being sent to do work that existed. Annotated rather than rewritten, so the original instruction survives beside what is true |
 | 2026-09-20 | Steps 1 to 3 marked done. Step 4 added for the `Status` choices and the `Classified at` field, step 5 for the private aggregator repository and an eighth secret. The `To review` explanation corrected, and the budget figure updated from 27% to 36% | ADR-0046 replaced classification-by-moving with classification-by-status, so a classified row now stays in `Jobs` for fifteen days and the view's filter is what hides it, not the row's absence. ADR-0047 added the private aggregator store and its token. The opening framing of this file as the only blocker was true when written and stopped being true when the operator completed steps 1 and 2 |
 | 2026-09-18 | File created, with seven secrets rather than the four originally planned | The token had been named as a blocker in `STATE.md` without steps to clear it. ADR-0045's sweep reads three classification tables that did not exist when the four secrets were specified, and looking them up by name each run costs a call and breaks on a rename |

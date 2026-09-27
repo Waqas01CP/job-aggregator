@@ -76,3 +76,57 @@ The operator asked for one file that stands in for the whole repository, for any
 
 - The older mutation files whose code this fix touches (D11, the private store, the catch-up, search) are re-run after the push, in a scratch clone; their results follow in the next commit.
 - Tonight's run, about 17:00Z, is the fix's first live proof. The next morning's walk is the recovery's.
+
+## After the fix: the evening run, the older mutations, and CAPABILITIES.md approved
+
+**The evening run of 2026-09-27, 17:35Z, on `368c641`, was healthy but did not test the
+fix** `[VERIFIED]` from its log on `data` at `7683317`:
+- no failure, and no escalation;
+- 11 requests, and the month at 107 calls;
+- `pending: 0` in the full block. Himalayas is not polled in the evening, and no employer
+  board listed a new posting, so there was nothing to save.
+
+The seat had told the operator this run would prove the fix. It could not. The first
+live save on the fixed code is the morning run of 2026-09-28, which is also the recovery
+walk.
+
+**The older mutation files the fix touches, re-run on `368c641` in a scratch clone**
+`[VERIFIED]`:
+- D11: 9 of 9;
+- the private store: 12 of 12;
+- the catch-up: 7 of 7;
+- search: 6 of 6.
+
+The private-store file's final suite run reported one error: a git call timed out while
+preparing a scratch repository. That run took 8,697 seconds against about 160, over hours
+in which the laptop slept. The suite re-run on the same clone passed, 666 tests in 98
+seconds `[VERIFIED]`. The error was the machine, not the code.
+
+**`CAPABILITIES.md` approved by the operator, 2026-09-27.** Before committing, he added his
+own account of how the design is made: he drafts the skeleton of each design and works it
+through with the architecture chat, which writes the records. No repository file records
+those conversations, so the file says it is his account. He asked whether the architecture
+chat, and perhaps the audit seat, should check the file:
+- the chat reviews his role, since it holds what no file does (brief part 8);
+- the next audit checks every number and claim against the repository.
+
+`CLAUDE.md` gains the rule that keeps the file current, on his decision of the same day.
+
+**Found stale and brought current**, on his instruction that nothing living may be left
+stale:
+- **`README.md`.** It said the review table was not built, that aggregator rows stay on
+  the machine that fetched them, and listed five of the hook's six gates. It now describes
+  the running system and points at `CAPABILITIES.md`.
+- **`docs/how-to/airtable-token-and-secrets.md`.** It said steps 4 and 5 were not done,
+  three days after both were, and counted seven secrets where twelve are set. Annotated
+  in place, as its own Changes rule does, with a Changes row.
+
+Decision records were not touched: a record's text is the decision as taken, and it is
+corrected only under ADR-RULES.
+
+**Flagged, not changed.** That how-to names the private repository at line 137, and at
+line 139 says the name is kept out of this public repository. It was committed that way
+by the operator on 2026-09-24 (`fe07242`). The repository is private, so the name grants
+nothing. Whether to remove it is his call.
+
+**Verified for it**, at 2026-09-27T21:50Z: 666 tests.

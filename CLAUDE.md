@@ -307,6 +307,16 @@ It is gitignored and the map skips it: a reference for the operator, never a
 record, ranking with "everything else" above. The operator's decision,
 2026-09-24.
 
+## CAPABILITIES.md
+
+`CAPABILITIES.md` describes everything the system does, for a reader who opens
+nothing else: a person, or a chat drafting the operator's CV. **Update it at
+the close of any session that changes a capability or a measured number**,
+re-measuring a number rather than carrying it forward, and giving each its
+date and source. It is not in the reading order and decides nothing: where it
+disagrees with the code, the data or a record, it is stale. The operator's
+decision, 2026-09-27.
+
 ## Writing
 
 No em-dashes. Lead with the verdict. Active voice. Numbers carry their
