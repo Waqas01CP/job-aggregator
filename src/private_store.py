@@ -230,8 +230,15 @@ class PrivateStore:
         made partial."""
         work = tempfile.mkdtemp(prefix="private-full-")
         try:
-            def git(args, what, **kw):
-                return self._git(args, what, cwd=work, **kw)
+            # **No command here may download a missing file on demand.** The
+            # earlier files are absent by design, and an on-demand download
+            # goes without the token: the run of 2026-09-27T03:59Z, the first
+            # save after the branch held a file, failed exactly so, at
+            # `write-tree`. Refused outright, a command needing one fails here
+            # and in the tests rather than reaching for the network.
+            def git(args, what, env=None, **kw):
+                return self._git(args, what, cwd=work,
+                                 env=dict(env or {}, GIT_NO_LAZY_FETCH="1"), **kw)
 
             def out(args, what, **kw):
                 return git(args, what, **kw).stdout.decode("utf-8").strip()
@@ -251,7 +258,9 @@ class PrivateStore:
             blob = out(["hash-object", "-w", "--stdin"], "storing the full file", stdin=text)
             git(["update-index", "--add", "--cacheinfo", "100644,%s,%s" % (blob, path)],
                 "staging the full file", env=env)
-            tree = out(["write-tree"], "writing the full branch's tree", env=env)
+            # The tree names the earlier files by hash alone, which the
+            # partial fetch brought; their contents are not needed to write it.
+            tree = out(["write-tree", "--missing-ok"], "writing the full branch's tree", env=env)
             args = ["commit-tree", tree, "-m", message] + (["-p", tip] if tip else [])
             commit = out(args, "committing the full file", env=COMMIT_IDENTITY)
             git(["push", "-q", "store", "%s:%s" % (commit, ref)], "pushing the full file",

@@ -107,6 +107,7 @@ supersedes and superseded-by links, deliberately not duplicated here.
 | `logs/2026-09-24-operator-decisions-and-the-next-builds.md` | The operator's decisions of 2026-09-24 while the architecture chat was unavailable, the implementing seat's own backlog cleared, and the builds those decisions released, with the evidence gathered for the next brief. | current |
 | `logs/2026-09-25-first-production-mornings-and-brief-7.md` | The first production runs with the private store, the contract check and the workspace count verified; the stamp gate widened; the sweep's timing asked; and Brief 7 read against its records before any build. | current |
 | `logs/2026-09-26-the-third-audit-and-the-first-scheduled-sweep.md` | The first scheduled sweep verified; the third audit's findings closed except F1, which is the operator's to decide; the projection's cost found to grow with the display; descriptions measured for the operator's choice on conflict 2. | current |
+| `logs/2026-09-27-the-full-branch-fix-and-capabilities.md` | The first two runs with full postings and Himalayas' search endpoint read back; the second full save's failure on GitHub reproduced and fixed the same morning, with the unsaved postings recovered by the next walk; and CAPABILITIES.md drafted for the operator's approval. | current |
 
 ## decision
 
@@ -200,4 +201,4 @@ Grouped by topic, in the order the pipeline runs. A record appears under exactly
 | `docs/deferred/rozee-pk.md` | Adding Rozee.pk as a source. Deferred until the display works and until more ATS sources are added, either of which may remove the need for it. | current |
 | `docs/deferred/similarity-matching.md` | Ranking postings by similarity to accepted roles. Deferred because ADR-0010 forbids it and the deterministic star was built instead; revisit when the accepted store holds fifty rows or when the operator stops reading every row. | current |
 
-Files listed: 95
+Files listed: 96

@@ -238,7 +238,17 @@ class TestSecrets(Harness):
 
 class TestTheFullBranch(Harness):
     """D11, 2026-09-26: every field a board returns, kept on the full branch,
-    one file per run, each read back after its push."""
+    one file per run, each read back after its push.
+
+    The stand-in repository honours a partial fetch, as GitHub does. Without
+    that, git quietly fetches every file, and a save that needs an earlier
+    file's contents passes here and fails on a runner: the run of
+    2026-09-27T03:59Z did."""
+
+    def setUp(self):
+        super().setUp()
+        subprocess.run(["git", "--git-dir", self.bare, "config", "uploadpack.allowFilter",
+                        "true"], check=True)
 
     def show(self, branch, path):
         p = subprocess.run(["git", "--git-dir", self.bare, "show", "%s:%s" % (branch, path)],
@@ -253,6 +263,40 @@ class TestTheFullBranch(Harness):
         self.assertEqual(self.show("data-full", "full/one.json"), '[{"posting": 1}]\n')
         self.assertEqual(self.show("data-full", "full/two.json"), '[{"posting": 2}]\n')
         self.assertEqual(self.branches(), ["data-full"], "the data branch was touched")
+
+    def test_a_later_save_never_needs_an_earlier_files_contents(self):
+        """The case the run of 2026-09-27T03:59Z met: the branch already holds
+        a file, and the second save's partial fetch leaves it absent. The
+        check that it really is absent keeps this test from passing on a
+        full fetch, as its predecessor did."""
+        s = self.store()
+        first = s.save_full("full/one.json", '[{"posting": 1}]\n', "one")
+        absent = []
+
+        def watching(args, **kw):
+            p = subprocess.run(args, **kw)
+            if "--filter=blob:none" in args and any(a.endswith(":refs/heads/data-full")
+                                                    for a in args):
+                absent.append(subprocess.run(["git", "cat-file", "-e", first],
+                                             cwd=kw["cwd"], env=kw["env"]).returncode != 0)
+            return p
+        s._run = watching
+        s.save_full("full/two.json", '[{"posting": 2}]\n', "two")
+        self.assertEqual(absent, [True], "the earlier file was fetched, so nothing is tested")
+        self.assertEqual(self.show("data-full", "full/one.json"), '[{"posting": 1}]\n')
+        self.assertEqual(self.show("data-full", "full/two.json"), '[{"posting": 2}]\n')
+
+    def test_no_command_of_a_save_may_download_on_demand(self):
+        calls = []
+
+        def recording(args, **kw):
+            calls.append((args, kw.get("env") or {}))
+            return subprocess.run(args, **kw)
+        s = self.store(run=recording)
+        calls.clear()
+        s.save_full("full/one.json", "[]\n", "one")
+        self.assertTrue(calls)
+        self.assertEqual([a for a, env in calls if env.get("GIT_NO_LAZY_FETCH") != "1"], [])
 
     def test_test_mode_writes_its_own_full_branch(self):
         self.store(test_mode=True).save_full("full/t.json", "[]\n", "t")

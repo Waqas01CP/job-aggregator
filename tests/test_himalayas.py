@@ -351,6 +351,15 @@ class TestRunIntegration(unittest.TestCase):
         with self.assertRaises(storage.StorageError):
             files_to_commit(log, run.paths, "logs-runs/x.json", False)
 
+    def _saved_in_full(self):
+        """What main() does after a verified save to the full branch (D11)."""
+        for key in ("seen", "local_seen"):
+            path = storage.layout(False)[key]
+            seen = storage.SeenStore.load(path)
+            for identity in seen.entries:
+                seen.mark_full_saved(identity, "2026-09-16T12:00:00Z")
+            seen.save(path)
+
     def test_the_stop_rule_still_reads_the_local_half_of_the_seen_store(self):
         """The high-water mark comes from stored Himalayas entries, which now
         live only in the local seen file. A run that loaded only the committed
@@ -364,6 +373,7 @@ class TestRunIntegration(unittest.TestCase):
         first = self._client([page1, page2])
         Run([BOARD], first, now=NOW, matcher=MATCHER).execute()
         self.assertEqual(first.counters()["by_source"]["himalayas"], 2)
+        self._saved_in_full()
 
         second = self._client([page1, page2])
         log = Run([BOARD], second, now=NOW, matcher=MATCHER).execute()
@@ -401,9 +411,27 @@ class TestRunIntegration(unittest.TestCase):
         must still read past it."""
         pages = self._two_pages(1789141800)
         Run([BOARD], self._client(pages), now=NOW, matcher=MATCHER).execute()
+        self._saved_in_full()
         client = self._client(pages)
         Run([SEARCH], client, now=NOW, matcher=MATCHER).execute()
         self.assertEqual(client.counters()["by_source"]["himalayas"], 3)
+
+    def test_a_posting_not_saved_in_full_is_walked_to_again(self):
+        """D11 on a paginated feed: the run of 2026-09-27T03:59Z stored its
+        postings and could not save them in full. They set no mark, so the
+        next walk reaches them and saves them; once saved, the walk stops."""
+        pages = self._two_pages(1789141800)
+        Run([SEARCH], self._client(pages), now=NOW, matcher=MATCHER).execute()
+        again = self._client(pages)
+        run = Run([SEARCH], again, now=NOW, matcher=MATCHER)
+        log = run.execute()
+        self.assertEqual(again.counters()["by_source"]["himalayas"], 3)
+        self.assertEqual(log["totals"]["new"], 0, "a posting walked to again is not new")
+        self.assertEqual(len(run.full_pending), 3, "reached again but not offered for saving")
+        self._saved_in_full()
+        stopped = self._client(pages)
+        Run([SEARCH], stopped, now=NOW, matcher=MATCHER).execute()
+        self.assertEqual(stopped.counters()["by_source"]["himalayas"], 1)
 
     def test_with_no_mark_the_walk_stops_at_the_age_limit(self):
         """A page wholly older than a week before now holds nothing D14 could

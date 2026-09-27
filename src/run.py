@@ -535,10 +535,16 @@ class Run:
         # the week that browse missed. Entries stored before boards were
         # recorded set no mark, so a board's first walk reads back to the age
         # floor. The operator's yes, 2026-09-26.
+        #
+        # Only a posting saved in full sets a mark (D11). One whose full save
+        # failed is then reached again by the next walk and saved, as an ATS
+        # posting is by the next run that still lists it. The run of
+        # 2026-09-27T03:59Z stored 361 new Himalayas postings and could save
+        # none of the 460 it fetched in full.
         self.high_water = {}
         for entry in seen.entries.values():
             board_id, published = entry.get("board_id"), entry.get("published_at")
-            if board_id and published:
+            if board_id and published and entry.get("full_saved_at"):
                 self.high_water[board_id] = max(self.high_water.get(board_id, ""), published)
 
         all_rows, reached = [], set()

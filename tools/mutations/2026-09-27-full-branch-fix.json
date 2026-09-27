@@ -1,0 +1,20 @@
+[
+  {
+    "label": "writing the tree needs every earlier file's contents",
+    "path": "src/private_store.py",
+    "find": "            tree = out([\"write-tree\", \"--missing-ok\"], \"writing the full branch's tree\", env=env)",
+    "replace": "            tree = out([\"write-tree\"], \"writing the full branch's tree\", env=env)"
+  },
+  {
+    "label": "a save may download a missing file on demand",
+    "path": "src/private_store.py",
+    "find": "                                 env=dict(env or {}, GIT_NO_LAZY_FETCH=\"1\"), **kw)",
+    "replace": "                                 env=env, **kw)"
+  },
+  {
+    "label": "a posting never saved in full still sets the mark",
+    "path": "src/run.py",
+    "find": "            if board_id and published and entry.get(\"full_saved_at\"):",
+    "replace": "            if board_id and published:"
+  }
+]
