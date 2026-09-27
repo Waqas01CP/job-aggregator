@@ -1,0 +1,73 @@
+{
+ "run_at": "2026-09-27T12:21:42.088181Z",
+ "platforms": {
+  "greenhouse": {
+   "board": "greenhouse:veeamsoftware",
+   "postings": 247,
+   "changes": [],
+   "status": "unchanged"
+  },
+  "lever": {
+   "board": "lever:smart-working-solutions",
+   "postings": 17,
+   "changes": [],
+   "status": "unchanged"
+  },
+  "himalayas": {
+   "board": "himalayas:pakistan",
+   "postings": 20,
+   "changes": [
+    {
+     "field": "limit",
+     "in": "response",
+     "was": "not in the stored fingerprint",
+     "now": {
+      "present": "all",
+      "null": "never",
+      "types": [
+       "number"
+      ]
+     }
+    },
+    {
+     "field": "nextCursor",
+     "in": "response",
+     "was": {
+      "present": "all",
+      "null": "never",
+      "types": [
+       "string"
+      ]
+     },
+     "now": "not in this fingerprint"
+    },
+    {
+     "field": "offset",
+     "in": "response",
+     "was": "not in the stored fingerprint",
+     "now": {
+      "present": "all",
+      "null": "never",
+      "types": [
+       "number"
+      ]
+     }
+    },
+    {
+     "field": "totalCount",
+     "in": "response",
+     "was": "not in the stored fingerprint",
+     "now": {
+      "present": "all",
+      "null": "never",
+      "types": [
+       "number"
+      ]
+     }
+    }
+   ],
+   "status": "changed"
+  }
+ },
+ "test_mode": false
+}

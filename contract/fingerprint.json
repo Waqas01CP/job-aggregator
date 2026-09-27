@@ -127,11 +127,25 @@
      "array"
     ]
    },
-   "nextCursor": {
+   "offset": {
     "present": "all",
     "null": "never",
     "types": [
-     "string"
+     "number"
+    ]
+   },
+   "limit": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "number"
+    ]
+   },
+   "totalCount": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "number"
     ]
    }
   },
