@@ -1,7 +1,7 @@
 ---
 status: accepted
 topic: display
-description: Three append-only outcome corpora, one per kind of outcome, and what each one is allowed to feed back into. Reverses ADR-0014's single-file clause.
+description: Five append-only stores written by the sweep: three outcome corpora, one per kind of outcome, plus the removal store and the removed-copies store. What each one is allowed to feed back into, and which of them the projection reads. Reverses ADR-0014's single-file clause.
 date: 2026-09-18
 decision-makers: Waqas Sharif
 # consulted:
@@ -56,9 +56,13 @@ Chosen option: "three files, one per outcome class".
 
 **`expired_before_review` gets no store.** *(Amended 2026-09-23: this clause is reversed. The status is retired, and the event it named is recorded in a fourth store. See Changes.)* It is not a judgement about a role; it measures the cost of the operator's absences, which is what ADR-0014 already says it is for. It stays a counted outcome and nothing reads it as a corpus.
 
-**This reverses ADR-0014's "not one file per status", and keeps what that clause was protecting.** The invariant was that a row has exactly one outcome. Routing is therefore exclusive: a swept row goes to exactly one store, decided by its status, and no identity may appear in two. That is now a checkable property rather than a property of the file layout, which is the better place for it.
+**This reverses ADR-0014's "not one file per status", and keeps what that clause was protecting.** The invariant was that a row has exactly one outcome. Routing is therefore exclusive: a swept row goes to exactly one store, decided by its status, and no identity may appear in two. That is now a checkable property rather than a property of the file layout, which is the better place for it. *(Annotated 2026-09-28: **the exclusivity invariant covers the three classification stores above and no others.** This record has since grown two more stores, and neither is an outcome corpus. An identity may legitimately appear in a classification store and in `removed_copies.json` at the same time, because D12 writes an `accepted` copy to both. A check that intersected all five would fail on correct behaviour.)*
 
-**Metadata only, per ADR-0011.** An outcome record carries the row as the filtered layer holds it, plus the status, the reason where one was given, and the date swept. No description text, and no note the operator typed in Airtable, because a free-text note is exactly where description text would arrive by the back door.
+**This record now owns five stores.** The three above are the outcome corpora. `outcomes/removed_unreviewed.json` holds a row removed from the display without a judgement, with the reason it went. `removed_copies.json` holds a classification-table copy removed other than by the fifteen-day clock. Only the three corpora are read as feedback, and only they are read by the projection's skip for their own sake; what the projection does with the removal store is set out below.
+
+**Metadata only, per ADR-0011.** An outcome record carries the row as the filtered layer holds it, plus the status, the reason where one was given, and the date swept. No description text, and no note the operator typed in Airtable, because a free-text note is exactly where description text would arrive by the back door. *(Extended 2026-09-28: the same limit binds the two later stores. A removed copy carries the ten identifying fields the sweep copied, its reason or its `Stage`, and the dates, and nothing else.)*
+
+**A row returns to the display only if the reason it left was the rules, because only the rules can change their mind.** *(Added 2026-09-28; see Changes.)* The projection's skip therefore reads `outcomes/removed_unreviewed.json` by reason and not as a whole: a row stored with reason `closed` stays out, and a row stored with the name of a rule that dropped it returns when that rule widens, which is what ADR-0040 requires. The principle, rather than a list of reasons, is what binds, so a reason added later is covered without amending this record.
 
 **ADR-0020 applies to all three.** Each store splits the way the filtered layer splits: an aggregator's rows go to the local copy and never to the branch. *(Changed by ADR-0047: an aggregator's rows in these stores go to the private repository's copy, not a local file alone, and still never to the public branch. The sweep writes them there from 2026-09-25, ADR-0050. The corpus audit's conflict 6.)* A new store is a new path for a row that may not be published, and the content guard at the commit boundary reads every record's source, so it catches this only if the split is done. It must be done.
 
@@ -78,7 +82,9 @@ The accepted store is read by the projection on every run once ADR-0044's star e
 
 ### Confirmation
 
-After the first sweep, no identity appears in more than one store. Take the three files, intersect their identities pairwise, and all three intersections must be empty.
+After the first sweep, no identity appears in more than one store. Take the three files, intersect their identities pairwise, and all three intersections must be empty. *(Scoped 2026-09-28: the three classification stores only, for the reason annotated above.)*
+
+**The skip must be seen reading the removal store by reason**, which is ADR-0050's check and is named here because this record owns the store: a row stored with reason `closed` is not projected, and a row stored with a rule's name is projected once the rule admits it again. A test that passes for both reasons is asserting something other than the principle.
 
 The check that can fail: hand-write a row into two stores and confirm the check reports it. A check over three files that never overlap by construction would pass whatever the routing did.
 
@@ -102,6 +108,8 @@ Reverses one clause of ADR-0014, which carries a Changes row pointing here. The 
 
 ADR-0044 consumes the accepted store. ADR-0011 governs what a record may carry. ADR-0020 governs the split. ADR-0003 governs the append.
 
+**The five stores, and who reads each.** `outcomes/rejected_not_a_fit.json`, `outcomes/rejected_poor_filtering.json` and `outcomes/accepted.json` are the corpora: the operator reads all three, the projection's skip reads all three, and ADR-0044's star reads the last. `outcomes/removed_unreviewed.json` is read by the operator as a measure of what he missed, and by the skip for its `closed` rows alone. `removed_copies.json` is read by nobody automatically; it exists so that no copy is ever deleted unsaved, which is D12's rule and the operator's own understanding of how the tables had always behaved.
+
 ## Changes
 
 | Date | Change | Reason |
@@ -109,3 +117,5 @@ ADR-0044 consumes the accepted store. ADR-0011 governs what a record may carry. 
 | 2026-09-23 | The "no fourth store" clause is reversed. `outcomes/removed_unreviewed.json` is written by ADR-0046's sweep step 4: an unreviewed row the current chain no longer admits, with the rule that dropped it and the date. A row dropped by the expiry rule is the event `expired_before_review` named | This record rejected a fourth store because "nothing would read it". Two things changed. The operator asked for the signal and is its reader: how many roles closed before he saw them, on which boards, and how long after they were surfaced. And ADR-0046 retired `expired_before_review` as a status, so without a store the event would have no home at all. The three outcome stores are unaffected, and this fourth one is not read by the projection's skip, so a row that fell out on a narrowed rule can still return if the rule widens |
 | 2026-09-24 | The status names feeding the stores annotated as stale | ADR-0046 decided new names that never reached the base, and the operator renamed them after the tables on 2026-09-24 *(corrected after that day's audit, F12)*. Annotated by the implementing seat under ADR-RULES, which allows a stale or wrong fact to be annotated unasked; the Decision Outcome is untouched. Found by the corpus audit of 2026-09-23 |
 | 2026-09-25 | ADR-0047 named where it changed where aggregator outcomes are stored | The corpus audit's conflict 6: ADR-0047 moved "its rows in ADR-0043's three outcome stores" to the private repository without naming this record. Annotated by the implementing seat under ADR-RULES, on Brief 7's corpus work; the Decision Outcome is untouched. |
+| 2026-09-26 | A fifth store, `removed_copies.json`, keyed by the copy's Airtable record ID. It holds every classification-table copy that leaves for any reason other than the fifteen-day clock: a rejection copy superseded by a status change, and an `accepted` copy the operator marks `Delete`. The exclusivity invariant is scoped to the three corpora, because an `accepted` copy is written here and to the accepted store in the same run | The operator's D12, answering the third audit's F1. ADR-0050 line 71 deleted a superseded copy unsaved, losing the reason it carried, and line 73 had no field for him to mark. A store that nothing reads automatically is the right shape here: its purpose is that a deletion is never the only record of a row, which is this project's oldest rule |
+| 2026-09-28 | The removal store is read by the projection's skip **by reason**, not ignored wholesale as the 2026-09-23 row said. One principle replaces the enumeration: a row returns only if the reason it left was the rules | The architecture chat's error, found by the implementing seat. ADR-0050 assumed a closed row would not return because the closure test still held. It does return, at once, because the filtered layer keeps every row it admitted and ADR-0040 re-projects it; the four-run absence count would then restart from nothing. Rule-dropped rows must still return, so the store cannot simply be read in full either. Stated as a principle so that the reasons the operator's removal tool and the unreviewed clock will add need no further amendment here |

@@ -16,9 +16,9 @@ Records are written at the moment a decision concludes. A record's factual error
 | 0002 | Raw layer on a git data branch, not a hosted database | Accepted |
 | 0003 | Append deltas, not snapshots | Accepted |
 | 0004 | Airtable as the filtered display layer | Accepted, clauses reversed by 0014, 0034, 0035 |
-| 0005 | Fetch complete board output, filter locally | Accepted |
+| 0005 | Fetch complete board output, filter locally | Accepted, narrowed for aggregators by 0053 |
 | 0006 | Twice-daily fetch cadence | Accepted, extended by 0048 |
-| 0007 | Recency is a view, not an ingest filter | Accepted |
+| 0007 | Recency is a view, not an ingest filter | Accepted, one consequence falsified by 0052 |
 | 0008 | Title matching by allowlist, blocklist, and unmatched flag | Superseded by 0021 |
 | 0009 | Vertical slice first, adapters incremental | Accepted |
 | 0010 | No relevance scoring, ranking, or model-based screening | Accepted |
@@ -27,10 +27,10 @@ Records are written at the moment a decision concludes. A record's factual error
 | 0013 | Three layers, filtered set persisted independently of the display | Accepted, clause reversed by 0030 |
 | 0014 | Weekly status sweep, with a four-status outcome taxonomy | Superseded by 0045 |
 | 0015 | Two measures, and the archive protocol | Accepted |
-| 0016 | Title-only matching against a versioned title pool | Accepted, one clause reversed by 0021 |
+| 0016 | Title-only matching against a versioned title pool | Accepted, one clause reversed by 0021, one built by 0051 |
 | 0017 | Sanitised cassettes as adapter test fixtures | Accepted |
 | 0018 | Scheduled contract check against live boards | Accepted, clause reversed by 0036 |
-| 0019 | Add aggregator feeds as a second source class | Accepted, clauses reversed by 0026 and 0039 |
+| 0019 | Add aggregator feeds as a second source class | Accepted, clauses reversed by 0026 and 0039; its removal condition tested against 0053 |
 | 0020 | Route raw storage by source class | Accepted, one clause reversed by 0047 |
 | 0021 | Allowlist-only title matching, with normalisation | Accepted, clause reversed by 0032 |
 | 0022 | Document authority order | Accepted |
@@ -47,21 +47,27 @@ Records are written at the moment a decision concludes. A record's factual error
 | 0033 | The data branch is the store, local files are working copies | Accepted |
 | 0034 | Airtable gets its own client | Accepted |
 | 0035 | The projection upserts on Identity | Accepted |
-| 0036 | The contract check reports through the run log | Accepted |
+| 0036 | The contract check reports through the run log | Accepted, extended by 0053 |
 | 0037 | The filtered layer stores rows, the projection groups them | Accepted |
 | 0038 | Role families are views, not a ranking | Accepted |
 | 0039 | The aggregator condition is the three components | Accepted |
 | 0040 | The current rules filter the projection, never the store | Accepted, extended by 0046, one clause narrowed by 0046 |
-| 0041 | Location admits unless a source excludes | Accepted |
+| 0041 | Location admits unless a source excludes | Accepted, extended by D13, built |
 | 0042 | *reserved for ADR-RULES, deliberately unused* | n/a |
-| 0043 | Three outcome stores | Accepted |
+| 0043 | Three outcome stores, now five | Accepted, extended by 0050, 0051 and 0055 |
 | 0044 | The priority star, on named attributes only | Accepted |
 | 0045 | The classification flow | Superseded by 0046 |
 | 0046 | Classification by status, and the fifteen-day retention | Superseded by 0050 |
-| 0047 | Aggregator data lives in private destinations | Accepted, reverses one clause of 0020 |
-| 0048 | A source is polled no faster than its feed refreshes | Accepted, extends 0006 |
+| 0047 | Aggregator data lives in private destinations | Accepted, reverses one clause of 0020, extended by 0051 |
+| 0048 | A source is polled no faster than its feed refreshes | Accepted, extends 0006, one assumption failed then restored by 0053 |
 | 0049 | Architectural rules are guarded by fitness functions, not by prose | Accepted |
 | 0050 | The classification flow, consolidated | Accepted, supersedes 0046 |
+| 0051 | Every field a board returns is saved, privately | Accepted |
+| 0052 | Age is judged once, at first sight | Accepted |
+| 0053 | Himalayas is polled through its search endpoint | Accepted, narrows one clause of 0005 |
+| 0054 | A scheduled run happens, or it is not silently gone | Accepted |
+| 0055 | The display is cleared by a clock, and by hand | Accepted, decided, the tool and the clock unbuilt |
+| 0056 | The projection sends the whole layer, and the delta design that will replace it | Accepted, the delta design decided and unbuilt |
 | RULES | How records are resolved, amended and retired | Accepted |
 
 ## Pending
@@ -69,7 +75,7 @@ Records are written at the moment a decision concludes. A record's factual error
 Decisions identified but not concluded.
 
 - Reuse boundary against the LinkedIn pipeline in fyp-career-guidance: which components are adopted, which are deliberately not.
-- Description matching, deferred by ADR-0016 until field coverage per platform is known.
+- Description matching, deferred by ADR-0016 until field coverage per platform is known. *(2026-09-28: half met. ADR-0051 now saves every field a board returns, descriptions included, so the data exists; nothing reads it, and the deferral stands.)*
 - Deduplication across source classes, and the employer alias map ADR-0019 makes necessary.
 - Whether Rozee.pk is added as a source. robots.txt permits the job paths and the terms carry no automated-access clause; a sitemap index publishes job URLs daily with the title in the slug.
 - An end-state document stating what the finished system is. Confirmed genuinely open by ADR-0023: no prior art exists in either project.
@@ -90,9 +96,15 @@ Records 0004 and 0008 were wrongly stamped superseded on 2026-09-09 and correcte
 
 ADR-0008 was then genuinely superseded by ADR-0021 on 2026-09-11, this time by the criteria: more than half its Decision Outcome was replaced. Its Changes table records both events, which is the point of keeping one.
 
-**Changes that are not supersessions are logged in a `## Changes` table at the bottom of the record.** As of 2026-09-25, 92 Changes rows sit across 40 records, ADR-RULES included, and every table is the last section of its record. Sixteen records had it above More Information until 2026-09-22 and were moved; the move changed no text.
+**Changes that are not supersessions are logged in a `## Changes` table at the bottom of the record.** As of 2026-09-28, **123 Changes rows sit across 42 records**, ADR-RULES included, and every table is the last section of its record. Sixteen records had it above More Information until 2026-09-22 and were moved; the move changed no text.
 
-A record stays under 200 lines, and its Changes table stays under eight rows. Reaching eight rows is itself a supersession trigger: a decision amended eight times is no longer the decision that was made.
+*(Corrected 2026-09-28. This file said "As of 2026-09-25, 92 Changes rows sit across 40 records", and the true count on that unchanged corpus was 106 across 41. The architecture chat wrote 92 before making its own edits of that day and then did not recount, which is the third time this index has carried a stale count. The count is now derived by reading every `## Changes` table rather than by remembering.)*
+
+**An extension is marked in two places, and they do different jobs.** The binding act is a Changes row in the extended record, which is what `CLAUDE.md` requires and what outranks this file. The Status cell here says "extended by NNNN" as a pointer for a reader scanning the table. Neither substitutes for the other, and ADR-RULES carries the ruling.
+
+A record's Changes table stays under eight rows, and reaching eight is itself a supersession trigger: a decision amended eight times is no longer the decision that was made. **A row recording that the record was superseded does not count toward the eight**, which is why ADR-0046 carries nine; and a record may set itself a lower threshold, as ADR-0050 sets six.
+
+**Two hundred lines is a target rather than a cap**, soft to about 250 while no other trigger has fired, and a hard flag at roughly 350 to 400. All of this is in ADR-RULES, along with the rule that a threshold not yet reached is not reported.
 
 ## Review
 

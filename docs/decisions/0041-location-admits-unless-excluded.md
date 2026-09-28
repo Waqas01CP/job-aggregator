@@ -76,6 +76,19 @@ statement by the source that the operator is not eligible:
 - an explicit statement such as "US only", or "must be authorised to work in
   X" for an X that is not Pakistan.
 
+*(Extended 2026-09-26 by the operator's D13, which built the structured half.
+Three additions, and the rule itself is unchanged. **A third exclusion class:**
+a Pakistani city other than Karachi that says on site or hybrid, because he can
+reach Karachi and nowhere else on site. A Pakistani city that says nothing about
+on site is admitted, since whether it is on site cannot be read; his words, "not
+mentioned would be checked as if it is allowed but for those that specifically
+says like lahore onsite, usa only and so on are out". **A posting is dropped
+only when every place it lists is closed**, which this record's wording did not
+settle for a list holding one open place among closed ones; one reachable place
+admits the posting. **Time zones never exclude.** Himalayas carries
+`timezoneRestrictions` beside the country list and the operator ruled it out of
+the rule: "time zones do not matter". See Changes.)*
+
 **Keywords never reject.** Normalised location keywords tag a row's
 reachability and nothing more. A tag orders and groups the display; it never
 removes a row. *(Narrowed 2026-09-25: a tag may filter or group a view and
@@ -89,7 +102,10 @@ Lever's `workplaceType` and `country`, both 100% populated and both currently
 unread; Ashby's `isRemote`; Workable's `telecommuting`.
 
 **What is buildable now, and what is not.** The structured half is buildable
-today. The text half is not: "US only" lives in description text, which
+today. *(Built 2026-09-26 as `rule_location`, on D13. Its places live in
+`config/eligibility.json` per ADR-0031, and Himalayas' adapter no longer
+truncates its country list at three, which it had been doing when this record
+was written.)* The text half is not: "US only" lives in description text, which
 ADR-0016 defers and ADR-0011 keeps off the public branch. **The rule is
 recorded in full so that the text half is implemented to this rule when
 description filtering arrives, rather than being designed again from
@@ -131,7 +147,15 @@ every one be admitted. A rule that drops any of them has become a matcher.
 
 For the structured half, once built: of the saved Himalayas corpus, exactly
 74 postings must drop and 17 must be admitted, and every drop must name the
-field and the absence of Pakistan from its list.
+field and the absence of Pakistan from its list. *(Still owed, 2026-09-28. The
+rule was built on 2026-09-26 and this check has not been reported against it.
+Two things must be said when it is. The adapter used to truncate each posting's
+country list at three and no longer does, so verdicts on that 91-posting corpus
+may legitimately differ from the 74 and 17 predicted here, and a difference is
+evidence about the truncation rather than about the rule. And the numbers
+measured since are from other samples: 17 of 20 restricted on one page on
+2026-09-26, then 93 of 100. Neither replaces this check, because this one names
+an exact corpus and an exact count, which is what makes it able to fail.)*
 
 The tag is checked separately: turn the tagger off entirely and the kept set
 must be byte-identical. If it is not, a keyword is rejecting.
@@ -168,3 +192,4 @@ reasoning ADR-0038 sets out for role families.
 | Date | Change | Reason |
 |---|---|---|
 | 2026-09-25 | "A tag orders and groups the display" is narrowed: a reachability tag may **filter or group a view, and never order one**. Ordering stays by date alone | ADR-0010 orders the display by date and nothing else, and ADR-0038 forbids a sort that mixes families in one ordered list, so ordering rows by a derived label is the ranking the scope floor excludes, whatever the label is called. This record's own More Information already argues the tag is a label and not a score; the word "orders" contradicted that. The operator's decision, 2026-09-25: "the main ordering will always be date and the families and others can be views or something else." Nothing is built on the old wording: the tag itself is unbuilt, and the field it needs does not exist |
+| 2026-09-26 | The operator's D13: the structured half is built as `rule_location`, and the rule gains a third exclusion class, an every-place-closed formulation, and an explicit ruling that time zones never exclude. Its places are configuration under ADR-0031, and the Himalayas adapter's three-country truncation is removed | He saw postings in his table restricted to the US or Canada and asked for them out, stating the constraint himself: "i do not want any jobs shown in the table which i am not eligible to while at the same time i do not want to miss any to which i am eligible to", which is this record's own admit-unless-excluded rule in his words. The two cases he was asked to judge both went the safe way: an unnameable place is kept, and a Pakistani city with no on-site marker is kept. Measured on a fresh sample of 100 Himalayas postings, 93 are restricted to countries and none names Pakistan. The rule this record states is unchanged; what changes is that it now runs, and that a Pakistani city can exclude, which this record had not considered because no ATS board then exposed an eligibility field at all |

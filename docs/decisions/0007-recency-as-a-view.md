@@ -50,7 +50,7 @@ Boards with no publication date remain usable, ordered by first-seen instead.
 
 Measure A is computable on the subset carrying a real publication date, and the coverage of that subset is itself measurable.
 
-The display contains postings older than 24 hours. Ordering handles this; no filtering is required.
+The display contains postings older than 24 hours. Ordering handles this; no filtering is required. *(Corrected 2026-09-26: **the second sentence is false.** Ordering did not handle it, and the operator said so on opening the table. ADR-0052 filters the display on age, judged once at first sight. This record's four rules are untouched, including the one that matters most here: nothing is filtered at ingest, so the rows ADR-0052 keeps out of the display are still stored. See Changes.)*
 
 Records must distinguish the ordering date's origin, so a first-seen fallback is never mistaken for a publication date.
 
@@ -69,3 +69,4 @@ The ingest-filter failure mode described here is live in the operator's LinkedIn
 | Date | Change | Reason |
 |---|---|---|
 | 2026-09-24 | The unverified date-coverage claim annotated as stale | Checked across 16 platforms on 2026-09-16. Annotated by the implementing seat under ADR-RULES, which allows a stale or wrong fact to be annotated unasked; the Decision Outcome is untouched. Found by the corpus audit of 2026-09-23 |
+| 2026-09-26 | The consequence "Ordering handles this; no filtering is required" is false, and named as such. ADR-0052 filters the display on age. **No rule of this record is reversed:** ingest everything, record first seen, order on publication date descending with a first-seen fallback, and record which supplied the ordering date, are all four in force and all four verified live on 2026-09-28 over 346 stored rows | The operator opened the table and found postings he would not apply to, so the consequence was falsified by use. It is a consequence and not a rule, which is why this record keeps its status and its Decision Outcome: the decision was never to leave old postings in the display, it was to avoid filtering at ingest, and that is exactly what ADR-0052 also avoids. The corpus now holds three positions on recency, and ADR-0052's More Information sets out why they do not conflict |
