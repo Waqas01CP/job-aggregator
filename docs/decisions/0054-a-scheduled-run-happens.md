@@ -1,6 +1,6 @@
 ---
 status: accepted
-topic: operations
+topic: fetching
 description: A run that should happen, happens. Runs queue rather than cancel each other, up to GitHub's hundred, and the sixty-day shutoff of scheduled workflows is disregarded on the operator's evidence from another project.
 date: 2026-09-25
 decision-makers: Waqas Sharif
