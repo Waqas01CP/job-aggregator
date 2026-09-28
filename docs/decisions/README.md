@@ -4,6 +4,8 @@ Every architecture decision made on this project, one file per decision, with th
 
 Format: MADR 4.0.0 with two documented deviations. Numbered in the order concluded.
 
+**`topic:` is a closed vocabulary of six values**, enforced by `tools/generate_map.py` and therefore by the pre-commit hook: `display`, `fetching`, `filtering`, `measurement`, `practice`, `storage`. A seventh value fails the map check and blocks the commit. Adding one is a decision, not a convenience, and it is made here rather than in a record's frontmatter.
+
 The deviations: an added **Assumptions** section, taken from Tyree and Akerman, holding every belief the decision rests on that is not established, so unmeasured numbers are visible and re-checkable rather than buried in prose. And three authoring rules carried forward from Nygard, which MADR does not specify: Context is written value-neutral with the tensions named, Decision Outcome is written in active voice as a rule, and Consequences are always filled including the negative ones.
 
 Records are written at the moment a decision concludes. A record's factual error may be corrected in place with a dated annotation; a change that leaves the decision in force is logged in its Changes table; a change that replaces it is a new record. The criteria for which is which are in `ADR-RULES.md` and in the operator's cross-project decision record standard.

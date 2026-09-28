@@ -128,6 +128,8 @@ Grouped by topic, in the order the pipeline runs. A record appears under exactly
 | `docs/decisions/0029-adapter-order-and-dover.md` | **ADR-0029: Adapter order after the slice, and Dover dropped.** Which adapters are built after the slice and in what order, ranked by the cost of obtaining a publication date. | accepted |
 | `docs/decisions/0039-aggregator-condition-three-components.md` | **ADR-0039: The aggregator condition is the three components.** Which of ADR-0019's two contradictory conditions governs when a source is added, and the rule the next aggregator faces. | accepted |
 | `docs/decisions/0048-poll-no-faster-than-the-feed-refreshes.md` | **ADR-0048: A source is polled no faster than its feed refreshes.** A source is polled no faster than its feed refreshes. Himalayas moves to the morning run only. The offset against its refresh stays unset until the refresh moment is measured. | accepted |
+| `docs/decisions/0053-himalayas-polled-through-its-search-endpoint.md` | **ADR-0053: Himalayas is polled through its search endpoint.** Himalayas is polled through its Pakistan search endpoint instead of the browse feed, so a morning reads every eligible posting rather than a third of all postings. The walk's two stop rules, the runaway cap, and the check that keeps a pushed-down predicate honest. | accepted |
+| `docs/decisions/0054-a-scheduled-run-happens.md` | **ADR-0054: A scheduled run happens, or it is not silently gone.** A run that should happen, happens. Runs queue rather than cancel each other, up to GitHub's hundred, and the sixty-day shutoff of scheduled workflows is disregarded on the operator's evidence from another project. | accepted |
 
 ### Filtering, matching and preferences
 
@@ -143,6 +145,7 @@ Grouped by topic, in the order the pipeline runs. A record appears under exactly
 | `docs/decisions/0032-seniority-rule.md` | **ADR-0032: The seniority rule, and the clause of ADR-0021 it reverses.** The seniority word list, running after the title rule, and the clause of ADR-0021 it reverses. | accepted |
 | `docs/decisions/0038-family-views.md` | **ADR-0038: Role families are views, not a ranking.** Role families are a label derived from the matched term, with one date-ordered view each, and the boundary that keeps it from becoming a ranking. | accepted |
 | `docs/decisions/0041-location-admits-unless-excluded.md` | **ADR-0041: Location admits unless a source excludes, and keywords only tag.** Location admits on any signal or on none and drops only on an explicit exclusion; keywords tag reachability and never reject. | accepted |
+| `docs/decisions/0052-age-judged-once-at-first-sight.md` | **ADR-0052: Age is judged once, at first sight.** A posting is admitted only if it was published no more than seven days before the pipeline first saw it, judged once at first sight and never again, so an admitted row never ages out unseen. | accepted |
 
 ### Storage and the data branch
 
@@ -157,6 +160,7 @@ Grouped by topic, in the order the pipeline runs. A record appears under exactly
 | `docs/decisions/0033-branch-is-the-store.md` | **ADR-0033: The data branch is the store, local files are working copies.** The data branch is the store and local files are working copies, so a committing run restores from the branch before it fetches. | accepted |
 | `docs/decisions/0037-filtered-layer-stores-rows.md` | **ADR-0037: The filtered layer stores rows, the projection groups them.** The filtered layer stores every kept row and the projection does the grouping, so no interpretation is frozen into the store. | accepted |
 | `docs/decisions/0047-aggregator-data-lives-in-private-destinations.md` | **ADR-0047: Aggregator data lives in private destinations.** Aggregator data lives in private destinations: a second private repository for every aggregator-sourced store, and the private Airtable base. Reverses ADR-0020's deferral. Nothing aggregator-sourced ever reaches the public branch. | accepted |
+| `docs/decisions/0051-every-field-saved-privately.md` | **ADR-0051: Every field a board returns is saved, privately.** Every posting is saved whole and privately, as its board returned it, verified by content hash before a posting counts as saved. Closes the conflict between ADR-0016's keep-every-field and ADR-0011's metadata-only. | accepted |
 
 ### The display and the projection
 
@@ -173,6 +177,8 @@ Grouped by topic, in the order the pipeline runs. A record appears under exactly
 | `docs/decisions/0045-classification-flow.md` | **ADR-0045: The classification flow.** The operator classifies by moving a row to one of three tables; the sweep writes it to its store, verifies the write, then deletes. Supersedes ADR-0014's sweep. Accepted is never deleted automatically. | superseded by ADR-0046 |
 | `docs/decisions/0046-classification-by-status-and-fifteen-day-retention.md` | **ADR-0046: Classification by status, and the fifteen-day retention.** Superseded by ADR-0050, which consolidates this flow and its eight amendments. The operator classifies by setting one status in Jobs; the sweep copies the row out, then writes, verifies and deletes it at fifteen days. Supersedes ADR-0045. | superseded by ADR-0050 |
 | `docs/decisions/0050-the-classification-flow-consolidated.md` | **ADR-0050: The classification flow, consolidated.** The whole classification flow in one record: one status in Jobs, the copy on every fetch, fifteen days on two clocks, closed postings marked and retired, and what keeps a classified row out of the display. Supersedes ADR-0046. | accepted |
+| `docs/decisions/0055-the-display-is-cleared-by-a-clock-and-by-hand.md` | **ADR-0055: The display is cleared by a clock, and by hand.** An unreviewed row leaves the display on a clock, and the operator can clear any table by an age threshold on demand. Both write to a store the projection reads by reason, because a row deleted in the browser comes back. | accepted |
+| `docs/decisions/0056-the-projection-sends-the-whole-layer.md` | **ADR-0056: The projection sends the whole layer, and the delta design that will replace it.** The projection sends every display group on every run, which costs about one call per ten rows per run, and the delta design that replaces it. Decided and unbuilt, with the triggers that call for it and the measurement that authorises the build. | accepted |
 
 ### Measurement and evidence
 
@@ -202,4 +208,4 @@ Grouped by topic, in the order the pipeline runs. A record appears under exactly
 | `docs/deferred/rozee-pk.md` | Adding Rozee.pk as a source. Deferred until the display works and until more ATS sources are added, either of which may remove the need for it. | current |
 | `docs/deferred/similarity-matching.md` | Ranking postings by similarity to accepted roles. Deferred because ADR-0010 forbids it and the deterministic star was built instead; revisit when the accepted store holds fifty rows or when the operator stops reading every row. | current |
 
-Files listed: 97
+Files listed: 103
