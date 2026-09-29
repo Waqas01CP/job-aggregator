@@ -1279,5 +1279,26 @@
   "url_provenance": "payload",
   "stated_experience": null,
   "expires_at": null
+ },
+ {
+  "identity": "lever:74040495-6301-4388-a22a-45974e7f5bd9",
+  "source": "lever",
+  "board_id": "lever:smart-working-solutions",
+  "external_id": "74040495-6301-4388-a22a-45974e7f5bd9",
+  "employer": "Smart Working Solutions",
+  "employer_provenance": "slug",
+  "title": "Senior AdTech Engineer (Remote, Full-Time) [TH038]",
+  "title_normalised": "Senior AdTech Engineer (Remote, Full-Time) [TH038]",
+  "location": "Romania",
+  "published_at": "2026-09-28T11:50:10.112000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-09-29T18:30:19.339091Z",
+  "ordering_date": "2026-09-28T11:50:10.112000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/smart-working-solutions/74040495-6301-4388-a22a-45974e7f5bd9",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null
  }
 ]
