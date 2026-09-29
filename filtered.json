@@ -7264,5 +7264,26 @@
   "url_provenance": "payload",
   "stated_experience": null,
   "expires_at": null
+ },
+ {
+  "identity": "greenhouse:5250951007",
+  "source": "greenhouse",
+  "board_id": "greenhouse:globalli",
+  "external_id": "5250951007",
+  "employer": "Globalli",
+  "employer_provenance": "payload",
+  "title": "Full Stack Software Developer",
+  "title_normalised": "Full Stack Software Developer",
+  "location": "Remote - India, Pakistan",
+  "published_at": "2026-09-28T21:59:41Z",
+  "published_field": "first_published",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-09-29T04:34:18.017109Z",
+  "ordering_date": "2026-09-28T21:59:41Z",
+  "ordering_date_source": "publication",
+  "url": "https://job-boards.greenhouse.io/globalli/jobs/5250951007",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null
  }
 ]
