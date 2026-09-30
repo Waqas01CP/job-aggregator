@@ -74,6 +74,7 @@ supersedes and superseded-by links, deliberately not duplicated here.
 | `docs/reference/seniority-exclusions.md` | The senior-level title words that drop a posting the title pool admitted, the levels deliberately left in, and the evidence behind the numbered levels. | current |
 | `docs/reference/title-pool.md` | The 79 title terms a posting must match, grouped into the operator's four role families in order of precedence to be admitted, plus the normalisation and matching rules applied to both sides. | current |
 | `docs/research/README.md` | Dated snapshots of what was found and when. Numbered by the order the pass was run, so a later reader knows what was known at each point. | current |
+| `logs/audit/README.md` | One report per audit, newest at the top, written by the audit seat in its own words. This table is the navigation index for every audit of this repository. | current |
 | `logs/README.md` | One log per session, newest at the top. This table is the navigation index for all session history. | current |
 
 ## research
@@ -209,4 +210,4 @@ Grouped by topic, in the order the pipeline runs. A record appears under exactly
 | `docs/deferred/rozee-pk.md` | Adding Rozee.pk as a source. Deferred until the display works and until more ATS sources are added, either of which may remove the need for it. | current |
 | `docs/deferred/similarity-matching.md` | Ranking postings by similarity to accepted roles. Deferred because ADR-0010 forbids it and the deterministic star was built instead; revisit when the accepted store holds fifty rows or when the operator stops reading every row. | current |
 
-Files listed: 104
+Files listed: 105

@@ -210,3 +210,21 @@ Each names its record and clause, and each is proved by a mutation in `tools/mut
     masking in the public log, and the agreement check's test by identity;
   - **the operator's:** how long a dry run of the clearing tool stays valid, since
     it is a preference about his own working pattern.
+
+## Two more of the operator's decisions, 2026-09-30T20:57Z
+
+- **The clearing tool's dry run stays valid for 48 hours**, the seat's value, approved:
+  "yes, 48 is enough. recommendation approved." `config/sweep.json` now says so.
+- **Audit reports are kept, in `logs/audit/`.** His words: the report "should be logged
+  ... there will always be a trail and credibility as audits will be chained just how
+  the logs are chained ... even audit is not exempt from making a correct output and
+  later audit chat can even use those". Built as:
+  - an index, `logs/audit/README.md`, with the chain rule and the report's format;
+  - what a report may never carry, since the repository is public;
+  - the audits before the folder, pointing to where the seat's account of each lives.
+
+  **The audit seat writes its report and its index row, and nothing else, and never
+  commits.** `docs/how-to/the-seats.md` carries the exception. The implementing seat
+  commits the report unchanged.
+- **The fourth audit has run**, the operator says. Its report is to be written into
+  `logs/audit/` by the audit chat, on a brief in `briefs/audit.md`, and relayed here.

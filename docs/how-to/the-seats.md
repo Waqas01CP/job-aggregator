@@ -116,11 +116,16 @@ scratchpad.
 **May not** edit any file, commit, push, write or amend a record, touch
 `MAP.md`, or write to Airtable. That prohibition is what makes fanning work
 out safe: an agent that cannot write cannot break the arrangement in this
-file.
+file. **One exception**, the operator's decision of 2026-09-30: it writes its
+own report to `logs/audit/` and adds its row to `logs/audit/README.md`, which
+says how. Those two files, nothing else, and still no commit or push. The
+implementing seat commits them unchanged.
 
 **Delivers findings to the operator**, with the command and its output for
 each, never straight to the implementing seat. The operator routes them, the
-same way he routes briefs.
+same way he routes briefs. **The report is also kept**, chained like the
+session logs, so a later audit reads what earlier ones found and missed, and
+an audit is itself open to checking.
 
 **Carry the authority order and the scope floor into every task it fans out.**
 Subagents start cold and inherit neither. The scope floor exists because those
@@ -207,6 +212,7 @@ this file. This one holds only who does what.
 
 | Date | Change | Reason |
 |---|---|---|
+| 2026-09-30 | The audit seat writes its own report to `logs/audit/` and its index row there, and the implementing seat commits them | The operator's decision: until now each report was discarded once relayed, leaving only the implementing seat's summary. His reasons: a trail, chained like the session logs; credibility, since an audit is not exempt from being checked; and later audits reading earlier ones. The file's `verified:` date is unchanged: only these lines were re-checked |
 | 2026-09-25 | The push rule replaced with the operator's D10 | The file said the implementing seat pushes only when a brief says push. The seat had pushed its own commits since the operator's "you can push it if you would like" of 2026-09-23, and read that as standing; a compaction summary then called it so, and the seat pushed against Brief 7's "The operator pushes". Asked, he answered: "D10: yes, you are allowed to push." The conditions, the full suite first and never a forced push, are those the seat proposed with the question. The file's `verified:` date is unchanged: only these two lines were re-checked. The operator's own "and pushes" line was missed and made to agree on 2026-09-26, found by the audit of 2026-09-25 |
 | 2026-09-23 | The session-boundary rule replaced with the operator's, and the audit seat's fresh-chat rule relaxed to its reason | The file said to start a new chat at a task boundary and said the audit seat takes a fresh chat every time. Both were the seat's inference, not the operator's practice, and the audit one was already producing a wrong answer within a day. He decides closure by watching `/context` and saying "close this chat"; a seat does not decide it. The audit seat goes cold when the importance of the audit justifies it, not on a schedule. The one-seat-at-a-time rule was added after two implementing seats ran in parallel for a round |
 | 2026-09-22 | File created | The arrangement governed every session and lived in handoff prompts. `CHAT_STATE.md` carried six lines of it addressed to the architecture chat, so the implementing seat was never told the rules it is bound by. A fourth seat made the omission worse, since an `ultracode` seat fans work out to agents that inherit no context at all |

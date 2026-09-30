@@ -22,6 +22,10 @@ This rule is what keeps the reading cost flat as the log count grows.
 
 **If a log file exists with no row here, read it and add the row before doing anything else.**
 
+## Audit reports
+
+**Audits have their own lane, `logs/audit/`**, with its own index and the same chain rule. Each report is the audit seat's own words; the session log that acts on it names it. The operator's decision, 2026-09-30.
+
 ## Log format
 
 ADR-0024. In short: a header with date, model, the HEAD commit, and whether the session was read-only or mutating. Every factual claim carries a file and line, or a command and its output. Every claim tagged `[VERIFIED]` or `[BELIEVED]`, with unmarked meaning believed. Rejected alternatives recorded with the reason. What was checked and found already correct, recorded. What was not done, stated explicitly. Findings separated from decisions.

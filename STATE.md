@@ -6,6 +6,8 @@ status: current
 
 # STATE
 
+**Touched 2026-09-30T20:57Z by the implementing seat, for two of the operator's decisions only:** the clearing tool's 48-hour dry run approved; audit reports kept in `logs/audit/`, written by the audit seat and committed by this one. No code changed. The line that follows stands.
+
 **Touched 2026-09-30T18:06Z by the implementing seat, for the operator's answers only:** the `To review` view filters out closed rows and shows the newest first, by him; the fourth audit runs before the Brief 8 report goes to the chat. No code changed. The line that follows stands.
 
 **Last verified 2026-09-30T17:34Z by the implementing seat, for Brief 8, against `main` at `19ca94d` plus this commit's work, `data` at `c5b29a6`, and the private repository read through its token.** Checked for it: 702 tests on Python 3.12 and 3.11; 28 of 28 mutations caught; ADR-0041's corpus; the run logs for a week of morning groups; a week-long snapshot of the Himalayas search against the private seen store; the repost measurements over the public history and the full postings. The line that follows is the previous one.
