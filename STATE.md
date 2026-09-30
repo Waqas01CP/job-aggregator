@@ -6,6 +6,8 @@ status: current
 
 # STATE
 
+**Touched 2026-09-30T16:25Z by the implementing seat, for Brief 8's build, before its mutations and measurements:** the reason-based skip, ADR-0055's clock and tool, ADR-0053's agreement check, ADR-0036's re-baseline, and the fitness functions; 702 tests on Python 3.12. The rows, the log and the results follow in the next commit. The line that follows stands.
+
 **Touched 2026-09-30T15:10Z by the implementing seat, for one correction only:** `CAPABILITIES.md` said 329 mutations across 29 files; it is 326 across 28 at `368c641`, counted from the tree. No code changed. The line that follows stands.
 
 **Touched 2026-09-27T21:50Z by the implementing seat, for `CAPABILITIES.md` and two stale documents only:** the file approved by the operator and committed; `README.md` and the secrets how-to brought current; the evening run of 2026-09-27 read, healthy and with nothing to save in full; the four older mutation files the fix touches re-run, all caught. No code changed. The line that follows stands.

@@ -72,6 +72,11 @@ _S_MAX = 4_000_000_000      # 2096-10-02
 
 PAGINATED = True
 
+# ADR-0053's agreement check: one page of the whole feed, newest first, read
+# beside the country search to learn whether the search still excludes only
+# what the location rule would. The run drives the request; this names it.
+AGREEMENT_URL = "https://himalayas.app/jobs/api?limit=%d" % PAGE_SIZE
+
 
 def url_for(board, cursor=None):
     """The search for postings open to the board's country; `cursor` is the

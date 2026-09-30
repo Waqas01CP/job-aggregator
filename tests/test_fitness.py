@@ -26,7 +26,7 @@ sys.path.insert(0, ROOT)
 from src import storage
 from src.adapters import greenhouse, himalayas, lever
 from src.airtable import PIPELINE_FIELDS
-from src.airtable_sweep import CLASSIFICATION_TABLES, COPY_FIELDS, JOBS, WRITES
+from src.airtable_sweep import CLASSIFICATION_TABLES, COPY_FIELDS, JOBS, TOOL_WRITES, WRITES
 from src.config import Board
 from src.filters import TitleMatcher
 from src.normalise import Row, normalise
@@ -126,8 +126,14 @@ class TestFitnessFunctions(unittest.TestCase):
         written by the pipeline": stated as a property over the schema, not a
         list. Every field in the base has an owner in the schema reference;
         the fields any pipeline writer sends to a table are exactly the ones
-        owned by the pipeline there, whatever the base gains later. Mutation:
-        "the sweep may write Status"."""
+        owned by the pipeline there, whatever the base gains later.
+
+        **Scoped to the pipeline's writers, the projection and the sweep**,
+        by ADR-0055: the operator's own clearing tool writes his `Delete`,
+        which is him acting through a tool, not the pipeline writing his
+        field. Read over every writer, this test would call that a violation.
+        The tool is held to the opposite property instead: every field it may
+        write is his. Mutation: "the sweep may write Status"."""
         jobs = owners("## `Jobs` and `Jobs test`", ("Field", "Type", "Owner", "Holds"))
         self.assertTrue(set(jobs.values()) <= {"pipeline", "operator", "Airtable"}, jobs)
         written = set(PIPELINE_FIELDS) | set(WRITES[JOBS])
@@ -141,6 +147,9 @@ class TestFitnessFunctions(unittest.TestCase):
             self.assertEqual(set(WRITES[table]), {f for f, o in copies.items()
                                                   if o == "pipeline"}, table)
         self.assertEqual(set(COPY_FIELDS), {f for f, o in copies.items() if o == "pipeline"})
+        for table, fields in TOOL_WRITES.items():
+            for field in fields:
+                self.assertEqual(copies.get(field), "operator", "%s on %s" % (field, table))
 
 
 def normalised(text):

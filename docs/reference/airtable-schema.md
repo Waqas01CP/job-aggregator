@@ -109,7 +109,7 @@ by D12 for the architecture chat to record.
 | Matched term | pipeline | Copied from `Jobs` |
 | Identity | pipeline | Copied from `Jobs`; what the store is keyed on and the verify checks |
 | Choice reason, Pipeline reason or Stage | operator | The one that applies to the table, below |
-| Delete | operator | `accepted` and `accepted test` only. A single select whose one choice is yes: the operator's mark to remove the row from Airtable, once it is saved. Empty means keep. The pipeline reads it and never writes it (D12) |
+| Delete | operator | `accepted` and `accepted test` only. A single select whose one choice is yes: the operator's mark to remove the row from Airtable, once it is saved. Empty means keep. The pipeline reads it and never writes it (D12). *(2026-09-30: it has two writers, both his: him in the browser, and his clearing tool acting for him, which sets it on the rows he clears from `accepted` (ADR-0055). No pipeline writer sends it)* |
 | Classified | Airtable | Created time: when the copy arrived. The fifteen-day clock of the two rejection tables |
 
 | Table | Its operator field | Choices |

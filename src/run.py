@@ -44,7 +44,7 @@ import sys
 import traceback
 from datetime import datetime, timedelta, timezone
 
-from . import envfile, private_store, projection, storage
+from . import clearing, envfile, private_store, projection, storage
 from .airtable_sweep import SweepClient, TABLE_SECRETS
 from .closure import Closure
 from .sweep import Sweep, older_than
@@ -55,7 +55,8 @@ from .backfill import backfill
 from .config import ConfigError, is_publishable, load_boards, load_sweep_config
 from .dedupe import counts as dedupe_counts
 from .dedupe import group, split_new
-from .filters import ELIGIBILITY, FilterError, TitleMatcher, apply_chain, drop_counts
+from .filters import (ELIGIBILITY, FilterError, TitleMatcher, apply_chain, drop_counts,
+                      rule_location)
 from .http_client import (BudgetExhausted, CircuitOpen, HttpClient, HttpError)
 from .normalise import UNCONFIRMED_PUBLISHED, dumps, iso, loads, normalise
 
@@ -366,6 +367,40 @@ def previous_run_at(test_mode):
     return logs[-1].get("run_at") if logs and isinstance(logs[-1], dict) else None
 
 
+# How many of this branch's recent run logs the clearing tool reads for the
+# dry run a confirmed run must follow. Two scheduled runs a day and a few
+# dispatches fit a two-day window many times over.
+CLEARING_LOGS_READ = 20
+
+
+def clear_display(run, no_commit, test_mode, request, private_ok, used_before, config):
+    """ADR-0055's tool, when the dispatch asked for it. After the sweep, so
+    the sweep's snapshot of origin cannot include what this writes, and a row
+    cleared now is deleted by a later daily sweep, never by this run. Never
+    raises: a failure is recorded, the run still commits, and it exits 2."""
+    table, days, confirmed = request
+    if no_commit:
+        return {"table": table, "older_than_days": days, "confirmed": confirmed,
+                "mode": "a no-commit run reaches no base", "failure": None}
+    client = None
+    try:
+        client = make_sweep_client(test_mode, used_before)
+        logs = storage.read_recent_run_logs(CLEARING_LOGS_READ, test_mode) if confirmed else []
+        report = clearing.Clearing(client, run.paths, run.now, private_ok).run(
+            table, days, confirmed, logs, config.clearing_dry_run_valid_hours)
+        report.update(client.counters())
+        return report
+    except Exception as e:
+        failure = "%s: %s" % (type(e).__name__, e)
+        if client is not None:
+            failure = client.redact(failure)
+        report = {"table": table, "older_than_days": days, "confirmed": confirmed,
+                  "failure": redact_secrets(failure)}
+        if client is not None:
+            report.update(client.counters())
+        return report
+
+
 def sweep_display(run, no_commit, test_mode, slot, private_ok, closure, config, used_before,
                   closure_failure=None):
     """ADR-0050's sweep. The copy step runs on every committing run; the
@@ -397,6 +432,49 @@ def sweep_display(run, no_commit, test_mode, slot, private_ok, closure, config, 
         block = dict(client.counters()) if client is not None else {"calls_used": 0}
         block.update(daily=daily, failure=redact_secrets(failure))
         return block
+
+
+# The private file ADR-0053's disagreements are kept in, beside the private
+# outcome stores so the private store pushes it. The public run log carries
+# counts alone: an aggregator's postings never reach the public branch.
+AGREEMENT_FILE = "agreement_disagreements.json"
+
+
+def agreement(browse, search, searched_before, eligibility, source):
+    """ADR-0053's check, as a function of what was read: `browse`, one page of
+    the whole feed; `search`, what this run's country search returned; and
+    `searched_before`, every identity the search board stored on earlier
+    walks. Returns (counts, the postings in disagreement).
+
+    **A browse posting is excluded by the search when neither this walk nor
+    any earlier one returned it.** Not "absent from the pages read": the
+    search pins four old postings on page one and its order has small
+    inversions, so a window over the pages read would count a posting on an
+    unread page as excluded. The seen store holds everything the search ever
+    returned, which is the fact the check needs.
+
+    **Only a browse posting no newer than the search's newest is compared**,
+    since the two endpoints need not refresh at the same moment and a posting
+    the search has not yet taken in is not one it excluded.
+
+    **A disagreement is an excluded posting ADR-0041 would admit**: the
+    search has dropped something the operator could apply to."""
+    searched = {"%s:%s" % (source, p.external_id) for p in search} | set(searched_before)
+    newest = max((p.published_at for p in search), default=None)
+    counts = {"browse_read": len(browse), "comparable": 0, "excluded_by_search": 0,
+              "disagreements": 0}
+    disagree = []
+    for p in browse:
+        if newest is None or p.published_at is None or p.published_at > newest:
+            continue
+        counts["comparable"] += 1
+        if "%s:%s" % (source, p.external_id) in searched:
+            continue
+        counts["excluded_by_search"] += 1
+        if rule_location(p, eligibility).keep:
+            disagree.append(p)
+    counts["disagreements"] = len(disagree)
+    return counts, disagree
 
 
 def budget_line(run_log, by_branch, config, now):
@@ -439,6 +517,9 @@ class Run:
         # aggregator polled without it would keep nothing and be first
         # contact next time too, so it is not polled.
         self.private_unavailable = private_unavailable
+        # ADR-0053: every identity each board stored, for the agreement
+        # check's "has the search ever returned it". Filled by execute().
+        self.board_seen = {}
 
     # ------------------------------------------------------------ per board
     def poll(self, board, seen_first_seen):
@@ -483,6 +564,8 @@ class Run:
 
         log["fetched"] = len(parsed.postings)
         log["parse_problems"] = len(parsed.problems)
+        if getattr(adapter, "AGREEMENT_URL", None):
+            self._agreement(adapter, board, parsed.postings, log)
         rows = normalise(parsed.postings, board, self.now, seen=seen_first_seen)
         # D11: the posting whole, for the private full branch. Keyed the way
         # the normaliser keys a row, so only what became a row is kept.
@@ -502,6 +585,34 @@ class Run:
         self.board_logs.append(log)
         self._log_for = log
         return rows
+
+    def _agreement(self, adapter, board, search, log):
+        """ADR-0053: one page of the whole feed against what the search
+        returned, one request. Counts in the public log; the postings in
+        disagreement, if any, in the private store beside the outcomes. A
+        failure here is recorded and never costs the board its postings."""
+        try:
+            payload = self.client.get_json(adapter.AGREEMENT_URL, board.source)
+            browse = adapter.parse(payload, board).postings
+        except (BudgetExhausted, CircuitOpen):
+            raise
+        except Exception as e:
+            log["agreement"] = {"failure": "%s: %s" % (type(e).__name__, e)}
+            return
+        counts, disagree = agreement(browse, search, self.board_seen.get(board.board_id, ()),
+                                     ELIGIBILITY, board.source)
+        log["agreement"] = counts
+        if disagree:
+            checked = iso(self.now)
+            storage.append_delta(
+                "%s/%s" % (self.paths["local_outcomes_dir"], AGREEMENT_FILE),
+                [{"key": "%s|%s" % (p.external_id, checked), "checked_at": checked,
+                  "identity": "%s:%s" % (board.source, p.external_id), "source": board.source,
+                  "title": p.title, "location": p.location,
+                  "published_at": iso(p.published_at)} for p in disagree], key="key")
+            print("::warning::ADR-0053: the %s search excluded %d posting(s) the location "
+                  "rule would admit; the private store names them"
+                  % (board.board_id, len(disagree)))
 
     def _fetch_pages(self, adapter, board, log):
         """Read a paginated feed newest-first until it reaches what is already
@@ -542,6 +653,9 @@ class Run:
         # 2026-09-27T03:59Z stored 361 new Himalayas postings and could save
         # none of the 460 it fetched in full.
         self.high_water = {}
+        for identity, entry in seen.entries.items():
+            if entry.get("board_id"):
+                self.board_seen.setdefault(entry["board_id"], set()).add(identity)
         for entry in seen.entries.values():
             board_id, published = entry.get("board_id"), entry.get("published_at")
             if board_id and published and entry.get("full_saved_at"):
@@ -684,6 +798,13 @@ def summarise(run_log):
                               "  TEST MODE" if run_log["test_mode"] else "")]
     for b in run_log["boards"]:
         drops = ", ".join("%s=%d" % (k, v) for k, v in sorted(b["drops"].items()))
+        agree = b.get("agreement")
+        if agree:
+            drops += ("  [agreement (ADR-0053): %s]" % agree["failure"] if agree.get("failure")
+                      else "  [agreement (ADR-0053): %d of %d browse postings compared, %d "
+                      "excluded by the search, %d the location rule would admit]"
+                      % (agree["comparable"], agree["browse_read"], agree["excluded_by_search"],
+                         agree["disagreements"]))
         lines.append("  %-34s %-12s fetched %4d  new %4d  kept %3d  %s%s"
                      % (b["board"], b["status"], b["fetched"], b["new"], b["kept"],
                         drops or "no drops",
@@ -716,6 +837,17 @@ def summarise(run_log):
                         p.get("groups", "-"), p.get("groups_skipped_by_store", "-"),
                         p.get("rows_to_send", "-"),
                         "  [%s]" % p["mode"] if p.get("mode") else ""))
+    c = run_log.get("clearing")
+    if c is not None:
+        lines.append("  clearing (ADR-0055): %s older than %s days on its %s, %s%s%s" % (
+            c.get("table"), c.get("older_than_days"), c.get("measured_on", "date"),
+            "confirmed" if c.get("confirmed") else "dry run",
+            ": would remove %s (%s unreviewed), published %s to %s; written %s, Delete set on %s"
+            % (c.get("would_remove", "-"), c.get("unreviewed", "-"),
+               c.get("oldest_published") or "-", c.get("newest_published") or "-",
+               c.get("written", 0), c.get("marked_delete", 0))
+            if c.get("would_remove") is not None else "",
+            "  FAILED: %s" % c["failure"] if c.get("failure") else ""))
     sw = run_log.get("sweep")
     if sw is not None:
         lines.append("  sweep: %s%s" % (
@@ -825,6 +957,17 @@ def main(argv=None):
 
     test_mode = args.test_mode or os.environ.get("TEST_MODE") == "1"
 
+    # ADR-0055's tool, asked for by a dispatch's inputs and by nothing else.
+    # Read now, so a malformed request is known before anything is fetched;
+    # it is refused by name in the run log and the fetch goes on.
+    try:
+        clear_request = clearing.request_from(os.environ.get("CLEAR_TABLE"),
+                                              os.environ.get("CLEAR_DAYS"),
+                                              os.environ.get("CLEAR_CONFIRM") == "1")
+        clear_refused = None
+    except clearing.ClearingError as e:
+        clear_request, clear_refused = None, str(e)
+
     try:
         boards = load_boards()
         matcher = TitleMatcher()
@@ -923,6 +1066,20 @@ def main(argv=None):
             + int((run_log[RUN_LOG_KEY] or {}).get("calls_used") or 0),
             closure_failure=run_log.get("closure_failure") if closure is None else None)
     sweep_failure = run_log["sweep"].get("failure")
+    if clear_refused is not None:
+        run_log["clearing"] = {"failure": "refused: %s" % clear_refused}
+    elif clear_request is not None and count_failure is not None:
+        run_log["clearing"] = {"table": clear_request[0], "failure": "the month's Airtable calls "
+                               "could not be counted, so nothing was cleared"}
+    elif clear_request is not None:
+        run_log["clearing"] = clear_display(
+            run, args.no_commit, test_mode, clear_request,
+            private_ok=bool(store is not None and not (private_block and private_block["failure"])),
+            used_before=sum(by_branch.values())
+            + int((run_log[RUN_LOG_KEY] or {}).get("calls_used") or 0)
+            + int(run_log["sweep"].get("calls_used") or 0),
+            config=sweep_config)
+    clearing_failure = (run_log.get("clearing") or {}).get("failure")
     if private_block is not None and store is not None and not private_block["failure"]:
         # The second push: the aggregator outcomes the sweep just wrote.
         save_private_store(store, private_block, run.paths, run_log["run_at"],
@@ -977,7 +1134,9 @@ def main(argv=None):
     if sweep_failure:
         print("the sweep failed; nothing it had not verified was deleted, and the next "
               "run sweeps again: %s" % sweep_failure, file=sys.stderr)
-    if private_failure or projection_failure or sweep_failure:
+    if clearing_failure:
+        print("the clearing tool did not clear: %s" % clearing_failure, file=sys.stderr)
+    if private_failure or projection_failure or sweep_failure or clearing_failure:
         return EXIT_STOPPED_RESUMABLE
     return run.exit_code()
 

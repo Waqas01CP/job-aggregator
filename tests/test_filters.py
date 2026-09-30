@@ -226,6 +226,20 @@ class TestTheAgeRule(unittest.TestCase):
         self.assertEqual(self.judged(self.row_dated("2026-09-02T11:59:00Z",
                                                     "2026-09-09T12:00:00Z")), (False, "age"))
 
+    def test_the_boundary_to_the_second_and_a_week_later(self):
+        """Fitness function for ADR-0052, "A posting exactly seven days old at
+        first sight must be admitted, and one a second older must be
+        dropped.": the boundary to the second, and the admitted posting still
+        admitted with the clock a week on. The mutation that must fail it is
+        the seat's own first build of 2026-09-26, judging against the run's
+        clock rather than first sight. Mutation: "the age rule is judged
+        against the run's clock"."""
+        exact = self.row_dated("2026-09-02T12:00:00Z", "2026-09-09T12:00:00Z")
+        self.assertEqual(self.judged(exact), (True, None))
+        self.assertEqual(self.judged(self.row_dated("2026-09-02T11:59:59Z",
+                                                    "2026-09-09T12:00:00Z")), (False, "age"))
+        self.assertEqual(self.judged(exact, "2026-09-16T12:00:00Z"), (True, None))
+
     def test_admitted_once_it_stays_however_long_it_waits(self):
         """His example: fresh when first seen, and still in the table days,
         or months, later. Every later projection and sweep re-judges it, and

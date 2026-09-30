@@ -176,14 +176,21 @@ class TestRunIntegration(unittest.TestCase):
         os.chdir(self.cwd)
         shutil.rmtree(self.dir, ignore_errors=True)
 
-    def _client(self, pages):
-        """Serves the given pages in order, whatever the cursor."""
+    def _client(self, pages, browse=None):
+        """Serves the given search pages in order, whatever the page number,
+        and `browse` for ADR-0053's agreement request, which takes no search
+        page. `client.searches` counts the search requests alone, which is
+        the walk's length."""
         served = {"n": 0}
+        browse = browse if browse is not None else {"jobs": []}
 
         class Session:
             def get(_self, url, params=None, timeout=None, headers=None):
-                page = pages[min(served["n"], len(pages) - 1)]
-                served["n"] += 1
+                if url == himalayas.AGREEMENT_URL:
+                    page = browse
+                else:
+                    page = pages[min(served["n"], len(pages) - 1)]
+                    served["n"] += 1
 
                 class R:
                     status_code = 200
@@ -192,7 +199,9 @@ class TestRunIntegration(unittest.TestCase):
                     def json(self):
                         return page
                 return R()
-        return HttpClient(session=Session(), sleep=lambda s: None, min_interval=0)
+        client = HttpClient(session=Session(), sleep=lambda s: None, min_interval=0)
+        client.served = served
+        return client
 
     def test_pagination_follows_the_pages_until_they_run_out(self):
         page1 = {"jobs": [{"guid": "https://x.test/1", "title": "AI Engineer",
@@ -204,7 +213,7 @@ class TestRunIntegration(unittest.TestCase):
         client = self._client([page1, page2])
         log = Run([BOARD], client, now=NOW, matcher=MATCHER).execute()
         self.assertEqual(log["totals"]["fetched"], 2)
-        self.assertEqual(client.counters()["by_source"]["himalayas"], 2)
+        self.assertEqual(client.served["n"], 2)
 
     def test_aggregator_rows_go_to_a_local_file_never_the_committed_one(self):
         """ADR-0020: two feeds prohibit redistribution and a branch inherits
@@ -372,12 +381,12 @@ class TestRunIntegration(unittest.TestCase):
                  "offset": 20, "limit": 20, "totalCount": 40}
         first = self._client([page1, page2])
         Run([BOARD], first, now=NOW, matcher=MATCHER).execute()
-        self.assertEqual(first.counters()["by_source"]["himalayas"], 2)
+        self.assertEqual(first.served["n"], 2)
         self._saved_in_full()
 
         second = self._client([page1, page2])
         log = Run([BOARD], second, now=NOW, matcher=MATCHER).execute()
-        self.assertEqual(second.counters()["by_source"]["himalayas"], 1)
+        self.assertEqual(second.served["n"], 1)
         self.assertEqual(log["totals"]["new"], 0)
 
     def test_paging_is_capped_even_with_endless_pages(self):
@@ -389,7 +398,7 @@ class TestRunIntegration(unittest.TestCase):
         client = self._client([endless])
         Run([BOARD], client, now=NOW, matcher=MATCHER).execute()
         from src.run import MAX_PAGES
-        self.assertEqual(client.counters()["by_source"]["himalayas"], MAX_PAGES)
+        self.assertEqual(client.served["n"], MAX_PAGES)
 
     # The catch-up, the operator's yes of 2026-09-26: the search board reads
     # back a week on its first walk instead of stopping at browse's mark.
@@ -414,7 +423,7 @@ class TestRunIntegration(unittest.TestCase):
         self._saved_in_full()
         client = self._client(pages)
         Run([SEARCH], client, now=NOW, matcher=MATCHER).execute()
-        self.assertEqual(client.counters()["by_source"]["himalayas"], 3)
+        self.assertEqual(client.served["n"], 3)
 
     def test_a_posting_not_saved_in_full_is_walked_to_again(self):
         """D11 on a paginated feed: the run of 2026-09-27T03:59Z stored its
@@ -425,33 +434,100 @@ class TestRunIntegration(unittest.TestCase):
         again = self._client(pages)
         run = Run([SEARCH], again, now=NOW, matcher=MATCHER)
         log = run.execute()
-        self.assertEqual(again.counters()["by_source"]["himalayas"], 3)
+        self.assertEqual(again.served["n"], 3)
         self.assertEqual(log["totals"]["new"], 0, "a posting walked to again is not new")
         self.assertEqual(len(run.full_pending), 3, "reached again but not offered for saving")
         self._saved_in_full()
         stopped = self._client(pages)
         Run([SEARCH], stopped, now=NOW, matcher=MATCHER).execute()
-        self.assertEqual(stopped.counters()["by_source"]["himalayas"], 1)
+        self.assertEqual(stopped.served["n"], 1)
 
     def test_with_no_mark_the_walk_stops_at_the_age_limit(self):
         """A page wholly older than a week before now holds nothing D14 could
         admit, so it ends a first walk; without that, the walk reads on."""
         client = self._client(self._two_pages(1788220800))      # 2026-09-01
         Run([SEARCH], client, now=NOW, matcher=MATCHER).execute()
-        self.assertEqual(client.counters()["by_source"]["himalayas"], 2)
+        self.assertEqual(client.served["n"], 2)
 
     def test_a_posting_exactly_at_the_age_limit_does_not_end_the_walk(self):
         """2026-09-09T12:00:00Z is exactly a week before NOW; the age rule
         keeps it, so the page it is on is not past the week."""
         client = self._client(self._two_pages(1788955200))
         log = Run([SEARCH], client, now=NOW, matcher=MATCHER).execute()
-        self.assertEqual(client.counters()["by_source"]["himalayas"], 3)
+        self.assertEqual(client.served["n"], 3)
         self.assertEqual(log["totals"]["fetched"], 3)
 
     def test_a_date_not_proven_to_mean_publication_sets_no_floor(self):
         from src.run import walk_floor
         self.assertIsNone(walk_floor("lever", NOW))
         self.assertEqual(walk_floor("himalayas", NOW), "2026-09-09T11:59:59Z")
+
+    # ADR-0053's agreement check: one browse page against what the search
+    # has returned, so a pushed-down predicate that drifts is seen.
+    def _search_page(self):
+        return {"jobs": [{"guid": "https://x.test/1", "title": "AI Engineer",
+                          "applicationLink": "https://x.test/1", "pubDate": 1789141813,
+                          "locationRestrictions": ["Pakistan"]}],
+                "offset": 0, "limit": 20, "totalCount": 1}
+
+    def _browse(self, *postings):
+        return {"jobs": [dict({"title": "Data Scientist", "applicationLink": p["guid"]}, **p)
+                         for p in postings]}
+
+    def test_the_agreement_check_is_seen_disagreeing(self):
+        """Fitness function for ADR-0053, "The agreement check must be seen
+        disagreeing.": a browse posting the search never returned, open to
+        anyone, is one the location rule admits, so the search has dropped
+        something the operator could apply to. It is counted in the public
+        log and named only in the private store. Mutation: "the agreement
+        check never disagrees"."""
+        browse = self._browse({"guid": "https://x.test/9", "pubDate": 1789141700})
+        log = Run([SEARCH], self._client([self._search_page()], browse), now=NOW,
+                  matcher=MATCHER).execute()
+        [board] = log["boards"]
+        self.assertEqual(board["agreement"], {"browse_read": 1, "comparable": 1,
+                                              "excluded_by_search": 1, "disagreements": 1})
+        self.assertNotIn("x.test/9", json.dumps(log))
+        [record] = load_json("data/local/outcomes/agreement_disagreements.json")
+        self.assertEqual(record["identity"], "himalayas:https://x.test/9")
+
+    def test_a_posting_the_search_excluded_and_the_rule_would_too_is_agreement(self):
+        """Mutation: "the agreement check ignores the location rule"."""
+        browse = self._browse({"guid": "https://x.test/9", "pubDate": 1789141700,
+                               "locationRestrictions": ["United States"]})
+        log = Run([SEARCH], self._client([self._search_page()], browse), now=NOW,
+                  matcher=MATCHER).execute()
+        self.assertEqual(log["boards"][0]["agreement"]["excluded_by_search"], 1)
+        self.assertEqual(log["boards"][0]["agreement"]["disagreements"], 0)
+
+    def test_what_the_search_returned_on_an_earlier_walk_was_not_excluded(self):
+        """The search pins old postings and its order inverts in places, so a
+        posting on a page this walk did not read is not an exclusion. The
+        seen store knows what the search ever returned. Mutation: "the
+        agreement check forgets earlier walks"."""
+        older = {"guid": "https://x.test/5", "title": "ML Engineer",
+                 "applicationLink": "https://x.test/5", "pubDate": 1789141700}
+        Run([SEARCH], self._client([{"jobs": [older], "offset": 0, "limit": 20,
+                                     "totalCount": 1}]), now=NOW, matcher=MATCHER).execute()
+        browse = self._browse({"guid": "https://x.test/5", "pubDate": 1789141700})
+        log = Run([SEARCH], self._client([self._search_page()], browse), now=NOW,
+                  matcher=MATCHER).execute()
+        self.assertEqual(log["boards"][0]["agreement"]["excluded_by_search"], 0)
+
+    def test_a_posting_newer_than_the_search_is_not_compared(self):
+        """The endpoints need not refresh together: a posting the search has
+        not taken in yet is not one it excluded."""
+        browse = self._browse({"guid": "https://x.test/9", "pubDate": 1789141813 + 3600})
+        log = Run([SEARCH], self._client([self._search_page()], browse), now=NOW,
+                  matcher=MATCHER).execute()
+        self.assertEqual(log["boards"][0]["agreement"]["comparable"], 0)
+
+    def test_a_failed_agreement_check_costs_the_board_nothing(self):
+        log = Run([SEARCH], self._client([self._search_page()], {"no jobs": True}), now=NOW,
+                  matcher=MATCHER).execute()
+        [board] = log["boards"]
+        self.assertIn("failure", board["agreement"])
+        self.assertEqual((board["status"], board["fetched"]), ("ok", 1))
 
     def test_the_cap_reaches_back_a_week(self):
         """A first walk must reach the age limit before the cap. 92 eligible

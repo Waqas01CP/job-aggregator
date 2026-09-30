@@ -36,6 +36,17 @@ field names are already public in `src/adapters/himalayas.py`.
 
 The first check of a platform records a baseline and gives no verdict; only
 the second onward can detect a change.
+
+**A change we caused is ours, and says so.** ADR-0036, 2026-09-28: when an
+endpoint or the fields an adapter reads change, the diff the next check
+reports is not the board moving. `config/contract_rebaselines.json` records
+each such change, with its date, its cause and the fields it moves, in the
+same commit as the change. A difference matching an entry newer than the
+shape it replaces is marked ours and the platform reads `re-baselined`; any
+other difference still reads `changed`. Each stored shape carries the date it
+was accepted, so an old entry can never excuse a later change to the same
+field. On 2026-09-27 the check reported four Himalayas fields changed that
+ADR-0053's move to the search endpoint had caused, with nothing to say so.
 """
 
 import argparse
@@ -46,13 +57,14 @@ from datetime import datetime, timezone
 
 from . import envfile, storage
 from .adapters import greenhouse, himalayas, lever
-from .config import load_boards
+from .config import REPO_ROOT, ConfigError, load_boards
 from .http_client import HttpClient, HttpError
 from .normalise import dumps, iso, loads
 
 PLATFORMS = {"greenhouse": greenhouse, "lever": lever, "himalayas": himalayas}
 
 FINGERPRINT_FILE = "contract/fingerprint.json"
+REBASELINES_PATH = os.path.join(REPO_ROOT, "config", "contract_rebaselines.json")
 LOG_DIR = "logs-contract"
 
 # One request per platform, and a little room: the shared client counts every
@@ -130,11 +142,42 @@ def compare(before, after):
     return changes
 
 
+def load_rebaselines(path=None):
+    """The recorded re-baselines, each checked for what explaining a
+    difference needs. A malformed entry stops the check rather than excusing
+    a change it was never meant to."""
+    import json
+    with open(path or REBASELINES_PATH, encoding="utf-8") as f:
+        doc = json.load(f)
+    entries = doc.get("rebaselines") if isinstance(doc, dict) else None
+    if not isinstance(entries, list):
+        raise ConfigError("contract re-baselines: expected a 'rebaselines' list")
+    for i, e in enumerate(entries):
+        if not (isinstance(e, dict) and e.get("platform") in PLATFORMS
+                and isinstance(e.get("date"), str) and len(e["date"]) == 10
+                and e.get("cause") and isinstance(e.get("fields"), list) and e["fields"]):
+            raise ConfigError("contract re-baseline %d needs a platform, a YYYY-MM-DD date, "
+                              "a cause and the fields it moves" % i)
+    return entries
+
+
+def explain(platform, changes, rebaselines, since):
+    """Mark each change a recorded re-baseline accounts for: same platform,
+    the field named, and dated after the stored shape was accepted."""
+    for c in changes:
+        name = "%s.%s" % (c["in"], c["field"])
+        for e in rebaselines:
+            if e["platform"] == platform and name in e["fields"] and e["date"] > (since or ""):
+                c["ours"] = "%s: %s" % (e["date"], e["cause"])
+                break
+    return changes
+
+
 def first_board(boards, platform):
     return next((b for b in boards if b.platform == platform), None)
 
 
-def check(boards, client, stored, now):
+def check(boards, client, stored, now, rebaselines=()):
     """One check. Returns (the new fingerprint file, the log). Never reaches
     the branch; main does. A board that cannot be answered keeps its old
     fingerprint and is logged as such."""
@@ -159,11 +202,19 @@ def check(boards, client, stored, now):
             # fields are still compared, since a renamed list lands here.
             fp["posting"] = (stored.get(platform) or {}).get("posting", {})
         previous = stored.get(platform)
+        since = (previous or {}).get("since")
         if previous is None:
             entry["status"] = "baseline"
         else:
-            entry["changes"] = compare(previous, fp)
-            entry["status"] = "changed" if entry["changes"] else "unchanged"
+            entry["changes"] = explain(platform, compare(previous, fp), rebaselines, since)
+            entry["status"] = ("unchanged" if not entry["changes"] else
+                               "re-baselined" if all(c.get("ours") for c in entry["changes"])
+                               else "changed")
+        # When this shape was accepted: today for a new or changed one, and
+        # for a stored one written before the date was kept, so no entry
+        # older than the shape in force can explain a later change.
+        fp["since"] = iso(now)[:10] if previous is None or entry.get("changes") or not since \
+            else since
         updated[platform] = fp
     return updated, log
 
@@ -176,8 +227,9 @@ def summarise(log):
             platform, entry["status"], entry.get("board", ""),
             "  %d posting(s)" % entry["postings"] if "postings" in entry else ""))
         for c in entry.get("changes") or []:
-            lines.append("    %s field %s: was %s, now %s" % (c["in"], c["field"],
-                                                           c["was"], c["now"]))
+            lines.append("    %s field %s: was %s, now %s%s" % (
+                c["in"], c["field"], c["was"], c["now"],
+                "  [ours, %s]" % c["ours"] if c.get("ours") else ""))
         if entry.get("detail"):
             lines.append("    %s" % entry["detail"])
     return "\n".join(lines)
@@ -211,7 +263,8 @@ def main(argv=None, now=None):
         boards = load_boards()
         stored = read_stored(test_mode, args.no_commit)
         now = now or datetime.now(timezone.utc)
-        updated, log = check(boards, HttpClient(budget=BUDGET), stored, now)
+        updated, log = check(boards, HttpClient(budget=BUDGET), stored, now,
+                             load_rebaselines())
         log["test_mode"] = test_mode
         print(summarise(log))
 

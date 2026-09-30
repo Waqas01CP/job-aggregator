@@ -23,6 +23,22 @@ on:
         description: "Write to alternate files, leaving production data alone"
         type: boolean
         default: false
+      # ADR-0055's clearing tool. A scheduled run carries none of these and
+      # clears nothing. Run it once unconfirmed, read the report in the run's
+      # output, then again with the same table and days, confirmed.
+      clear_table:
+        description: "Clear a table (ADR-0055): the rows older than the days below"
+        type: choice
+        options: [none, jobs, rejected-not-a-fit, rejected-poor-filtering, accepted]
+        default: none
+      clear_days:
+        description: "Older than this many days: 15, 30 or any whole number. Jobs measures the publication date, the other tables Classified"
+        type: string
+        default: "30"
+      clear_confirm:
+        description: "Clear them. Unticked is the dry run, which removes nothing"
+        type: boolean
+        default: false
 
 # Two runs must never write the data branch at once. A queued run waits rather
 # than being cancelled, because cancelling would drop the fetch entirely.
@@ -127,6 +143,11 @@ jobs:
           # once a day is asked on the morning run only. A dispatch is neither
           # slot and polls every source.
           RUN_SLOT: ${{ github.event.schedule == '0 0 * * *' && 'morning' || github.event.schedule == '0 13 * * *' && 'evening' || 'manual' }}
+          # ADR-0055's tool, from the dispatch's inputs. Passed as values, never
+          # into the script below, so a typed number cannot become a command.
+          CLEAR_TABLE: ${{ inputs.clear_table || 'none' }}
+          CLEAR_DAYS: ${{ inputs.clear_days }}
+          CLEAR_CONFIRM: ${{ inputs.clear_confirm && '1' || '0' }}
           AIRTABLE_TOKEN: ${{ secrets.AIRTABLE_TOKEN }}
           AIRTABLE_BASE_ID: ${{ secrets.AIRTABLE_BASE_ID }}
           AIRTABLE_TABLE_ID: ${{ secrets.AIRTABLE_TABLE_ID }}

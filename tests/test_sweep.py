@@ -34,6 +34,7 @@ from tests.fake_airtable import FakeBase, stamp
 MATCHER = TitleMatcher()
 NOW = datetime(2026, 10, 10, 4, 0, tzinfo=timezone.utc)
 CONFIG = SweepConfig(closed_after_polled_runs=4, retire_after_days=15, run_log_window=60,
+                     unreviewed_after_days=30, clearing_dry_run_valid_hours=48,
                      budget_warning_share=0.6, budget_warning_before_day=15)
 TABLES = {JOBS: "tblPRODJOBS000001", "rejected-not-a-fit": "tblPRODNOTFIT0001",
           "rejected-poor-filtering": "tblPRODPOORFILT01", "accepted": "tblPRODACCEPT0001"}
@@ -628,6 +629,125 @@ class TestNoClockMoves(Harness):
         for call in self.base.calls:
             for rec in (call["json"] or {}).get("records", []):
                 self.assertNotIn("Status", rec.get("fields", {}))
+
+
+class TestTheClock(Harness):
+    """ADR-0055's clock: an unreviewed row leaves thirty days after it was
+    first seen, stored with `unreviewed-aged-out` first, deleted on a later
+    run once origin holds it."""
+
+    def aged(self, days):
+        first = (NOW - timedelta(days=days)).isoformat().replace("+00:00", "Z")
+        r = make_row(1, published=first)
+        self.store_rows([r])
+        self.in_jobs(r)
+        return r
+
+    def test_a_row_29_days_unreviewed_stays(self):
+        """Mutation: "the clock fires at the retention window"."""
+        self.aged(29)
+        report = self.sweep()
+        self.assertEqual(len(self.jobs()), 1)
+        self.assertEqual(self.store("removed_unreviewed.json"), [])
+        self.assertEqual(report["aged_out"], 0)
+
+    def test_at_31_days_it_is_stored_then_removed_on_a_later_run(self):
+        """Mutation: "the clock never fires"."""
+        self.aged(31)
+        first = self.sweep()
+        [record] = self.store("removed_unreviewed.json")
+        self.assertEqual((record["identity"], record["reason"]),
+                         ("greenhouse:1", "unreviewed-aged-out"))
+        self.assertEqual(len(self.jobs()), 1, "deleted in the run that wrote its store")
+        self.assertIn({"identity": "greenhouse:1", "table": JOBS,
+                       "reason": "unreviewed-aged-out", "action": "stored"}, first["removals"])
+        second = self.sweep()
+        self.assertEqual(self.jobs(), [])
+        self.assertIn({"identity": "greenhouse:1", "table": JOBS,
+                       "reason": "unreviewed-aged-out", "action": "deleted"}, second["removals"])
+
+    def test_a_classified_row_is_never_aged_out(self):
+        first = (NOW - timedelta(days=40)).isoformat().replace("+00:00", "Z")
+        r = make_row(1, published=first)
+        self.store_rows([r])
+        self.in_jobs(r, status="accepted", classified_days_ago=2)
+        self.sweep()
+        self.assertEqual(self.store("removed_unreviewed.json"), [])
+
+    def test_an_aggregator_rows_identity_is_masked_in_the_log(self):
+        first = (NOW - timedelta(days=31)).isoformat().replace("+00:00", "Z")
+        r = make_row(1, source="himalayas", published=first)
+        self.store_rows([r])
+        self.in_jobs(r)
+        report = self.sweep()
+        self.assertEqual([x["identity"] for x in report["removals"]], ["<aggregator row>"])
+        [record] = self.store("removed_unreviewed.json", private=True)
+        self.assertEqual(record["identity"], "himalayas:1")
+
+
+class TestRemovalsByReason(Harness):
+    def write_removals(self, records, private=False):
+        directory = self.paths["local_outcomes_dir" if private else "outcomes_dir"]
+        storage.write_atomic("%s/removed_unreviewed.json" % directory, dumps(records))
+
+    def test_a_row_that_returned_and_aged_out_is_stored_again_before_it_goes(self):
+        """A rule dropped it, a widened rule let it back, and it has now aged
+        out. Origin holds the first removal, not this one, so this one is
+        written and the row stays until origin holds it. Deleting against the
+        old record would let the projection, reading its rule reason, send the
+        row back on every run. Mutation: "a returned row is deleted against
+        its old record"."""
+        first = (NOW - timedelta(days=31)).isoformat().replace("+00:00", "Z")
+        r = make_row(1, published=first)
+        self.store_rows([r])
+        self.in_jobs(r)
+        self.write_removals([{"identity": "greenhouse:1", "reason": "dropped by the age rule",
+                              "swept_at": "2026-09-01T04:00:00Z"}])
+        report = self.sweep()
+        self.assertEqual(len(self.jobs()), 1)
+        self.assertEqual([x["reason"] for x in self.store("removed_unreviewed.json")],
+                         ["dropped by the age rule", "unreviewed-aged-out"])
+        self.assertEqual(report["deleted_from_jobs"], 0)
+        self.sweep()
+        self.assertEqual(self.jobs(), [])
+
+    def test_a_removal_the_operators_tool_wrote_takes_the_row_once_origin_holds_it(self):
+        """ADR-0055: the tool writes `operator-removed` and nothing else; the
+        sweep deletes the row on its next daily run. The rules would keep the
+        row, so the stored removal is the only reason it goes. Mutation: "a
+        kept-out row is judged again"."""
+        r = make_row(1)
+        self.store_rows([r])
+        self.in_jobs(r)
+        self.write_removals([{"identity": "greenhouse:1", "reason": "operator-removed",
+                              "swept_at": "2026-10-09T04:00:00Z"}])
+        report = self.sweep()
+        self.assertEqual(self.jobs(), [])
+        self.assertIn({"identity": "greenhouse:1", "table": JOBS,
+                       "reason": "operator-removed", "action": "deleted"}, report["removals"])
+        self.assertEqual(len(self.store("removed_unreviewed.json")), 1, "a second record")
+
+
+class TestExclusivity(Harness):
+    def test_an_accepted_copy_saved_twice_is_correct_and_two_corpora_are_not(self):
+        """Fitness function for ADR-0043, "the exclusivity invariant covers the
+        three classification stores above and no others.": D12 writes an
+        `accepted` copy to `removed_copies.json` and to the accepted store in
+        the same run, which is correct; one identity in two outcome corpora is
+        not. Before 2026-09-30 nothing checked either. Mutation: "the
+        exclusivity check covers every store"."""
+        storage.write_atomic("%s/accepted.json" % self.paths["outcomes_dir"],
+                             dumps([{"identity": "greenhouse:1"}]))
+        storage.write_atomic("%s/removed_copies.json" % self.paths["outcomes_dir"],
+                             dumps([{"identity": "greenhouse:1", "copy_id": "recA"}]))
+        storage.write_atomic("%s/removed_unreviewed.json" % self.paths["outcomes_dir"],
+                             dumps([{"identity": "greenhouse:1", "reason": "closed"}]))
+        report = self.sweep()
+        self.assertEqual([p for p in report["problems"] if "ADR-0043" in p], [])
+        storage.write_atomic("%s/rejected_not_a_fit.json" % self.paths["outcomes_dir"],
+                             dumps([{"identity": "greenhouse:1"}]))
+        report = self.sweep()
+        self.assertEqual(len([p for p in report["problems"] if "ADR-0043" in p]), 1)
 
 
 if __name__ == "__main__":

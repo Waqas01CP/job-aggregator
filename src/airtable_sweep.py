@@ -59,9 +59,15 @@ OPERATOR_FIELD = {"rejected-not-a-fit": "Choice reason",
 # it and never writes it. The operator's D12, 2026-09-26.
 DELETE_FIELD = "Delete"
 DELETE_YES = "yes"
-# What the sweep may write, per table. Nothing else leaves this module.
+# What the sweep may write, per table. Nothing else leaves this module for a
+# pipeline writer.
 WRITES = {JOBS: ("Closed",)}
 WRITES.update({table: COPY_FIELDS for table in CLASSIFICATION_TABLES})
+# What the operator's own clearing tool may write: his `Delete` mark, on
+# `accepted` alone. A tool he invokes is him acting, not the pipeline, which
+# is why ADR-0055 scopes ADR-0035's ownership rule to the pipeline's writers
+# and why this is a list of its own that no pipeline writer consults.
+TOOL_WRITES = {"accepted": (DELETE_FIELD,)}
 
 # The secret each table's ID comes from, per mode. The production names are
 # the ones the operator created on 2026-09-18; the test ones on 2026-09-25,
@@ -259,6 +265,32 @@ class SweepClient(ResilientClient):
                 raise ResponseMismatch(target, "%d of %d updates are not in the response"
                                        % (len(missing), len(batch)), missing)
             done.extend(record_id for record_id, _ in batch)
+        return done
+
+    def mark_delete(self, record_ids):
+        """Set `Delete` to yes on `accepted` copies: the operator's clearing
+        tool acting for him (ADR-0055). It deletes nothing; D12's path in the
+        sweep saves each copy and removes it once origin holds the record.
+        The only field sent is `Delete`, and only to `accepted`."""
+        done = []
+        batches = list(self._batches(list(record_ids)))
+        for number, batch in enumerate(batches, 1):
+            target = "airtable update of Delete, batch %d of %d" % (number, len(batches))
+            records = [{"id": record_id, "fields": {DELETE_FIELD: DELETE_YES}}
+                       for record_id in batch]
+            for index, r in enumerate(records):
+                extra = sorted(set(r["fields"]) - set(TOOL_WRITES["accepted"]))
+                if extra:
+                    raise ValueError("record %d for accepted carries fields the tool may not "
+                                     "write: %s" % (index, extra))
+            payload = self._call("PATCH", "accepted", target, repeatable=True,
+                                 body={"records": records})
+            got = {r.get("id") for r in payload.get("records") or []}
+            missing = [record_id for record_id in batch if record_id not in got]
+            if missing:
+                raise ResponseMismatch(target, "%d of %d updates are not in the response"
+                                       % (len(missing), len(batch)), missing)
+            done.extend(batch)
         return done
 
     def delete(self, table, record_ids):

@@ -145,9 +145,13 @@ class TestWorkflow(unittest.TestCase):
         self.assertNotRegex(self.text, r"git push[^\n]*OTHER_BRANCH")
 
     def test_no_waiting_run_is_ever_cancelled(self):
-        """GitHub keeps one pending run per concurrency group by default and
-        cancels it when a third arrives, and the contract check shares this
-        group. Both workflows must queue. The audit of 2026-09-24, F3."""
+        """Fitness function for ADR-0054, "Runs queue, up to GitHub's
+        hundred.": GitHub keeps one pending run per concurrency group by
+        default and cancels it when a third arrives, and the contract check
+        shares this group. Both workflows must queue, and neither may cancel a
+        run in progress. The audit of 2026-09-24, F3. Mutation: "the fetch no
+        longer queues"; its twin, "the contract check cancels a run in
+        progress", is on file beside it."""
         for name, text in (("fetch.yml", self.text), ("contract.yml", contract_workflow())):
             with self.subTest(workflow=name):
                 block = re.search(r"^concurrency:\n((?:  .*\n)+)", text, re.M).group(1)

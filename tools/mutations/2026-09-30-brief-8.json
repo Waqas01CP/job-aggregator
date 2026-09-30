@@ -1,0 +1,170 @@
+[
+  {
+    "label": "the skip reads the removal store whole",
+    "path": "src/projection.py",
+    "find": "            if label.endswith(REMOVED_UNREVIEWED_STORE):\n                removals.append(record)\n            else:\n                stored.add(identity)\n",
+    "replace": "            stored.add(identity)\n"
+  },
+  {
+    "label": "the skip ignores the removal store",
+    "path": "src/projection.py",
+    "find": "    return stored | kept_out(removals)",
+    "replace": "    return stored"
+  },
+  {
+    "label": "the earliest removal decides",
+    "path": "src/projection.py",
+    "find": "        if identity not in latest or when >= latest[identity][0]:",
+    "replace": "        if identity not in latest:"
+  },
+  {
+    "label": "a regrouped row hides its group",
+    "path": "src/projection.py",
+    "find": "    return reason == REASON_REGROUPED or (reason.startswith(\"dropped by the \")",
+    "replace": "    return (reason.startswith(\"dropped by the \")"
+  },
+  {
+    "label": "the clock fires at the retention window",
+    "path": "src/sweep.py",
+    "find": "        return older_than(first_seen, self.config.unreviewed_after_days, self.now)",
+    "replace": "        return older_than(first_seen, self.config.retire_after_days, self.now)"
+  },
+  {
+    "label": "the clock never fires",
+    "path": "src/sweep.py",
+    "find": "            if removal is None and self.aged_out(identity, f):",
+    "replace": "            if False:"
+  },
+  {
+    "label": "a returned row is deleted against its old record",
+    "path": "src/sweep.py",
+    "find": "            if self.stores.durable_removal(where, identity, removal):",
+    "replace": "            if identity in self.stores.durable.get((where, REMOVED_UNREVIEWED_STORE), set()):"
+  },
+  {
+    "label": "a kept-out row is judged again",
+    "path": "src/sweep.py",
+    "find": "            if kept is not None:\n                delete_jobs.append((r[\"id\"], identity, kept))",
+    "replace": "            if False:\n                delete_jobs.append((r[\"id\"], identity, kept))"
+  },
+  {
+    "label": "the exclusivity check covers every store",
+    "path": "src/sweep.py",
+    "find": "        names = list(STORE_FOR.values())\n        for where in self.dirs:",
+    "replace": "        names = list(STORE_FOR.values()) + [REMOVED_UNREVIEWED_STORE]\n        for where in self.dirs:"
+  },
+  {
+    "label": "the operator's removal of a classified row waits fifteen days",
+    "path": "src/sweep.py",
+    "find": "            early = where is not None and self.stores.removed_by_operator(where, name, identity)",
+    "replace": "            early = False"
+  },
+  {
+    "label": "the operator's removal of a rejection copy waits fifteen days",
+    "path": "src/sweep.py",
+    "find": "                early = where is not None and self.stores.removed_by_operator(\n                    where, STORE_FOR[t], identity)",
+    "replace": "                early = False"
+  },
+  {
+    "label": "a dry run writes the stores",
+    "path": "src/clearing.py",
+    "find": "        if not confirmed:\n            report[\"mode\"] = \"dry run: nothing was written or removed\"",
+    "replace": "        if False:\n            report[\"mode\"] = \"dry run: nothing was written or removed\""
+  },
+  {
+    "label": "the confirmation is not required",
+    "path": "src/clearing.py",
+    "find": "        if confirmed and not dry_run_on_file(logs, table, days, self.now, valid_hours):",
+    "replace": "        if False:"
+  },
+  {
+    "label": "jobs is measured on Classified",
+    "path": "src/clearing.py",
+    "find": "            dated = [(r, r[\"fields\"].get(\"Published\")) for r in rows]",
+    "replace": "            dated = [(r, r[\"fields\"].get(\"Classified at\")) for r in rows]"
+  },
+  {
+    "label": "the tables are measured on the publication date",
+    "path": "src/clearing.py",
+    "find": "            dated = [(r, r.get(\"createdTime\")) for r in rows]",
+    "replace": "            dated = [(r, r[\"fields\"].get(\"Published\")) for r in rows]"
+  },
+  {
+    "label": "the tool removes a Jobs row without storing it",
+    "path": "src/clearing.py",
+    "find": "                self.stores.write(where, REMOVED_UNREVIEWED_STORE,\n                                  self.record(identity, f, reason=REASON_OPERATOR,\n                                              removed_by=REMOVED_BY_OPERATOR,\n                                              removal=removal_key(identity, REASON_OPERATOR)),\n                                  key=\"removal\")",
+    "replace": "                self.client.delete(JOBS, [r[\"id\"]])"
+  },
+  {
+    "label": "the tool deletes from accepted",
+    "path": "src/clearing.py",
+    "find": "            self.client.mark_delete(ids)",
+    "replace": "            self.client.delete(\"accepted\", ids)"
+  },
+  {
+    "label": "the tool may write a pipeline field",
+    "path": "src/airtable_sweep.py",
+    "find": "TOOL_WRITES = {\"accepted\": (DELETE_FIELD,)}",
+    "replace": "TOOL_WRITES = {\"accepted\": (DELETE_FIELD, \"Title\")}"
+  },
+  {
+    "label": "the agreement check never disagrees",
+    "path": "src/run.py",
+    "find": "        if rule_location(p, eligibility).keep:\n            disagree.append(p)",
+    "replace": "        if False:\n            disagree.append(p)"
+  },
+  {
+    "label": "the agreement check ignores the location rule",
+    "path": "src/run.py",
+    "find": "        if rule_location(p, eligibility).keep:",
+    "replace": "        if True:"
+  },
+  {
+    "label": "the agreement check forgets earlier walks",
+    "path": "src/run.py",
+    "find": "    searched = {\"%s:%s\" % (source, p.external_id) for p in search} | set(searched_before)",
+    "replace": "    searched = {\"%s:%s\" % (source, p.external_id) for p in search}"
+  },
+  {
+    "label": "the agreement check compares postings newer than the search",
+    "path": "src/run.py",
+    "find": "        if newest is None or p.published_at is None or p.published_at > newest:",
+    "replace": "        if newest is None or p.published_at is None:"
+  },
+  {
+    "label": "a recorded re-baseline is ignored",
+    "path": "src/contract.py",
+    "find": "            entry[\"changes\"] = explain(platform, compare(previous, fp), rebaselines, since)",
+    "replace": "            entry[\"changes\"] = compare(previous, fp)"
+  },
+  {
+    "label": "an old re-baseline excuses a later change",
+    "path": "src/contract.py",
+    "find": "            if e[\"platform\"] == platform and name in e[\"fields\"] and e[\"date\"] > (since or \"\"):",
+    "replace": "            if e[\"platform\"] == platform and name in e[\"fields\"]:"
+  },
+  {
+    "label": "the age rule is judged against the run's clock",
+    "path": "src/filters.py",
+    "find": "    seen = _when(getattr(row, \"first_seen\", None)) or _when(now_iso)",
+    "replace": "    seen = _when(now_iso)"
+  },
+  {
+    "label": "the age boundary is exclusive",
+    "path": "src/filters.py",
+    "find": "    if seen - dated <= timedelta(days=eligibility.max_age_days):",
+    "replace": "    if seen - dated < timedelta(days=eligibility.max_age_days):"
+  },
+  {
+    "label": "the fetch no longer queues",
+    "path": ".github/workflows/fetch.yml",
+    "find": "  cancel-in-progress: false\n  queue: max",
+    "replace": "  cancel-in-progress: false"
+  },
+  {
+    "label": "the contract check cancels a run in progress",
+    "path": ".github/workflows/contract.yml",
+    "find": "  cancel-in-progress: false",
+    "replace": "  cancel-in-progress: true"
+  }
+]

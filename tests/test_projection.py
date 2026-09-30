@@ -246,13 +246,84 @@ class TestTheSkip(Harness):
                 client, _ = self.project()
                 self.assertEqual(client.sent, [])
 
-    def test_the_fourth_store_is_not_read(self):
-        """ADR-0043's 2026-09-23 row: removed_unreviewed.json exists so a row
-        that fell out on a narrowed rule can return. The skip must not read it."""
+    def write_removals(self, records, private=False):
+        directory = self.paths["local_outcomes_dir" if private else "outcomes_dir"]
+        storage.write_atomic("%s/%s" % (directory, projection.REMOVED_UNREVIEWED_STORE),
+                             dumps(records))
+
+    def test_the_removal_store_is_read_by_reason_both_ways(self):
+        """Fitness function for ADR-0043, "A row returns to the display only if
+        the reason it left was the rules, because only the rules can change
+        their mind.": the same admitted row, stored once as closed and once as
+        dropped by a rule the current chain now admits. Closed stays out; the
+        rule's drop comes back. A skip that read the store whole, or not at
+        all, passes one half and fails the other. Mutation: "the skip reads
+        the removal store whole"."""
         self.write_filtered([make_row(1)])
-        self.write_store(projection.REMOVED_UNREVIEWED_STORE, ["greenhouse:1"])
+        self.write_removals([{"identity": "greenhouse:1", "reason": projection.REASON_CLOSED,
+                              "swept_at": "2026-09-22T04:00:00Z"}])
+        client, _ = self.project()
+        self.assertEqual(client.sent, [])
+        self.write_removals([{"identity": "greenhouse:1",
+                              "reason": projection.RULE_REASON % "location",
+                              "swept_at": "2026-09-22T04:00:00Z"}])
         client, _ = self.project()
         self.assertEqual([r["Identity"] for r in client.sent], ["greenhouse:1"])
+
+    def test_the_clock_and_the_tool_keep_a_row_out(self):
+        """ADR-0055: `unreviewed-aged-out` and `operator-removed` do not
+        return. Mutation: "the skip ignores the removal store"."""
+        for reason in (projection.REASON_AGED_OUT, projection.REASON_OPERATOR):
+            with self.subTest(reason=reason):
+                self.write_filtered([make_row(1)])
+                self.write_removals([{"identity": "greenhouse:1", "reason": reason,
+                                      "swept_at": "2026-09-22T04:00:00Z"}])
+                client, _ = self.project()
+                self.assertEqual(client.sent, [])
+
+    def test_the_latest_removal_decides(self):
+        """A row a rule dropped, which returned when the rule widened and then
+        closed, stays out; one that closed and was later dropped by a rule
+        cannot be, since a closed row is never judged again, but the order is
+        what decides either way. Mutation: "the earliest removal decides"."""
+        self.write_filtered([make_row(1)])
+        rule = {"identity": "greenhouse:1", "reason": projection.RULE_REASON % "age",
+                "swept_at": "2026-09-20T04:00:00Z"}
+        closed = {"identity": "greenhouse:1", "reason": projection.REASON_CLOSED,
+                  "swept_at": "2026-09-22T04:00:00Z"}
+        self.write_removals([rule, closed])
+        client, _ = self.project()
+        self.assertEqual(client.sent, [])
+        self.write_removals([dict(closed, swept_at="2026-09-19T04:00:00Z"), rule])
+        client, _ = self.project()
+        self.assertEqual(len(client.sent), 1)
+
+    def test_a_reason_not_yet_invented_keeps_the_row_out(self):
+        """The principle, not a list: only the rules' own reasons return."""
+        self.write_filtered([make_row(1)])
+        self.write_removals([{"identity": "greenhouse:1", "reason": "a reason from later",
+                              "swept_at": "2026-09-22T04:00:00Z"}])
+        client, _ = self.project()
+        self.assertEqual(client.sent, [])
+
+    def test_a_member_that_stopped_being_the_display_row_does_not_hide_its_group(self):
+        """Step 6 stores a row that stopped being its group's display row when
+        an earlier member became the representative. The group is live and
+        shows under that member; hiding it would lose an unreviewed role.
+        Mutation: "a regrouped row hides its group"."""
+        self.write_filtered([make_row(3, location="Karachi"), make_row(4, location="Lahore")])
+        self.write_removals([{"identity": "greenhouse:4", "reason": projection.REASON_REGROUPED,
+                              "swept_at": "2026-09-22T04:00:00Z"}])
+        client, _ = self.project()
+        self.assertEqual([r["Identity"] for r in client.sent], ["greenhouse:3"])
+
+    def test_the_private_removal_store_is_read(self):
+        """ADR-0047: an aggregator row's removal is stored privately."""
+        self.write_filtered([], local=[make_row(7, source="himalayas")])
+        self.write_removals([{"identity": "himalayas:7", "reason": projection.REASON_CLOSED,
+                              "swept_at": "2026-09-22T04:00:00Z"}], private=True)
+        client, _ = self.project(projection.private_store_texts(self.paths))
+        self.assertEqual(client.sent, [])
 
     def test_the_private_stores_are_read(self):
         """ADR-0047: aggregator outcomes live in the private repository."""

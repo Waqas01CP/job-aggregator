@@ -171,6 +171,8 @@ class SweepConfig:
     closed_after_polled_runs: int
     retire_after_days: int
     run_log_window: int
+    unreviewed_after_days: int
+    clearing_dry_run_valid_hours: int
     budget_warning_share: float
     budget_warning_before_day: int
 
@@ -209,6 +211,8 @@ def load_sweep_config(path=None):
     return SweepConfig(closed_after_polled_runs=whole("closed_after_polled_runs", 1),
                        retire_after_days=whole("retire_after_days", 1),
                        run_log_window=whole("run_log_window", 1),
+                       unreviewed_after_days=whole("unreviewed_after_days", 1),
+                       clearing_dry_run_valid_hours=whole("clearing_dry_run_valid_hours", 1),
                        budget_warning_share=float(share),
                        budget_warning_before_day=day)
 
