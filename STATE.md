@@ -6,6 +6,8 @@ status: current
 
 # STATE
 
+**Touched 2026-09-30T18:06Z by the implementing seat, for the operator's answers only:** the `To review` view filters out closed rows and shows the newest first, by him; the fourth audit runs before the Brief 8 report goes to the chat. No code changed. The line that follows stands.
+
 **Last verified 2026-09-30T17:34Z by the implementing seat, for Brief 8, against `main` at `19ca94d` plus this commit's work, `data` at `c5b29a6`, and the private repository read through its token.** Checked for it: 702 tests on Python 3.12 and 3.11; 28 of 28 mutations caught; ADR-0041's corpus; the run logs for a week of morning groups; a week-long snapshot of the Himalayas search against the private seen store; the repost measurements over the public history and the full postings. The line that follows is the previous one.
 
 **Touched 2026-09-30T16:25Z by the implementing seat, for Brief 8's build, before its mutations and measurements:** the reason-based skip, ADR-0055's clock and tool, ADR-0053's agreement check, ADR-0036's re-baseline, and the fitness functions; 702 tests on Python 3.12. The rows, the log and the results follow in the next commit. The line that follows stands.
@@ -160,7 +162,7 @@ Current blockers only. Resolved paragraphs moved to `docs/reference/completed.md
 | The stated-experience rule | Deferred by the operator until filtering reads descriptions | Operator | 2026-09-17 |
 | Keeping the month under 1,000 calls as the display grows | *(2026-09-30T17:34Z: ADR-0056's week measured from the run logs, Brief 8 item 4: steady intake about one new display group a day on 2026-09-29 and 09-30, the recovery walk of 09-28 aside, which implies a steady display near 30 rows at ADR-0055's thirty days, under the trigger of 100. Not built. The feed itself is thin: 11 postings published on 09-29 and 4 on 09-30. A clean week under the current rules completes 2026-10-05)* *(2026-09-26T12:24Z: mostly answered by D13 and D14, which take `Jobs` from 101 rows to about 28 once the sweep has saved and removed the rest, so a projection costs about 3 calls again, inferred. The remedy stays the chat's if the display grows again)* The projection re-sends every display group each run: 5 calls for 44 groups on 2026-09-24, 9 for 86 on 2026-09-26, and Himalayas adds 15 to 25 rows a morning. By the seat's arithmetic, not measured, the month reaches 1,000 in the second half of October. Sending only new or changed groups is the obvious remedy and touches ADR-0034, ADR-0035 and ADR-0040 | Architecture chat | 2026-09-26 |
 
-**Decided, not blocked:** the contract check's cadence is daily (ADR-0036), Rozee.pk is deferred with its trigger in `docs/deferred/`, and the `To review` view exists on `Jobs`.
+**Decided, not blocked:** the contract check's cadence is daily (ADR-0036), Rozee.pk is deferred with its trigger in `docs/deferred/`, and the `To review` view exists on `Jobs` *(2026-09-30T18:06Z: with `Closed is empty` in its filter, and the newest posting first, set and confirmed by the operator)*.
 
 ## Known unverified
 

@@ -193,3 +193,20 @@ Each names its record and clause, and each is proved by a mutation in `tools/mut
 - the clock's first removal, read back from its store before the row leaves.
 
 **Not in Brief 8:** ADR-0053's other Confirmation items, a week of the snapshot read on both runs and of pages per morning. The first needs an evening read of the search, which ADR-0048's morning-only rule does not make, so it is for the chat.
+
+## After the report: the operator's answers, 2026-09-30T18:06Z
+
+- **The `To review` view.** He added `Closed is empty` to its filter, and confirms it
+  shows the most recent posting first: the two tasks Brief 8 gave him, done.
+- **The order changes.** "after the brief 8 execution, what comes is the audit ...
+  unless there is a reason to not do the audit then i propose, the audit is done
+  first". There is no reason not to, and one for it: the report to the chat would
+  otherwise carry any error the audit finds. So the fourth audit runs next, and the
+  Brief 8 report waits in `briefs/architecture.md` for its findings.
+- **Each seat decides what belongs to its perspective.** Sorted on that rule:
+  - **the chat's:** the two records that conflict (ADR-0041 against ADR-0031), and
+    the record corrections for ADR-0053, ADR-0056 and the index;
+  - **the seat's, for information:** the regrouped reason, the removal store's key,
+    masking in the public log, and the agreement check's test by identity;
+  - **the operator's:** how long a dry run of the clearing tool stays valid, since
+    it is a preference about his own working pattern.
