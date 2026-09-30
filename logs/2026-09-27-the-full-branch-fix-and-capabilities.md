@@ -130,3 +130,5 @@ by the operator on 2026-09-24 (`fe07242`). The repository is private, so the nam
 nothing. Whether to remove it is his call.
 
 **Verified for it**, at 2026-09-27T21:50Z: 666 tests.
+
+**Corrected 2026-09-30T15:09Z, in `CAPABILITIES.md`:** the mutation count read 329 across 29 files. It is 326 across 28 at `368c641` `[VERIFIED]`, counted from the tree at that commit. The seat's count of 2026-09-27 already included the fix's own file, and the seat added it a second time. The code figures beside it were re-counted at the same commit and are right.

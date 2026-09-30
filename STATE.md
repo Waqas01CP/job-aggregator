@@ -6,6 +6,8 @@ status: current
 
 # STATE
 
+**Touched 2026-09-30T15:10Z by the implementing seat, for one correction only:** `CAPABILITIES.md` said 329 mutations across 29 files; it is 326 across 28 at `368c641`, counted from the tree. No code changed. The line that follows stands.
+
 **Touched 2026-09-27T21:50Z by the implementing seat, for `CAPABILITIES.md` and two stale documents only:** the file approved by the operator and committed; `README.md` and the secrets how-to brought current; the evening run of 2026-09-27 read, healthy and with nothing to save in full; the four older mutation files the fix touches re-run, all caught. No code changed. The line that follows stands.
 
 **Last verified 2026-09-27T11:02Z by the implementing seat, for the full branch's fix and the first search morning, against `main` at `65c70e3` plus this commit's work, and `data` at `5add66a`.** Checked for it: the runs of 2026-09-26T16:56Z and 2026-09-27T03:59Z from their committed logs in a scratch clone; the failure reproduced against a real partial fetch; 666 tests on Python 3.12 and 3.11; 3 of 3 mutations caught. The line that follows is the previous one.

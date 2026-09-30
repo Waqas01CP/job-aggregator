@@ -195,7 +195,7 @@ Each is measured, with its date and source. `data` is the public data branch.
 | Feasibility research | 16 ATS platforms probed; 1,646 postings across the first 11 boards | 2026-09-11 to 09-16 | Spike logs |
 | Code | 24 source files, 5,464 lines; 31 test files, 8,983 lines; 9 tool files, 1,817 lines | 2026-09-27 | `git ls-files`, `wc` |
 | Tests | 666, passing on Python 3.11 and 3.12 | 2026-09-27 | `unittest` |
-| Mutations | 329 recorded across 29 files, re-run when the code they guard changes. A survivor is closed by a new test, or, where the mutation changes nothing, replaced and recorded as such | 2026-09-27 | `tools/mutations/`, run by `tools/mutate.py`; results in the session logs |
+| Mutations | 326 recorded across 28 files, re-run when the code they guard changes. A survivor is closed by a new test, or, where the mutation changes nothing, replaced and recorded as such | 2026-09-27 | `tools/mutations/`, run by `tools/mutate.py`; results in the session logs |
 | Decision records | 49 (four superseded), plus the rules for amending them. 106 dated Changes rows across 41 records | 2026-09-27 | `docs/decisions/` |
 | History | 108 commits on `main`, the first on 2026-09-01 UTC; 21 session logs | 2026-09-27 | `git log`, `logs/` |
 
@@ -339,7 +339,7 @@ Short, role-neutral statements a reader can take as they are. Every figure is fr
 - Git branches serve as the database, with privacy enforced in code: employers' description text and aggregator data never reach the public repository. Every posting is saved in full to a private repository, verified by read-back.
 - A classification workflow: the operator's marks are copied to their own tables and stored permanently. Rows are deleted from the display only after the store is read back from the remote.
 - A day's worth of an aggregator's feed went from about a third read, 93% of it irrelevant, to all of the relevant postings, by moving to a filtered endpoint an earlier measurement had wrongly rejected.
-- 666 tests, and 329 mutations that deliberately break the code to prove the tests notice.
+- 666 tests, and 326 mutations that deliberately break the code to prove the tests notice.
 - Designed by the operator and built with AI agents in separate roles: architecture, implementation, and cold, read-only audit. The work was carried out under a written verification discipline and produced 49 decision records and 21 session logs.
 
 ---
