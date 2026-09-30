@@ -93,6 +93,14 @@ A local run writes its working files under `data/`, which git ignores. A committ
 
 It can also be run by hand from the Actions tab. Ticking "Write to alternate files, leaving production data alone" makes it a test run that writes `data-test` and the test tables instead.
 
+**Clearing a table** (ADR-0055) is the same dispatch with three more inputs:
+1. Choose a table: `jobs`, `rejected-not-a-fit`, `rejected-poor-filtering` or `accepted`.
+2. Give a number of days: 15, 30 or any whole number. `jobs` measures each row's publication date; the other tables measure `Classified`.
+3. Run it with "Clear them" unticked. That is the dry run: the run's output lists what would be removed, and nothing changes.
+4. Run it again with the same table and days and the box ticked, within two days.
+
+The next morning's sweep then removes the rows, once their records are stored. `accepted` rows only get `Delete` set, and leave by the same path. A row deleted by hand in Airtable comes back on the next run; one cleared this way does not.
+
 `.github/workflows/contract.yml` runs the contract check daily at 06:30 UTC. It reports any change in the shape of the fields each adapter reads.
 
 A committing run needs repository secrets: the Airtable token and table IDs, and the private repository's name and token. `docs/how-to/airtable-token-and-secrets.md` lists them.

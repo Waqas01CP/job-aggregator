@@ -21,6 +21,7 @@ those moves when a classification changes.
 | `rejected-not-a-fit` | `Classified`, a `createdTime` field | **15 days** | The sweep deletes the row. Its outcome is already in the store |
 | `rejected-poor-filtering` | `Classified`, a `createdTime` field | **15 days** | The sweep deletes the row. Its outcome is already in the store |
 | `accepted` | none | never | Nothing, unless the operator sets `Delete`. See below |
+| `Jobs`, unreviewed | `First seen` | **30 days** | ADR-0055's clock, added 2026-09-30: the sweep writes the row to `outcomes/removed_unreviewed.json` with the reason `unreviewed-aged-out`, verifies the write on a later run, then deletes it. It never comes back. `unreviewed_after_days` in `config/sweep.json` |
 
 **`accepted` is deleted by no clock.** Its rows are written to the accepted
 store on the same 15-day clock as the others, so ADR-0044's star can read
@@ -99,9 +100,34 @@ A row dropped by the expiry rule is the event ADR-0014 called
 operator reached it. A row dropped by a narrowed pool term is a different
 event with the same shape, and the stored rule name is what tells them apart.
 
-**That store is not read by the projection's skip.** ADR-0040 requires a row
-that fell out on a narrowed rule to reappear if the rule widens again, and
-only the three classification stores make a removal final.
+**That store is read by the projection's skip by reason** *(since 2026-09-30,
+ADR-0043's row of 2026-09-28; until then it was not read at all, and a
+retired closed row came straight back)*. ADR-0040 requires a row that fell
+out on a narrowed rule to reappear if the rule widens again, so a row stored
+with a rule's name returns when the rule admits it, and so does one stored
+because another member became its group's display row. Every other reason
+keeps the row out: `closed`, `unreviewed-aged-out` and `operator-removed`,
+and any reason added later. The latest record for a row decides, and a row
+that returns and later leaves again for another reason gets a second record
+before it is deleted.
+
+## The operator's clearing tool
+
+ADR-0055. He clears one table by an age threshold, on demand, from the fetch
+workflow's dispatch: a table, a number of days (15, 30 or any he gives), and
+a confirmation box. `Jobs` is measured on the publication date; the three
+classification tables on `Classified`, when the copy arrived. A run without
+the box ticked is a dry run: it reports what it would remove and changes
+nothing. A ticked run is refused unless a dry run of the same table and days
+ran within `clearing_dry_run_valid_hours` of `config/sweep.json`, 48.
+
+**The tool writes stores and deletes nothing.** An unreviewed `Jobs` row is
+stored with `operator-removed`; a classified row or a rejection copy has its
+classification saved in its corpus, marked as his removal, so it leaves
+before its fifteen days; an `accepted` copy gets `Delete` set, and D12's path
+does the rest. The next daily sweep deletes once origin holds the record.
+Deleting in the browser instead does not stick: the next projection sends
+the row back.
 
 ## The ordering invariant
 
@@ -131,6 +157,7 @@ below, never a code change.
 
 | Date | Change | Reason |
 |---|---|---|
+| 2026-09-30 | ADR-0055's thirty-day clock for unreviewed rows and the operator's clearing tool added; the removal store is now read by reason | Brief 8. `Jobs` had no clock for a row nobody marked, the one unbounded quantity in the system, and rows deleted in the browser came back within about fourteen hours |
 | 2026-09-26 | `accepted` rows leave Airtable on the operator's `Delete`, saved first; a superseded rejection copy is saved before it goes; a clear removes nothing | The operator's D12, answering the audit of 2026-09-25's F1, which found a clear or a status change deleting an `accepted` copy and its `Stage`. The separate tool this file named is the `Delete` field |
 | 2026-09-23 | A fourth removal added, on no clock: unreviewed rows the chain no longer admits, stored with the rule that dropped them | ADR-0046 step 4, on the operator's decision. It closes ADR-0040's unowned removal and preserves the `expired_before_review` signal, which ADR-0046 retired as a status |
 | 2026-09-22 | An accepted row carries its `Stage` to the store the same way | The operator's decision; ADR-0046 extended |

@@ -10,7 +10,7 @@ status: current
 - a person who wants to know what the system offers;
 - a chat drafting a CV, which should find every usable fact here without reading the tree.
 
-**Current as of 2026-09-27 UTC**, against `main` at `368c641`. Every number carries its date and its source. A number that could not be measured is not here.
+**Current as of 2026-09-30 UTC**, against `main` at `19ca94d`. Every number carries its date and its source. A number that could not be measured is not here.
 
 **Kept current.** Updated at the close of any session that changes a capability or a measured number. Sections that restate a decision name the record that holds it, so a reader who wants the reasoning can find it.
 
@@ -22,7 +22,7 @@ A personal job-discovery pipeline that runs itself.
 - **Twice a day**, on GitHub Actions, it reads the public job feeds of eleven employers' applicant-tracking-system (ATS) boards, and one aggregator narrowed to postings open to Pakistan.
 - **It keeps every posting it fetches, permanently.**
 - **It admits only postings the operator can use:** his target roles, his level, places he is eligible to work, and at most a week old when first seen. Each posting is admitted or dropped by a named, deterministic rule.
-- **It shows what survives in an Airtable table.** The operator marks each row accepted, not a fit, or poorly filtered. The pipeline copies each mark to its own table, stores it for good, and clears the display after fifteen days.
+- **It shows what survives in an Airtable table.** The operator marks each row accepted, not a fit, or poorly filtered. The pipeline copies each mark to its own table, stores it for good, and clears the display after fifteen days. A row he never marks leaves after thirty, and he can clear any table himself, dry run first.
 - **It costs nothing to run.** A new posting reaches the table a median of 5 hours after its employer publishes it.
 
 ---
@@ -65,6 +65,8 @@ By his estimate, that took most of a working week. He usually found a posting th
    - a circuit breaker on consecutive failures.
 
    **Adapters are per platform, never per employer:** one Greenhouse adapter serves nine boards. An adapter only parses; it never fetches. The aggregator, Himalayas, is paginated. It is read newest first and stops at the first page that is either wholly older than what that board has already stored in full, or wholly older than the age limit. A 40-page cap guards against a runaway.
+
+   **The aggregator's own filter is checked every morning.** Himalayas is asked only for postings open to Pakistan, which hands part of the location rule to a third party. So one page of its whole feed is read beside the search. A posting the search never returned, but the location rule would admit, is a disagreement: counted in the log and named in the private store (ADR-0053).
 4. **Normalises** every posting to one row shape. The publication date and the moment the pipeline first saw the posting are recorded as separate fields, never confused. Where the employer name or URL is derived rather than given, the row says so.
 5. **Stores the raw layer.** Every posting never seen before is appended permanently, before anything is judged, and nothing is ever rewritten. So a filter mistake is recoverable: the rows it missed are still stored.
 6. **Filters**, cheapest rule first. Every drop is logged with the rule that caused it. The rules (the chain is in `src/filters.py`):
@@ -95,6 +97,9 @@ By his estimate, that took most of a working week. He usually found a posting th
 
       On a later run it reads the store back from the remote, and only then deletes the row from the display.
     - **The `accepted` table** keeps a row until he sets its `Delete` to yes, and every store is kept forever.
+    - **A row nobody marks** leaves thirty days after it was first seen, stored first as `unreviewed-aged-out` (ADR-0055).
+    - **What keeps a removed row out is its reason.** A row stored as closed, aged out or removed by the operator never returns. One a rule dropped returns if the rule is widened, because only the rules can change their mind (ADR-0043).
+    - **Every removal is named in the run log** by identity. An aggregator's identity is masked there and named in its private store.
 12. **Writes a run log**:
     - per board, every run, including zeros, since a board that silently returns nothing is a broken adapter, not a quiet market;
     - requests, drops per rule, what was stored and what failed;
@@ -105,7 +110,9 @@ By his estimate, that took most of a working week. He usually found a posting th
 
     The data is always saved before the run is marked, so a failure is visible and never costs data.
 
-**The contract check** fetches one response per platform. It fingerprints the shape of exactly the fields each adapter reads: present or absent, type, null or not. It reports any change by field name. That tells a board that changed its API apart from a board with no new jobs (ADR-0018, ADR-0036).
+**The contract check** fetches one response per platform. It fingerprints the shape of exactly the fields each adapter reads: present or absent, type, null or not. It reports any change by field name. That tells a board that changed its API apart from a board with no new jobs (ADR-0018, ADR-0036). A change we caused ourselves, such as a new endpoint, is recorded in configuration with its date and cause and reported as ours, so it never reads as the board moving.
+
+**The clearing tool** is the operator's, run from the same workflow by hand (ADR-0055). He chooses a table and an age in days: publication date for `Jobs`, the date he classified for the other tables. The first run is a dry run: it reports what it would remove and changes nothing. A confirmed run is refused unless a dry run of the same request ran within two days. It writes the stores and deletes nothing itself, so the next sweep removes the rows only after reading those records back. On `accepted` it only sets `Delete`. A row deleted by hand in Airtable would come back; one cleared this way does not.
 
 ---
 
@@ -166,6 +173,7 @@ By his estimate, that took most of a working week. He usually found a posting th
 | Privacy and licensing boundaries | Enforced in code and in the hook, not by care. Descriptions never public, aggregator data never public, and secrets and Airtable IDs never in the repository |
 | Preferences are configuration | The title pool, seniority words, role families, eligible places, age limit and vendor list are files. A test fails if any module hard-codes one (ADR-0031) |
 | Idempotent | A run that finds nothing new commits only its log; a retried upsert creates no duplicate; the sweep's copy step is safe to repeat |
+| Safe to clear | A bulk removal runs dry first, is refused without a recent dry run of the same request, writes before anything is deleted, and never deletes from the table of roles applied to |
 | Self-diagnosing | The daily contract check, per-board run logs including zeros, the month's call budget, and escalation after the push |
 | Change safety | Every guarantee has a test, and every test that guards one is proved by a mutation that breaks the code and must fail it. Architectural rules are guarded by fitness functions in the ordinary suite (ADR-0049) |
 | Cost | Nothing recurring: GitHub Actions is free on a public repository, and Airtable is on its free plan |
@@ -178,26 +186,29 @@ Each is measured, with its date and source. `data` is the public data branch.
 
 | What | Value | Measured | Source |
 |---|---|---|---|
-| Production runs | 22, from 2026-09-17 to 2026-09-27, a span of 9.5 days | 2026-09-27 | Run logs on `data`, `tools/run_log_report.py` |
-| Fetch reliability | 0 retries, 0 failed requests, 0 runs near the request ceiling, across all 22 runs | 2026-09-27 | Same |
-| Requests per run | Median 36 against a ceiling of 500; 11 on an evening run | 2026-09-27 | Same |
+| Production runs | 28, from 2026-09-17 to 2026-09-30, a span of 12.6 days | 2026-09-30 | Run logs on `data`, `tools/run_log_report.py` |
+| Fetch reliability | 0 retries, 0 failed requests, 0 runs near the request ceiling, across all 28 runs | 2026-09-30 | Same |
+| Requests per run | Median 36 against a ceiling of 500, at most 41; 11 on an evening run | 2026-09-30 | Same |
 | Postings read per run | 824 from the eleven boards; 1,283 with Himalayas | 2026-09-26 and 09-27 | Those runs' logs |
-| Postings fetched in total | 27,217 across 22 runs, repeats included | 2026-09-27 | Run logs |
-| Distinct employer-board postings stored | 979 (920 Greenhouse, 59 Lever) | 2026-09-27 | `seen.json` on `data` |
-| **Freshness (Measure A)** | New postings first seen a **median 5.0 hours** after publication, **90th percentile 10.0 hours**, maximum 13.4, over 89 postings. The targets are 24 and 72 hours | 2026-09-27 | `seen.json` and run logs on `data`. Counts only postings published after the run before the one that saw them |
+| Postings fetched in total | 32,831 across 28 runs, repeats included | 2026-09-30 | Run logs |
+| Distinct employer-board postings stored | 1,012 | 2026-09-30 | `seen.json` on `data` |
+| **Freshness (Measure A)** | New postings first seen a **median 5.4 hours** after publication, **90th percentile 10.5 hours**, maximum 14.4, over 114 postings. The targets are 24 and 72 hours | 2026-09-30 | `seen.json` and run logs on `data`. Counts only postings published after the run before the one that saw them |
 | Selectivity | Of 1,283 postings read, 36 kept: 922 dropped on title, 258 on location, 56 on seniority, 11 on age | 2026-09-27, morning run | Run log |
 | Deduplication | 824 postings grouped into 527 display rows; the largest group, one role posted 134 times, once per city, became one row | 2026-09-26 | Run log |
 | Himalayas before the change | 500 postings a morning, the page cap, from about 1,600 published a day (inferred from 499 new postings spanning 7.3 hours). 93 of 100 postings sampled from the feed were closed to Pakistan | 2026-09-26 | Run logs, and a live sample of 100 postings |
 | Himalayas after the change | Only postings open to Pakistan requested. The first morning read back a week, 460 postings in 23 pages, stored 361 new and kept 31 | 2026-09-27 | Run log |
+| Himalayas completeness | Of the 420 postings a week-long read of the search held, published before the morning walk, the pipeline had stored all 420 | 2026-09-30 | A 26-page snapshot against the private seen store |
+| Location rule, its owed check | Exactly 74 of the saved 91 Himalayas postings dropped and 17 admitted, as the record predicted nine days before the rule was built | 2026-09-30 | ADR-0041's Confirmation, on `raw_responses/` |
 | Full postings saved privately | 824 postings in one 9.8 MB file, read back and matched by content hash | 2026-09-26 | Run log |
-| Airtable usage | 100 of the month's 1,000 calls, 10%; `Jobs` holds 126 rows | 2026-09-27 | Run log |
+| Airtable usage | 172 of the month's 1,000 calls, 17%; `Jobs` holds 89 rows; a projection costs 8 calls | 2026-09-30 | Run log |
+| Display intake | About one new display row a day under the current rules, so the display settles near thirty rows and the cheaper delta projection is not yet needed | 2026-09-29 and 09-30 | Run logs, against ADR-0056's trigger of 100 |
 | Recurring cost | None | 2026-09-27 | Free plans only |
 | Feasibility research | 16 ATS platforms probed; 1,646 postings across the first 11 boards | 2026-09-11 to 09-16 | Spike logs |
-| Code | 24 source files, 5,464 lines; 31 test files, 8,983 lines; 9 tool files, 1,817 lines | 2026-09-27 | `git ls-files`, `wc` |
-| Tests | 666, passing on Python 3.11 and 3.12 | 2026-09-27 | `unittest` |
-| Mutations | 326 recorded across 28 files, re-run when the code they guard changes. A survivor is closed by a new test, or, where the mutation changes nothing, replaced and recorded as such | 2026-09-27 | `tools/mutations/`, run by `tools/mutate.py`; results in the session logs |
-| Decision records | 49 (four superseded), plus the rules for amending them. 106 dated Changes rows across 41 records | 2026-09-27 | `docs/decisions/` |
-| History | 108 commits on `main`, the first on 2026-09-01 UTC; 21 session logs | 2026-09-27 | `git log`, `logs/` |
+| Code | 25 source files, 6,123 lines; 32 test files, 9,574 lines; 9 tool files, 1,817 lines | 2026-09-30 | `git ls-files`, `wc` |
+| Tests | 702, passing on Python 3.11 and 3.12 | 2026-09-30 | `unittest` |
+| Mutations | 354 recorded across 29 files, re-run when the code they guard changes. A survivor is closed by a new test, or, where the mutation changes nothing, replaced and recorded as such | 2026-09-30 | `tools/mutations/`, run by `tools/mutate.py`; results in the session logs |
+| Decision records | 55 (four superseded), plus the rules for amending them. 124 dated Changes rows across 42 records | 2026-09-30 | `docs/decisions/` |
+| History | 115 commits on `main`, the first on 2026-09-01 UTC; 22 session logs | 2026-09-30 | `git log`, `logs/` |
 
 ---
 
@@ -236,6 +247,8 @@ Each is measured, with its date and source. `data` is the public data branch.
 | 2026-09-25 | The sweep live, in test and in production |
 | 2026-09-26 | Full postings saved privately; the location and age rules; Himalayas moved to search |
 | 2026-09-27 | A production failure: the second save of full postings failed on GitHub. Found in the morning's run log, reproduced, fixed and pushed the same morning, before the next run, with the postings it missed recovered by the next walk |
+| 2026-09-28 | The architecture chat recorded the operator's decisions of the week in six new records, ADR-0051 to ADR-0056 |
+| 2026-09-30 | The display bounded: an unreviewed row leaves after thirty days, the operator can clear any table himself, and a removed row stays removed for the reason it left. The aggregator's pushed-down filter and the contract check's own changes are now checked |
 
 ---
 
@@ -322,7 +335,8 @@ Each dated item below has its source in the session log of that date. The design
 - **Duplicates across sources are not merged.** An employer's own posting and an aggregator's copy of it can both appear, because the aggregator stamps its own date.
 - **Lever's date is not proven to mean publication**, so Lever postings are never dropped for age.
 - **GitHub starts scheduled runs three to four hours late.** Freshness is measured from publication, so it includes that delay.
-- **Unbuilt:** the priority star (a mark on postings sharing a named attribute with an accepted one, ADR-0044) and the contract check's Airtable row.
+- **Unbuilt:** the priority star (a mark on postings sharing a named attribute with an accepted one, ADR-0044) and the contract check's Airtable row. The cheaper projection that sends only changed rows is designed and deliberately waits on its triggers (ADR-0056).
+- **The clearing tool and the thirty-day clock have not run live yet**; both are proved offline.
 - **"Finished" is not yet defined.** The end-state document is open by decision (ADR-0023).
 - **The private store's token expires on 2027-01-01**; the operator rotates it before then.
 
@@ -333,14 +347,14 @@ Each dated item below has its source in the session log of that date. The design
 Short, role-neutral statements a reader can take as they are. Every figure is from the table above.
 
 - Built an unattended job-discovery pipeline on GitHub Actions and Python (standard library plus `requests`). It polls employer job boards twice a day and shows only eligible, matching postings in Airtable, at no recurring cost.
-- New postings reach the display a median of 5 hours after publication, and 90% within 10 hours, against targets of 24 and 72 hours, over 89 postings.
-- 22 production runs over 9.5 days with no retries and no failed requests, reading 800 to 1,300 postings a run and keeping a few dozen.
+- New postings reach the display a median of 5.4 hours after publication, and 90% within 10.5 hours, against targets of 24 and 72 hours, over 114 postings.
+- 28 production runs over 12.6 days with no retries and no failed requests, reading 800 to 1,300 postings a run and keeping a few dozen.
 - Every posting is admitted or dropped by a named, deterministic rule, and every drop is logged. There is no model and no scoring.
 - Git branches serve as the database, with privacy enforced in code: employers' description text and aggregator data never reach the public repository. Every posting is saved in full to a private repository, verified by read-back.
-- A classification workflow: the operator's marks are copied to their own tables and stored permanently. Rows are deleted from the display only after the store is read back from the remote.
+- A classification workflow: the operator's marks are copied to their own tables and stored permanently. Rows are deleted from the display only after the store is read back from the remote. The display is bounded by a thirty-day clock and a dry-run-first clearing tool.
 - A day's worth of an aggregator's feed went from about a third read, 93% of it irrelevant, to all of the relevant postings, by moving to a filtered endpoint an earlier measurement had wrongly rejected.
-- 666 tests, and 326 mutations that deliberately break the code to prove the tests notice.
-- Designed by the operator and built with AI agents in separate roles: architecture, implementation, and cold, read-only audit. The work was carried out under a written verification discipline and produced 49 decision records and 21 session logs.
+- 702 tests, and 354 mutations that deliberately break the code to prove the tests notice.
+- Designed by the operator and built with AI agents in separate roles: architecture, implementation, and cold, read-only audit. The work was carried out under a written verification discipline and produced 55 decision records and 22 session logs.
 
 ---
 
