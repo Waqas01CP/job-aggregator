@@ -6,10 +6,11 @@
     python tools/run_log_report.py --dir PATH       a directory of run logs, e.g. data/logs-runs
     python tools/run_log_report.py --since 2026-10-01
 
-The data branch is written on a GitHub runner, so this clone only has what it
-last fetched. Fetch first:
+The data branch is written on GitHub. Clone it apart from this repository,
+never into its refs (docs/how-to/the-seats.md), and pass the clone:
 
-    git fetch origin data:data
+    git clone --branch data --single-branch <this repository's URL> <a scratch directory>
+    python tools/run_log_report.py --repo <that directory>
 
 ADR-0028 set the per-run request ceiling at 500 as a runaway guard with no
 basis, and says the real ceiling is set from the distribution the run logs
@@ -326,8 +327,10 @@ def main(argv=None):
         branch = BRANCHES[args.test_mode]
         where = "the %s branch of %s" % (branch, args.repo)
         texts = logs_from_branch(args.repo, branch)
-        missing = ("no %s branch in %s. It is written on GitHub; fetch it first:\n"
-                   "  git fetch origin %s:%s" % (branch, args.repo, branch, branch))
+        missing = ("no %s branch in %s. It is written on GitHub. Clone it apart from "
+                   "this repository, whose refs never hold it:\n  git clone --branch %s "
+                   "--single-branch <this repository's URL> <a scratch directory>\n"
+                   "then pass --repo <that directory>" % (branch, args.repo, branch))
     if texts is None:
         print(missing, file=sys.stderr)
         return 1

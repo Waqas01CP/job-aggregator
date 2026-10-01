@@ -155,7 +155,8 @@ class TestReading(unittest.TestCase):
     def test_a_missing_branch_says_how_to_fetch_it(self):
         code, _, err = self.run_tool("--repo", self.dir)
         self.assertEqual(code, 1)
-        self.assertIn("git fetch origin data:data", err)
+        self.assertIn("git clone --branch data --single-branch", err)
+        self.assertNotIn("git fetch", err)
 
     def test_a_local_directory_includes_aggregator_raw_files(self):
         root = os.path.join(self.dir, "d")

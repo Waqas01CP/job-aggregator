@@ -141,7 +141,12 @@ public rows always update**: the operator's decision, D9. Both are in
 ADR-0047's Changes. **So does a sweep that fails** (ADR-0050), with the
 fetch committed and nothing deleted on a write not yet read back: the
 operator approved it on 2026-09-25, the seat's decision 6 in the Brief 7
-report. **The run is marked failed after its push**, so a failure cannot
+report. **So does a clearing tool that refused or failed** (ADR-0055), with
+the fetch committed: the tool writes stores and deletes nothing, so a
+refused confirm costs only a second dispatch after a dry run. The
+implementing seat's choice in Brief 8's build, 2026-09-30, not yet put to
+the operator; the fourth audit (F13) found this paragraph silent on it.
+**The run is marked failed after its push**, so a failure cannot
 look healthy and marking it can never cost data: at once for a
 private-store failure, which needs fixing and does not clear on its own
 (D9), and on the third in a row for a projection or sweep failure (D1). The

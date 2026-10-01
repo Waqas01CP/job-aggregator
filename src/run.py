@@ -5,7 +5,8 @@ Exit codes, because the orchestrator needs to tell three things apart:
   0  finished
   1  could not start, or fetched and could not store the result
   2  stopped deliberately and resumable, the projection to Airtable failed,
-     or the private store could not be restored or written
+     the sweep failed (ADR-0050), the clearing tool refused or failed
+     (ADR-0055), or the private store could not be restored or written
 
 Exit 1 has two causes because CLAUDE.md fixes the codes at three, and a
 completed fetch that cannot be stored is neither a clean finish nor a
@@ -25,6 +26,12 @@ operator's decision of 2026-09-24, D6: the public fetch is kept, the run log's
 polled, because nothing they returned could be kept. ADR-0047's "fail
 visibly" is the run log, the workflow's warning, and after three runs in a row
 a failed run.
+
+**So do a failed sweep and a clearing tool that refused or failed.** The
+sweep (ADR-0050) deletes nothing it has not verified, so the next run sweeps
+again; the operator approved exit 2 for it on 2026-09-25. The tool (ADR-0055)
+writes stores and deletes nothing, so a refused confirm loses nothing and is
+dispatched again after a dry run. Neither may cost the fetch.
 
 Two runs a day, early PKT morning and early PKT evening. ADR-0006.
 
@@ -377,7 +384,12 @@ def clear_display(run, no_commit, test_mode, request, private_ok, used_before, c
     """ADR-0055's tool, when the dispatch asked for it. After the sweep, so
     the sweep's snapshot of origin cannot include what this writes, and a row
     cleared now is deleted by a later daily sweep, never by this run. Never
-    raises: a failure is recorded, the run still commits, and it exits 2."""
+    raises: a failure is recorded, the run still commits, and it exits 2.
+
+    **The mode reaches all three: the client, the logs and the tool.** A
+    test-mode dispatch with a production client would set `Delete` on
+    production `accepted` copies, and D12's path would then remove them.
+    The fourth audit's F2 found nothing proving it."""
     table, days, confirmed = request
     if no_commit:
         return {"table": table, "older_than_days": days, "confirmed": confirmed,
@@ -386,7 +398,7 @@ def clear_display(run, no_commit, test_mode, request, private_ok, used_before, c
     try:
         client = make_sweep_client(test_mode, used_before)
         logs = storage.read_recent_run_logs(CLEARING_LOGS_READ, test_mode) if confirmed else []
-        report = clearing.Clearing(client, run.paths, run.now, private_ok).run(
+        report = clearing.Clearing(client, run.paths, run.now, private_ok, test_mode).run(
             table, days, confirmed, logs, config.clearing_dry_run_valid_hours)
         report.update(client.counters())
         return report
@@ -434,17 +446,27 @@ def sweep_display(run, no_commit, test_mode, slot, private_ok, closure, config, 
         return block
 
 
-# The private file ADR-0053's disagreements are kept in, beside the private
-# outcome stores so the private store pushes it. The public run log carries
-# counts alone: an aggregator's postings never reach the public branch.
+# The private files ADR-0053's check keeps, beside the private outcome stores
+# so the private store pushes them: the postings in disagreement, and the
+# ones waiting for a later walk to say whether the search returns them. The
+# public run log carries counts alone: an aggregator's postings never reach
+# the public branch.
 AGREEMENT_FILE = "agreement_disagreements.json"
+AGREEMENT_PENDING_FILE = "agreement_pending.json"
+# How long a browse posting the search has not returned waits before its
+# absence can count. The search trails browse by hours: at the fourth audit's
+# sample its newest posting was 6.3 hours old, older than all 20 on browse's
+# first page. The search board is walked each morning only (ADR-0048), so in
+# practice the next morning's walk decides, about a day later.
+AGREEMENT_WAIT_HOURS = 12
 
 
-def agreement(browse, search, searched_before, eligibility, source):
+def agreement(browse, search, searched_before, pending, eligibility, source, now):
     """ADR-0053's check, as a function of what was read: `browse`, one page of
-    the whole feed; `search`, what this run's country search returned; and
+    the whole feed; `search`, what this run's country search returned;
     `searched_before`, every identity the search board stored on earlier
-    walks. Returns (counts, the postings in disagreement).
+    walks; and `pending`, the postings earlier checks left waiting. Returns
+    (counts, the postings still waiting, the postings in disagreement).
 
     **A browse posting is excluded by the search when neither this walk nor
     any earlier one returned it.** Not "absent from the pages read": the
@@ -453,28 +475,53 @@ def agreement(browse, search, searched_before, eligibility, source):
     unread page as excluded. The seen store holds everything the search ever
     returned, which is the fact the check needs.
 
-    **Only a browse posting no newer than the search's newest is compared**,
-    since the two endpoints need not refresh at the same moment and a posting
-    the search has not yet taken in is not one it excluded.
+    **Every posting on the page is compared, now or on a later walk.** One
+    the search has returned agrees. One the location rule would drop agrees
+    whatever the search does. One the rule would admit and the search has
+    not returned waits, privately, because browse's first page is minutes
+    old and the search trails it by hours, so its absence today means
+    nothing. A later walk decides: returned, it agrees; still absent once
+    `AGREEMENT_WAIT_HOURS` have passed, on a walk that read back to its
+    publication date, it is a disagreement. The first build compared only
+    postings no newer than the search's newest, which on the live feed was
+    none of them: 0 of 20, the fourth audit's F3.
 
     **A disagreement is an excluded posting ADR-0041 would admit**: the
     search has dropped something the operator could apply to."""
     searched = {"%s:%s" % (source, p.external_id) for p in search} | set(searched_before)
-    newest = max((p.published_at for p in search), default=None)
-    counts = {"browse_read": len(browse), "comparable": 0, "excluded_by_search": 0,
-              "disagreements": 0}
-    disagree = []
+    reached = min((p.published_at for p in search if p.published_at), default=None)
+    counts = {"browse_read": len(browse), "returned_by_search": 0, "rule_excludes": 0,
+              "newly_waiting": 0, "returned_since": 0, "disagreements": 0, "still_waiting": 0}
+    waiting = {e["identity"]: e for e in pending}
     for p in browse:
-        if newest is None or p.published_at is None or p.published_at > newest:
+        identity = "%s:%s" % (source, p.external_id)
+        if identity in searched:
+            counts["returned_by_search"] += 1
+        elif not rule_location(p, eligibility).keep:
+            counts["rule_excludes"] += 1
+        elif identity not in waiting:
+            waiting[identity] = {"identity": identity, "source": source, "title": p.title,
+                                 "location": p.location, "published_at": iso(p.published_at),
+                                 "waiting_since": iso(now)}
+            counts["newly_waiting"] += 1
+    still, disagree = [], []
+    for identity, e in sorted(waiting.items()):
+        if identity in searched:
+            counts["returned_since"] += 1
             continue
-        counts["comparable"] += 1
-        if "%s:%s" % (source, p.external_id) in searched:
-            continue
-        counts["excluded_by_search"] += 1
-        if rule_location(p, eligibility).keep:
-            disagree.append(p)
-    counts["disagreements"] = len(disagree)
-    return counts, disagree
+        waited = now - _parse(e["waiting_since"]) >= timedelta(hours=AGREEMENT_WAIT_HOURS)
+        # The walk must have read back to its date for an absence to mean
+        # anything. One with no date is judged on the wait alone, so it
+        # cannot wait for ever.
+        covered = e.get("published_at") is None or (
+            reached is not None and reached <= _parse(e["published_at"]))
+        (disagree if waited and covered else still).append(e)
+    counts["disagreements"], counts["still_waiting"] = len(disagree), len(still)
+    return counts, still, disagree
+
+
+def _parse(value):
+    return datetime.fromisoformat(str(value).replace("Z", "+00:00")).astimezone(timezone.utc)
 
 
 def budget_line(run_log, by_branch, config, now):
@@ -588,31 +635,37 @@ class Run:
 
     def _agreement(self, adapter, board, search, log):
         """ADR-0053: one page of the whole feed against what the search
-        returned, one request. Counts in the public log; the postings in
-        disagreement, if any, in the private store beside the outcomes. A
-        failure here is recorded and never costs the board its postings."""
+        returned, one request. Counts in the public log; the postings waiting
+        and the postings in disagreement in the private store beside the
+        outcomes. A failure here is recorded and never costs the board its
+        postings."""
+        pending_path = "%s/%s" % (self.paths["local_outcomes_dir"], AGREEMENT_PENDING_FILE)
         try:
             payload = self.client.get_json(adapter.AGREEMENT_URL, board.source)
             browse = adapter.parse(payload, board).postings
+            held = storage.read_records(pending_path)
+            pending = [e for e in held if e.get("source") == board.source]
+            others = [e for e in held if e.get("source") != board.source]
         except (BudgetExhausted, CircuitOpen):
             raise
         except Exception as e:
             log["agreement"] = {"failure": "%s: %s" % (type(e).__name__, e)}
             return
-        counts, disagree = agreement(browse, search, self.board_seen.get(board.board_id, ()),
-                                     ELIGIBILITY, board.source)
+        counts, still, disagree = agreement(browse, search,
+                                            self.board_seen.get(board.board_id, ()), pending,
+                                            ELIGIBILITY, board.source, self.now)
         log["agreement"] = counts
+        if still != pending:
+            storage.write_atomic(pending_path, dumps(others + still))
         if disagree:
             checked = iso(self.now)
             storage.append_delta(
                 "%s/%s" % (self.paths["local_outcomes_dir"], AGREEMENT_FILE),
-                [{"key": "%s|%s" % (p.external_id, checked), "checked_at": checked,
-                  "identity": "%s:%s" % (board.source, p.external_id), "source": board.source,
-                  "title": p.title, "location": p.location,
-                  "published_at": iso(p.published_at)} for p in disagree], key="key")
-            print("::warning::ADR-0053: the %s search excluded %d posting(s) the location "
-                  "rule would admit; the private store names them"
-                  % (board.board_id, len(disagree)))
+                [dict(e, key="%s|%s" % (e["identity"], checked), checked_at=checked)
+                 for e in disagree], key="key")
+            print("::warning::ADR-0053: the %s search has not returned %d posting(s) the "
+                  "location rule would admit, a day after browse listed them; the private "
+                  "store names them" % (board.board_id, len(disagree)))
 
     def _fetch_pages(self, adapter, board, log):
         """Read a paginated feed newest-first until it reaches what is already
@@ -623,17 +676,28 @@ class Run:
         and never look again."""
         mark = max(self.high_water.get(board.board_id) or "",
                    walk_floor(board.source, self.now) or "")
-        merged, cursor, pages = {"jobs": []}, None, 0
+        merged, cursor, pages, ended = {"jobs": []}, None, 0, False
         while pages < MAX_PAGES:
             payload = self.client.get_json(adapter.url_for(board, cursor), board.source)
             pages += 1
             merged["jobs"].extend(payload.get("jobs", []))
             if adapter.stop_after(payload, mark):
+                ended = True
                 break
             cursor = adapter.next_cursor(payload)
             if not cursor:
+                ended = True
                 break
         log["pages"] = pages
+        # The cap cuts the oldest days of the window unannounced, and only
+        # `pages: 40` showed it: a recovery walk after several failed saves,
+        # in a busy week, is the case (the fourth audit's F17). Logged and
+        # warned, so it is read on the run's page.
+        log["capped"] = not ended
+        if not ended:
+            print("::warning::%s: the walk reached its cap of %d pages before the stop mark "
+                  "or the age limit, so older postings in the window were not read"
+                  % (board.board_id, MAX_PAGES))
         return merged
 
     # ---------------------------------------------------------------- main
@@ -801,10 +865,14 @@ def summarise(run_log):
         agree = b.get("agreement")
         if agree:
             drops += ("  [agreement (ADR-0053): %s]" % agree["failure"] if agree.get("failure")
-                      else "  [agreement (ADR-0053): %d of %d browse postings compared, %d "
-                      "excluded by the search, %d the location rule would admit]"
-                      % (agree["comparable"], agree["browse_read"], agree["excluded_by_search"],
-                         agree["disagreements"]))
+                      else "  [agreement (ADR-0053): of %d browse postings, %d returned by the "
+                      "search, %d the location rule excludes too, %d newly waiting for a "
+                      "later walk; %d waiting returned since, %d disagreements, %d still "
+                      "waiting]"
+                      % (agree["browse_read"], agree["returned_by_search"],
+                         agree["rule_excludes"], agree["newly_waiting"],
+                         agree["returned_since"], agree["disagreements"],
+                         agree["still_waiting"]))
         lines.append("  %-34s %-12s fetched %4d  new %4d  kept %3d  %s%s"
                      % (b["board"], b["status"], b["fetched"], b["new"], b["kept"],
                         drops or "no drops",
@@ -839,7 +907,23 @@ def summarise(run_log):
                         "  [%s]" % p["mode"] if p.get("mode") else ""))
     c = run_log.get("clearing")
     if c is not None:
-        lines.append("  clearing (ADR-0055): %s older than %s days on its %s, %s%s%s" % (
+        # What would surprise him, said on the line he reads: the copies that
+        # leave with their rows, rows newer than the dry run that stay, and
+        # where the aggregator rows he cannot see here are listed.
+        extra = []
+        if c.get("classified"):
+            extra.append("classified among them %s, a rejection copy leaving with its row"
+                         % c["classified"])
+        if c.get("not_in_the_dry_run"):
+            extra.append("%d past the threshold since the dry run, left"
+                         % c["not_in_the_dry_run"])
+        if c.get("aggregator_listed_privately") is not None:
+            extra.append("%d aggregator row(s) listed in the private store's %s"
+                         % (c["aggregator_listed_privately"], clearing.DRY_RUN_FILE))
+        if c.get("aggregator_not_listed"):
+            extra.append("%d aggregator row(s) not listed, the private store being "
+                         "unavailable, so a confirm leaves them" % c["aggregator_not_listed"])
+        lines.append("  clearing (ADR-0055): %s older than %s days on its %s, %s%s%s%s" % (
             c.get("table"), c.get("older_than_days"), c.get("measured_on", "date"),
             "confirmed" if c.get("confirmed") else "dry run",
             ": would remove %s (%s unreviewed), published %s to %s; written %s, Delete set on %s"
@@ -847,6 +931,7 @@ def summarise(run_log):
                c.get("oldest_published") or "-", c.get("newest_published") or "-",
                c.get("written", 0), c.get("marked_delete", 0))
             if c.get("would_remove") is not None else "",
+            "; " + "; ".join(extra) if extra else "",
             "  FAILED: %s" % c["failure"] if c.get("failure") else ""))
     sw = run_log.get("sweep")
     if sw is not None:

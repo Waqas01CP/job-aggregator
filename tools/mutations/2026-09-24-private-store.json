@@ -20,8 +20,8 @@
   {
     "label": "a private store failure exits 0",
     "path": "src/run.py",
-    "find": "    if private_failure or projection_failure or sweep_failure:",
-    "replace": "    if projection_failure or sweep_failure:"
+    "find": "    if private_failure or projection_failure or sweep_failure or clearing_failure:",
+    "replace": "    if projection_failure or sweep_failure or clearing_failure:"
   },
   {
     "label": "the escalation ignores the private store",

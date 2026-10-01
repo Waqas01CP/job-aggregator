@@ -218,6 +218,26 @@ ELIGIBILITY_PATH = os.path.join(REPO_ROOT, "config", "eligibility.json")
 # except US" names a closed country and means the opposite.
 _NEGATIONS = re.compile(r"\b(except|excluding|excl|outside|not in|other than)\b")
 _PARTS = re.compile(r"[;\n|]| / ")
+# Words that never restrict where a posting can be done from, removed before a
+# place is judged: a time zone, a preference, an office that is optional. The
+# operator: "time zone is not an issue". So "Remote (US time zones)" is remote,
+# not a United States posting, and "Anywhere (US preferred)" is anywhere. The
+# fourth audit's F4 found all three dropped. Bracketed ones are found before
+# the fold, which drops brackets; the rest after it, on folded text.
+_BRACKETED_QUALIFIER = re.compile(
+    r"\([^()]*\b(time ?zones?|hours?|hrs|overlap|preferred|preferably|optional)\b[^()]*\)")
+_QUALIFIER = re.compile(
+    r"\b(within |in |across |overlapping |overlap with )?(the )?([a-z]+ )?time ?zones?\b"
+    r"|\b(est|edt|cst|cdt|mst|mdt|pst|pdt|cet|cest|eet|gmt|bst|ist|aest|sgt|jst|utc)"
+    r"( ?[+-] ?\d{1,2}(:?\d\d)?)? (hours?|hrs|time|overlap)\b"
+    r"|\b(utc|gmt) ?[+-] ?\d{1,2}(:?\d\d)?\b"
+    r"|\b([a-z]+ )?preferred\b"
+    r"|\bpreferabl[ey]( in| within)?( the)? [a-z]+\b"
+    r"|\b(office|onsite|on site|in office) optional\b")
+# "Anywhere in the US" is the US. The open word goes, so the place decides.
+_SCOPED_OPEN = re.compile(r"\b(anywhere|worldwide|globally|global) (in|within|across)\b")
+# "US only" is a restriction even beside a word that would open it.
+_ONLY = re.compile(r"\bonly\b")
 
 
 @dataclass(frozen=True)
@@ -231,6 +251,9 @@ class Eligibility:
     onsite_markers: tuple
     open: tuple
     closed: tuple
+    remote: tuple = ()
+    home_cities: tuple = ()
+    home_country_names: tuple = ()
 
 
 def _words(terms):
@@ -243,27 +266,58 @@ def load_eligibility(path=None):
     days = raw.get("max_age_days")
     if not isinstance(days, int) or isinstance(days, bool) or days < 1:
         raise FilterError("max_age_days must be a whole number of days, 1 or more")
-    lists = {}
-    for key in ("home", "onsite_home_city", "onsite_markers", "open", "closed"):
+    lists, names = {}, {}
+    for key in ("home", "home_country", "onsite_home_city", "onsite_markers", "remote", "open",
+                "closed"):
         value = raw.get(key)
         if not isinstance(value, list) or not value or not all(isinstance(v, str) and v.strip()
                                                                for v in value):
             raise FilterError("%s must be a non-empty list of places" % key)
-        lists[key] = _words(value)
+        lists[key], names[key] = _words(value), tuple(value)
     if any(p.pattern in {q.pattern for q in lists["closed"]} for p in lists["home"]):
         raise FilterError("a home place is also listed as closed")
-    return Eligibility(max_age_days=days, **lists)
+    country = {p.pattern for p in lists.pop("home_country")}
+    if not country <= {p.pattern for p in lists["home"]}:
+        raise FilterError("the home country must be one of the home places")
+    return Eligibility(max_age_days=days,
+                       home_cities=tuple(p for p in lists["home"] if p.pattern not in country),
+                       home_country_names=names["home_country"], **lists)
+
+
+def _qualifiers_removed(part):
+    """A location part folded, with what never restricts it taken out."""
+    text = fold(_BRACKETED_QUALIFIER.sub(" ", str(part).lower()))
+    text = _QUALIFIER.sub(" ", text)
+    text = _SCOPED_OPEN.sub(" in ", text)
+    return " ".join(text.split())
 
 
 ELIGIBILITY = load_eligibility()
 
 
 def classify_place(part, eligibility):
-    """One location, alone: "eligible", "closed" or "unclear". D13's order:
-    a home place wins, unless it says on site outside the home city; then a
-    closed place; then remote or a region that can include Pakistan. A part
-    naming nothing known is unclear, which keeps the posting."""
-    text = fold(part)
+    """One location, alone: "eligible", "closed" or "unclear". The order, each
+    step the operator's D13 or its ruling:
+
+    1. Time zones, preferences and optional offices are removed first: they
+       never restrict ("time zone is not an issue").
+    2. "Except" and its kind make the part unclear, so it is kept.
+    3. A home place admits it, unless it is on site in a home city other than
+       Karachi with no remote option: "any onsite post besides karachi,
+       pakistan are automatically out". "Pakistan (On-site)" names no city,
+       so it may be Karachi and is kept.
+    4. A closed place beside "only" is closed: "usa only ... out".
+    5. Worldwide, or a region that can include Pakistan, admits it, even beside
+       closed countries: "US, Canada, Asia" includes him.
+    6. A closed place is closed: "Remote, Germany" is Germany's remote.
+    7. Remote with nothing closed beside it admits it.
+    8. Anything else is unclear, and kept.
+
+    The fourth audit's F4 found the first build dropping seven location
+    strings he could take, because it judged a closed name before an open
+    one, read "on site" without asking whether a city was named or remote was
+    offered, and read a time zone as a country."""
+    text = _qualifiers_removed(part)
     if not text:
         return "unclear"
 
@@ -272,12 +326,18 @@ def classify_place(part, eligibility):
     if _NEGATIONS.search(text):
         return "unclear"
     if names(eligibility.home):
-        if names(eligibility.onsite_markers) and not names(eligibility.onsite_home_city):
-            return "closed"
-        return "eligible"
-    if names(eligibility.closed):
+        on_site_elsewhere = (names(eligibility.onsite_markers) and not names(eligibility.remote)
+                             and names(eligibility.home_cities)
+                             and not names(eligibility.onsite_home_city))
+        return "closed" if on_site_elsewhere else "eligible"
+    closed = names(eligibility.closed)
+    if closed and _ONLY.search(text):
         return "closed"
     if names(eligibility.open):
+        return "eligible"
+    if closed:
+        return "closed"
+    if names(eligibility.remote):
         return "eligible"
     return "unclear"
 
@@ -411,8 +471,13 @@ def rule_location(row, eligibility, **kw):
         return Verdict(True)
     parts = [p for p in _PARTS.split(str(text)) if p.strip()]
     if parts and all(classify_place(p, eligibility) == "closed" for p in parts):
-        return Verdict(False, "location", "every place listed is closed to the operator: %r"
-                       % str(text).replace("\n", "; ")[:120])
+        # The field, and what was absent from it, as ADR-0041's Confirmation
+        # asks. The home country comes from the configuration, so no module
+        # names a country (ADR-0031).
+        return Verdict(False, "location", "the location field names only places closed to the "
+                       "operator, none of them %s or a remote role open to it: %r"
+                       % (" or ".join(eligibility.home_country_names),
+                          str(text).replace("\n", "; ")[:120]))
     return Verdict(True)
 
 

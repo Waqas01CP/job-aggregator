@@ -15,6 +15,7 @@ import shutil
 import sys
 import tempfile
 import unittest
+from dataclasses import replace
 from datetime import datetime, timedelta, timezone
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -665,6 +666,23 @@ class TestTheClock(Harness):
         self.assertEqual(self.jobs(), [])
         self.assertIn({"identity": "greenhouse:1", "table": JOBS,
                        "reason": "unreviewed-aged-out", "action": "deleted"}, second["removals"])
+
+    def test_the_clock_measures_first_seen_not_the_publication_date(self):
+        """ADR-0055: thirty days after it was first seen. A row published 34
+        days ago and first seen 28 days ago, six days old then and so
+        admitted (D14), has been in the display 28 days and stays. Every
+        other test gave a row one date for both, so measuring publication
+        would have aged rows out up to a week early unnoticed: the fourth
+        audit's F7. Mutation: "the clock measures the publication date"."""
+        r = replace(make_row(1, published=(NOW - timedelta(days=34)).isoformat()
+                             .replace("+00:00", "Z")),
+                    first_seen=(NOW - timedelta(days=28)).isoformat().replace("+00:00", "Z"))
+        self.store_rows([r])
+        self.in_jobs(r)
+        self.assertNotEqual(self.jobs()[0]["First seen"], self.jobs()[0]["Published"])
+        report = self.sweep()
+        self.assertEqual((report["aged_out"], self.store("removed_unreviewed.json")), (0, []))
+        self.assertEqual(report.get("removals", []), [])
 
     def test_a_classified_row_is_never_aged_out(self):
         first = (NOW - timedelta(days=40)).isoformat().replace("+00:00", "Z")

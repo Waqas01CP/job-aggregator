@@ -77,7 +77,7 @@
   "replace": "            if names:\n                print(\"  %s: %d\" % (k, len(names)), file=sys.stderr)\n        return 0"},
  {"label": "cli: a missing branch gives no fetch hint",
   "path": "tools/run_log_report.py",
-  "find": "\"  git fetch origin %s:%s\" % (branch, args.repo, branch, branch))",
+  "find": "\"this repository, whose refs never hold it:\\n  git clone --branch %s \"\n                   \"--single-branch <this repository's URL> <a scratch directory>\\n\"\n                   \"then pass --repo <that directory>\" % (branch, args.repo, branch))",
   "replace": "\"\" % (branch, args.repo))"},
 
  {"label": "workflow: checkout back on Node 20",

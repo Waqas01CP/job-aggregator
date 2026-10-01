@@ -33,6 +33,7 @@ from src.normalise import Row, normalise
 from tests.test_adapters import cassette
 from tests.test_normalise import NOW as NORMALISE_NOW
 from tests.test_normalise import SPEECHIFY
+from tools import mutate
 
 MATCHER = TitleMatcher()
 SCHEMA = os.path.join(ROOT, "docs", "reference", "airtable-schema.md")
@@ -235,6 +236,38 @@ class TestTheFitnessFunctionsThemselves(unittest.TestCase):
                 ("a mutation not on file", good + ' Mutation: "nothing of the sort".')):
             with self.subTest(case=case):
                 self.assertTrue(problems(case, doc, labels))
+
+
+class TestTheMutationsOnFile(unittest.TestCase):
+    """Every mutation on file must still run. The harness refuses a file
+    with one stale find whole, so a code change that moves the text under a
+    mutation silently retires every guarantee in that file. `19ca94d` did it
+    to four files and the fourth audit (F6) found it; `8857d0b`, fixing that
+    audit's F5, did it again to two mutations. A mutation applied by the
+    harness is the one case that must not count, so its file is exempt
+    while the harness holds it."""
+
+    def test_every_find_occurs_exactly_once(self):
+        exempt = {os.environ[mutate.APPLIED_ENV]} if os.environ.get(mutate.APPLIED_ENV) else set()
+        found = []
+        for path in sorted(glob.glob(os.path.join(ROOT, "tools", "mutations", "*.json"))):
+            with open(path, encoding="utf-8") as f:
+                found += ["%s %s" % (os.path.basename(path), p)
+                          for p in mutate.problems_in(json.load(f), ROOT, exempt)]
+        self.assertEqual(found, [])
+
+    def test_the_check_can_fail(self):
+        """The cases built to defeat it: a find matching nothing, a find
+        matching twice, and the same stale find exempt. Mutation: "a find
+        that matches nothing passes"."""
+        def mutation(find):
+            return {"label": "x", "path": "src/config.py", "find": find, "replace": "y"}
+        self.assertEqual(mutate.problems_in([mutation("def is_publishable(source):")], ROOT), [])
+        for case, find in (("nothing", "def is_publishable(nothing):"), ("twice", "import ")):
+            with self.subTest(case=case):
+                self.assertTrue(mutate.problems_in([mutation(find)], ROOT))
+        self.assertEqual(mutate.problems_in([mutation("def is_publishable(nothing):")], ROOT,
+                                            exempt={"src/config.py"}), [])
 
 
 if __name__ == "__main__":

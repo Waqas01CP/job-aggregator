@@ -171,10 +171,11 @@ jobs:
           #   0 finished
           #   2 resumable: the budget was reached, the circuit opened, the
           #     projection to Airtable failed, the sweep failed (ADR-0050),
-          #     or the private store could not be restored or written
-          #     (ADR-0047, the operator's D6). The run log names which, the
-          #     public fetch is committed, and the next run picks it up; the
-          #     next projection sends the whole layer again.
+          #     the clearing tool refused or failed (ADR-0055), or the
+          #     private store could not be restored or written (ADR-0047,
+          #     the operator's D6). The run log names which, the public
+          #     fetch is committed, and the next run picks it up; the next
+          #     projection sends the whole layer again.
           #   1 failed: either it could not start, or it fetched and could not
           #     store the result. The run's own output above says which.
           if [ "$code" -eq 1 ]; then
@@ -182,7 +183,7 @@ jobs:
             exit 1
           fi
           if [ "$code" -eq 2 ]; then
-            echo "::warning::the run is resumable: it stopped early on the request budget or the circuit breaker, its projection to Airtable or its sweep failed, or the private store could not be restored or written; the run log says which"
+            echo "::warning::the run is resumable: it stopped early on the request budget or the circuit breaker, its projection to Airtable or its sweep failed, the clearing tool refused or failed, or the private store could not be restored or written; the run log says which"
           fi
           exit 0
 

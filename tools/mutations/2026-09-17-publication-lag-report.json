@@ -49,7 +49,7 @@
   "replace": "    runs, problems = run_log_report.parse(logs, args.test_mode) if False else ([r for m in (False, True) for r in run_log_report.parse(logs, m)[0]], {})"},
  {"label": "cli: a missing branch gives no fetch hint",
   "path": "tools/publication_lag_report.py",
-  "find": "\"fetch it first:\\n  git fetch origin %s:%s\"\n                   % (branch, args.repo, branch, branch))",
+  "find": "\"Clone it apart from this repository, whose refs never hold it:\\n\"\n                   \"  git clone --branch %s --single-branch <this repository's URL> \"\n                   \"<a scratch directory>\\nthen pass --repo <that directory>\"\n                   % (branch, args.repo, branch))",
   "replace": "\"\"\n                   % (branch, args.repo))"},
  {"label": "render: late postings not listed",
   "path": "tools/publication_lag_report.py",

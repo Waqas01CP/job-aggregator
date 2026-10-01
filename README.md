@@ -85,7 +85,7 @@ The commands below use the Windows path to the environment's Python; on Linux an
 
 A local run writes its working files under `data/`, which git ignores. A committing run first loads the branch's stored state, so it appends to what the branch holds rather than to whatever this machine last saw.
 
-**On GitHub**, `.github/workflows/fetch.yml` is scheduled at 00:00 and 13:00 UTC. GitHub starts scheduled runs late: they have begun between 03:27 and 04:00 UTC and between 16:56 and 17:47 UTC. Each run:
+**On GitHub**, `.github/workflows/fetch.yml` is scheduled at 00:00 and 13:00 UTC. GitHub starts scheduled runs late: over the 29 scheduled runs to 2026-10-01 they began between 03:26 and 04:33 UTC and between 16:18 and 20:02 UTC, 3.3 to 7.0 hours after the slot. Each run:
 1. runs the tests;
 2. fetches, stores the aggregator's data privately, and updates the Airtable display;
 3. runs the sweep, whose daily steps run on the morning run only;
@@ -96,8 +96,8 @@ It can also be run by hand from the Actions tab. Ticking "Write to alternate fil
 **Clearing a table** (ADR-0055) is the same dispatch with three more inputs:
 1. Choose a table: `jobs`, `rejected-not-a-fit`, `rejected-poor-filtering` or `accepted`.
 2. Give a number of days: 15, 30 or any whole number. `jobs` measures each row's publication date; the other tables measure `Classified`.
-3. Run it with "Clear them" unticked. That is the dry run: the run's output lists what would be removed, and nothing changes.
-4. Run it again with the same table and days and the box ticked, within two days.
+3. Run it with "Clear them" unticked. That is the dry run, and nothing is removed. The run's output says how many rows it would remove, their dates, how many are unreviewed, and how many classified rows' rejection copies would go with them. The rows themselves are named in the run log on `data`, an aggregator's in the private repository's `outcomes/clearing_dry_runs.json`.
+4. Run it again with the same table and days and the box ticked, within two days. It removes only the rows the dry run listed; a row that crossed the threshold since is left, and counted.
 
 The next morning's sweep then removes the rows, once their records are stored. `accepted` rows only get `Delete` set, and leave by the same path. A row deleted by hand in Airtable comes back on the next run; one cleared this way does not.
 
@@ -118,7 +118,7 @@ A committing run needs repository secrets: the Airtable token and table IDs, and
 | `.venv/Scripts/python tools/mutate.py <file>` | Breaks the code in the ways a mutation file lists and confirms the tests notice |
 | `python tools/make_cassette.py --source <saved response> --out tests/cassettes/<name>.json` | Builds a test fixture from a saved board response, with description text stripped |
 
-The report tools read the `data` branch, which is written on GitHub. Fetch it first with `git fetch origin data:data`, or pass `--repo` or `--dir`.
+The report tools read the `data` branch, which is written on GitHub. Clone it apart from this repository, never into its refs, with `git clone --branch data --single-branch <this repository's URL> <a scratch directory>`, and pass `--repo <that directory>`; or pass `--dir` for a directory of run logs.
 
 `docs/architecture.md` is a superseded design kept as a record of what was rejected. It carries a banner saying so. Do not implement from it.
 

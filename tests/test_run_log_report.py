@@ -299,7 +299,8 @@ class TestReadingTheBranch(unittest.TestCase):
         code, out, err = self.run_tool("--repo", self.dir)
         self.assertEqual(code, 1)
         self.assertEqual(out, "")
-        self.assertIn("git fetch origin data:data", err)
+        self.assertIn("git clone --branch data --single-branch", err)
+        self.assertNotIn("git fetch", err)
 
     def test_nothing_countable_is_a_failure_not_an_empty_report(self):
         storage.commit_files({"logs-runs/t.json": dumps(log("2026-09-17T00:00:00Z", 7, {"greenhouse": 7},

@@ -298,6 +298,21 @@ class TestTheSkip(Harness):
         client, _ = self.project()
         self.assertEqual(len(client.sent), 1)
 
+    def test_a_tie_in_swept_at_goes_to_the_record_written_last(self):
+        """The sweep and the operator's tool write in the same run, so both
+        records carry its clock, and the tool's reason, written after the
+        sweep's, must decide: the store only appends, so position is the
+        order of writing (the fourth audit's F7). Mutation: "a tie in
+        swept_at goes to the first record written"."""
+        self.write_filtered([make_row(1)])
+        when = "2026-09-22T04:00:00Z"
+        self.write_removals([
+            {"identity": "greenhouse:1", "reason": projection.RULE_REASON % "location",
+             "swept_at": when},
+            {"identity": "greenhouse:1", "reason": projection.REASON_OPERATOR, "swept_at": when}])
+        client, _ = self.project()
+        self.assertEqual(client.sent, [])
+
     def test_a_reason_not_yet_invented_keeps_the_row_out(self):
         """The principle, not a list: only the rules' own reasons return."""
         self.write_filtered([make_row(1)])

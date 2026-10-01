@@ -19,6 +19,10 @@ Guards, each against a failure that has already happened once:
 
 - A `find` that does not occur exactly once is refused before anything runs.
   An in-place replacement that silently matched nothing cost real time twice.
+  The suite applies the same check to every file on record, so a commit
+  that changes the code under a mutation fails until the mutation is
+  re-expressed. A file is refused whole, and the fourth audit found four
+  that had been unable to run since `19ca94d` without anyone knowing.
 - The suite must pass before any mutation is applied, or a broken suite would
   report every mutation as caught.
 - Every run compiles into a fresh bytecode cache, so a stale .pyc can never
@@ -46,13 +50,24 @@ SUITE = [sys.executable, "-m", "unittest", "discover", "-s", "tests", "-t", "."]
 KEYS = {"label", "path", "find", "replace"}
 
 
-def run_suite():
+# Names the file a mutation is applied to, for the suite's run. The suite
+# checks that every find on file still occurs exactly once, and an applied
+# mutation's file is the one place that must not hold: without this every
+# mutation would be "caught" by that check alone.
+APPLIED_ENV = "MUTATION_APPLIED"
+
+
+def run_suite(applied=None):
     """(passed, tail, failing). The tail lets a failing baseline be read
     without rerunning; `failing` names the tests that failed or errored, so
     `--why` can show that a mutation was caught by the test meant to catch it
-    rather than by an unrelated crash."""
+    rather than by an unrelated crash. `applied` is the path of the file a
+    mutation has changed, or None for the baseline and the final run."""
     cache = tempfile.mkdtemp(prefix="mutate-pyc-")
     env = dict(os.environ, PYTHONPYCACHEPREFIX=cache)
+    env.pop(APPLIED_ENV, None)
+    if applied:
+        env[APPLIED_ENV] = applied
     try:
         p = subprocess.run(SUITE, cwd=REPO_ROOT, env=env, capture_output=True,
                            text=True, encoding="utf-8", errors="replace")
@@ -70,12 +85,14 @@ def refs():
     return set(p.stdout.split())
 
 
-def load(path, only=None):
-    """Read and validate every mutation before any file is touched."""
-    with open(path, encoding="utf-8") as f:
-        mutations = json.load(f)
-    if not isinstance(mutations, list) or not mutations:
-        raise SystemExit("%s: expected a non-empty JSON list" % path)
+def problems_in(mutations, root=REPO_ROOT, exempt=()):
+    """What stops a list of mutations from running against the tree at
+    `root`: wrong keys, a duplicate label, a find equal to its replace, a
+    missing file, or a find that does not occur exactly once. A path in
+    `exempt` is not counted, which is how the suite reads the tree while the
+    harness holds one file mutated. The suite runs this over every file on
+    record: the fourth audit's F6 found a commit that left 8 finds matching
+    nothing and 4 files unable to run, which nothing noticed."""
     problems, labels = [], set()
     for i, m in enumerate(mutations):
         where = "[%d] %s" % (i, m.get("label") if isinstance(m, dict) else "?")
@@ -87,14 +104,26 @@ def load(path, only=None):
         labels.add(m["label"])
         if m["find"] == m["replace"]:
             problems.append("%s: find and replace are identical" % where)
-        target = REPO_ROOT / m["path"]
+        target = Path(root) / m["path"]
         if not target.is_file():
             problems.append("%s: no file at %s" % (where, m["path"]))
+            continue
+        if m["path"] in exempt:
             continue
         count = target.read_bytes().decode("utf-8").count(m["find"])
         if count != 1:
             problems.append("%s: find occurs %d times in %s, expected exactly 1"
                             % (where, count, m["path"]))
+    return problems
+
+
+def load(path, only=None):
+    """Read and validate every mutation before any file is touched."""
+    with open(path, encoding="utf-8") as f:
+        mutations = json.load(f)
+    if not isinstance(mutations, list) or not mutations:
+        raise SystemExit("%s: expected a non-empty JSON list" % path)
+    problems = problems_in(mutations)
     if problems:
         raise SystemExit("refusing to run:\n  " + "\n  ".join(problems))
     if only:
@@ -111,7 +140,7 @@ def apply_one(m):
     mutated = original.decode("utf-8").replace(m["find"], m["replace"], 1).encode("utf-8")
     try:
         target.write_bytes(mutated)
-        passed, _, failing = run_suite()
+        passed, _, failing = run_suite(applied=m["path"])
     finally:
         target.write_bytes(original)
     if target.read_bytes() != original:

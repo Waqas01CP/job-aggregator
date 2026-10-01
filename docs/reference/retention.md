@@ -11,9 +11,11 @@ citations below name because it decided each item at the time. ADR-0050 adds a
 third fifteen-day period, for a posting that has closed, and moves the copy
 step to every fetch.
 
-One period, fifteen days, applied twice on two different clocks. Neither clock
-is the posting's publication date or its first-seen date, because neither of
-those moves when a classification changes.
+A classified row has one period, fifteen days, applied twice on two different
+clocks. Neither is the posting's publication date or its first-seen date,
+because neither moves when a classification changes. A row nobody classified
+has a clock of its own, the table's last row, and that one is first-seen:
+with no classification there is nothing else to measure from.
 
 | Table | Clock | Value | What happens at the end |
 |---|---|---|---|
@@ -66,10 +68,15 @@ enough that a cluster of one reason is still on screen to be seen. Four rows
 in `rejected-poor-filtering` all admitted by the same pool term is a work item,
 and it is only visible while the rows are together.
 
-Nothing here has ever run. No row has been classified, no sweep has executed,
-and no store has been written. **A longer window is the cheaper mistake while
-that is true.** Shorten it once the sweep has run cleanly for a few cycles.
-That is the operator's call and it is a one-line change here.
+The sweep has run since 2026-09-25 and has deleted rows since 2026-09-28:
+25 public rows that day, each dropped by a rule (18 on location, 7 on age, in
+the public removal store), and 44 aggregator rows on 09-29, inferred to be
+rule drops since the count per step was not logged then. No
+classification has reached its fifteen days: the first were marked on
+2026-09-24, so the first come due about 2026-10-09 [inferred]. **A longer
+window is the cheaper mistake until that clock has run cleanly for a few
+cycles.** Shortening it is the operator's call and a one-line change in
+`config/sweep.json`.
 
 ## What the two clocks do not buy
 
@@ -81,8 +88,9 @@ outcome.
 
 **The reason reaches the store from the copy.** On day 15 the sweep reads
 the row from `Jobs` and its reason from the matching copy, in the same run,
-and writes both. A status change discards the old copy's reason, because it
-belonged to the old classification. An accepted row carries its `Stage`,
+and writes both. A status change discards nothing (D12, 2026-09-26): the old
+rejection copy is saved with its reason to `removed_copies.json` before it is
+deleted, and an old accepted copy stays. An accepted row carries its `Stage`,
 shortlisted or applied, the same way. A `Stage` changed after day 15 does not
 reach the store. ADR-0046, Changes rows of 2026-09-22.
 
@@ -119,7 +127,13 @@ a confirmation box. `Jobs` is measured on the publication date; the three
 classification tables on `Classified`, when the copy arrived. A run without
 the box ticked is a dry run: it reports what it would remove and changes
 nothing. A ticked run is refused unless a dry run of the same table and days
-ran within `clearing_dry_run_valid_hours` of `config/sweep.json`, 48.
+ran within `clearing_dry_run_valid_hours` of `config/sweep.json`, 48, and it
+removes only the rows that dry run listed: one that crossed the threshold
+since is left and counted (the fourth audit's F1, 2026-10-01). The dry run
+names a public row in the run log, and an aggregator's, with its title and
+employer, in the private repository's `outcomes/clearing_dry_runs.json`.
+Clearing `Jobs` takes a classified row's rejection copy with it, and the dry
+run counts those rows by status.
 
 **The tool writes stores and deletes nothing.** An unreviewed `Jobs` row is
 stored with `operator-removed`; a classified row or a rejection copy has its
@@ -145,18 +159,19 @@ record provides for.
 
 ## What reads these numbers
 
-Nothing yet. The sweep is unbuilt. **This file exists before the code so the
-sweep is built to these numbers rather than having them chosen during
-implementation**, which is where a number nobody decided usually comes from.
-
-Per ADR-0031 these are configuration, not constants in a module: the sweep
-loads them from here, and changing one is a documented act with a dated row
-below, never a code change.
+The sweep and the clearing tool, from `config/sweep.json`: `retire_after_days`
+(15), `unreviewed_after_days` (30) and `clearing_dry_run_valid_hours` (48).
+This file was written before the sweep, so the sweep was built to the
+operator's numbers rather than ones chosen during implementation; it now
+says what each number is and why, and the configuration is what the code
+reads. Per ADR-0031 they are configuration, not constants in a module, and
+changing one is a dated row there and here, never a code change.
 
 ## Changes
 
 | Date | Change | Reason |
 |---|---|---|
+| 2026-10-01 | Four statements the file contradicted corrected: the clocks paragraph now names the first-seen clock, the sweep has run, a status change discards nothing (D12), and the numbers are read from `config/sweep.json`. The clearing tool removes only what its dry run listed | The fourth audit's F12 and F1 |
 | 2026-09-30 | ADR-0055's thirty-day clock for unreviewed rows and the operator's clearing tool added; the removal store is now read by reason | Brief 8. `Jobs` had no clock for a row nobody marked, the one unbounded quantity in the system, and rows deleted in the browser came back within about fourteen hours |
 | 2026-09-26 | `accepted` rows leave Airtable on the operator's `Delete`, saved first; a superseded rejection copy is saved before it goes; a clear removes nothing | The operator's D12, answering the audit of 2026-09-25's F1, which found a clear or a status change deleting an `accepted` copy and its `Stage`. The separate tool this file named is the `Delete` field |
 | 2026-09-23 | A fourth removal added, on no clock: unreviewed rows the chain no longer admits, stored with the rule that dropped them | ADR-0046 step 4, on the operator's decision. It closes ADR-0040's unowned removal and preserves the `expired_before_review` signal, which ADR-0046 retired as a status |

@@ -7,9 +7,11 @@ before it is added.
     python tools/title_pool_report.py --repo PATH | --dir data | --test-mode
     python tools/title_pool_report.py --pool path/to/candidate-pool.md
 
-The data branch is written on GitHub, so fetch it first:
+The data branch is written on GitHub. Clone it apart from this repository,
+never into its refs (docs/how-to/the-seats.md), and pass the clone:
 
-    git fetch origin data:data
+    git clone --branch data --single-branch <this repository's URL> <a scratch directory>
+    python tools/title_pool_report.py --repo <that directory>
 
 ADR-0021 makes the drop log "the sole feedback signal for a missing term" and
 the pool a versioned file whose every change is a documented act. This is the
@@ -166,8 +168,10 @@ def main(argv=None):
         branch = storage.data_branch(args.test_mode)
         where = "the %s branch of %s" % (branch, args.repo)
         rows = postings_from_branch(args.repo, branch)
-        missing = ("no %s branch in %s. It is written on GitHub; fetch it first:\n"
-                   "  git fetch origin %s:%s" % (branch, args.repo, branch, branch))
+        missing = ("no %s branch in %s. It is written on GitHub. Clone it apart from "
+                   "this repository, whose refs never hold it:\n  git clone --branch %s "
+                   "--single-branch <this repository's URL> <a scratch directory>\n"
+                   "then pass --repo <that directory>" % (branch, args.repo, branch))
     if rows is None:
         print(missing, file=sys.stderr)
         return 1

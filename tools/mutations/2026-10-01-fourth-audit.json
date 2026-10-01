@@ -1,0 +1,194 @@
+[
+  {
+    "label": "a time zone reads as a country",
+    "path": "src/filters.py",
+    "find": "    text = fold(_BRACKETED_QUALIFIER.sub(\" \", str(part).lower()))\n    text = _QUALIFIER.sub(\" \", text)\n",
+    "replace": "    text = fold(str(part).lower())\n"
+  },
+  {
+    "label": "a closed country beside only reads as open",
+    "path": "src/filters.py",
+    "find": "    if closed and _ONLY.search(text):",
+    "replace": "    if False:"
+  },
+  {
+    "label": "anywhere in a closed country reads as anywhere",
+    "path": "src/filters.py",
+    "find": "    text = _SCOPED_OPEN.sub(\" in \", text)\n",
+    "replace": ""
+  },
+  {
+    "label": "a closed country outranks an open region beside it",
+    "path": "src/filters.py",
+    "find": "    if names(eligibility.open):\n        return \"eligible\"\n    if closed:\n        return \"closed\"\n",
+    "replace": "    if closed:\n        return \"closed\"\n    if names(eligibility.open):\n        return \"eligible\"\n"
+  },
+  {
+    "label": "on site with no city named is closed",
+    "path": "src/filters.py",
+    "find": "                             and names(eligibility.home_cities)\n",
+    "replace": ""
+  },
+  {
+    "label": "a remote option beside an office reads as on site",
+    "path": "src/filters.py",
+    "find": "names(eligibility.onsite_markers) and not names(eligibility.remote)",
+    "replace": "names(eligibility.onsite_markers)"
+  },
+  {
+    "label": "a drop reason names no home country",
+    "path": "src/filters.py",
+    "find": "                       % (\" or \".join(eligibility.home_country_names),",
+    "replace": "                       % (\"anywhere\","
+  },
+  {
+    "label": "a shape with no acceptance date reads as older than every entry",
+    "path": "src/contract.py",
+    "find": "    if not since:\n        return changes\n",
+    "replace": "    since = since or \"\"\n"
+  },
+  {
+    "label": "an entry dated in the future excuses a change today",
+    "path": "src/contract.py",
+    "find": "name in e[\"fields\"] and since < e[\"date\"] <= today:",
+    "replace": "name in e[\"fields\"] and since < e[\"date\"]:"
+  },
+  {
+    "label": "any ten characters pass as a date",
+    "path": "src/contract.py",
+    "find": "        datetime.strptime(value, \"%Y-%m-%d\")\n    except (TypeError, ValueError):\n",
+    "replace": "        str(value)\n    except (TypeError, ValueError):\n"
+  },
+  {
+    "label": "a confirm removes rows its dry run never listed",
+    "path": "src/clearing.py",
+    "find": "            chosen = [r for r in chosen if r[\"id\"] not in unseen]",
+    "replace": "            pass"
+  },
+  {
+    "label": "the dry run lists no aggregator row",
+    "path": "src/clearing.py",
+    "find": "        if not aggregator:\n            return\n        if \"private\" not in self.stores.dirs:",
+    "replace": "        return\n        if \"private\" not in self.stores.dirs:"
+  },
+  {
+    "label": "the dry run's list is written as a store",
+    "path": "src/clearing.py",
+    "find": "DRY_RUN_FILE = \"clearing_dry_runs.json\"",
+    "replace": "DRY_RUN_FILE = \"removed_unreviewed.json\""
+  },
+  {
+    "label": "a failed dry run validates a confirm",
+    "path": "src/clearing.py",
+    "find": "        if c.get(\"failure\") or not isinstance(c.get(\"rows\"), list):",
+    "replace": "        if not isinstance(c.get(\"rows\"), list):"
+  },
+  {
+    "label": "a dry run with no list validates a confirm",
+    "path": "src/clearing.py",
+    "find": "        if c.get(\"failure\") or not isinstance(c.get(\"rows\"), list):",
+    "replace": "        if c.get(\"failure\"):"
+  },
+  {
+    "label": "a confirmed run counts as the dry run",
+    "path": "src/clearing.py",
+    "find": "        if (c.get(\"table\"), c.get(\"older_than_days\"), c.get(\"confirmed\")) != (table, days, False):",
+    "replace": "        if (c.get(\"table\"), c.get(\"older_than_days\")) != (table, days):"
+  },
+  {
+    "label": "a test-mode confirm accepts a production dry run",
+    "path": "src/clearing.py",
+    "find": "        if not isinstance(log, dict) or bool(log.get(\"test_mode\")) != test_mode:",
+    "replace": "        if not isinstance(log, dict):"
+  },
+  {
+    "label": "the earliest dry run on file is bound",
+    "path": "src/clearing.py",
+    "find": "        if found is None or parse_time(when) > parse_time(found[\"run_at\"]):",
+    "replace": "        if found is None:"
+  },
+  {
+    "label": "the dry run does not count the classified rows",
+    "path": "src/clearing.py",
+    "find": "            report[\"classified\"] = classified",
+    "replace": "            report[\"classified\"] = {}"
+  },
+  {
+    "label": "the clearing tool in test mode reaches production",
+    "path": "src/run.py",
+    "find": "        client = make_sweep_client(test_mode, used_before)\n        logs = storage.read_recent_run_logs(",
+    "replace": "        client = make_sweep_client(False, used_before)\n        logs = storage.read_recent_run_logs("
+  },
+  {
+    "label": "a test-mode confirm reads production's logs",
+    "path": "src/run.py",
+    "find": "storage.read_recent_run_logs(CLEARING_LOGS_READ, test_mode)",
+    "replace": "storage.read_recent_run_logs(CLEARING_LOGS_READ, False)"
+  },
+  {
+    "label": "the tool is told it is production",
+    "path": "src/run.py",
+    "find": "clearing.Clearing(client, run.paths, run.now, private_ok, test_mode)",
+    "replace": "clearing.Clearing(client, run.paths, run.now, private_ok)"
+  },
+  {
+    "label": "the clock measures the publication date",
+    "path": "src/sweep.py",
+    "find": "        first_seen = fields.get(\"First seen\")",
+    "replace": "        first_seen = fields.get(\"Published\")"
+  },
+  {
+    "label": "the skip ignores the private removal store",
+    "path": "src/run.py",
+    "find": "        projection.project(run.paths, now_iso, run.matcher, client,\n                           projection.private_store_texts(run.paths), stages,",
+    "replace": "        projection.project(run.paths, now_iso, run.matcher, client,\n                           [], stages,"
+  },
+  {
+    "label": "a tie in swept_at goes to the first record written",
+    "path": "src/projection.py",
+    "find": "if identity not in latest or when >= latest[identity][0]:",
+    "replace": "if identity not in latest or when > latest[identity][0]:"
+  },
+  {
+    "label": "the age limit is a constant, not configuration",
+    "path": "src/filters.py",
+    "find": "    if seen - dated <= timedelta(days=eligibility.max_age_days):",
+    "replace": "    if seen - dated <= timedelta(days=7):"
+  },
+  {
+    "label": "a backfilled row is first seen at the backfill",
+    "path": "src/backfill.py",
+    "find": "        paths[\"filtered\"], [r.as_record() for r in public])",
+    "replace": "        paths[\"filtered\"], [dict(r.as_record(), first_seen=now_iso) for r in public])"
+  },
+  {
+    "label": "a waiting posting the search returned later is a disagreement",
+    "path": "src/run.py",
+    "find": "        if identity in searched:\n            counts[\"returned_since\"] += 1\n            continue\n",
+    "replace": ""
+  },
+  {
+    "label": "a walk that never reached a waiting posting's date judges it",
+    "path": "src/run.py",
+    "find": "            reached is not None and reached <= _parse(e[\"published_at\"]))",
+    "replace": "            True)"
+  },
+  {
+    "label": "the waiting list is forgotten between walks",
+    "path": "src/run.py",
+    "find": "        if still != pending:\n            storage.write_atomic(pending_path, dumps(others + still))\n",
+    "replace": ""
+  },
+  {
+    "label": "hitting the page cap is silent",
+    "path": "src/run.py",
+    "find": "        log[\"capped\"] = not ended\n        if not ended:\n",
+    "replace": "        log[\"capped\"] = False\n        if False:\n"
+  },
+  {
+    "label": "a find that matches nothing passes",
+    "path": "tools/mutate.py",
+    "find": "        if count != 1:",
+    "replace": "        if count > 1:"
+  }
+]

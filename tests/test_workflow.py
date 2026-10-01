@@ -176,6 +176,10 @@ class TestWorkflow(unittest.TestCase):
         self.assertIn("private store", warning)
         self.assertIn("budget", warning)
         self.assertIn("breaker", warning)
+        # A refused confirm showed green with a warning naming other causes
+        # (the fourth audit's F13).
+        self.assertIn("sweep", warning)
+        self.assertIn("clearing tool", warning)
 
     def test_exit_1_is_not_labelled_as_could_not_start(self):
         """Run 35179218050 failed at the commit after a full fetch and the

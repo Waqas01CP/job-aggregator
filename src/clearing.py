@@ -7,8 +7,8 @@ selected that then it should delete the jobs which are older than 1 month".
 
 **Deleting a row in the browser does not stick**, which is why this exists.
 The projection re-applies the rules over the whole filtered layer and upserts
-on `Identity`, so a row cleared by hand returns within about fourteen hours.
-Only a store the skip reads keeps a row out.
+on `Identity`, so a row cleared by hand returns at the next run. Only a store the skip
+reads keeps a row out.
 
 **So the tool writes stores and deletes nothing.** The next daily sweep reads
 what this run wrote back from origin and deletes the rows then, by ADR-0050's
@@ -30,26 +30,48 @@ judges age once at first sight and a waiting row's publication date recedes.
 
 **A dry run always comes first.** A run that is not confirmed reports, per
 table, how many rows it would remove, the oldest and newest publication dates
-among them, and how many are unreviewed, and writes nothing. A confirmed run
-refuses unless a dry run of the same table and threshold ran on this branch
-within `clearing_dry_run_valid_hours`. Every row is named in the run log by
-identity, an aggregator's masked there and named in its private store.
+among them, and how many are unreviewed, and removes and stores nothing. A
+confirmed run refuses unless a dry run of the same table and threshold, in
+the same mode, finished on this branch within `clearing_dry_run_valid_hours`.
+
+**A confirmed run removes only what its dry run listed.** It selects again
+at its own clock and acts on the rows both selections hold. A row that
+crossed the threshold after the dry run is left and counted, never removed
+unseen: `operator-removed` never returns, and he said "i do not want to miss
+any". The fourth audit's F1 found the first build selecting afresh, so a
+confirm up to 48 hours later removed rows no dry run had shown him.
+
+**So every row the dry run lists is named where he can read it.** A public
+row by identity in the run log. An aggregator's is masked there (ADR-0020),
+so the dry run lists it, with its title, employer and date, in the private
+repository's `outcomes/clearing_dry_runs.json`. That file is a list for him
+and for the confirm, and is no store: neither the skip nor the sweep reads
+it, so it keeps nothing out of the display.
+
+**Clearing `Jobs` takes a classified row's rejection copy with it**, since
+both leave on the outcome the tool writes. An accepted copy stays until its
+`Delete` (D12). The dry run counts the classified rows by status, so the
+copies leaving are not a surprise (the fourth audit's F16).
 """
 
 from datetime import timedelta
 
 from . import storage
+from .config import is_publishable
 from .airtable_sweep import (CLASSIFICATION_TABLES, COPY_FIELDS, DELETE_FIELD, DELETE_YES, JOBS,
                              OPERATOR_FIELD)
 from .normalise import Row
 from .projection import REASON_OPERATOR, REMOVED_UNREVIEWED_STORE, removal_key
 from .sweep import (JOBS_FIELDS, REMOVED_BY_OPERATOR, STORE_FOR, Stores, jobs_fields_record,
-                    masked, older_than, parse_time)
+                    masked, older_than, parse_time, source_of)
 
 # The four tables by the name the dispatch offers; `jobs` is this mode's
 # `Jobs` or `Jobs test`, as the client binds it.
 TABLES = (JOBS,) + CLASSIFICATION_TABLES
 NONE = "none"
+# The dry run's aggregator rows, beside the private outcome stores so the
+# private store pushes it. Read by the confirm and by no store reader.
+DRY_RUN_FILE = "clearing_dry_runs.json"
 
 
 class ClearingError(Exception):
@@ -74,26 +96,38 @@ def request_from(table, days, confirm):
     return table, value, bool(confirm)
 
 
-def dry_run_on_file(logs, table, days, now, valid_hours):
-    """Whether one of `logs`, this branch's recent run logs, carries an
-    unconfirmed run of the same table and threshold, recent enough."""
+def dry_run_on_file(logs, table, days, now, valid_hours, test_mode=False):
+    """The latest of `logs`, this branch's recent run logs, carrying a dry run
+    of the same table and threshold in the same mode, finished and recent
+    enough; or None. None of these may stand in for one, and the fourth
+    audit's F2 found the first three untested: a dry run that failed showed
+    nothing; a confirmed run is not a dry run; a log of the other mode listed
+    the other mode's rows; and a log with no list gives the confirm nothing
+    to bind to."""
+    found = None
     for log in logs:
-        c = (log or {}).get("clearing") or {}
+        if not isinstance(log, dict) or bool(log.get("test_mode")) != test_mode:
+            continue
+        c = log.get("clearing") or {}
         if (c.get("table"), c.get("older_than_days"), c.get("confirmed")) != (table, days, False):
             continue
-        if c.get("failure"):
+        if c.get("failure") or not isinstance(c.get("rows"), list):
             continue
         when = log.get("run_at")
-        if when and parse_time(when) >= now - timedelta(hours=valid_hours):
-            return True
-    return False
+        if not when or parse_time(when) < now - timedelta(hours=valid_hours):
+            continue
+        if found is None or parse_time(when) > parse_time(found["run_at"]):
+            found = log
+    return found
 
 
 class Clearing:
-    def __init__(self, client, paths, now, private_ok):
+    def __init__(self, client, paths, now, private_ok, test_mode=False):
         self.client = client
         self.now = now
         self.now_iso = now.isoformat().replace("+00:00", "Z")
+        self.test_mode = test_mode
+        self.dry_run_path = "%s/%s" % (paths["local_outcomes_dir"], DRY_RUN_FILE)
         self.stores = Stores(paths, private_ok)
         rows = []
         for key in ("filtered", "local_filtered"):
@@ -131,12 +165,25 @@ class Clearing:
         report = {"table": table, "older_than_days": days, "confirmed": confirmed,
                   "measured_on": "publication date" if table == JOBS else "Classified",
                   "failure": None}
-        if confirmed and not dry_run_on_file(logs, table, days, self.now, valid_hours):
-            report["failure"] = ("refused: no dry run of %s at %d days on this branch in the last "
-                                 "%d hours. Run it once without confirming, read the report, "
-                                 "then confirm" % (table, days, valid_hours))
-            return report
+        listed = None
+        if confirmed:
+            dry = dry_run_on_file(logs, table, days, self.now, valid_hours, self.test_mode)
+            if dry is None:
+                report["failure"] = ("refused: no dry run of %s at %d days on this branch in "
+                                     "the last %d hours. Run it once without confirming, read "
+                                     "the report, then confirm" % (table, days, valid_hours))
+                return report
+            report["dry_run_at"] = dry["run_at"]
+            listed = self.listed_by(dry)
         chosen, undated = self.select(table, days)
+        if listed is not None:
+            # A row the private store cannot be read for stays and is counted
+            # as held, below; every other row must have been shown.
+            unseen = {r["id"] for r in chosen if r["fields"].get("Identity")
+                      and self.stores.where(r["fields"]["Identity"]) is not None
+                      and r["fields"]["Identity"] not in listed}
+            report["not_in_the_dry_run"] = len(unseen)
+            chosen = [r for r in chosen if r["id"] not in unseen]
         published = sorted(r["fields"].get("Published") for r in chosen
                            if r["fields"].get("Published"))
         report.update({
@@ -148,8 +195,16 @@ class Clearing:
             "without_a_date": len(undated),
             "rows": [masked(r["fields"].get("Identity")) for r in chosen],
         })
+        if table == JOBS:
+            classified = {}
+            for r in chosen:
+                status = r["fields"].get("Status")
+                if status in STORE_FOR:
+                    classified[status] = classified.get(status, 0) + 1
+            report["classified"] = classified
         if not confirmed:
-            report["mode"] = "dry run: nothing was written or removed"
+            self.list_privately(table, days, chosen, report)
+            report["mode"] = "dry run: nothing was removed or stored"
             return report
         report.update({"written": 0, "already_leaving": 0, "marked_delete": 0,
                        "held_private_unavailable": 0, "problems": []})
@@ -163,6 +218,41 @@ class Clearing:
         report["mode"] = ("confirmed: stores written; the next daily sweep removes the rows "
                           "once origin holds them")
         return report
+
+    def listed_by(self, dry):
+        """The identities a dry run showed: a public row's from its run log,
+        an aggregator's from the private list it wrote, when the private
+        store can be read."""
+        listed = {i for i in dry["clearing"]["rows"]
+                  if isinstance(i, str) and is_publishable(source_of(i))}
+        if "private" in self.stores.dirs:
+            listed |= {r.get("identity") for r in storage.read_records(self.dry_run_path)
+                       if r.get("dry_run_at") == dry["run_at"]}
+        return listed
+
+    def list_privately(self, table, days, chosen, report):
+        """The dry run's aggregator rows, named for him to review and for the
+        confirm to bind to. Without the private store they cannot be listed,
+        so a confirm will leave them, and the report says so."""
+        aggregator = [r for r in chosen if r["fields"].get("Identity")
+                      and not is_publishable(source_of(r["fields"]["Identity"]))]
+        if not aggregator:
+            return
+        if "private" not in self.stores.dirs:
+            report["aggregator_not_listed"] = len(aggregator)
+            return
+        records = []
+        for r in aggregator:
+            f = r["fields"]
+            records.append({
+                "key": "%s|%s" % (self.now_iso, f["Identity"]), "dry_run_at": self.now_iso,
+                "table": table, "older_than_days": days, "identity": f["Identity"],
+                "title": f.get("Title"), "employer": f.get("Employer"),
+                "published": f.get("Published"),
+                "status": f.get("Status") if table == JOBS else table,
+                "classified": f.get("Classified at") if table == JOBS else r.get("createdTime")})
+        report["aggregator_listed_privately"] = storage.append_delta(self.dry_run_path, records,
+                                                                     key="key")
 
     def clear_jobs(self, chosen, report):
         copies = None

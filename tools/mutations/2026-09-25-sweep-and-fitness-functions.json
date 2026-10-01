@@ -26,8 +26,8 @@
   {
     "label": "a row is deleted in the run that wrote its store",
     "path": "src/sweep.py",
-    "find": "                                                       classified_at=f.get(\"Classified at\")))\n            self.report[\"waiting_for_the_store\"] += 1",
-    "replace": "                                                       classified_at=f.get(\"Classified at\")))\n            self.report[\"waiting_for_the_store\"] += 1\n            delete_jobs.append(r[\"id\"])"
+    "find": "            self._removal(identity, JOBS, why, \"stored\")\n            self.report[\"waiting_for_the_store\"] += 1\n",
+    "replace": "            self._removal(identity, JOBS, why, \"stored\")\n            self.report[\"waiting_for_the_store\"] += 1\n            delete_jobs.append((r[\"id\"], identity, why))\n"
   },
   {
     "label": "accepted is deleted at fifteen days",
@@ -104,13 +104,13 @@
   {
     "label": "a row a rule dropped is kept",
     "path": "src/sweep.py",
-    "find": "        return None, \"dropped by the %s rule\" % rule",
+    "find": "        return None, RULE_REASON % rule",
     "replace": "        return None, None"
   },
   {
     "label": "a row no longer its group's display row is kept",
     "path": "src/sweep.py",
-    "find": "                return None, \"no longer its group's display row\"",
+    "find": "                return None, REASON_REGROUPED",
     "replace": "                return self.closure.group_closed_on(g.members), None"
   },
   {
@@ -152,8 +152,8 @@
   {
     "label": "a sweep failure exits 0",
     "path": "src/run.py",
-    "find": "    if private_failure or projection_failure or sweep_failure:",
-    "replace": "    if private_failure or projection_failure:"
+    "find": "    if private_failure or projection_failure or sweep_failure or clearing_failure:",
+    "replace": "    if private_failure or projection_failure or clearing_failure:"
   },
   {
     "label": "a failed sweep is not counted toward escalation",

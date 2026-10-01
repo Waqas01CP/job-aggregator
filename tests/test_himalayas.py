@@ -5,13 +5,15 @@ anchored on the newest pubDate the board actually stored, or on the age limit,
 rather than on clock time.
 """
 
+import contextlib
+import io
 import json
 import os
 import sys
 import shutil
 import tempfile
 import unittest
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -396,9 +398,20 @@ class TestRunIntegration(unittest.TestCase):
                              "applicationLink": "https://x.test/1", "pubDate": 1789141813}],
                    "offset": 0, "limit": 20, "totalCount": 100000}
         client = self._client([endless])
-        Run([BOARD], client, now=NOW, matcher=MATCHER).execute()
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            log = Run([BOARD], client, now=NOW, matcher=MATCHER).execute()
         from src.run import MAX_PAGES
         self.assertEqual(client.served["n"], MAX_PAGES)
+        # And it says so: the cap cuts the oldest days unannounced otherwise
+        # (the fourth audit's F17). Mutation: "hitting the page cap is silent".
+        self.assertIs(log["boards"][0]["capped"], True)
+        self.assertIn("::warning::himalayas:browse: the walk reached its cap", out.getvalue())
+
+    def test_a_walk_that_ends_on_its_own_is_not_capped(self):
+        client = self._client(self._two_pages(1788220800))
+        log = Run([SEARCH], client, now=NOW, matcher=MATCHER).execute()
+        self.assertIs(log["boards"][0]["capped"], False)
 
     # The catch-up, the operator's yes of 2026-09-26: the search board reads
     # back a week on its first walk instead of stopping at browse's mark.
@@ -474,31 +487,73 @@ class TestRunIntegration(unittest.TestCase):
         return {"jobs": [dict({"title": "Data Scientist", "applicationLink": p["guid"]}, **p)
                          for p in postings]}
 
+    # Browse's first page is minutes old and the search trails it by hours,
+    # as live, so the posting below is an hour newer than the search's.
+    NEWER = 1789141813 + 3600
+
+    def _walk(self, browse, search=None, days_later=0):
+        page = search or self._search_page()
+        return Run([SEARCH], self._client([page], browse),
+                   now=NOW + timedelta(days=days_later), matcher=MATCHER).execute()
+
     def test_the_agreement_check_is_seen_disagreeing(self):
         """Fitness function for ADR-0053, "The agreement check must be seen
-        disagreeing.": a browse posting the search never returned, open to
-        anyone, is one the location rule admits, so the search has dropped
-        something the operator could apply to. It is counted in the public
+        disagreeing.": a browse posting open to anyone, which the location
+        rule admits, waits; the next morning's walk, a day later and reaching
+        back past its date, has still not returned it, so the search has
+        dropped something the operator could apply to. Counted in the public
         log and named only in the private store. Mutation: "the agreement
         check never disagrees"."""
-        browse = self._browse({"guid": "https://x.test/9", "pubDate": 1789141700})
-        log = Run([SEARCH], self._client([self._search_page()], browse), now=NOW,
-                  matcher=MATCHER).execute()
+        first = self._walk(self._browse({"guid": "https://x.test/9", "pubDate": self.NEWER}))
+        self.assertEqual(first["boards"][0]["agreement"]["disagreements"], 0)
+        log = self._walk(self._browse(), days_later=1)
         [board] = log["boards"]
-        self.assertEqual(board["agreement"], {"browse_read": 1, "comparable": 1,
-                                              "excluded_by_search": 1, "disagreements": 1})
-        self.assertNotIn("x.test/9", json.dumps(log))
+        self.assertEqual(board["agreement"], {"browse_read": 0, "returned_by_search": 0,
+                                              "rule_excludes": 0, "newly_waiting": 0,
+                                              "returned_since": 0, "disagreements": 1,
+                                              "still_waiting": 0})
+        self.assertNotIn("x.test/9", json.dumps(first) + json.dumps(log))
         [record] = load_json("data/local/outcomes/agreement_disagreements.json")
         self.assertEqual(record["identity"], "himalayas:https://x.test/9")
+        self.assertEqual(load_json("data/local/outcomes/agreement_pending.json"), [])
+
+    def test_a_posting_the_search_has_not_taken_in_waits_and_agrees_once_returned(self):
+        """The live case. The first build compared only postings no newer
+        than the search's newest, which on the live feed was none: 0 of 20,
+        the fourth audit's F3. Now such a posting waits, privately, and the
+        walk that returns it settles it. Mutations: "a posting the search has
+        not returned is judged on the walk that found it", "a waiting posting
+        the search returned later is a disagreement"."""
+        first = self._walk(self._browse({"guid": "https://x.test/9", "pubDate": self.NEWER}))
+        agree = first["boards"][0]["agreement"]
+        self.assertEqual((agree["browse_read"], agree["newly_waiting"], agree["disagreements"],
+                          agree["still_waiting"]), (1, 1, 0, 1))
+        [waiting] = load_json("data/local/outcomes/agreement_pending.json")
+        self.assertEqual(waiting["identity"], "himalayas:https://x.test/9")
+        returned = self._search_page()
+        returned["jobs"].insert(0, {"guid": "https://x.test/9", "title": "Data Scientist",
+                                    "applicationLink": "https://x.test/9",
+                                    "pubDate": self.NEWER})
+        agree = self._walk(self._browse(), search=returned,
+                           days_later=1)["boards"][0]["agreement"]
+        self.assertEqual((agree["returned_since"], agree["disagreements"],
+                          agree["still_waiting"]), (1, 0, 0))
+
+    def test_a_walk_that_did_not_reach_back_to_it_leaves_it_waiting(self):
+        """An absence from pages that end before a posting's date says
+        nothing about it. Mutation: "a walk that never reached a waiting
+        posting's date judges it"."""
+        self._walk(self._browse({"guid": "https://x.test/9", "pubDate": 1789141700}))
+        agree = self._walk(self._browse(), days_later=1)["boards"][0]["agreement"]
+        self.assertEqual((agree["disagreements"], agree["still_waiting"]), (0, 1))
 
     def test_a_posting_the_search_excluded_and_the_rule_would_too_is_agreement(self):
         """Mutation: "the agreement check ignores the location rule"."""
-        browse = self._browse({"guid": "https://x.test/9", "pubDate": 1789141700,
-                               "locationRestrictions": ["United States"]})
-        log = Run([SEARCH], self._client([self._search_page()], browse), now=NOW,
-                  matcher=MATCHER).execute()
-        self.assertEqual(log["boards"][0]["agreement"]["excluded_by_search"], 1)
-        self.assertEqual(log["boards"][0]["agreement"]["disagreements"], 0)
+        log = self._walk(self._browse({"guid": "https://x.test/9", "pubDate": self.NEWER,
+                                       "locationRestrictions": ["United States"]}))
+        agree = log["boards"][0]["agreement"]
+        self.assertEqual((agree["rule_excludes"], agree["newly_waiting"],
+                          agree["disagreements"]), (1, 0, 0))
 
     def test_what_the_search_returned_on_an_earlier_walk_was_not_excluded(self):
         """The search pins old postings and its order inverts in places, so a
@@ -509,18 +564,9 @@ class TestRunIntegration(unittest.TestCase):
                  "applicationLink": "https://x.test/5", "pubDate": 1789141700}
         Run([SEARCH], self._client([{"jobs": [older], "offset": 0, "limit": 20,
                                      "totalCount": 1}]), now=NOW, matcher=MATCHER).execute()
-        browse = self._browse({"guid": "https://x.test/5", "pubDate": 1789141700})
-        log = Run([SEARCH], self._client([self._search_page()], browse), now=NOW,
-                  matcher=MATCHER).execute()
-        self.assertEqual(log["boards"][0]["agreement"]["excluded_by_search"], 0)
-
-    def test_a_posting_newer_than_the_search_is_not_compared(self):
-        """The endpoints need not refresh together: a posting the search has
-        not taken in yet is not one it excluded."""
-        browse = self._browse({"guid": "https://x.test/9", "pubDate": 1789141813 + 3600})
-        log = Run([SEARCH], self._client([self._search_page()], browse), now=NOW,
-                  matcher=MATCHER).execute()
-        self.assertEqual(log["boards"][0]["agreement"]["comparable"], 0)
+        log = self._walk(self._browse({"guid": "https://x.test/5", "pubDate": 1789141700}))
+        agree = log["boards"][0]["agreement"]
+        self.assertEqual((agree["returned_by_search"], agree["newly_waiting"]), (1, 0))
 
     def test_a_failed_agreement_check_costs_the_board_nothing(self):
         log = Run([SEARCH], self._client([self._search_page()], {"no jobs": True}), now=NOW,

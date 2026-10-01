@@ -6,9 +6,11 @@ first saw it.
     python tools/publication_lag_report.py --repo PATH     another clone, or a bare repository
     python tools/publication_lag_report.py --dir data      a local data directory
 
-The data branch is written on GitHub, so fetch it first:
+The data branch is written on GitHub. Clone it apart from this repository,
+never into its refs (docs/how-to/the-seats.md), and pass the clone:
 
-    git fetch origin data:data
+    git clone --branch data --single-branch <this repository's URL> <a scratch directory>
+    python tools/publication_lag_report.py --repo <that directory>
 
 Two open questions are answered from the pipeline's own data rather than by
 extra requests:
@@ -173,9 +175,11 @@ def main(argv=None):
         where = "the %s branch of %s" % (branch, args.repo)
         seen = seen_from_branch(args.repo, branch)
         logs = run_log_report.logs_from_branch(args.repo, branch)
-        missing = ("no %s branch with a seen store in %s. It is written on GitHub; "
-                   "fetch it first:\n  git fetch origin %s:%s"
-                   % (branch, args.repo, branch, branch))
+        missing = ("no %s branch with a seen store in %s. It is written on GitHub. "
+                   "Clone it apart from this repository, whose refs never hold it:\n"
+                   "  git clone --branch %s --single-branch <this repository's URL> "
+                   "<a scratch directory>\nthen pass --repo <that directory>"
+                   % (branch, args.repo, branch))
     if seen is None or logs is None:
         print(missing, file=sys.stderr)
         return 1

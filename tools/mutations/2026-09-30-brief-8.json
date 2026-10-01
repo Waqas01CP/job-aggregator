@@ -68,14 +68,14 @@
   {
     "label": "a dry run writes the stores",
     "path": "src/clearing.py",
-    "find": "        if not confirmed:\n            report[\"mode\"] = \"dry run: nothing was written or removed\"",
-    "replace": "        if False:\n            report[\"mode\"] = \"dry run: nothing was written or removed\""
+    "find": "        if not confirmed:\n            self.list_privately(table, days, chosen, report)\n            report[\"mode\"] = \"dry run: nothing was removed or stored\"",
+    "replace": "        if False:\n            self.list_privately(table, days, chosen, report)\n            report[\"mode\"] = \"dry run: nothing was removed or stored\""
   },
   {
     "label": "the confirmation is not required",
     "path": "src/clearing.py",
-    "find": "        if confirmed and not dry_run_on_file(logs, table, days, self.now, valid_hours):",
-    "replace": "        if False:"
+    "find": "        if confirmed:\n            dry = dry_run_on_file(",
+    "replace": "        if False:\n            dry = dry_run_on_file("
   },
   {
     "label": "jobs is measured on Classified",
@@ -110,14 +110,14 @@
   {
     "label": "the agreement check never disagrees",
     "path": "src/run.py",
-    "find": "        if rule_location(p, eligibility).keep:\n            disagree.append(p)",
-    "replace": "        if False:\n            disagree.append(p)"
+    "find": "        (disagree if waited and covered else still).append(e)",
+    "replace": "        still.append(e)"
   },
   {
     "label": "the agreement check ignores the location rule",
     "path": "src/run.py",
-    "find": "        if rule_location(p, eligibility).keep:",
-    "replace": "        if True:"
+    "find": "        elif not rule_location(p, eligibility).keep:",
+    "replace": "        elif False:"
   },
   {
     "label": "the agreement check forgets earlier walks",
@@ -126,21 +126,21 @@
     "replace": "    searched = {\"%s:%s\" % (source, p.external_id) for p in search}"
   },
   {
-    "label": "the agreement check compares postings newer than the search",
+    "label": "a posting the search has not returned is judged on the walk that found it",
     "path": "src/run.py",
-    "find": "        if newest is None or p.published_at is None or p.published_at > newest:",
-    "replace": "        if newest is None or p.published_at is None:"
+    "find": "AGREEMENT_WAIT_HOURS = 12",
+    "replace": "AGREEMENT_WAIT_HOURS = 0"
   },
   {
     "label": "a recorded re-baseline is ignored",
     "path": "src/contract.py",
-    "find": "            entry[\"changes\"] = explain(platform, compare(previous, fp), rebaselines, since)",
+    "find": "            entry[\"changes\"] = explain(platform, compare(previous, fp), rebaselines, since,\n                                       iso(now)[:10])",
     "replace": "            entry[\"changes\"] = compare(previous, fp)"
   },
   {
     "label": "an old re-baseline excuses a later change",
     "path": "src/contract.py",
-    "find": "            if e[\"platform\"] == platform and name in e[\"fields\"] and e[\"date\"] > (since or \"\"):",
+    "find": "            if e[\"platform\"] == platform and name in e[\"fields\"] and since < e[\"date\"] <= today:",
     "replace": "            if e[\"platform\"] == platform and name in e[\"fields\"]:"
   },
   {

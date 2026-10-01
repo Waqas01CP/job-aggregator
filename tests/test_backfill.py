@@ -15,7 +15,7 @@ import unittest
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from src import storage
+from src import filters, storage
 from src.filters import TitleMatcher
 from src.normalise import Row
 from src.backfill import BackfillError, backfill, gap, load_rows
@@ -147,6 +147,39 @@ class TestTheAppend(BackfillCase):
         self.assertEqual(result["missing"], 1)
         self.assertEqual(result["written_public"], 0)
         self.assertEqual(read_bytes(self.paths["filtered"]), before)
+
+
+class TestWideningTheAgeLimit(BackfillCase):
+    def test_widening_the_limit_admits_what_it_dropped_with_first_seen_intact(self):
+        """Fitness function for ADR-0052, "Widening the limit must admit what
+        it previously dropped.": a posting ten days old when first seen is
+        dropped at seven days; with the number raised to fourteen in a copy
+        of the configuration, the backfill admits it, carrying the
+        `first_seen` it was stored with, not the backfill's clock. The fourth
+        audit's F18 found the clause untested. Mutation: "the age limit is a
+        constant, not configuration"; and "a backfilled row is first seen at
+        the backfill"."""
+        old = Row(**dict(row("greenhouse:1").as_record(),
+                         ordering_date="2026-09-05T00:00:00.000000Z",
+                         published_at="2026-09-05T00:00:00.000000Z"))
+        self.write_raw([old])
+        self.write_filtered([])
+        self.assertEqual(backfill(self.paths, NOW, MATCHER)["written_public"], 0)
+        with open(filters.ELIGIBILITY_PATH, encoding="utf-8") as f:
+            config = json.load(f)
+        config["max_age_days"] = 14
+        path = os.path.join(self.root, "eligibility.json")
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(config, f)
+        real = filters.ELIGIBILITY
+        filters.ELIGIBILITY = filters.load_eligibility(path)
+        try:
+            self.assertEqual(backfill(self.paths, NOW, MATCHER)["written_public"], 1)
+        finally:
+            filters.ELIGIBILITY = real
+        [stored] = self.read("filtered")
+        self.assertEqual((stored["identity"], stored["first_seen"]),
+                         ("greenhouse:1", "2026-09-15T00:00:00.000000Z"))
 
 
 class TestADR0020IsEnforced(BackfillCase):

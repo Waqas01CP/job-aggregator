@@ -32,7 +32,7 @@
   {
     "label": "Delete leaves the Jobs row behind",
     "path": "src/sweep.py",
-    "find": "                    delete_jobs.append(row[\"id\"])",
+    "find": "                    delete_jobs.append((row[\"id\"], identity, \"its accepted copy was deleted\"))",
     "replace": "                    pass"
   },
   {
@@ -44,8 +44,8 @@
   {
     "label": "a row due twice is named twice in one delete",
     "path": "src/sweep.py",
-    "find": "        delete_jobs = list(dict.fromkeys(delete_jobs))",
-    "replace": "        pass"
+    "find": "            self.client.delete(JOBS, list(once))",
+    "replace": "            self.client.delete(JOBS, [d[0] for d in delete_jobs])"
   },
   {
     "label": "the removed-copies record drops the operator's reason",

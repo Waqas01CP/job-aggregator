@@ -111,6 +111,7 @@ supersedes and superseded-by links, deliberately not duplicated here.
 | `logs/2026-09-26-the-third-audit-and-the-first-scheduled-sweep.md` | The first scheduled sweep verified; the third audit's findings closed except F1, which is the operator's to decide; the projection's cost found to grow with the display; descriptions measured for the operator's choice on conflict 2. | current |
 | `logs/2026-09-27-the-full-branch-fix-and-capabilities.md` | The first two runs with full postings and Himalayas' search endpoint read back; the second full save's failure on GitHub reproduced and fixed the same morning, with the unsaved postings recovered by the next walk; and CAPABILITIES.md drafted for the operator's approval. | current |
 | `logs/2026-09-30-brief-8-the-displays-clock-and-four-checks.md` | Brief 8. The projection's skip reads the removal store by reason; ADR-0055's thirty-day clock and the operator's clearing tool; ADR-0053's agreement check and ADR-0036's re-baseline; ADR-0041's owed check met; a week of intake measured against ADR-0056's trigger; the repost research; and the Himalayas walk checked complete against the private store. | current |
+| `logs/2026-10-01-the-fourth-audits-corrections.md` | The fourth audit's twenty-one findings, each checked and acted on. A confirmed clear removes only what its dry run listed; the agreement check judges each browse posting on a later walk; the location rule keeps the places the operator can take; the contract re-baseline excuses nothing on an undated shape; the suite now fails when a mutation goes stale; three untested guarantees tested; the documents and the Airtable descriptions corrected. | current |
 | `logs/audit/2026-09-30-fourth-audit.md` | The fourth audit, of 783ba3e..015bead. No deletion was wrong and the deletion paths hold; five defects, none yet triggered (the clearing tool's confirmation, the agreement check, location strings the operator can take, the contract re-baseline, and eight stale mutations), and several wrong documents, CAPABILITIES.md among them. | current |
 
 ## decision
@@ -211,4 +212,4 @@ Grouped by topic, in the order the pipeline runs. A record appears under exactly
 | `docs/deferred/rozee-pk.md` | Adding Rozee.pk as a source. Deferred until the display works and until more ATS sources are added, either of which may remove the need for it. | current |
 | `docs/deferred/similarity-matching.md` | Ranking postings by similarity to accepted roles. Deferred because ADR-0010 forbids it and the deterministic star was built instead; revisit when the accepted store holds fifty rows or when the operator stops reading every row. | current |
 
-Files listed: 106
+Files listed: 107

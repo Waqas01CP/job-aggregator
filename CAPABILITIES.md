@@ -10,7 +10,7 @@ status: current
 - a person who wants to know what the system offers;
 - a chat drafting a CV, which should find every usable fact here without reading the tree.
 
-**Current as of 2026-09-30 UTC**, against `main` at `19ca94d`. Every number carries its date and its source. A number that could not be measured is not here.
+**Current as of 2026-10-01 UTC**, against `main` with the fourth audit's corrections. Every number carries its date and its source. A number that could not be measured is not here.
 
 **Kept current.** Updated at the close of any session that changes a capability or a measured number. Sections that restate a decision name the record that holds it, so a reader who wants the reasoning can find it.
 
@@ -23,7 +23,7 @@ A personal job-discovery pipeline that runs itself.
 - **It keeps every posting it fetches, permanently.**
 - **It admits only postings the operator can use:** his target roles, his level, places he is eligible to work, and at most a week old when first seen. Each posting is admitted or dropped by a named, deterministic rule.
 - **It shows what survives in an Airtable table.** The operator marks each row accepted, not a fit, or poorly filtered. The pipeline copies each mark to its own table, stores it for good, and clears the display after fifteen days. A row he never marks leaves after thirty, and he can clear any table himself, dry run first.
-- **It costs nothing to run.** A new posting reaches the table a median of 5 hours after its employer publishes it.
+- **It costs nothing to run.** It first sees a new posting a median of 5.4 hours after its employer publishes it.
 
 ---
 
@@ -52,8 +52,8 @@ By his estimate, that took most of a working week. He usually found a posting th
 ## What a run does, end to end
 
 1. **Starts on a schedule.** Two GitHub Actions workflows:
-   - **Fetch.** Scheduled for 00:00 and 13:00 UTC; GitHub starts them late, measured at 03:27 to 03:59 UTC and 16:56 to 17:47 UTC. It also runs on a manual dispatch, which can be ticked as a test run that writes only to separate test branches and tables.
-   - **Contract check.** Daily at 06:30 UTC.
+   - **Fetch.** Scheduled for 00:00 and 13:00 UTC; GitHub starts them late, measured at 03:26 to 04:33 UTC and 16:18 to 20:02 UTC, 3.3 to 7.0 hours after the slot, over the 29 scheduled runs to 2026-10-01. It also runs on a manual dispatch, which can be ticked as a test run that writes only to separate test branches and tables.
+   - **Contract check.** Scheduled daily for 06:30 UTC; GitHub started its last five at 11:42 to 14:21 UTC.
 
    Each fetch runs the full test suite before touching any data.
 2. **Restores state.** The run loads what the stores already hold, so it appends to the stored history rather than to whatever the last machine saw:
@@ -66,7 +66,7 @@ By his estimate, that took most of a working week. He usually found a posting th
 
    **Adapters are per platform, never per employer:** one Greenhouse adapter serves nine boards. An adapter only parses; it never fetches. The aggregator, Himalayas, is paginated. It is read newest first and stops at the first page that is either wholly older than what that board has already stored in full, or wholly older than the age limit. A 40-page cap guards against a runaway.
 
-   **The aggregator's own filter is checked every morning.** Himalayas is asked only for postings open to Pakistan, which hands part of the location rule to a third party. So one page of its whole feed is read beside the search. A posting the search never returned, but the location rule would admit, is a disagreement: counted in the log and named in the private store (ADR-0053).
+   **The aggregator's own filter is checked every morning.** Himalayas is asked only for postings open to Pakistan, which hands part of the location rule to a third party. So one page of its whole feed is read beside the search. That page is minutes old and the search trails it by hours, so a posting there that the location rule would admit, and the search has not returned, waits privately for the next morning's walk. Still not returned by then, it is a disagreement: counted in the log and named in the private store (ADR-0053).
 4. **Normalises** every posting to one row shape. The publication date and the moment the pipeline first saw the posting are recorded as separate fields, never confused. Where the employer name or URL is derived rather than given, the row says so.
 5. **Stores the raw layer.** Every posting never seen before is appended permanently, before anything is judged, and nothing is ever rewritten. So a filter mistake is recoverable: the rows it missed are still stored.
 6. **Filters**, cheapest rule first. Every drop is logged with the rule that caused it. The rules (the chain is in `src/filters.py`):
@@ -112,7 +112,7 @@ By his estimate, that took most of a working week. He usually found a posting th
 
 **The contract check** fetches one response per platform. It fingerprints the shape of exactly the fields each adapter reads: present or absent, type, null or not. It reports any change by field name. That tells a board that changed its API apart from a board with no new jobs (ADR-0018, ADR-0036). A change we caused ourselves, such as a new endpoint, is recorded in configuration with its date and cause and reported as ours, so it never reads as the board moving.
 
-**The clearing tool** is the operator's, run from the same workflow by hand (ADR-0055). He chooses a table and an age in days: publication date for `Jobs`, the date he classified for the other tables. The first run is a dry run: it reports what it would remove and changes nothing. A confirmed run is refused unless a dry run of the same request ran within two days. It writes the stores and deletes nothing itself, so the next sweep removes the rows only after reading those records back. On `accepted` it only sets `Delete`. A row deleted by hand in Airtable would come back; one cleared this way does not.
+**The clearing tool** is the operator's, run from the same workflow by hand (ADR-0055). He chooses a table and an age in days: publication date for `Jobs`, the date he classified for the other tables. The first run is a dry run: it reports what it would remove and changes nothing. A confirmed run is refused unless a dry run of the same request ran within two days, and it removes only the rows that dry run listed: a row that crossed the threshold since is left. The dry run names public rows in the run log and aggregator rows, with title and employer, in the private repository. It writes the stores and deletes nothing itself, so the next sweep removes the rows only after reading those records back. On `accepted` it only sets `Delete`. A row deleted by hand in Airtable would come back; one cleared this way does not.
 
 ---
 
@@ -173,9 +173,9 @@ By his estimate, that took most of a working week. He usually found a posting th
 | Privacy and licensing boundaries | Enforced in code and in the hook, not by care. Descriptions never public, aggregator data never public, and secrets and Airtable IDs never in the repository |
 | Preferences are configuration | The title pool, seniority words, role families, eligible places, age limit and vendor list are files. A test fails if any module hard-codes one (ADR-0031) |
 | Idempotent | A run that finds nothing new commits only its log; a retried upsert creates no duplicate; the sweep's copy step is safe to repeat |
-| Safe to clear | A bulk removal runs dry first, is refused without a recent dry run of the same request, writes before anything is deleted, and never deletes from the table of roles applied to |
+| Safe to clear | A bulk removal runs dry first, is refused without a recent dry run of the same request, removes only what that dry run listed, writes before anything is deleted, and never deletes from the table of roles applied to |
 | Self-diagnosing | The daily contract check, per-board run logs including zeros, the month's call budget, and escalation after the push |
-| Change safety | Every guarantee has a test, and every test that guards one is proved by a mutation that breaks the code and must fail it. Architectural rules are guarded by fitness functions in the ordinary suite (ADR-0049) |
+| Change safety | Every guarantee has a test, and every test that guards one is proved by a mutation that breaks the code and must fail it. The suite fails when a code change leaves a recorded mutation unable to run. Architectural rules are guarded by fitness functions in the ordinary suite (ADR-0049) |
 | Cost | Nothing recurring: GitHub Actions is free on a public repository, and Airtable is on its free plan |
 
 ---
@@ -186,13 +186,13 @@ Each is measured, with its date and source. `data` is the public data branch.
 
 | What | Value | Measured | Source |
 |---|---|---|---|
-| Production runs | 28, from 2026-09-17 to 2026-09-30, a span of 12.6 days | 2026-09-30 | Run logs on `data`, `tools/run_log_report.py` |
-| Fetch reliability | 0 retries, 0 failed requests, 0 runs near the request ceiling, across all 28 runs | 2026-09-30 | Same |
-| Requests per run | Median 36 against a ceiling of 500, at most 41; 11 on an evening run | 2026-09-30 | Same |
-| Postings read per run | 824 from the eleven boards; 1,283 with Himalayas | 2026-09-26 and 09-27 | Those runs' logs |
-| Postings fetched in total | 32,831 across 28 runs, repeats included | 2026-09-30 | Run logs |
-| Distinct employer-board postings stored | 1,012 | 2026-09-30 | `seen.json` on `data` |
-| **Freshness (Measure A)** | New postings first seen a **median 5.4 hours** after publication, **90th percentile 10.5 hours**, maximum 14.4, over 114 postings. The targets are 24 and 72 hours | 2026-09-30 | `seen.json` and run logs on `data`. Counts only postings published after the run before the one that saw them |
+| Production runs | 30, from 2026-09-17 to 2026-10-01, a span of 13.6 days | 2026-10-01 | Run logs on `data`, `tools/run_log_report.py` |
+| Fetch reliability | 0 retries, 0 failed requests, 0 runs near the request ceiling, across all 30 runs | 2026-10-01 | Same |
+| Requests per run | Median 36 against a ceiling of 500, at most 41; 11 on an evening run | 2026-10-01 | Same |
+| Postings read per run | 803 to 1,420 across all 30 runs. 824 from the eleven boards alone, 1,283 with Himalayas, on 2026-09-26 and 09-27 | 2026-10-01 | Run logs |
+| Postings fetched in total | 34,557 across 30 runs, repeats included | 2026-10-01 | Run logs |
+| Distinct employer-board postings stored | 1,018 | 2026-10-01 | `seen.json` on `data` |
+| **Freshness (Measure A)** | New postings first seen a **median 5.4 hours** after publication, **90th percentile 10.5 hours**, maximum 14.4, over 114 postings. The targets are 24 and 72 hours. This is first sight, not arrival in the display: 8 of the 114 were ever admitted | 2026-09-30 | `seen.json` and run logs on `data`. Counts only postings published after the run before the one that saw them |
 | Selectivity | Of 1,283 postings read, 36 kept: 922 dropped on title, 258 on location, 56 on seniority, 11 on age | 2026-09-27, morning run | Run log |
 | Deduplication | 824 postings grouped into 527 display rows; the largest group, one role posted 134 times, once per city, became one row | 2026-09-26 | Run log |
 | Himalayas before the change | 500 postings a morning, the page cap, from about 1,600 published a day (inferred from 499 new postings spanning 7.3 hours). 93 of 100 postings sampled from the feed were closed to Pakistan | 2026-09-26 | Run logs, and a live sample of 100 postings |
@@ -201,14 +201,14 @@ Each is measured, with its date and source. `data` is the public data branch.
 | Location rule, its owed check | Exactly 74 of the saved 91 Himalayas postings dropped and 17 admitted, as the record predicted nine days before the rule was built | 2026-09-30 | ADR-0041's Confirmation, on `raw_responses/` |
 | Full postings saved privately | 824 postings in one 9.8 MB file, read back and matched by content hash | 2026-09-26 | Run log |
 | Airtable usage | 172 of the month's 1,000 calls, 17%; `Jobs` holds 89 rows; a projection costs 8 calls | 2026-09-30 | Run log |
-| Display intake | About one new display row a day under the current rules, so the display settles near thirty rows and the cheaper delta projection is not yet needed | 2026-09-29 and 09-30 | Run logs, against ADR-0056's trigger of 100 |
+| Display intake | About one new display row a day under the current rules, so by arithmetic, not measurement, the display settles near thirty rows, and the cheaper delta projection is not yet needed | 2026-09-29 and 09-30 | Run logs, against ADR-0056's trigger of 100 |
 | Recurring cost | None | 2026-09-27 | Free plans only |
 | Feasibility research | 16 ATS platforms probed; 1,646 postings across the first 11 boards | 2026-09-11 to 09-16 | Spike logs |
-| Code | 25 source files, 6,123 lines; 32 test files, 9,574 lines; 9 tool files, 1,817 lines | 2026-09-30 | `git ls-files`, `wc` |
-| Tests | 702, passing on Python 3.11 and 3.12 | 2026-09-30 | `unittest` |
-| Mutations | 354 recorded across 29 files, re-run when the code they guard changes. A survivor is closed by a new test, or, where the mutation changes nothing, replaced and recorded as such | 2026-09-30 | `tools/mutations/`, run by `tools/mutate.py`; results in the session logs |
+| Code | 25 source files, 6,386 lines; 32 test files, 10,006 lines; 9 tool files, 1,857 lines | 2026-10-01 | `git ls-files`, `wc` |
+| Tests | 723, passing on Python 3.11 and 3.12 | 2026-10-01 | `unittest` |
+| Mutations | 386 recorded across 30 files. Since 2026-10-01 the suite fails when a code change leaves any of them unable to run, which two commits had done to 10, unnoticed. A survivor is closed by a new test, or, where the mutation changes nothing, replaced and recorded as such | 2026-10-01 | `tools/mutations/`, run by `tools/mutate.py`; results in the session logs |
 | Decision records | 55 (four superseded), plus the rules for amending them. 124 dated Changes rows across 42 records | 2026-09-30 | `docs/decisions/` |
-| History | 115 commits on `main`, the first on 2026-09-01 UTC; 22 session logs | 2026-09-30 | `git log`, `logs/` |
+| History | 119 commits on `main`, the first on 2026-09-01 UTC; 22 session logs; one audit report in `logs/audit/` | 2026-10-01 | `git log`, `logs/` |
 
 ---
 
@@ -223,9 +223,9 @@ Each is measured, with its date and source. `data` is the public data branch.
 | Implementing seat | Claude Code | Builds to briefs, tests, logs every session, keeps the state file current | Amend a decision beyond what the rules allow, push before the full suite passes, work around the scope floor |
 | Audit seat | Claude Code, in a fresh chat | Audits a range of commits cold, read-only, and reports to the operator | Edit anything |
 
-**Five independent audits so far:** two of documents (the writer's constraints, and the decision corpus) and three of code ranges. Each was run by an audit chat reading the work cold, with the operator routing its findings. The latest audited the first code that deletes anything:
-- all 86 of its mutations were caught;
-- it found four defects, none yet triggered, all closed within a day.
+**Six independent audits so far:** two of documents (the writer's constraints, and the decision corpus) and four of code ranges. Each was run by an audit chat reading the work cold, with the operator routing its findings. Since 2026-09-30 each report is kept in `logs/audit/`, in the auditor's own words. The latest, on 2026-09-30, audited every new way out of the display:
+- no deletion was wrong, and the paths that delete held;
+- it found five defects, none yet triggered, and wrong documents; the seat corrected them on 2026-10-01, the defects first.
 
 **The working method is written down and enforced:**
 - **"Verify, do not trust."** Every claim, including a handoff or the seat's own memory, is checked with a command before anything is built on it. Every claim passed on is tagged verified or believed.
@@ -248,6 +248,7 @@ Each is measured, with its date and source. `data` is the public data branch.
 | 2026-09-26 | Full postings saved privately; the location and age rules; Himalayas moved to search |
 | 2026-09-27 | A production failure: the second save of full postings failed on GitHub. Found in the morning's run log, reproduced, fixed and pushed the same morning, before the next run, with the postings it missed recovered by the next walk |
 | 2026-09-28 | The architecture chat recorded the operator's decisions of the week in six new records, ADR-0051 to ADR-0056 |
+| 2026-10-01 | The fourth code audit's corrections: a confirmed clear removes only what its dry run listed, the aggregator check judges each posting on a later walk, places the operator can take are kept, and the suite fails when a mutation goes stale |
 | 2026-09-30 | The display bounded: an unreviewed row leaves after thirty days, the operator can clear any table himself, and a removed row stays removed for the reason it left. The aggregator's pushed-down filter and the contract check's own changes are now checked |
 
 ---
@@ -329,12 +330,12 @@ Each dated item below has its source in the session log of that date. The design
 - no reading of email job alerts;
 - no paid service.
 
-**Limits as of 2026-09-27:**
+**Limits as of 2026-10-01:**
 - **Sources.** Eleven employer boards and one aggregator. Five more adapters are decided and unbuilt (Ashby, Workable, SmartRecruiters, Breezy and Manatal, ADR-0029), out of 53 boards in the operator's registry. On-site roles in Karachi are thin: Rozee.pk, the main Pakistani board, has no API, and it is deferred.
 - **Matching reads titles only.** Descriptions are now saved but never read, so a role whose title misses the pool is missed. The years-of-experience rule waits on reading descriptions.
 - **Duplicates across sources are not merged.** An employer's own posting and an aggregator's copy of it can both appear, because the aggregator stamps its own date.
 - **Lever's date is not proven to mean publication**, so Lever postings are never dropped for age.
-- **GitHub starts scheduled runs three to four hours late.** Freshness is measured from publication, so it includes that delay.
+- **GitHub starts scheduled runs 3.3 to 7.0 hours late**, over the 29 scheduled runs to 2026-10-01. Freshness is measured from publication, so it includes that delay.
 - **Unbuilt:** the priority star (a mark on postings sharing a named attribute with an accepted one, ADR-0044) and the contract check's Airtable row. The cheaper projection that sends only changed rows is designed and deliberately waits on its triggers (ADR-0056).
 - **The clearing tool and the thirty-day clock have not run live yet**; both are proved offline.
 - **"Finished" is not yet defined.** The end-state document is open by decision (ADR-0023).
@@ -347,13 +348,13 @@ Each dated item below has its source in the session log of that date. The design
 Short, role-neutral statements a reader can take as they are. Every figure is from the table above.
 
 - Built an unattended job-discovery pipeline on GitHub Actions and Python (standard library plus `requests`). It polls employer job boards twice a day and shows only eligible, matching postings in Airtable, at no recurring cost.
-- New postings reach the display a median of 5.4 hours after publication, and 90% within 10.5 hours, against targets of 24 and 72 hours, over 114 postings.
-- 28 production runs over 12.6 days with no retries and no failed requests, reading 800 to 1,300 postings a run and keeping a few dozen.
+- New postings are first seen a median of 5.4 hours after publication, and 90% within 10.5 hours, against targets of 24 and 72 hours, over 114 postings.
+- 30 production runs over 13.6 days with no retries and no failed requests, reading 803 to 1,420 postings a run and, under the location and age rules, keeping 5 to 56.
 - Every posting is admitted or dropped by a named, deterministic rule, and every drop is logged. There is no model and no scoring.
 - Git branches serve as the database, with privacy enforced in code: employers' description text and aggregator data never reach the public repository. Every posting is saved in full to a private repository, verified by read-back.
 - A classification workflow: the operator's marks are copied to their own tables and stored permanently. Rows are deleted from the display only after the store is read back from the remote. The display is bounded by a thirty-day clock and a dry-run-first clearing tool.
 - A day's worth of an aggregator's feed went from about a third read, 93% of it irrelevant, to all of the relevant postings, by moving to a filtered endpoint an earlier measurement had wrongly rejected.
-- 702 tests, and 354 mutations that deliberately break the code to prove the tests notice.
+- 723 tests, and 386 mutations that deliberately break the code to prove the tests notice.
 - Designed by the operator and built with AI agents in separate roles: architecture, implementation, and cold, read-only audit. The work was carried out under a written verification discipline and produced 55 decision records and 22 session logs.
 
 ---

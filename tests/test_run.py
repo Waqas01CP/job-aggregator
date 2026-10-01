@@ -872,6 +872,28 @@ class TestMain(unittest.TestCase):
         self.assertEqual(log["projection"]["aggregator_rows_withheld"], 1)
         self.assertIsNone(log["airtable"]["failure"])
 
+    def test_the_run_keeps_out_an_aggregator_row_its_private_removal_store_holds(self):
+        """ADR-0047 and ADR-0055: a Himalayas row stored privately as closed,
+        aged out, or removed by the operator is not sent again. The
+        projection's own tests hand it the private texts; nothing proved the
+        run passes them, and without them every such row would return on the
+        next run (the fourth audit's F7). Mutation: "the skip ignores the
+        private removal store"."""
+        run_module.load_boards = lambda: [GH, HIM]
+        removals = "%s/removed_unreviewed.json" % storage.layout(False)["local_outcomes_dir"]
+        for reason in ("closed", "unreviewed-aged-out", "operator-removed"):
+            with self.subTest(reason=reason):
+                storage.write_atomic(removals, dumps([
+                    {"identity": "himalayas:https://x.test/h1", "reason": reason,
+                     "swept_at": "2026-09-22T04:00:00Z"}]))
+                self.assertEqual(self.main()[0], EXIT_OK)
+                self.assertEqual([r["Identity"] for r in self.airtable[-1].sent],
+                                 ["greenhouse:1000"])
+        os.remove(removals)
+        self.assertEqual(self.main()[0], EXIT_OK)
+        self.assertIn("himalayas:https://x.test/h1",
+                      {r["Identity"] for r in self.airtable[-1].sent}, "the case is not built")
+
     def test_a_failed_restore_never_writes(self):
         """A push after a failed restore would replace the stored history
         with one run's snapshot, ADR-0003's failure."""

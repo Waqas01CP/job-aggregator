@@ -20,14 +20,14 @@
   {
     "label": "on site outside Karachi is kept",
     "path": "src/filters.py",
-    "find": "        if names(eligibility.onsite_markers) and not names(eligibility.onsite_home_city):",
-    "replace": "        if False:"
+    "find": "        return \"closed\" if on_site_elsewhere else \"eligible\"",
+    "replace": "        return \"eligible\""
   },
   {
     "label": "an unrecognised place drops the posting",
     "path": "src/filters.py",
-    "find": "    if names(eligibility.open):\n        return \"eligible\"\n    return \"unclear\"",
-    "replace": "    if names(eligibility.open):\n        return \"eligible\"\n    return \"closed\""
+    "find": "    if names(eligibility.remote):\n        return \"eligible\"\n    return \"unclear\"",
+    "replace": "    if names(eligibility.remote):\n        return \"eligible\"\n    return \"closed\""
   },
   {
     "label": "an except is read as closed",

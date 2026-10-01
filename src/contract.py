@@ -166,9 +166,10 @@ def real_date(value):
     fourth audit loaded "2026-19-26" and "9999-99-99", each able to excuse
     changes it was never written for."""
     try:
-        return isinstance(value, str) and datetime.strptime(value, "%Y-%m-%d") is not None             and len(value) == 10
-    except ValueError:
+        datetime.strptime(value, "%Y-%m-%d")
+    except (TypeError, ValueError):
         return False
+    return len(value) == 10
 
 
 def explain(platform, changes, rebaselines, since, today):

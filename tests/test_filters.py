@@ -196,6 +196,44 @@ class TestTheLocationRule(unittest.TestCase):
             with self.subTest(location=location):
                 self.assertTrue(keep(location=location)[0])
 
+    def test_places_he_can_take_are_kept(self):
+        """Fitness function for ADR-0041, "Time zones never exclude": the
+        fourth audit's probe G, every string of which the first build dropped.
+        A region that can include Pakistan beside closed countries, a time
+        zone, a preference, a remote option beside an on-site word, an
+        optional office, and on site in Pakistan with no city named. Mutation:
+        "a time zone reads as a country"."""
+        for location in ("US, Canada, Asia", "Europe, Middle East", "Remote (US time zones)",
+                         "Anywhere (US preferred)", "Remote/Hybrid - Lahore",
+                         "Pakistan (On-site)", "Remote, Pakistan (office optional)",
+                         "Remote - EST hours", "Remote, US preferred", "Remote - UTC+5 hours"):
+            with self.subTest(location=location):
+                self.assertTrue(keep(location=location)[0])
+
+    def test_what_restricts_still_restricts(self):
+        """The other side of the fix, so it cannot open too much: "only", a
+        scoped "anywhere", a country's remote, a city on site, and a time zone
+        removed from a country that still restricts. Mutation: "a closed
+        country beside only reads as open"."""
+        for location in ("Global (US only)", "Remote (Anywhere in the US)", "Remote, Germany",
+                         "Hybrid - Lahore", "Canada - remote, Eastern time zones",
+                         "Remote - United States, United Kingdom, Canada"):
+            with self.subTest(location=location):
+                kept, drop = keep(location=location)
+                self.assertFalse(kept)
+                self.assertIn("location field", drop["reason"])
+
+    def test_a_drop_names_the_field_and_the_home_country_from_configuration(self):
+        """ADR-0041's Confirmation asks every drop to name the field and the
+        absence of the home country; ADR-0031 forbids a module naming a
+        country. The reason takes the country from the configuration, which
+        satisfies both: the fourth audit's F9."""
+        from src.filters import ELIGIBILITY
+        _, drop = keep(location="Remote, Germany")
+        self.assertIn("location field", drop["reason"])
+        for name in ELIGIBILITY.home_country_names:
+            self.assertIn(name, drop["reason"])
+
     def test_a_word_is_never_matched_inside_another(self):
         """"India" must not close "Indiana", nor "Oman" close "Romania"'s
         neighbour: whole words only. Indiana is not listed, so it is unclear
