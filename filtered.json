@@ -7285,5 +7285,26 @@
   "url_provenance": "payload",
   "stated_experience": null,
   "expires_at": null
+ },
+ {
+  "identity": "lever:a7c30ccb-5785-4290-bdbd-45bd590d09f7",
+  "source": "lever",
+  "board_id": "lever:smart-working-solutions",
+  "external_id": "a7c30ccb-5785-4290-bdbd-45bd590d09f7",
+  "employer": "Smart Working Solutions",
+  "employer_provenance": "slug",
+  "title": "Mid-Level Data Engineer (Onsite, Full-Time) [HR215]",
+  "title_normalised": "Mid-Level Data Engineer (Onsite, Full-Time) [HR215]",
+  "location": "Bucharest",
+  "published_at": "2026-09-29T13:35:23.297000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-10-01T18:44:25.780755Z",
+  "ordering_date": "2026-09-29T13:35:23.297000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/smart-working-solutions/a7c30ccb-5785-4290-bdbd-45bd590d09f7",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null
  }
 ]
