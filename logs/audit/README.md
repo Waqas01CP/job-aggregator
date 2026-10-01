@@ -71,3 +71,4 @@ These audits ran before 2026-09-30. Only the implementing seat's account of each
 
 | Date | Audit | Range | Verdict | Report |
 |---|---|---|---|---|
+| 2026-09-30 | The fourth audit | `783ba3e..015bead` | No deletion wrong and the deletion paths hold; five defects, none yet triggered (the clearing tool's confirmation, the agreement check, location strings the operator can take, the contract re-baseline, eight stale mutations), and wrong documents, `CAPABILITIES.md` among them | `2026-09-30-fourth-audit.md` |

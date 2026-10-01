@@ -291,6 +291,37 @@ class TestTheDeliberateRebaseline(unittest.TestCase):
                                 datetime(2026, 9, 30, 6, 30, tzinfo=timezone.utc), rebaselines)
         self.assertEqual(log["platforms"]["lever"]["status"], "changed")
 
+    def test_a_shape_with_no_acceptance_date_is_never_excused(self):
+        """The fourth audit's F5, the case built to defeat the first build:
+        every shape stored before 2026-09-30 lacks `since`, and reading the
+        gap as older than everything let a spent entry excuse the next
+        check's changes. Mutation: "a shape with no acceptance date reads as
+        older than every entry"."""
+        fp = self.changed_lever()
+        del fp["lever"]["since"]
+        updated, log = contract.check(BOARDS, client(responses()), fp, LATER,
+                                      self.entry("2026-09-25", ["posting.hostedUrl"]))
+        self.assertEqual(log["platforms"]["lever"]["status"], "changed")
+        self.assertEqual(updated["lever"]["since"], "2026-09-25", "it gains its date now")
+
+    def test_an_entry_dated_after_today_excuses_nothing_yet(self):
+        """Mutation: "an entry dated in the future excuses a change today"."""
+        _, log = contract.check(BOARDS, client(responses()), self.changed_lever(), LATER,
+                                self.entry("2026-12-31", ["posting.hostedUrl"]))
+        self.assertEqual(log["platforms"]["lever"]["status"], "changed")
+
+    def test_a_date_that_is_not_a_calendar_date_is_refused(self):
+        """The fourth audit's probe H2 loaded both of these. Mutation: "any ten
+        characters pass as a date"."""
+        path = os.path.join(tempfile.mkdtemp(), "r.json")
+        for date in ("2026-19-26", "9999-99-99", "2026-02-30"):
+            with self.subTest(date=date):
+                with open(path, "w", encoding="utf-8") as f:
+                    json.dump({"rebaselines": [{"platform": "lever", "date": date, "cause": "x",
+                                                "fields": ["posting.text"]}]}, f)
+                with self.assertRaises(contract.ConfigError):
+                    contract.load_rebaselines(path)
+
     def test_one_unexplained_field_among_ours_is_a_change(self):
         fp = self.changed_lever()
         del fp["lever"]["posting"]["text"]

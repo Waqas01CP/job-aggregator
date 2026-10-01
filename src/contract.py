@@ -154,20 +154,41 @@ def load_rebaselines(path=None):
         raise ConfigError("contract re-baselines: expected a 'rebaselines' list")
     for i, e in enumerate(entries):
         if not (isinstance(e, dict) and e.get("platform") in PLATFORMS
-                and isinstance(e.get("date"), str) and len(e["date"]) == 10
+                and real_date(e.get("date"))
                 and e.get("cause") and isinstance(e.get("fields"), list) and e["fields"]):
             raise ConfigError("contract re-baseline %d needs a platform, a YYYY-MM-DD date, "
                               "a cause and the fields it moves" % i)
     return entries
 
 
-def explain(platform, changes, rebaselines, since):
+def real_date(value):
+    """A calendar date written YYYY-MM-DD. Ten characters are not enough: the
+    fourth audit loaded "2026-19-26" and "9999-99-99", each able to excuse
+    changes it was never written for."""
+    try:
+        return isinstance(value, str) and datetime.strptime(value, "%Y-%m-%d") is not None             and len(value) == 10
+    except ValueError:
+        return False
+
+
+def explain(platform, changes, rebaselines, since, today):
     """Mark each change a recorded re-baseline accounts for: same platform,
-    the field named, and dated after the stored shape was accepted."""
+    the field named, dated after the stored shape was accepted and not after
+    today.
+
+    **A shape whose acceptance date is unknown is never excused.** Shapes
+    stored before 2026-09-30 carry none, and reading the gap as "older than
+    everything" let the entry of 2026-09-26, already spent on the check of
+    09-27, excuse any change to its four fields on the next check: the fourth
+    audit's F5. Such a shape gains its date on the first check that reads it.
+    **An entry dated after today excuses nothing yet**, so a mistyped future
+    date cannot hold a field open."""
+    if not since:
+        return changes
     for c in changes:
         name = "%s.%s" % (c["in"], c["field"])
         for e in rebaselines:
-            if e["platform"] == platform and name in e["fields"] and e["date"] > (since or ""):
+            if e["platform"] == platform and name in e["fields"] and since < e["date"] <= today:
                 c["ours"] = "%s: %s" % (e["date"], e["cause"])
                 break
     return changes
@@ -206,7 +227,8 @@ def check(boards, client, stored, now, rebaselines=()):
         if previous is None:
             entry["status"] = "baseline"
         else:
-            entry["changes"] = explain(platform, compare(previous, fp), rebaselines, since)
+            entry["changes"] = explain(platform, compare(previous, fp), rebaselines, since,
+                                       iso(now)[:10])
             entry["status"] = ("unchanged" if not entry["changes"] else
                                "re-baselined" if all(c.get("ours") for c in entry["changes"])
                                else "changed")

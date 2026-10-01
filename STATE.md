@@ -6,6 +6,8 @@ status: current
 
 # STATE
 
+**Touched 2026-10-01T11:19Z by the implementing seat, for the fourth audit's F5 only, ahead of the day's contract check:** a stored shape with no acceptance date is never excused, an entry dated after today excuses nothing, and a re-baseline's date must be a calendar date. 705 tests on Python 3.12. The audit's report, `logs/audit/2026-09-30-fourth-audit.md`, committed unchanged in the same commit; the rest of its findings follow. The line that follows stands.
+
 **Touched 2026-09-30T20:57Z by the implementing seat, for two of the operator's decisions only:** the clearing tool's 48-hour dry run approved; audit reports kept in `logs/audit/`, written by the audit seat and committed by this one. No code changed. The line that follows stands.
 
 **Touched 2026-09-30T18:06Z by the implementing seat, for the operator's answers only:** the `To review` view filters out closed rows and shows the newest first, by him; the fourth audit runs before the Brief 8 report goes to the chat. No code changed. The line that follows stands.
