@@ -46,6 +46,14 @@ class Posting:
     # The level the source states, verbatim, where it states one: Himalayas'
     # `seniority`. No employer board gives one (docs/reference/platform-fields.md).
     levels: tuple = None
+    # Where the posting is, as the source structures it: a place string per
+    # office, a country name, or an ISO 3166 alpha-2 code. The location rule
+    # consults them only when the free text names nothing it recognises,
+    # and only to close (the operator's go, 2026-10-02).
+    places: tuple = None
+    # The workplace the source states, verbatim: Lever's `workplaceType`, a
+    # Greenhouse board's custom work-type field. Feeds D13's on-site rule.
+    workplace: str = None
     # The posting exactly as the board returned it, description included.
     # Carried, never read: the run saves it to the private store's full
     # branch and nothing else looks inside (the operator's D11, 2026-09-26:

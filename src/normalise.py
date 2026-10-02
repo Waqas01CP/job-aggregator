@@ -39,7 +39,7 @@ FIELDS = (
     "published_at", "published_field", "published_meaning_unconfirmed",
     "first_seen", "ordering_date", "ordering_date_source",
     "url", "url_provenance",
-    "stated_experience", "expires_at", "stated_levels",
+    "stated_experience", "expires_at", "stated_levels", "places", "workplace",
 )
 
 
@@ -78,6 +78,12 @@ class Row:
     # only. A row stored before 2026-10-02 has none, and the level rule keeps
     # a row with none, so those rows keep their verdict.
     stated_levels: list = None
+    # Where the source structures the posting's place, and how it is
+    # worked, where it says: Greenhouse's offices and custom fields,
+    # Lever's country and workplaceType. None on rows stored before
+    # 2026-10-02, which the location rule judges by their text alone.
+    places: list = None
+    workplace: str = None
 
     def as_record(self):
         """The canonical dict. Key order is fixed by FIELDS so two runs that
@@ -228,6 +234,8 @@ def normalise(postings, board, now, seen=None):
             stated_experience=None,
             expires_at=getattr(p, "expires_at", None),
             stated_levels=list(p.levels) if getattr(p, "levels", None) else None,
+            places=list(p.places) if getattr(p, "places", None) else None,
+            workplace=getattr(p, "workplace", None),
         )
         rows.append(row)
     return rows

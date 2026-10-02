@@ -20,23 +20,23 @@ on:
   workflow_dispatch:
     inputs:
       test_mode:
-        description: "Write to alternate files, leaving production data alone"
+        description: "Test mode: the test tables (Jobs test and its three) and the test branches. Unticked is your real tables"
         type: boolean
         default: false
       # ADR-0055's clearing tool. A scheduled run carries none of these and
       # clears nothing. Run it once unconfirmed, read the report in the run's
       # output, then again with the same table and days, confirmed.
       clear_table:
-        description: "Clear a table (ADR-0055): the rows older than the days below"
+        description: "Clear a table (ADR-0055), or none for a normal run. jobs is Jobs, or Jobs test in test mode"
         type: choice
         options: [none, jobs, rejected-not-a-fit, rejected-poor-filtering, accepted]
         default: none
       clear_days:
-        description: "Older than this many days: 15, 30 or any whole number. Jobs measures the publication date, the other tables Classified"
+        description: "Days, not hours: rows older than this go. Jobs counts from the publication date, the other tables from Classified. A confirm must repeat the dry run's table and days"
         type: string
         default: "30"
       clear_confirm:
-        description: "Clear them. Unticked is the dry run, which removes nothing"
+        description: "Clear them. Unticked is the dry run, which removes nothing. Ticked needs that dry run, same table, days and mode, within 48 hours; the rows leave at the next run's sweep"
         type: boolean
         default: false
 
@@ -61,7 +61,10 @@ permissions:
 
 jobs:
   fetch:
-    runs-on: ubuntu-latest
+    # Pinned, not ubuntu-latest: GitHub moves that label to Ubuntu 26 from
+    # 2026-10-19, and Python 3.11, which this pins, is untested there. Moved
+    # deliberately, after a test run on the new image, never by the label.
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
 
     # A test run writes and pushes its own branch. It keeps production's layout
@@ -98,7 +101,17 @@ jobs:
       - run: pip install -r requirements.txt
 
       - name: Run the tests before touching a live board
-        run: python -m unittest discover -s tests -t .
+        # Workflow commands are switched off while the tests run. A test that
+        # prints a warning command otherwise becomes an annotation on the run: one
+        # did on every run of 2026-10-02, a disagreement that never happened.
+        run: |
+          token="tests-$(date +%s%N)"
+          echo "::stop-commands::$token"
+          set +e
+          python -m unittest discover -s tests -t .
+          status=$?
+          echo "::$token::"
+          exit $status
 
       # The checkout holds main only. The run appends to what the branch
       # already stores, so the branch is fetched first; without it every run is

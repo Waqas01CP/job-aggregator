@@ -1,0 +1,547 @@
+{
+ "jobs": [
+  {
+   "absolute_url": "https://boards.greenhouse.io/careem/jobs/8618945002?gh_jid=8618945002",
+   "ai_disclaimer": null,
+   "ai_opt_out_request_url": null,
+   "application_deadline": null,
+   "company_name": "Careem",
+   "content": "STRIPPED",
+   "data_compliance": [
+    {
+     "demographic_data_consent_applies": false,
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "type": "gdpr"
+    }
+   ],
+   "departments": [
+    {
+     "child_ids": [],
+     "id": 4078148002,
+     "name": "Ads",
+     "parent_id": null
+    }
+   ],
+   "first_published": "2026-07-13T05:10:34-04:00",
+   "id": 8618945002,
+   "include_ai_disclaimer": false,
+   "internal_job_id": 6442292002,
+   "language": "en",
+   "location": {
+    "name": "Dubai, United Arab Emirates"
+   },
+   "metadata": [
+    {
+     "id": 4471783002,
+     "name": "Division",
+     "value": "STRIPPED",
+     "value_type": "single_select"
+    },
+    {
+     "id": 4221047002,
+     "name": "Sub-Division",
+     "value": "STRIPPED",
+     "value_type": "single_select"
+    },
+    {
+     "id": 10033485002,
+     "name": "Sub-Department",
+     "value": "STRIPPED",
+     "value_type": "single_select"
+    },
+    {
+     "id": 22986410002,
+     "name": "Hiring Manager",
+     "value": "STRIPPED",
+     "value_type": "short_text"
+    },
+    {
+     "id": 12565152002,
+     "name": "Job Family",
+     "value": "STRIPPED",
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653543002,
+     "name": "Tribe",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653550002,
+     "name": "Squad",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 24594952002,
+     "name": "Country",
+     "value": "United Arab Emirates",
+     "value_type": "single_select"
+    },
+    {
+     "id": 24436433002,
+     "name": "Evergreen Role (TA)",
+     "value": false,
+     "value_type": "yes_no"
+    },
+    {
+     "id": 22868282002,
+     "name": "SOURCER (TA)",
+     "value": null,
+     "value_type": "short_text"
+    }
+   ],
+   "offices": [
+    {
+     "child_ids": [],
+     "id": 4014188002,
+     "location": "Dubai, United Arab Emirates",
+     "name": "Dubai",
+     "parent_id": 4002851002
+    }
+   ],
+   "requisition_id": "9887",
+   "title": "Associate Director of Ads Sales",
+   "updated_at": "2026-09-14T02:22:32-04:00"
+  },
+  {
+   "absolute_url": "https://boards.greenhouse.io/careem/jobs/8620725002?gh_jid=8620725002",
+   "ai_disclaimer": null,
+   "ai_opt_out_request_url": null,
+   "application_deadline": null,
+   "company_name": "Careem",
+   "content": "STRIPPED",
+   "data_compliance": [
+    {
+     "demographic_data_consent_applies": false,
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "type": "gdpr"
+    }
+   ],
+   "departments": [
+    {
+     "child_ids": [],
+     "id": 4055038002,
+     "name": "IT",
+     "parent_id": null
+    }
+   ],
+   "first_published": "2026-07-11T15:52:24-04:00",
+   "id": 8620725002,
+   "include_ai_disclaimer": false,
+   "internal_job_id": 6442755002,
+   "language": "en",
+   "location": {
+    "name": "Karachi, Pakistan"
+   },
+   "metadata": [
+    {
+     "id": 4471783002,
+     "name": "Division",
+     "value": "STRIPPED",
+     "value_type": "single_select"
+    },
+    {
+     "id": 4221047002,
+     "name": "Sub-Division",
+     "value": "STRIPPED",
+     "value_type": "single_select"
+    },
+    {
+     "id": 10033485002,
+     "name": "Sub-Department",
+     "value": "STRIPPED",
+     "value_type": "single_select"
+    },
+    {
+     "id": 22986410002,
+     "name": "Hiring Manager",
+     "value": "STRIPPED",
+     "value_type": "short_text"
+    },
+    {
+     "id": 12565152002,
+     "name": "Job Family",
+     "value": "STRIPPED",
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653543002,
+     "name": "Tribe",
+     "value": "STRIPPED",
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653550002,
+     "name": "Squad",
+     "value": "STRIPPED",
+     "value_type": "single_select"
+    },
+    {
+     "id": 24594952002,
+     "name": "Country",
+     "value": "Pakistan",
+     "value_type": "single_select"
+    },
+    {
+     "id": 24436433002,
+     "name": "Evergreen Role (TA)",
+     "value": false,
+     "value_type": "yes_no"
+    },
+    {
+     "id": 22868282002,
+     "name": "SOURCER (TA)",
+     "value": null,
+     "value_type": "short_text"
+    }
+   ],
+   "offices": [
+    {
+     "child_ids": [],
+     "id": 4002871002,
+     "location": "Karachi, Pakistan",
+     "name": "Karachi",
+     "parent_id": 4004468002
+    }
+   ],
+   "requisition_id": "9896",
+   "title": "Associate Director of ERP Digital Transformation",
+   "updated_at": "2026-10-01T08:48:56-04:00"
+  },
+  {
+   "absolute_url": "https://boards.greenhouse.io/careem/jobs/8805501002?gh_jid=8805501002",
+   "ai_disclaimer": null,
+   "ai_opt_out_request_url": null,
+   "application_deadline": null,
+   "company_name": "Careem",
+   "content": "STRIPPED",
+   "data_compliance": [
+    {
+     "demographic_data_consent_applies": false,
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "type": "gdpr"
+    }
+   ],
+   "departments": [
+    {
+     "child_ids": [],
+     "id": 4137858002,
+     "name": "Experience & Optimisation",
+     "parent_id": null
+    }
+   ],
+   "first_published": "2026-09-28T08:54:25-04:00",
+   "id": 8805501002,
+   "include_ai_disclaimer": false,
+   "internal_job_id": 6523731002,
+   "language": "en",
+   "location": {
+    "name": "Lahore, Pakistan"
+   },
+   "metadata": [
+    {
+     "id": 4471783002,
+     "name": "Division",
+     "value": "STRIPPED",
+     "value_type": "single_select"
+    },
+    {
+     "id": 4221047002,
+     "name": "Sub-Division",
+     "value": "STRIPPED",
+     "value_type": "single_select"
+    },
+    {
+     "id": 10033485002,
+     "name": "Sub-Department",
+     "value": "STRIPPED",
+     "value_type": "single_select"
+    },
+    {
+     "id": 22986410002,
+     "name": "Hiring Manager",
+     "value": "STRIPPED",
+     "value_type": "short_text"
+    },
+    {
+     "id": 12565152002,
+     "name": "Job Family",
+     "value": "STRIPPED",
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653543002,
+     "name": "Tribe",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653550002,
+     "name": "Squad",
+     "value": null,
+     "value_type": "single_select"
+    },
+    {
+     "id": 24594952002,
+     "name": "Country",
+     "value": "Pakistan",
+     "value_type": "single_select"
+    },
+    {
+     "id": 24436433002,
+     "name": "Evergreen Role (TA)",
+     "value": false,
+     "value_type": "yes_no"
+    },
+    {
+     "id": 22868282002,
+     "name": "SOURCER (TA)",
+     "value": null,
+     "value_type": "short_text"
+    }
+   ],
+   "offices": [
+    {
+     "child_ids": [],
+     "id": 4002872002,
+     "location": "Lahore, Pakistan",
+     "name": "Lahore",
+     "parent_id": 4004468002
+    }
+   ],
+   "requisition_id": "9989",
+   "title": "Care & Service Operations Lead ",
+   "updated_at": "2026-09-28T08:54:25-04:00"
+  },
+  {
+   "absolute_url": "https://boards.greenhouse.io/careem/jobs/8620289002?gh_jid=8620289002",
+   "ai_disclaimer": null,
+   "ai_opt_out_request_url": null,
+   "application_deadline": null,
+   "company_name": "Careem",
+   "content": "STRIPPED",
+   "data_compliance": [
+    {
+     "demographic_data_consent_applies": false,
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "type": "gdpr"
+    }
+   ],
+   "departments": [
+    {
+     "child_ids": [],
+     "id": 4067657002,
+     "name": "Data Science",
+     "parent_id": null
+    }
+   ],
+   "first_published": "2026-07-07T04:36:13-04:00",
+   "id": 8620289002,
+   "include_ai_disclaimer": false,
+   "internal_job_id": 6442610002,
+   "language": "en",
+   "location": {
+    "name": "Dubai, United Arab Emirates"
+   },
+   "metadata": [
+    {
+     "id": 4471783002,
+     "name": "Division",
+     "value": "STRIPPED",
+     "value_type": "single_select"
+    },
+    {
+     "id": 4221047002,
+     "name": "Sub-Division",
+     "value": "STRIPPED",
+     "value_type": "single_select"
+    },
+    {
+     "id": 10033485002,
+     "name": "Sub-Department",
+     "value": "STRIPPED",
+     "value_type": "single_select"
+    },
+    {
+     "id": 22986410002,
+     "name": "Hiring Manager",
+     "value": "STRIPPED",
+     "value_type": "short_text"
+    },
+    {
+     "id": 12565152002,
+     "name": "Job Family",
+     "value": "STRIPPED",
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653543002,
+     "name": "Tribe",
+     "value": "STRIPPED",
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653550002,
+     "name": "Squad",
+     "value": "STRIPPED",
+     "value_type": "single_select"
+    },
+    {
+     "id": 24594952002,
+     "name": "Country",
+     "value": "United Arab Emirates",
+     "value_type": "single_select"
+    },
+    {
+     "id": 24436433002,
+     "name": "Evergreen Role (TA)",
+     "value": false,
+     "value_type": "yes_no"
+    },
+    {
+     "id": 22868282002,
+     "name": "SOURCER (TA)",
+     "value": "STRIPPED",
+     "value_type": "short_text"
+    }
+   ],
+   "offices": [
+    {
+     "child_ids": [],
+     "id": 4014188002,
+     "location": "Dubai, United Arab Emirates",
+     "name": "Dubai",
+     "parent_id": 4002851002
+    }
+   ],
+   "requisition_id": "9889",
+   "title": "Senior Data Scientist II - Personalization ",
+   "updated_at": "2026-09-29T04:06:01-04:00"
+  },
+  {
+   "absolute_url": "https://boards.greenhouse.io/careem/jobs/8620292002?gh_jid=8620292002",
+   "ai_disclaimer": null,
+   "ai_opt_out_request_url": null,
+   "application_deadline": null,
+   "company_name": "Careem",
+   "content": "STRIPPED",
+   "data_compliance": [
+    {
+     "demographic_data_consent_applies": false,
+     "requires_consent": false,
+     "requires_processing_consent": false,
+     "requires_retention_consent": false,
+     "retention_period": null,
+     "type": "gdpr"
+    }
+   ],
+   "departments": [
+    {
+     "child_ids": [],
+     "id": 4055038002,
+     "name": "IT",
+     "parent_id": null
+    }
+   ],
+   "first_published": "2026-07-07T07:26:47-04:00",
+   "id": 8620292002,
+   "include_ai_disclaimer": false,
+   "internal_job_id": 6442613002,
+   "language": "en",
+   "location": {
+    "name": "Karachi, Pakistan"
+   },
+   "metadata": [
+    {
+     "id": 4471783002,
+     "name": "Division",
+     "value": "STRIPPED",
+     "value_type": "single_select"
+    },
+    {
+     "id": 4221047002,
+     "name": "Sub-Division",
+     "value": "STRIPPED",
+     "value_type": "single_select"
+    },
+    {
+     "id": 10033485002,
+     "name": "Sub-Department",
+     "value": "STRIPPED",
+     "value_type": "single_select"
+    },
+    {
+     "id": 22986410002,
+     "name": "Hiring Manager",
+     "value": "STRIPPED",
+     "value_type": "short_text"
+    },
+    {
+     "id": 12565152002,
+     "name": "Job Family",
+     "value": "STRIPPED",
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653543002,
+     "name": "Tribe",
+     "value": "STRIPPED",
+     "value_type": "single_select"
+    },
+    {
+     "id": 15653550002,
+     "name": "Squad",
+     "value": "STRIPPED",
+     "value_type": "single_select"
+    },
+    {
+     "id": 24594952002,
+     "name": "Country",
+     "value": "Pakistan",
+     "value_type": "single_select"
+    },
+    {
+     "id": 24436433002,
+     "name": "Evergreen Role (TA)",
+     "value": false,
+     "value_type": "yes_no"
+    },
+    {
+     "id": 22868282002,
+     "name": "SOURCER (TA)",
+     "value": null,
+     "value_type": "short_text"
+    }
+   ],
+   "offices": [
+    {
+     "child_ids": [],
+     "id": 4002871002,
+     "location": "Karachi, Pakistan",
+     "name": "Karachi",
+     "parent_id": 4004468002
+    }
+   ],
+   "requisition_id": "9892",
+   "title": "Senior Integration Manager - ERP Digital Transformation",
+   "updated_at": "2026-09-14T02:22:32-04:00"
+  }
+ ],
+ "meta": {
+  "total": 5
+ }
+}

@@ -311,3 +311,119 @@ Answered in `docs/reference/platform-fields.md`, measured over the 823 Greenhous
 **Proposed, not built**, since it changes what reaches his table: where every part of the location text is unclear, let the source's structured place decide, and only ever to close.
 
 **Also found, for him:** one board's "Lahore, Punjab, Pakistan" postings say "onsite" in the description on 6 of 11, which the location field does not say. D13 drops on-site roles outside Karachi. Reading description text for location is a further proposal, and a riskier one.
+
+## The evening: his test dry run, two false alarms, and the structured place built
+
+**His words, 2026-10-02 evening:**
+- the job types stay, on every source;
+- the custom fields should be used where useful;
+- "if the job is remote but is us only then it should not be shown";
+- both proposals accepted;
+- "high time that we use the description", for experience, on-site work, and any requirement that stops him applying even when a posting passes every other check.
+
+### His test-mode dry run, run 37050567807 at 18:54Z [VERIFIED]
+
+From its log on `data-test`: on `Jobs test` at 30 days it would remove 19 rows, 18 unreviewed, with one poor-filtering copy leaving with its row. It wrote nothing.
+
+### The warning "the search has not returned 1 posting" was false [VERIFIED]
+
+- **It appeared on all three of the day's runs:** the morning run, whose log reads 0 disagreements, and the evening run, which never polls Himalayas.
+- **Cause:** the workflow runs the test suite before fetching, and GitHub turns any warning command a step prints into an annotation. The agreement check's fitness test printed one. No disagreement has happened.
+- **Fixed twice over:**
+  - that test now captures and asserts its output;
+  - both workflows stop workflow commands for the length of the test step, with a one-off token, and resume after, exiting with the suite's own status.
+- **Tests:** a workflow test holds both. Mutation: "the tests run with workflow commands live".
+
+### The cap warning was real, and a week no longer fits in 40 pages [VERIFIED]
+
+- **His test-mode walk** read 40 pages, 707 postings, and stopped at the cap before the age limit. The test branch had no recent mark, so it read back toward a week.
+- **The scheduled walks** read 6 and 7 pages on 10-01 and 10-02, about 100 new postings a day.
+- **What this means:** a week of the Pakistan search is more than 40 pages now. ADR-0053's "a full week is about 28 pages, so a normal walk never reaches it" no longer holds. Only a walk that must read back a week meets the cap: a first walk, or recovery after failed saves.
+- **Proposed to him:** raise the cap to 80, about two weeks at today's rate and 80 requests against the run's 500. Not changed, since ADR-0053's number is his.
+
+### The agreement check measured reach by the pinned posting too [VERIFIED from the code]
+
+`agreement()` judged whether a walk reached a waiting posting by the walk's oldest posting, the same mistake as the closure test.
+- **Exposure:** latent on daily walks, whose browse postings are newer than the mark.
+- **Now:** it uses the walk's record, through `closure.covered`.
+- **The waiting list is bounded:** a posting older than the age limit leaves the list, counted as given up.
+- **Tests:** the case of a walk stopped at a newer mark, built with a saved mark this time, and the give-up.
+- **Mutations:** "a walk that never reached a waiting posting's date judges it", re-expressed, and "a waiting posting never gives up".
+
+### The runner image pinned
+
+GitHub's notice on every run: `ubuntu-latest` moves to Ubuntu 26 from 2026-10-19. The workflows pin Python 3.11, untested on the new image.
+- **Both workflows now run on `ubuntu-24.04`.** A move is a decision, made after a test run on the new image.
+- **Test:** the image is pinned. Mutation: "the runner follows ubuntu-latest".
+
+### The dispatch form says what it means
+
+His questions were whether the days are hours, and whether test mode is the `Jobs test` table. The four inputs now say:
+- days, not hours, counted from the publication date or from Classified;
+- test mode is the test tables;
+- a confirm repeats the dry run's table, days and mode within 48 hours;
+- the rows leave at the next run's sweep.
+
+### The structured place and the stated workplace, built
+
+**Rows and adapters.** Two new row fields, `places` and `workplace`, filled by the adapters:
+- **Lever:** `country` and `workplaceType`;
+- **Greenhouse:** each office's `location`, a `Country` custom field, and a `Work Type` or `Job Type` custom field.
+
+**`rule_location`.** Where every part of the text is unclear, the structured places decide, and only to close:
+- an ISO code is the home country's (`home_country_codes`, `PK`) or another's;
+- any other place is read like text.
+
+**A stated on-site or hybrid workplace** marks a Pakistani city other than Karachi as on site, under D13.
+
+**My error in the first build:** a stated remote workplace was placed beside the city, "Manila (remote)", and read as open. 19 remote Lever postings in other countries stayed kept. Caught by the measurement, not by a test; fixed, and now a test and a mutation.
+
+**Measured with the code** over the saved postings [VERIFIED]:
+- **67 kept postings now dropped,** none newly kept: Lever 42, all by country; Greenhouse 25, 19 by office or country and 6 by a stated hybrid workplace;
+- **the only ones naming Pakistan** are those 6, a board's "Islamabad, Pakistan" roles whose field says Hybrid, which D13 drops;
+- **no newly dropped posting's description** mentions "anywhere" or "worldwide".
+
+**The contract check:**
+- **it now steps into lists,** so `offices.location`, `metadata.name` and `metadata.value` are fingerprinted, where they would always have read absent;
+- **re-baseline entries** record the new Greenhouse and Lever fields as ours;
+- **a new fixture,** `greenhouse-careem-content.json`, fetched with `?content=true` as the run requests;
+- **the path test** runs against it.
+
+### People's addresses in a committed fixture
+
+- **Found:** `tests/cassettes/greenhouse-careem.json`, committed in `9d8f9c1`, carried 19 hiring managers' addresses in Careem's custom fields. They are public in Careem's API.
+- **The cassette tool** now keeps custom-field values only where the adapter reads them, the country and the workplace, and strips any address anywhere. A test holds its kept list equal to the adapter's.
+- **Both fixtures are clean now.**
+- **The addresses remain in git history.** Removing them needs a rewritten, force-pushed history, which D10 forbids without him. Flagged to him, not done.
+
+### The description: measured, designed, waiting on his numbers
+
+Over the saved postings that pass every rule but age [VERIFIED]:
+- **Years** are stated on about a third. Greenhouse: of 15, 3 ask 5 or more and 1 asks 3. Himalayas: of 35, 1 asks 5 or more, 6 ask 3, and 4 ask 2 or fewer. The sampled matches read right.
+- **Work authorisation** is rare here. The one match, "visa sponsorship is not available", sat on a fully remote role: no stop for him.
+- **On-site wording** on postings in Pakistani cities other than Karachi: 2 of 6. One is real, "Onsite job with offices in our Thokar office"; one is false, "hybrid/vector search".
+
+**Proposed design:**
+- **Read the description once, at fetch,** where it is in hand. Store only what is derived, as row fields: the least years asked, a stated authorisation or residence requirement and where, and a stated on-site arrangement. The text never leaves the private full branch.
+- **Name each rule:**
+  - experience, the rule built and switched off, with his threshold;
+  - authorisation;
+  - on site, fed into D13 as the stated workplace is.
+- **Phrase-based and deterministic,** within ADR-0010. Each pattern is measured over every saved description before it is switched on.
+
+**His to answer:**
+1. The most years a posting may ask and still be shown.
+2. Whether "preferred" counts like "required".
+3. Which requirements stop him: work authorisation, citizenship, clearance, residence.
+
+**The architecture chat's:** recording it, against ADR-0011, ADR-0016 and ADR-0051.
+
+### Verification of the evening's work
+
+All `[VERIFIED]` on this commit's code; each clone's `src`, `tests`, `tools`, `config` and `.github` were compared with the tree and found identical.
+
+- **Suite:** 754 tests pass on Python 3.12, and on 3.11 under `-W error::ResourceWarning`. A run of the whole suite prints no workflow command.
+- **Mutations, first run:** 18 of 19 caught, each by the test built for it. The run covered the new structured-place, agreement and workflow files, and the seven re-expressed.
+- **The survivor, "the home country's code reads as closed":** its test used "Lahore", which the text admits before the source's place is asked, so the test could not fail. Rebuilt on text the rule cannot place, and re-run in a fresh clone: caught, by that test. 19 of 19.
+- **Stale finds:** 0 of 410.
+- **Privacy:** both Greenhouse fixtures carry no address, and the outgoing diff holds no Himalayas URL, no Airtable ID and no token.

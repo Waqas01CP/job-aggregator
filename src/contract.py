@@ -78,8 +78,21 @@ TYPE_NAMES = {bool: "boolean", int: "number", float: "number", str: "string",
 def resolve(obj, path):
     """(present, value) for a dotted path. A step through anything that is not
     an object is absent, not an error: a null `location` makes
-    `location.name` absent, which is itself a shape worth recording."""
-    for part in path.split("."):
+    `location.name` absent, which is itself a shape worth recording.
+
+    **A step into a list reads its items**: the rest of the path in each,
+    present when any item has it, with the first value found. Greenhouse's
+    `offices.location` and `metadata.value` are read that way since
+    2026-10-02; resolved as absent, they would fingerprint nothing, and a
+    renamed field inside them would never show."""
+    parts = path.split(".")
+    for i, part in enumerate(parts):
+        if isinstance(obj, list):
+            for item in obj:
+                present, value = resolve(item, ".".join(parts[i:]))
+                if present:
+                    return True, value
+            return False, None
         if not isinstance(obj, dict) or part not in obj:
             return False, None
         obj = obj[part]

@@ -81,12 +81,12 @@ operator's (ADR-0032 is the title-word rule).
 | `location`, `location.name` | object, string | 100% | yes | one free-text string |
 | `content` | string | 100% | no | the description, HTML-escaped. Saved privately (D11), never parsed. Since `?content=true` |
 | `departments` | list | 100% | no | since `?content=true` |
-| `offices` | list | 99.6% | no | structured office locations, beside the free-text one |
+| `offices` | list | 99.6% | **yes**, since 2026-10-02 | each office's `location`, "City, Region, Country": the posting's structured place, read by the location rule only where the free text names nothing it knows |
 | `updated_at` | string | 100% | no | deliberately: bulk-stamped, ADR-0018 |
 | `data_compliance` | list | 100% | no | GDPR flags |
 | `language` | string | 100% | no | |
 | `internal_job_id`, `requisition_id` | number, string | 99.6% | no | |
-| `metadata` | list | 61.0% | no | each board's custom fields. One board accounts for most: "Workday P Level", "Job Family", "Worker Type", "Time Type", "Pay Rate Type" and nine more on 269 postings; "Employment Type" on 196 |
+| `metadata` | list | 61.0% | **in part**, since 2026-10-02 | a `Country` field as a structured place, and a `Work Type` or `Job Type` field as the stated workplace; the rest unread. Each board's custom fields. One board accounts for most: "Workday P Level", "Job Family", "Worker Type", "Time Type", "Pay Rate Type" and nine more on 269 postings; "Employment Type" on 196 |
 | `education` | string | 30.4% | no | a requirement flag, not a value |
 | `include_ai_disclaimer`, `ai_opt_out_request_url`, `ai_disclaimer` | bool, string | 2.6 to 10.3% | no | |
 | `employment` | string | 0.9% | no | |
@@ -148,8 +148,8 @@ Measured 2026-10-02 over the same 823 postings `[VERIFIED]`.
 | `categories.team` | string | 100% | no | |
 | `categories.commitment` | string | 96.8% | no | full time, part time and the like |
 | `categories.department` | string | 63.5% | no | |
-| `workplaceType` | string | 100% | no | remote 41, on-site 22. A structured remote flag beside the free-text location |
-| `country` | string | 100% | no | ISO-2 |
+| `workplaceType` | string | 100% | **yes**, since 2026-10-02 | remote 41, on-site 22. The stated workplace: on site or hybrid feeds D13's on-site rule; remote adds nothing |
+| `country` | string | 100% | **yes**, since 2026-10-02 | ISO-2. The posting's structured place, read where the free text names nothing the rule knows |
 | `applyUrl` | string | 100% | no | |
 | `description`, `descriptionBody` | string | 100% | no | HTML. Saved privately, never parsed |
 | `descriptionPlain`, `descriptionBodyPlain` | string | 95.2%, 81.0% | no | the same as plain text |
@@ -300,31 +300,41 @@ means and what happens when it is absent.
   temporary and volunteer roles are all kept: the operator, "volunteer might
   be a good opportunity and can become a stepping stone".
 - **Time zones are not filtered.** He works US hours remotely.
+- **Each source's structured place, and its stated workplace, are read**, the
+  operator's go. Where every part of the location text is a place the rule
+  cannot name, Lever's `country` and Greenhouse's `offices` and `Country`
+  field decide, and only ever to close. A stated on-site or hybrid workplace,
+  Lever's `workplaceType` or a Greenhouse `Work Type` field, makes a Pakistani
+  city other than Karachi on site under D13; a stated remote workplace adds
+  nothing. Measured with the code over the saved postings: 67 kept postings
+  now dropped, 42 Lever and 25 Greenhouse, and none newly kept. The only ones
+  naming Pakistan are six Islamabad roles whose field says hybrid, which D13
+  drops.
 
-**Open:**
-1. **Each source's structured place, where the location text names nothing
-   the rule recognises.** Lever's `country` and Greenhouse's `offices` would
-   close 59 postings he cannot take, measured over the saved postings: 40
-   Lever, from on-site United States jobs to remote Philippines ones, and 19
-   Greenhouse, mostly Saudi cities. They would lose none: they apply only to
-   a posting with no part the rule places, and never to one naming a
-   Pakistani place, and none of the 59 descriptions mentions Pakistan,
-   "anywhere" or "worldwide" `[VERIFIED]`. A posting with neither keeps
-   today's verdict.
-2. **On site, read from the description.** One board's "Lahore, Punjab,
+**Open: the description, decided in direction on 2026-10-02.** The operator:
+use the description to find what stops him applying, such as years of
+experience, a work permit in another country, or on-site work, even on a
+posting every other check passes. The design and its thresholds wait on his
+answers (the log of 2026-10-02, its last section). Measured on the saved
+postings that pass every rule but age: about a third state a number of years;
+of 15 Greenhouse postings, 3 ask 5 or more; of 35 Himalayas postings, 1 asks
+5 or more and 6 ask 3. Phrases need care: "hybrid" matched "hybrid/vector
+search", and "visa sponsorship is not available" sat on a fully remote role.
+
+1. **On site, read from the description.** One board's "Lahore, Punjab,
    Pakistan" postings say "onsite" in the description on 6 of 11; D13 drops
    on-site roles outside Karachi, and the location field does not say it.
    Reading description text for location is new, and words like "onsite"
    occur in other senses.
-3. **Years of experience, from the description**, on all three sources: 50
+2. **Years of experience, from the description**, on all three sources: 50
    to 67% state a number, and on Lever it is in `lists`. The
    stated-experience rule is deferred by the operator until filtering reads
    descriptions; these are the rates it would start from. Every description
    is saved privately (D11), so a rule could be tested over them without a
    request.
-4. **Salary**, on Himalayas 15.9% and Lever 12.7%. Greenhouse's
+3. **Salary**, on Himalayas 15.9% and Lever 12.7%. Greenhouse's
    `pay_transparency` costs a request per posting, rate unmeasured.
-5. **Greenhouse `internal_job_id`**, to group one job's city copies exactly.
+4. **Greenhouse `internal_job_id`**, to group one job's city copies exactly.
 
 ## Inventorying a new source
 

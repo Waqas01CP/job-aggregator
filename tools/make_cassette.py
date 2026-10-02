@@ -19,6 +19,7 @@ usage:
 import argparse
 import json
 import os
+import re
 import sys
 
 PLACEHOLDER = "STRIPPED"
@@ -43,9 +44,28 @@ READ_FIELDS = frozenset({
 })
 
 
+# An address anywhere in a value, and a Greenhouse custom field whose value
+# is a person. Greenhouse boards name hiring managers, approvers and
+# recruiters in `metadata`, by name or by email: public in the employer's
+# API, and never committed here (2026-10-02, the first cassette fetched with
+# `?content=true`).
+EMAIL = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}")
+# Custom fields are kept only where the adapter reads them, the country and
+# the workplace (src/adapters/greenhouse.py, a test holds the two lists
+# equal); every other value is stripped, so a person named as plain text in a
+# field this tool has never seen is stripped too.
+KEPT_METADATA = ("country", "work type", "job type")
+
+
 def sanitise(node):
-    """Replace description values wherever they appear, at any depth."""
+    """Replace description values, people and addresses wherever they
+    appear, at any depth."""
+    if isinstance(node, str):
+        return PLACEHOLDER if EMAIL.search(node) else node
     if isinstance(node, dict):
+        if ("value_type" in node and node.get("value") not in (None, True, False)
+                and str(node.get("name") or "").strip().lower() not in KEPT_METADATA):
+            node = dict(node, value=PLACEHOLDER)
         out = {}
         for key, value in node.items():
             if key in DESCRIPTION_FIELDS and isinstance(value, str):
@@ -117,6 +137,9 @@ def main():
     print("wrote %s: %d postings, %d bytes" % (args.out, len(postings), len(text)))
     if leaked:
         print("REFUSING: these description fields still carry text: %s" % leaked)
+        return 1
+    if EMAIL.search(text):
+        print("REFUSING: an email address survived sanitising")
         return 1
     return 0
 

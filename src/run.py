@@ -53,7 +53,7 @@ from datetime import datetime, timedelta, timezone
 
 from . import clearing, envfile, private_store, projection, storage
 from .airtable_sweep import SweepClient, TABLE_SECRETS
-from .closure import Closure
+from .closure import Closure, covered as walk_covered
 from .sweep import Sweep, older_than
 from .adapters import greenhouse, himalayas, lever
 from .airtable import (BASE_ENV, RUN_LOG_KEY, TABLE_ENV, TEST_TABLE_ENV, TOKEN_ENV,
@@ -467,7 +467,7 @@ AGREEMENT_PENDING_FILE = "agreement_pending.json"
 AGREEMENT_WAIT_HOURS = 12
 
 
-def agreement(browse, search, searched_before, pending, eligibility, source, now):
+def agreement(browse, search, searched_before, pending, eligibility, source, now, walk=None):
     """ADR-0053's check, as a function of what was read: `browse`, one page of
     the whole feed; `search`, what this run's country search returned;
     `searched_before`, every identity the search board stored on earlier
@@ -495,9 +495,9 @@ def agreement(browse, search, searched_before, pending, eligibility, source, now
     **A disagreement is an excluded posting ADR-0041 would admit**: the
     search has dropped something the operator could apply to."""
     searched = {"%s:%s" % (source, p.external_id) for p in search} | set(searched_before)
-    reached = min((p.published_at for p in search if p.published_at), default=None)
     counts = {"browse_read": len(browse), "returned_by_search": 0, "rule_excludes": 0,
-              "newly_waiting": 0, "returned_since": 0, "disagreements": 0, "still_waiting": 0}
+              "newly_waiting": 0, "returned_since": 0, "disagreements": 0, "still_waiting": 0,
+              "gave_up": 0}
     waiting = {e["identity"]: e for e in pending}
     for p in browse:
         identity = "%s:%s" % (source, p.external_id)
@@ -515,12 +515,20 @@ def agreement(browse, search, searched_before, pending, eligibility, source, now
         if identity in searched:
             counts["returned_since"] += 1
             continue
+        published = e.get("published_at")
+        if published and now - _parse(published) > timedelta(days=eligibility.max_age_days):
+            # Older than any walk reads back to, so no later walk can settle
+            # it, and the waiting list must not grow for ever. Counted.
+            counts["gave_up"] += 1
+            continue
         waited = now - _parse(e["waiting_since"]) >= timedelta(hours=AGREEMENT_WAIT_HOURS)
-        # The walk must have read back to its date for an absence to mean
-        # anything. One with no date is judged on the wait alone, so it
-        # cannot wait for ever.
-        covered = e.get("published_at") is None or (
-            reached is not None and reached <= _parse(e["published_at"]))
+        # The walk must have covered its date for an absence to mean
+        # anything, by the walk's own record: stopped at a mark older than
+        # the posting, or read to the feed's end. Never by its oldest
+        # posting, which a pinned one makes meaningless, as the closure test
+        # learned on 2026-10-02. One with no date is judged on the wait
+        # alone, so it cannot wait for ever.
+        covered = published is None or walk_covered(walk, published)
         (disagree if waited and covered else still).append(e)
     counts["disagreements"], counts["still_waiting"] = len(disagree), len(still)
     return counts, still, disagree
@@ -659,7 +667,8 @@ class Run:
             return
         counts, still, disagree = agreement(browse, search,
                                             self.board_seen.get(board.board_id, ()), pending,
-                                            ELIGIBILITY, board.source, self.now)
+                                            ELIGIBILITY, board.source, self.now,
+                                            walk=log.get("walk"))
         log["agreement"] = counts
         if still != pending:
             storage.write_atomic(pending_path, dumps(others + still))
@@ -884,11 +893,13 @@ def summarise(run_log):
                       else "  [agreement (ADR-0053): of %d browse postings, %d returned by the "
                       "search, %d the location rule excludes too, %d newly waiting for a "
                       "later walk; %d waiting returned since, %d disagreements, %d still "
-                      "waiting]"
+                      "waiting%s]"
                       % (agree["browse_read"], agree["returned_by_search"],
                          agree["rule_excludes"], agree["newly_waiting"],
                          agree["returned_since"], agree["disagreements"],
-                         agree["still_waiting"]))
+                         agree["still_waiting"],
+                         ", %d given up past the age limit" % agree["gave_up"]
+                         if agree.get("gave_up") else ""))
         lines.append("  %-34s %-12s fetched %4d  new %4d  kept %3d  %s%s"
                      % (b["board"], b["status"], b["fetched"], b["new"], b["kept"],
                         drops or "no drops",

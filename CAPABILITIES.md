@@ -79,7 +79,7 @@ By his estimate, that took most of a working week. He usually found a posting th
    | Title | Titles matching none of 79 terms in four role families: agentic AI, LLM and applied AI, traditional AI and ML, software engineering | `docs/reference/title-pool.md` |
    | Seniority | Titles carrying a senior-level word (senior, staff, lead, principal, II, III and others) | `docs/reference/seniority-exclusions.md` |
    | Level | Where the source states a level, a posting none of whose levels is Entry-level or Mid-level. Only Himalayas states one; a posting that states none is kept | `config/eligibility.json` |
-   | Location | A posting only when *every* place it lists is closed to the operator. Examples: other countries only; a region without Pakistan; on-site in a Pakistani city other than Karachi. Anything unclear is kept | `config/eligibility.json` |
+   | Location | A posting only when *every* place it lists is closed to the operator. Examples: other countries only; a region without Pakistan; on-site in a Pakistani city other than Karachi. Where the text names only a city the rule does not know, the source's own country or office decides, and only to close; a workplace the source states as on site or hybrid counts as on site. Anything still unclear is kept | `config/eligibility.json` |
    | Age | A posting published more than 7 days before the pipeline first saw it. Judged once, at first sight, so an admitted row never ages out unseen | `config/eligibility.json` |
 
    Title matching normalises both sides: case, punctuation, accents and plurals. Spelling variants such as "fullstack" and "full stack" are listed as terms of their own.
@@ -207,11 +207,11 @@ Each is measured, with its date and source. `data` is the public data branch.
 | Display intake | About one new display row a day under the current rules, so by arithmetic, not measurement, the display settles near thirty rows, and the cheaper delta projection is not yet needed | 2026-09-29 and 09-30 | Run logs, against ADR-0056's trigger of 100 |
 | Recurring cost | None | 2026-09-27 | Free plans only |
 | Feasibility research | 16 ATS platforms probed; 1,646 postings across the first 11 boards | 2026-09-11 to 09-16 | Spike logs |
-| Code | 25 source files, 6,492 lines; 32 test files, 10,200 lines; 9 tool files, 1,857 lines | 2026-10-02 | `git ls-files`, `wc` |
-| Tests | 737, passing on Python 3.11 and 3.12 | 2026-10-02 | `unittest` |
-| Mutations | 398 recorded across 32 files. Since 2026-10-01 the suite fails when a code change leaves any of them unable to run, which two commits had done to 10, unnoticed. A survivor is closed by a new test, or, where the mutation changes nothing, replaced and recorded as such | 2026-10-02 | `tools/mutations/`, run by `tools/mutate.py`; results in the session logs |
+| Code | 25 source files, 6,636 lines; 32 test files, 10,381 lines; 9 tool files, 1,880 lines | 2026-10-02 | `git ls-files`, `wc` |
+| Tests | 754, passing on Python 3.11 and 3.12 | 2026-10-02 | `unittest` |
+| Mutations | 410 recorded across 34 files. Since 2026-10-01 the suite fails when a code change leaves any of them unable to run, which two commits had done to 10, unnoticed. A survivor is closed by a new test, or, where the mutation changes nothing, replaced and recorded as such | 2026-10-02 | `tools/mutations/`, run by `tools/mutate.py`; results in the session logs |
 | Decision records | 55 (four superseded), plus the rules for amending them. 124 dated Changes rows across 42 records | 2026-09-30 | `docs/decisions/` |
-| History | 121 commits on `main`, the first on 2026-09-01 UTC; 23 session logs; one audit report in `logs/audit/` | 2026-10-01 | `git log`, `logs/` |
+| History | 122 commits on `main`, the first on 2026-09-01 UTC; 23 session logs; one audit report in `logs/audit/` | 2026-10-01 | `git log`, `logs/` |
 
 ---
 
@@ -357,7 +357,7 @@ Short, role-neutral statements a reader can take as they are. Every figure is fr
 - Git branches serve as the database, with privacy enforced in code: employers' description text and aggregator data never reach the public repository. Every posting is saved in full to a private repository, verified by read-back.
 - A classification workflow: the operator's marks are copied to their own tables and stored permanently. Rows are deleted from the display only after the store is read back from the remote. The display is bounded by a thirty-day clock and a dry-run-first clearing tool.
 - A day's worth of an aggregator's feed went from about a third read, 93% of it irrelevant, to all of the relevant postings, by moving to a filtered endpoint an earlier measurement had wrongly rejected.
-- 737 tests, and 398 mutations that deliberately break the code to prove the tests notice.
+- 754 tests, and 410 mutations that deliberately break the code to prove the tests notice.
 - Designed by the operator and built with AI agents in separate roles: architecture, implementation, and cold, read-only audit. The work was carried out under a written verification discipline and produced 55 decision records and 23 session logs.
 
 ---

@@ -127,7 +127,9 @@ class TestConsumedFields(unittest.TestCase):
         nothing (the audit of 2026-09-24, F5). So every undotted path must be
         a key the saved response really has, and every dotted one must hang
         off a declared parent."""
-        saved = {"greenhouse": "greenhouse-careem.json",
+        # Greenhouse's as the run requests it since 2026-09-26, with
+        # `?content=true`, which adds `offices`.
+        saved = {"greenhouse": "greenhouse-careem-content.json",
                  "lever": "lever-smart-working-solutions.json",
                  "himalayas": "himalayas-browse.json"}
         for module in (greenhouse, lever, himalayas):
@@ -177,6 +179,34 @@ class TestShape(unittest.TestCase):
         self.assertEqual(contract.resolve({"location": None}, "location.name"), (False, None))
         self.assertEqual(contract.resolve({"location": {"name": "X"}}, "location.name"),
                          (True, "X"))
+
+    def test_a_path_into_a_list_reads_its_items(self):
+        """Greenhouse's `offices.location`: present when any item has it.
+        Read as absent, it would fingerprint nothing and a rename inside
+        would never show. Mutation: "a path through a list is absent"."""
+        posting = {"offices": [{"id": 1}, {"location": "Lahore, Pakistan"}]}
+        self.assertEqual(contract.resolve(posting, "offices.location"),
+                         (True, "Lahore, Pakistan"))
+        self.assertEqual(contract.resolve({"offices": []}, "offices.location"), (False, None))
+        self.assertEqual(contract.resolve({"offices": [{"id": 1}]}, "offices.location"),
+                         (False, None))
+
+    def test_the_cassette_tool_strips_people(self):
+        """A board's custom fields name hiring managers and recruiters, by
+        email or by name; no cassette may carry one. Mutation: "the cassette
+        tool keeps people's addresses"."""
+        from src.adapters import greenhouse
+        from tools.make_cassette import KEPT_METADATA, PLACEHOLDER, sanitise
+        self.assertEqual(set(KEPT_METADATA),
+                         set(greenhouse.COUNTRY_FIELDS + greenhouse.WORKPLACE_FIELDS))
+        out = sanitise([{"metadata": [
+            {"name": "Hiring Lead", "value": "A Person", "value_type": "short_text"},
+            {"name": "Job Approver", "value": {"name": "B"}, "value_type": "user"},
+            {"name": "Country", "value": "Pakistan", "value_type": "single_select"}],
+            "note": "write to someone@example.com"}])
+        self.assertEqual([m["value"] for m in out[0]["metadata"]],
+                         [PLACEHOLDER, PLACEHOLDER, "Pakistan"])
+        self.assertEqual(out[0]["note"], PLACEHOLDER)
 
     def test_the_fingerprint_holds_no_value_from_any_posting(self):
         """Structure only: Himalayas' fingerprint sits on the public branch."""

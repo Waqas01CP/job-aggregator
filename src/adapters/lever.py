@@ -38,7 +38,8 @@ PUBLISHED_FIELD = "createdAt"
 # The response is the list of postings itself.
 CONSUMED_RESPONSE = ()
 POSTINGS_AT = None
-CONSUMED = ("id", "text", "hostedUrl", PUBLISHED_FIELD, "categories", "categories.location")
+CONSUMED = ("id", "text", "hostedUrl", PUBLISHED_FIELD, "categories", "categories.location",
+            "country", "workplaceType")
 
 # Recorded on every Lever row. Removed when a second observation settles it.
 PUBLISHED_MEANING_UNCONFIRMED = True
@@ -119,6 +120,13 @@ def parse(payload, board):
             employer_provenance=employer_provenance,
             url_provenance="payload",
             location=location,
+            # Where Lever says the role is, an ISO 3166 alpha-2 code, and
+            # how it is worked. `categories.location` is often a city the
+            # location rule cannot place, "Dallas, TX" or "Manila", and the
+            # country settles it (the operator's go, 2026-10-02).
+            places=(str(entry["country"]).strip().upper(),)
+            if str(entry.get("country") or "").strip() else None,
+            workplace=str(entry.get("workplaceType") or "").strip() or None,
             raw=entry,
         ))
     return result

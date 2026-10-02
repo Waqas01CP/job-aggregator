@@ -257,6 +257,7 @@ class Eligibility:
     home_country_names: tuple = ()
     levels_admitted: tuple = ()
     level_names: tuple = ()
+    home_country_codes: tuple = ()
 
 
 def _words(terms):
@@ -282,6 +283,10 @@ def load_eligibility(path=None):
     country = {p.pattern for p in lists.pop("home_country")}
     if not country <= {p.pattern for p in lists["home"]}:
         raise FilterError("the home country must be one of the home places")
+    codes = raw.get("home_country_codes")
+    if (not isinstance(codes, list) or not codes
+            or not all(isinstance(c, str) and re.fullmatch(r"[A-Z]{2}", c) for c in codes)):
+        raise FilterError("home_country_codes must be a non-empty list of ISO 3166 alpha-2 codes")
     levels = raw.get("stated_levels_admitted")
     if not isinstance(levels, list) or not levels or not all(isinstance(v, str) and v.strip()
                                                              for v in levels):
@@ -290,7 +295,7 @@ def load_eligibility(path=None):
                        home_cities=tuple(p for p in lists["home"] if p.pattern not in country),
                        home_country_names=names["home_country"],
                        levels_admitted=tuple(fold(v) for v in levels),
-                       level_names=tuple(levels), **lists)
+                       level_names=tuple(levels), home_country_codes=tuple(codes), **lists)
 
 
 def _qualifiers_removed(part):
@@ -504,7 +509,10 @@ def rule_location(row, eligibility, **kw):
     if not text or not str(text).strip():
         return Verdict(True)
     parts = [p for p in _PARTS.split(str(text)) if p.strip()]
-    if parts and all(classify_place(p, eligibility) == "closed" for p in parts):
+    worked = _workplace_words(getattr(row, "workplace", None), eligibility)
+    verdicts = [classify_place(_with_workplace(p, worked, eligibility), eligibility)
+                for p in parts]
+    if parts and all(v == "closed" for v in verdicts):
         # The field, and what was absent from it, as ADR-0041's Confirmation
         # asks. The home country comes from the configuration, so no module
         # names a country (ADR-0031).
@@ -512,7 +520,60 @@ def rule_location(row, eligibility, **kw):
                        "operator, none of them %s or a remote role open to it: %r"
                        % (" or ".join(eligibility.home_country_names),
                           str(text).replace("\n", "; ")[:120]))
+    # The text names nothing eligible, and something it cannot place: a city
+    # such as "Dallas, TX" or "Manila". Where the source says where the
+    # posting is, that decides, and only ever to close: a home place there
+    # keeps it, and a source that says nothing leaves today's verdict. The
+    # operator's go, 2026-10-02, on 59 saved postings it would close and
+    # none it would lose.
+    if "eligible" not in verdicts and "unclear" in verdicts:
+        places = [str(x) for x in (getattr(row, "places", None) or []) if str(x).strip()]
+        if places and all(_classify_structured(x, eligibility) == "closed" for x in places):
+            return Verdict(False, "location", "the location field names no place the rule "
+                           "knows, and the source places the posting outside %s: %s"
+                           % (" or ".join(eligibility.home_country_names),
+                              "; ".join(places)[:120]))
     return Verdict(True)
+
+
+def _workplace_words(workplace, eligibility):
+    """The workplace a source states, as the words the place rules read: an
+    on-site marker for an on-site or hybrid role, and nothing otherwise.
+
+    **A stated remote workplace adds nothing.** Beside a city the rule cannot
+    place, "Manila (remote)" reads as remote with nothing closed beside it,
+    which admits it, and the source's own country, the Philippines, would
+    never be consulted. The first build did that, and kept 19 remote Lever
+    postings in four other countries. A remote role in Pakistan needs no
+    help: a home place admits it already."""
+    text = fold(workplace or "")
+    if not text or any(p.search(text) for p in eligibility.remote):
+        return ""
+    if any(p.search(text) for p in eligibility.onsite_markers):
+        return "on site"
+    return ""
+
+
+def _with_workplace(part, worked, eligibility):
+    """A place, with the source's stated workplace beside it when the text
+    says neither. So "Lahore, Pakistan" from a board whose field says the
+    role is office based reads as on site, and D13's on-site rule applies.
+    Text that already says remote or on site is never overridden."""
+    if not worked:
+        return part
+    text = fold(part)
+    if any(p.search(text) for p in eligibility.remote + eligibility.onsite_markers):
+        return part
+    return "%s (%s)" % (part, worked)
+
+
+def _classify_structured(place, eligibility):
+    """A place as a source structures it. An ISO 3166 alpha-2 code is the
+    home country's or another's; anything else is read like text."""
+    code = str(place).strip()
+    if re.fullmatch(r"[A-Z]{2}", code):
+        return "eligible" if code in eligibility.home_country_codes else "closed"
+    return classify_place(code, eligibility)
 
 
 def _when(value):

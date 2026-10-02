@@ -8,8 +8,8 @@
   {
     "label": "a posting's entry is not carried",
     "path": "src/adapters/greenhouse.py",
-    "find": "            expires_at=expires_at,\n            raw=entry,",
-    "replace": "            expires_at=expires_at,\n            raw=None,"
+    "find": "            workplace=workplace,\n            raw=entry,",
+    "replace": "            workplace=workplace,\n            raw=None,"
   },
   {
     "label": "an aggregator posting's entry is not carried",

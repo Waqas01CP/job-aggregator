@@ -226,5 +226,34 @@ class TestContractWorkflow(unittest.TestCase):
         self.assertNotIn("secrets.", self.text)
 
 
+class TestBothWorkflows(unittest.TestCase):
+    """What holds for the fetch and the contract check alike."""
+
+    def texts(self):
+        with open(CONTRACT, encoding="utf-8") as f:
+            return {"fetch": workflow(), "contract": f.read()}
+
+    def test_the_tests_can_raise_no_annotation_and_still_fail_the_step(self):
+        """A "::warning::" a test printed became an annotation on every run
+        of 2026-10-02. Commands are stopped for the tests and resumed after,
+        and the step exits with the suite's own status. Mutation: "the
+        tests run with workflow commands live"."""
+        for name, text in self.texts().items():
+            with self.subTest(workflow=name):
+                stop = text.index('echo "::stop-commands::$token"')
+                tests = text.index("python -m unittest discover", stop)
+                resume = text.index('echo "::$token::"', tests)
+                self.assertLess(text.index("status=$?", tests), resume)
+                self.assertIn("exit $status", text[resume:resume + 60])
+
+    def test_the_runner_image_is_pinned(self):
+        """ubuntu-latest moves to Ubuntu 26 from 2026-10-19, under a pinned
+        Python 3.11. A move is a decision, made after a test run."""
+        for name, text in self.texts().items():
+            with self.subTest(workflow=name):
+                self.assertRegex(text, r"runs-on: ubuntu-\d\d\.\d\d\n")
+                self.assertNotIn("ubuntu-latest\n", text)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

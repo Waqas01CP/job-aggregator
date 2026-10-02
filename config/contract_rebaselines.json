@@ -12,6 +12,19 @@
       "date": "2026-10-02",
       "cause": "The adapter now reads seniority, the level Himalayas states, for the level rule the operator decided on 2026-10-02, so the check fingerprints one more field. Nothing changed at Himalayas.",
       "fields": ["posting.seniority"]
+    },
+    {
+      "platform": "greenhouse",
+      "date": "2026-10-02",
+      "cause": "The adapter now reads offices and metadata, for the location rule's structured place and stated workplace, the operator's go of 2026-10-02, so the check fingerprints two more fields. Nothing changed at Greenhouse.",
+      "fields": ["posting.offices", "posting.offices.location", "posting.metadata",
+                 "posting.metadata.name", "posting.metadata.value"]
+    },
+    {
+      "platform": "lever",
+      "date": "2026-10-02",
+      "cause": "The adapter now reads country and workplaceType, for the location rule's structured place and stated workplace, the operator's go of 2026-10-02, so the check fingerprints two more fields. Nothing changed at Lever.",
+      "fields": ["posting.country", "posting.workplaceType"]
     }
   ]
 }

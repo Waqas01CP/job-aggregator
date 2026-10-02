@@ -32,7 +32,10 @@ permissions:
 
 jobs:
   contract:
-    runs-on: ubuntu-latest
+    # Pinned, not ubuntu-latest: GitHub moves that label to Ubuntu 26 from
+    # 2026-10-19, and Python 3.11, which this pins, is untested there. Moved
+    # deliberately, after a test run on the new image, never by the label.
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
 
     env:
@@ -50,7 +53,17 @@ jobs:
       - run: pip install -r requirements.txt
 
       - name: Run the tests before asking a live board
-        run: python -m unittest discover -s tests -t .
+        # Workflow commands are switched off while the tests run. A test that
+        # prints a warning command otherwise becomes an annotation on the run: one
+        # did on every run of 2026-10-02, a disagreement that never happened.
+        run: |
+          token="tests-$(date +%s%N)"
+          echo "::stop-commands::$token"
+          set +e
+          python -m unittest discover -s tests -t .
+          status=$?
+          echo "::$token::"
+          exit $status
 
       # As in fetch.yml: the check reads the last fingerprint from the branch
       # and commits the next one on top, so the branch is fetched first.

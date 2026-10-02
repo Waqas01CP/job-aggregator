@@ -38,8 +38,8 @@
   {
     "label": "a consumed path loses its parent",
     "path": "src/adapters/greenhouse.py",
-    "find": "\"location\", \"location.name\")",
-    "replace": "\"location\", \"name\")"
+    "find": "\"company_name\", \"location\", \"location.name\",",
+    "replace": "\"company_name\", \"location\", \"name\","
   },
   {
     "label": "a waiting fetch can be cancelled",

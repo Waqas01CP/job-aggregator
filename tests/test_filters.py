@@ -372,6 +372,79 @@ class TestAnnotationVendors(unittest.TestCase):
         self.assertTrue(rule_annotation_vendor(row(employer=None), ANNOTATION_VENDORS).keep)
 
 
+class TestTheSourcesOwnPlace(unittest.TestCase):
+    """The operator's go of 2026-10-02: where the location text names nothing
+    the rule knows, the source's structured place decides, and only to
+    close; the workplace the source states feeds D13's on-site rule."""
+
+    def judged(self, location, places=None, workplace=None):
+        r = row(location=location)
+        r.places, r.workplace = places, workplace
+        kept, drops = apply_chain([r], NOW_ISO, matcher=MATCHER)
+        return bool(kept), (drops[0] if drops else None)
+
+    def test_a_city_the_rule_cannot_place_is_closed_by_the_sources_country(self):
+        """Lever's "Dallas, TX" in the United States, a Saudi city from a
+        Greenhouse office. Mutation: "the source's place is never read"."""
+        for location, places in (("Dallas, TX", ["US"]), ("Manila", ["PH"]),
+                                 ("Riyadh", ["Riyadh, Riyadh, Saudi Arabia"])):
+            with self.subTest(location=location):
+                kept, drop = self.judged(location, places)
+                self.assertFalse(kept)
+                self.assertEqual(drop["rule"], "location")
+                self.assertIn("the source places the posting outside", drop["reason"])
+
+    def test_the_home_country_there_keeps_it(self):
+        """Text the rule cannot place, which the source places in Pakistan.
+        "Lahore" alone would not test this: the text admits it before the
+        source's place is asked, so the first version of this test passed
+        with the code reading Pakistan's as closed. Mutation: "the home
+        country's code reads as closed"."""
+        self.assertTrue(self.judged("Thokar Niaz Baig", ["PK"])[0])
+        self.assertTrue(self.judged("Thokar Niaz Baig", ["Karachi, Sindh, Pakistan"])[0])
+
+    def test_a_source_that_says_nothing_leaves_the_text_to_decide(self):
+        self.assertTrue(self.judged("Dallas, TX")[0])
+
+    def test_text_naming_an_eligible_place_is_never_overridden(self):
+        """A "Remote - India, Pakistan" posting lists offices in India and
+        Mexico only. Mutation: "the source's place overrides the text"."""
+        self.assertTrue(self.judged("Remote - India, Pakistan",
+                                    ["Mumbai, India", "Mexico City, Mexico"])[0])
+        self.assertTrue(self.judged("Remote", ["US"])[0])
+
+    def test_one_place_in_pakistan_keeps_it(self):
+        """Only to close: every place the source gives must be elsewhere."""
+        self.assertTrue(self.judged("Cairo; Somewhere", ["Cairo, Egypt", "Lahore, Pakistan"])[0])
+
+    def test_the_stated_workplace_makes_a_city_outside_karachi_on_site(self):
+        """D13: "any onsite post besides karachi, pakistan are automatically
+        out". The location field did not say on site; the source's field
+        does. Mutation: "the stated workplace is ignored"."""
+        self.assertFalse(self.judged("Lahore, Pakistan", workplace="Office Based")[0])
+        self.assertFalse(self.judged("Islamabad, Pakistan", workplace="onsite")[0])
+        self.assertTrue(self.judged("Karachi, Pakistan", workplace="Office Based")[0])
+        self.assertTrue(self.judged("Lahore, Pakistan", workplace="Remote")[0])
+        self.assertTrue(self.judged("Pakistan", workplace="onsite")[0])
+
+    def test_a_stated_remote_workplace_never_opens_a_city_elsewhere(self):
+        """Lever's remote Manila role is in the Philippines. Beside the city,
+        "remote" read as open to anyone, and the country was never asked.
+        Mutation: "a stated remote workplace opens an unknown city"."""
+        kept, drop = self.judged("Manila", ["PH"], workplace="remote")
+        self.assertFalse(kept)
+        self.assertIn("PH", drop["reason"])
+        self.assertTrue(self.judged("Karachi", ["PK"], workplace="remote")[0])
+
+    def test_text_that_says_how_the_role_is_worked_wins(self):
+        """"Remote - Lahore" stays remote whatever a field says."""
+        self.assertTrue(self.judged("Remote - Lahore", workplace="Hybrid")[0])
+
+    def test_a_value_that_names_no_workplace_changes_nothing(self):
+        self.assertTrue(self.judged("Lahore, Pakistan", workplace="Full-time")[0])
+        self.assertTrue(self.judged("Lahore, Pakistan", workplace="unspecified")[0])
+
+
 class TestTheLevelRule(unittest.TestCase):
     """The operator's decision of 2026-10-02: where a source states a level,
     keep the levels he takes, his option A. The levels come from

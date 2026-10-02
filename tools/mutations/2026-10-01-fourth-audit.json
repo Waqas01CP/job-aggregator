@@ -38,8 +38,8 @@
   {
     "label": "a drop reason names no home country",
     "path": "src/filters.py",
-    "find": "                       % (\" or \".join(eligibility.home_country_names),",
-    "replace": "                       % (\"anywhere\","
+    "find": "                       % (\" or \".join(eligibility.home_country_names),\n                          str(text).replace(\"\\n\", \"; \")[:120]))",
+    "replace": "                       % (\"anywhere\",\n                          str(text).replace(\"\\n\", \"; \")[:120]))"
   },
   {
     "label": "a shape with no acceptance date reads as older than every entry",
@@ -170,8 +170,8 @@
   {
     "label": "a walk that never reached a waiting posting's date judges it",
     "path": "src/run.py",
-    "find": "            reached is not None and reached <= _parse(e[\"published_at\"]))",
-    "replace": "            True)"
+    "find": "        covered = published is None or walk_covered(walk, published)",
+    "replace": "        covered = True"
   },
   {
     "label": "the waiting list is forgotten between walks",

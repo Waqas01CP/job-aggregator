@@ -1,0 +1,20 @@
+[
+  {
+    "label": "a waiting posting never gives up",
+    "path": "src/run.py",
+    "find": "        if published and now - _parse(published) > timedelta(days=eligibility.max_age_days):",
+    "replace": "        if False:"
+  },
+  {
+    "label": "the tests run with workflow commands live",
+    "path": ".github/workflows/fetch.yml",
+    "find": "          echo \"::stop-commands::$token\"\n",
+    "replace": ""
+  },
+  {
+    "label": "the runner follows ubuntu-latest",
+    "path": ".github/workflows/fetch.yml",
+    "find": "    runs-on: ubuntu-24.04\n",
+    "replace": "    runs-on: ubuntu-latest\n"
+  }
+]

@@ -535,12 +535,18 @@ class TestRunIntegration(unittest.TestCase):
         check never disagrees"."""
         first = self._walk(self._browse({"guid": "https://x.test/9", "pubDate": self.NEWER}))
         self.assertEqual(first["boards"][0]["agreement"]["disagreements"], 0)
-        log = self._walk(self._browse(), days_later=1)
+        # Captured, and asserted: the workflow runs this suite before every
+        # fetch, and a "::warning::" printed here became an annotation on
+        # every run from 2026-10-02, a disagreement that never happened.
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            log = self._walk(self._browse(), days_later=1)
+        self.assertIn("::warning::ADR-0053", out.getvalue())
         [board] = log["boards"]
         self.assertEqual(board["agreement"], {"browse_read": 0, "returned_by_search": 0,
                                               "rule_excludes": 0, "newly_waiting": 0,
                                               "returned_since": 0, "disagreements": 1,
-                                              "still_waiting": 0})
+                                              "still_waiting": 0, "gave_up": 0})
         self.assertNotIn("x.test/9", json.dumps(first) + json.dumps(log))
         [record] = load_json("data/local/outcomes/agreement_disagreements.json")
         self.assertEqual(record["identity"], "himalayas:https://x.test/9")
@@ -570,11 +576,27 @@ class TestRunIntegration(unittest.TestCase):
 
     def test_a_walk_that_did_not_reach_back_to_it_leaves_it_waiting(self):
         """An absence from pages that end before a posting's date says
-        nothing about it. Mutation: "a walk that never reached a waiting
-        posting's date judges it"."""
+        nothing about it. The second walk stops at the mark the first one
+        saved, newer than the waiting posting, so it never looked; judged by
+        its oldest posting, as the first build did, it would have. Mutation:
+        "a walk that never reached a waiting posting's date judges it"."""
         self._walk(self._browse({"guid": "https://x.test/9", "pubDate": 1789141700}))
-        agree = self._walk(self._browse(), days_later=1)["boards"][0]["agreement"]
+        self._saved_in_full()
+        log = self._walk(self._browse(), days_later=1)
+        self.assertEqual(log["boards"][0]["walk"]["stopped_by"], "mark")
+        agree = log["boards"][0]["agreement"]
         self.assertEqual((agree["disagreements"], agree["still_waiting"]), (0, 1))
+
+    def test_a_posting_no_walk_can_settle_is_given_up(self):
+        """Once it is older than the age limit no walk reads back to it, so
+        it leaves the waiting list, counted. Mutation: "a waiting posting
+        never gives up"."""
+        self._walk(self._browse({"guid": "https://x.test/9", "pubDate": 1789141700}))
+        self._saved_in_full()
+        agree = self._walk(self._browse(), days_later=9)["boards"][0]["agreement"]
+        self.assertEqual((agree["gave_up"], agree["still_waiting"], agree["disagreements"]),
+                         (1, 0, 0))
+        self.assertEqual(load_json("data/local/outcomes/agreement_pending.json"), [])
 
     def test_a_posting_the_search_excluded_and_the_rule_would_too_is_agreement(self):
         """Mutation: "the agreement check ignores the location rule"."""

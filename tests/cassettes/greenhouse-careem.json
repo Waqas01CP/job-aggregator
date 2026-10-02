@@ -25,31 +25,31 @@
     {
      "id": 4471783002,
      "name": "Division",
-     "value": "Marketplace Business",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 4221047002,
      "name": "Sub-Division",
-     "value": "Food & Dineout",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 10033485002,
      "name": "Sub-Department",
-     "value": "Food UAE - Online accounts",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 22986410002,
      "name": "Hiring Manager",
-     "value": "muhammad.arsal1@careem.com",
+     "value": "STRIPPED",
      "value_type": "short_text"
     },
     {
      "id": 12565152002,
      "name": "Job Family",
-     "value": "Sales & Account management",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
@@ -112,31 +112,31 @@
     {
      "id": 4471783002,
      "name": "Division",
-     "value": "Strategic Partnerships",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 4221047002,
      "name": "Sub-Division",
-     "value": "Strategic Partnerships",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 10033485002,
      "name": "Sub-Department",
-     "value": "Ads Commercial",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 22986410002,
      "name": "Hiring Manager",
-     "value": "dana.elzein@careem.com",
+     "value": "STRIPPED",
      "value_type": "short_text"
     },
     {
      "id": 12565152002,
      "name": "Job Family",
-     "value": "Partnership",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
@@ -199,43 +199,43 @@
     {
      "id": 4471783002,
      "name": "Division",
-     "value": "Tech",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 4221047002,
      "name": "Sub-Division",
-     "value": "Information Security & IT",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 10033485002,
      "name": "Sub-Department",
-     "value": "ERP Digital Transformation",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 22986410002,
      "name": "Hiring Manager",
-     "value": "tarun.matai@careem.com",
+     "value": "STRIPPED",
      "value_type": "short_text"
     },
     {
      "id": 12565152002,
      "name": "Job Family",
-     "value": "ERP",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 15653543002,
      "name": "Tribe",
-     "value": "IT",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 15653550002,
      "name": "Squad",
-     "value": "it-erp-digital-transformation",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
@@ -286,31 +286,31 @@
     {
      "id": 4471783002,
      "name": "Division",
-     "value": "Groceries",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 4221047002,
      "name": "Sub-Division",
-     "value": "Groceries Category Management",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 10033485002,
      "name": "Sub-Department",
-     "value": "Groceries Category Management",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 22986410002,
      "name": "Hiring Manager",
-     "value": "ali.hodroj@careem.com",
+     "value": "STRIPPED",
      "value_type": "short_text"
     },
     {
      "id": 12565152002,
      "name": "Job Family",
-     "value": "Category management",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
@@ -373,31 +373,31 @@
     {
      "id": 4471783002,
      "name": "Division",
-     "value": "Groceries",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 4221047002,
      "name": "Sub-Division",
-     "value": "Groceries Category Management",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 10033485002,
      "name": "Sub-Department",
-     "value": "Groceries Category Management",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 22986410002,
      "name": "Hiring Manager",
-     "value": "ali.hodroj@careem.com",
+     "value": "STRIPPED",
      "value_type": "short_text"
     },
     {
      "id": 12565152002,
      "name": "Job Family",
-     "value": "Category management",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
@@ -460,31 +460,31 @@
     {
      "id": 4471783002,
      "name": "Division",
-     "value": "Marketplace Business",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 4221047002,
      "name": "Sub-Division",
-     "value": "Marketplace Revenue Management",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 10033485002,
      "name": "Sub-Department",
-     "value": "Marketplace Revenue Management",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 22986410002,
      "name": "Hiring Manager",
-     "value": "raghavendra.pai@careem.com",
+     "value": "STRIPPED",
      "value_type": "short_text"
     },
     {
      "id": 12565152002,
      "name": "Job Family",
-     "value": "Insights & Analytics",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
@@ -547,31 +547,31 @@
     {
      "id": 4471783002,
      "name": "Division",
-     "value": "Groceries",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 4221047002,
      "name": "Sub-Division",
-     "value": "Groceries Category Management",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 10033485002,
      "name": "Sub-Department",
-     "value": "Groceries Category Management",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 22986410002,
      "name": "Hiring Manager",
-     "value": "dusty.tourani@careem.com",
+     "value": "STRIPPED",
      "value_type": "short_text"
     },
     {
      "id": 12565152002,
      "name": "Job Family",
-     "value": "Category management",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
@@ -634,31 +634,31 @@
     {
      "id": 4471783002,
      "name": "Division",
-     "value": "Marketplace Business",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 4221047002,
      "name": "Sub-Division",
-     "value": "Shops",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 10033485002,
      "name": "Sub-Department",
-     "value": "Shops Operations - UAE",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 22986410002,
      "name": "Hiring Manager",
-     "value": "fakhruddin.saifuddin@careem.com",
+     "value": "STRIPPED",
      "value_type": "short_text"
     },
     {
      "id": 12565152002,
      "name": "Job Family",
-     "value": "Operations",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
@@ -721,31 +721,31 @@
     {
      "id": 4471783002,
      "name": "Division",
-     "value": "Legal",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 4221047002,
      "name": "Sub-Division",
-     "value": "Legal",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 10033485002,
      "name": "Sub-Department",
-     "value": "Safety & Security",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 22986410002,
      "name": "Hiring Manager",
-     "value": "daniela.bartolo@careem.com",
+     "value": "STRIPPED",
      "value_type": "short_text"
     },
     {
      "id": 12565152002,
      "name": "Job Family",
-     "value": "Safety Operations",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
@@ -808,31 +808,31 @@
     {
      "id": 4471783002,
      "name": "Division",
-     "value": "Strategic Partnerships",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 4221047002,
      "name": "Sub-Division",
-     "value": "Strategic Partnerships",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 10033485002,
      "name": "Sub-Department",
-     "value": "External Communications",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 22986410002,
      "name": "Hiring Manager",
-     "value": "daniela.pereira@careem.com",
+     "value": "STRIPPED",
      "value_type": "short_text"
     },
     {
      "id": 12565152002,
      "name": "Job Family",
-     "value": "Corporate Affairs",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
@@ -895,43 +895,43 @@
     {
      "id": 4471783002,
      "name": "Division",
-     "value": "Tech",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 4221047002,
      "name": "Sub-Division",
-     "value": "Information Security & IT",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 10033485002,
      "name": "Sub-Department",
-     "value": "ERP Digital Transformation",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 22986410002,
      "name": "Hiring Manager",
-     "value": "tarun.matai@careem.com",
+     "value": "STRIPPED",
      "value_type": "short_text"
     },
     {
      "id": 12565152002,
      "name": "Job Family",
-     "value": "ERP",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 15653543002,
      "name": "Tribe",
-     "value": "IT",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 15653550002,
      "name": "Squad",
-     "value": "it-erp-digital-transformation",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
@@ -982,43 +982,43 @@
     {
      "id": 4471783002,
      "name": "Division",
-     "value": "Tech",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 4221047002,
      "name": "Sub-Division",
-     "value": "Information Security & IT",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 10033485002,
      "name": "Sub-Department",
-     "value": "IT Infrastructure & Services",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 22986410002,
      "name": "Hiring Manager",
-     "value": "pawan.negi@careem.com",
+     "value": "STRIPPED",
      "value_type": "short_text"
     },
     {
      "id": 12565152002,
      "name": "Job Family",
-     "value": "IT Infrastructure",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 15653543002,
      "name": "Tribe",
-     "value": "IT",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 15653550002,
      "name": "Squad",
-     "value": "it-infrastructure",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
@@ -1069,31 +1069,31 @@
     {
      "id": 4471783002,
      "name": "Division",
-     "value": "Groceries",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 4221047002,
      "name": "Sub-Division",
-     "value": "Groceries Revenue Management",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 10033485002,
      "name": "Sub-Department",
-     "value": "Groceries Merchandising",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 22986410002,
      "name": "Hiring Manager",
-     "value": "mariam.nagui@careem.com",
+     "value": "STRIPPED",
      "value_type": "short_text"
     },
     {
      "id": 12565152002,
      "name": "Job Family",
-     "value": "Category management",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
@@ -1156,31 +1156,31 @@
     {
      "id": 4471783002,
      "name": "Division",
-     "value": "Marketplace Business",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 4221047002,
      "name": "Sub-Division",
-     "value": "Shops",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 10033485002,
      "name": "Sub-Department",
-     "value": "Shops Operations - UAE",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 22986410002,
      "name": "Hiring Manager",
-     "value": "emad.gharzuddine@careem.com",
+     "value": "STRIPPED",
      "value_type": "short_text"
     },
     {
      "id": 12565152002,
      "name": "Job Family",
-     "value": "Operations",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
@@ -1243,43 +1243,43 @@
     {
      "id": 4471783002,
      "name": "Division",
-     "value": "Tech",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 4221047002,
      "name": "Sub-Division",
-     "value": "Product",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 10033485002,
      "name": "Sub-Department",
-     "value": "Product Design",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 22986410002,
      "name": "Hiring Manager",
-     "value": "dom.dressler@careem.com",
+     "value": "STRIPPED",
      "value_type": "short_text"
     },
     {
      "id": 12565152002,
      "name": "Job Family",
-     "value": "Product Designer",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 15653543002,
      "name": "Tribe",
-     "value": "Captain",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 15653550002,
      "name": "Squad",
-     "value": "ea-plus-profile",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
@@ -1330,43 +1330,43 @@
     {
      "id": 4471783002,
      "name": "Division",
-     "value": "Tech",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 4221047002,
      "name": "Sub-Division",
-     "value": "Product",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 10033485002,
      "name": "Sub-Department",
-     "value": "Product Design",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 22986410002,
      "name": "Hiring Manager",
-     "value": "dom.dressler@careem.com",
+     "value": "STRIPPED",
      "value_type": "short_text"
     },
     {
      "id": 12565152002,
      "name": "Job Family",
-     "value": "Product Designer",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 15653543002,
      "name": "Tribe",
-     "value": "Transport & Global Experiences",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 15653550002,
      "name": "Squad",
-     "value": "ea-core-platform",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
@@ -1417,31 +1417,31 @@
     {
      "id": 4471783002,
      "name": "Division",
-     "value": "Careem Pay",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 4221047002,
      "name": "Sub-Division",
-     "value": "Careem Pay",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 10033485002,
      "name": "Sub-Department",
-     "value": "Pay Product",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 22986410002,
      "name": "Hiring Manager",
-     "value": "fathy.abdelmonam@careem.com",
+     "value": "STRIPPED",
      "value_type": "short_text"
     },
     {
      "id": 12565152002,
      "name": "Job Family",
-     "value": "Product Operations",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
@@ -1504,43 +1504,43 @@
     {
      "id": 4471783002,
      "name": "Division",
-     "value": "Tech",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 4221047002,
      "name": "Sub-Division",
-     "value": "Engineering",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 10033485002,
      "name": "Sub-Department",
-     "value": "Deliveries Discovery",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 22986410002,
      "name": "Hiring Manager",
-     "value": "sergio.garre@careem.com",
+     "value": "STRIPPED",
      "value_type": "short_text"
     },
     {
      "id": 12565152002,
      "name": "Job Family",
-     "value": "Software engineering - Backend",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 15653543002,
      "name": "Tribe",
-     "value": "Deliveries Discovery",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 15653550002,
      "name": "Squad",
-     "value": "quick-shops-box",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
@@ -1591,31 +1591,31 @@
     {
      "id": 4471783002,
      "name": "Division",
-     "value": "Groceries",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 4221047002,
      "name": "Sub-Division",
-     "value": "Supply Chain & Store Operations",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 10033485002,
      "name": "Sub-Department",
-     "value": "Supply Chain Planning",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 22986410002,
      "name": "Hiring Manager",
-     "value": "omair.siddiqui@careem.com",
+     "value": "STRIPPED",
      "value_type": "short_text"
     },
     {
      "id": 12565152002,
      "name": "Job Family",
-     "value": "Insights & Analytics",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
@@ -1678,19 +1678,19 @@
     {
      "id": 4471783002,
      "name": "Division",
-     "value": "Tech",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 4221047002,
      "name": "Sub-Division",
-     "value": "Satellite Engineering",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 10033485002,
      "name": "Sub-Department",
-     "value": "Satellite Engineering",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
@@ -1702,7 +1702,7 @@
     {
      "id": 12565152002,
      "name": "Job Family",
-     "value": "Software engineering",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
@@ -1765,19 +1765,19 @@
     {
      "id": 4471783002,
      "name": "Division",
-     "value": "Tech",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 4221047002,
      "name": "Sub-Division",
-     "value": "Core Engineering",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {
      "id": 10033485002,
      "name": "Sub-Department",
-     "value": "Satellite Engineering",
+     "value": "STRIPPED",
      "value_type": "single_select"
     },
     {

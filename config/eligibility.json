@@ -5,6 +5,8 @@
   "home": ["pakistan", "karachi", "lahore", "islamabad", "rawalpindi", "faisalabad", "multan", "peshawar", "quetta", "sialkot", "gujranwala"],
   "home_note": "Places in Pakistan. A location naming one is eligible. Hyderabad is left out on purpose: India has one too, and 'Hyderabad, India' must not read as Pakistan.",
   "home_country": ["pakistan"],
+  "home_country_codes": ["PK"],
+  "home_country_codes_note": "The home country's ISO 3166 alpha-2 code, as a source structures a posting's place: Lever's country. Where the location text names nothing the rule knows, a structured place decides, and only to close: a posting the source places in any other country is out, one it places here is kept, one it places nowhere keeps the text's verdict. The operator's go, 2026-10-02.",
   "home_country_note": "Which of the home places is the country rather than a city. 'Pakistan (On-site)' names no city, so it may be Karachi and is kept; an on-site posting is out only when it names a home city other than Karachi. A dropped posting's reason names these, so it says what was absent without any module naming a country.",
   "onsite_home_city": ["karachi"],
   "onsite_home_city_note": "D13: 'any onsite post besides karachi, pakistan are automatically out'. A Pakistan location that says it is on site or hybrid is eligible only in these cities. One that says neither is kept, since whether it is on site cannot be read from it.",

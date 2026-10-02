@@ -1,0 +1,56 @@
+[
+  {
+    "label": "the source's place is never read",
+    "path": "src/filters.py",
+    "find": "    if \"eligible\" not in verdicts and \"unclear\" in verdicts:",
+    "replace": "    if False:"
+  },
+  {
+    "label": "the source's place overrides the text",
+    "path": "src/filters.py",
+    "find": "    if \"eligible\" not in verdicts and \"unclear\" in verdicts:",
+    "replace": "    if True:"
+  },
+  {
+    "label": "the home country's code reads as closed",
+    "path": "src/filters.py",
+    "find": "        return \"eligible\" if code in eligibility.home_country_codes else \"closed\"",
+    "replace": "        return \"closed\""
+  },
+  {
+    "label": "the stated workplace is ignored",
+    "path": "src/filters.py",
+    "find": "    worked = _workplace_words(getattr(row, \"workplace\", None), eligibility)",
+    "replace": "    worked = \"\""
+  },
+  {
+    "label": "the adapter reads no office",
+    "path": "src/adapters/greenhouse.py",
+    "find": "            places.append(str(office[\"location\"]).strip())",
+    "replace": "            pass"
+  },
+  {
+    "label": "the adapter reads no country",
+    "path": "src/adapters/lever.py",
+    "find": "            places=(str(entry[\"country\"]).strip().upper(),)\n            if str(entry.get(\"country\") or \"\").strip() else None,",
+    "replace": "            places=None,"
+  },
+  {
+    "label": "a path through a list is absent",
+    "path": "src/contract.py",
+    "find": "        if isinstance(obj, list):",
+    "replace": "        if False:"
+  },
+  {
+    "label": "the cassette tool keeps people's addresses",
+    "path": "tools/make_cassette.py",
+    "find": "        return PLACEHOLDER if EMAIL.search(node) else node",
+    "replace": "        return node"
+  },
+  {
+    "label": "a stated remote workplace opens an unknown city",
+    "path": "src/filters.py",
+    "find": "    if not text or any(p.search(text) for p in eligibility.remote):\n        return \"\"",
+    "replace": "    if not text:\n        return \"\"\n    if any(p.search(text) for p in eligibility.remote):\n        return \"remote\""
+  }
+]

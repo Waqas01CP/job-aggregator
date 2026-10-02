@@ -42,7 +42,14 @@ PUBLISHED_FIELD = "first_published"
 CONSUMED_RESPONSE = ("jobs",)
 POSTINGS_AT = "jobs"
 CONSUMED = ("id", "title", "absolute_url", PUBLISHED_FIELD, "application_deadline",
-            "application_deadline.date", "company_name", "location", "location.name")
+            "application_deadline.date", "company_name", "location", "location.name",
+            "offices", "offices.location", "metadata", "metadata.name", "metadata.value")
+
+# Custom fields, which each employer names itself, that say where a posting
+# is or how it is worked, by the names measured on the boards configured on
+# 2026-10-02 (docs/reference/platform-fields.md). Matched case-insensitively.
+COUNTRY_FIELDS = ("country",)
+WORKPLACE_FIELDS = ("work type", "job type")
 
 
 def url_for(board):
@@ -110,6 +117,7 @@ def parse(payload, board):
         employer = (entry.get("company_name") or "").strip() or None
         location = entry.get("location") or {}
         location_name = (location.get("name") or "").strip() if isinstance(location, dict) else None
+        places, workplace = _structured_place(entry)
 
         result.postings.append(Posting(
             external_id=external_id,
@@ -125,6 +133,33 @@ def parse(payload, board):
             url_provenance="payload",
             location=location_name or None,
             expires_at=expires_at,
+            places=places or None,
+            workplace=workplace,
             raw=entry,
         ))
     return result
+
+
+def _structured_place(entry):
+    """(places, workplace): each office's "City, Region, Country", a custom
+    field naming the country, and a custom field naming how the role is
+    worked. `offices` is not authoritative on its own: a "Remote - India,
+    Pakistan" posting lists offices in India and Mexico only. So the
+    location rule reads these only where the location text names nothing it
+    recognises, and only to close."""
+    places, workplace = [], None
+    for office in entry.get("offices") or []:
+        if isinstance(office, dict) and str(office.get("location") or "").strip():
+            places.append(str(office["location"]).strip())
+    for field in entry.get("metadata") or []:
+        if not isinstance(field, dict):
+            continue
+        name = str(field.get("name") or "").strip().lower()
+        value = field.get("value")
+        values = [str(v).strip() for v in (value if isinstance(value, list) else [value])
+                  if v is not None and str(v).strip()]
+        if name in COUNTRY_FIELDS:
+            places.extend(values)
+        elif name in WORKPLACE_FIELDS and values and workplace is None:
+            workplace = values[0]
+    return tuple(places), workplace

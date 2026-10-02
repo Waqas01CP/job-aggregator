@@ -122,6 +122,32 @@ class TestGreenhouse(unittest.TestCase):
         self.assertEqual(result.problems, [])
 
 
+class TestTheSourcesOwnPlace(unittest.TestCase):
+    """2026-10-02: where each source structures a posting's place, and how
+    it is worked, read verbatim for the location rule. Mutations: "the
+    adapter reads no office", "the adapter reads no country"."""
+
+    def test_greenhouse_reads_each_office_and_a_country_field(self):
+        result = greenhouse.parse(cassette("greenhouse-careem-content.json"), GH_BOARD)
+        self.assertEqual(result.postings[1].places, ("Karachi, Pakistan", "Pakistan"))
+        self.assertEqual(result.postings[0].places,
+                         ("Dubai, United Arab Emirates", "United Arab Emirates"))
+
+    def test_greenhouse_reads_a_work_type_field(self):
+        entry = {"id": 1, "title": "AI Engineer", "absolute_url": "https://x.test/1",
+                 "first_published": "2026-09-10T00:00:00-04:00", "location": {"name": "Lahore"},
+                 "offices": [], "metadata": [
+                     {"name": "Work Type", "value": "Office Based", "value_type": "single_select"},
+                     {"name": "Country", "value": None, "value_type": "single_select"}]}
+        [p] = greenhouse.parse({"jobs": [entry]}, GH_BOARD).postings
+        self.assertEqual((p.workplace, p.places), ("Office Based", None))
+
+    def test_lever_reads_the_country_code_and_the_workplace(self):
+        postings = lever.parse(cassette("lever-smart-working-solutions.json"), LV_BOARD).postings
+        self.assertEqual([(p.places, p.workplace) for p in postings[:2]],
+                         [(("IN",), "remote"), (("PK",), "remote")])
+
+
 class TestLever(unittest.TestCase):
     def setUp(self):
         self.payload = cassette("lever-smart-working-solutions.json")
