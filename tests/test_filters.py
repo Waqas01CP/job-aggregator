@@ -372,6 +372,71 @@ class TestAnnotationVendors(unittest.TestCase):
         self.assertTrue(rule_annotation_vendor(row(employer=None), ANNOTATION_VENDORS).keep)
 
 
+class TestTheLevelRule(unittest.TestCase):
+    """The operator's decision of 2026-10-02: where a source states a level,
+    keep the levels he takes, his option A. The levels come from
+    configuration, never from this file's literals, so the test cannot drift
+    from what he decided."""
+
+    def setUp(self):
+        from src.filters import ELIGIBILITY
+        self.taken = list(ELIGIBILITY.level_names)
+        self.assertTrue(self.taken, "no admitted levels configured")
+
+    def stated(self, *levels):
+        r = row()
+        r.stated_levels = list(levels) if levels else None
+        kept, drops = apply_chain([r], NOW_ISO, matcher=MATCHER)
+        return bool(kept), (drops[0] if drops else None)
+
+    def test_a_level_he_takes_is_kept(self):
+        for level in self.taken:
+            with self.subTest(level=level):
+                self.assertEqual(self.stated(level), (True, None))
+
+    def test_a_level_above_is_dropped_and_named(self):
+        """Mutation: "the level rule keeps every posting"."""
+        kept, drop = self.stated("Senior")
+        self.assertFalse(kept)
+        self.assertEqual(drop["rule"], "level")
+        self.assertIn("Senior", drop["reason"])
+        for level in self.taken:
+            self.assertIn(level, drop["reason"])
+
+    def test_a_posting_open_to_a_level_he_takes_is_kept_whatever_else_it_states(self):
+        """Option A: "Mid-level/Senior" is open to a mid-level candidate.
+        Mutation: "a posting must state only levels he takes"."""
+        self.assertEqual(self.stated(self.taken[-1], "Senior"), (True, None))
+        self.assertFalse(self.stated("Senior", "Executive")[0])
+
+    def test_a_posting_that_states_no_level_is_kept(self):
+        """Every employer board, and every row stored before the rule.
+        Mutation: "a posting with no stated level is dropped"."""
+        self.assertEqual(self.stated(), (True, None))
+
+    def test_the_comparison_ignores_case_and_spacing(self):
+        self.assertTrue(self.stated(" %s " % self.taken[0].upper())[0])
+
+    def test_the_title_rule_still_runs_first(self):
+        r = row(title="Senior AI Engineer")
+        r.stated_levels = [self.taken[0]]
+        _, drops = apply_chain([r], NOW_ISO, matcher=MATCHER)
+        self.assertEqual(drops[0]["rule"], "seniority")
+
+    def test_the_configuration_refuses_an_empty_list(self):
+        import json
+        import tempfile
+        from src.filters import ELIGIBILITY_PATH, load_eligibility
+        with open(ELIGIBILITY_PATH, encoding="utf-8") as f:
+            config = json.load(f)
+        config["stated_levels_admitted"] = []
+        path = os.path.join(tempfile.mkdtemp(), "e.json")
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(config, f)
+        with self.assertRaises(FilterError):
+            load_eligibility(path)
+
+
 class TestChainOrder(unittest.TestCase):
     def test_the_cheapest_disqualifier_runs_first(self):
         """An expired annotation-vendor posting is dropped by expiry, not by

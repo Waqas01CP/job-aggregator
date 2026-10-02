@@ -53,6 +53,22 @@ class TestAdapter(unittest.TestCase):
         self.assertIn("sort=recent", url)
         self.assertIn("page=1", url)
 
+    def test_the_stated_level_is_read_verbatim_and_carried_to_the_row(self):
+        """2026-10-02: Himalayas' `seniority`, the level rule's input. An
+        empty or absent list is no level, which the rule keeps. Mutation:
+        "the adapter reads no level"."""
+        def job(guid, **extra):
+            return dict({"guid": "https://x.test/%s" % guid, "title": "AI Engineer",
+                         "applicationLink": "https://x.test/%s" % guid,
+                         "pubDate": 1789141813}, **extra)
+        payload = {"jobs": [job("1", seniority=["Mid-level", "Senior"]), job("2", seniority=[]),
+                            job("3")]}
+        postings = himalayas.parse(payload, BOARD).postings
+        self.assertEqual([p.levels for p in postings], [("Mid-level", "Senior"), None, None])
+        rows = normalise(postings, BOARD, NOW)
+        self.assertEqual(rows[0].stated_levels, ["Mid-level", "Senior"])
+        self.assertEqual((rows[1].stated_levels, rows[2].stated_levels), (None, None))
+
     def test_the_real_board_is_pakistan_on_the_morning_run(self):
         from src.config import load_boards
         [him] = [b for b in load_boards() if b.platform == "himalayas"]

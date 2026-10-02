@@ -260,3 +260,54 @@ All `[VERIFIED]` on this commit's code; each clone's `src`, `tests` and `tools` 
   - the 47 marks clear;
   - no Himalayas row is newly marked closed except by expiry.
 - **For the next audit:** the closure defect, which no audit had a chance to see.
+
+## Later the same day: his decisions, the level rule, and the two employer platforms
+
+**His answers** [VERIFIED as recorded]:
+- **The clearing tool's exit code: green.** Recorded in `CLAUDE.md`.
+- **Mixed levels:** his option A.
+- **Job types:** keep interns, contract, part-time, temporary and volunteer roles, on every source: volunteering "might be a good opportunity and can become a stepping stone".
+- **The level rule:** build it.
+- **Closure:** he confirmed that his apply-before idea and the fix already pushed are the same. On 99 of 100 current Himalayas postings, apply-before is exactly 60 days after posting [VERIFIED], so in practice the 15-day and 30-day clocks act first.
+- **Rejection copies:** stay as built. A rejection copy and its row leave together on the normal sweep, so only `accepted` copies outlive their row, and the clearing tool matches that.
+- **Time zones:** not filtered; he works US hours.
+
+### The level rule, built
+
+- **Read from the response, never asked of the search.** Himalayas' `seniority` is read into a new row field, `stated_levels`.
+- **Option A:** `rule_level` keeps a posting when any level it states is in `stated_levels_admitted`, which is Entry-level and Mid-level in `config/eligibility.json`.
+- **No level is kept.** A posting stating none is kept: every employer board, and every row stored before today.
+- **The title rule still runs.** The new rule sits after it in the chain.
+- **The contract check** now watches `seniority`, and the re-baseline entry of 2026-10-02 records that as our change.
+- **Measured** [VERIFIED], the real adapter and chain over the 809 saved Himalayas postings: 67 kept before, 34 after; the level rule takes 33.
+- **What it does not reach** [INFERRED from the code]: rows stored before today carry no level, so the senior-labelled Himalayas rows already in `Jobs` stay until he classifies them or the thirty-day clock takes them. Giving them their levels would mean rewriting stored rows, which the append-only layers forbid; it was not done.
+- **Tests:** the rule's cases, read from configuration rather than literals; the adapter and the row; the configuration refusing an empty list; the re-baseline entry.
+- **Mutations:** `tools/mutations/2026-10-02-level-rule.json`, 6 of 6 caught in a scratch clone of this code, each by the test built for it [VERIFIED].
+- **Suite:** 737 tests on Python 3.12, and on 3.11 under `-W error::ResourceWarning` [VERIFIED]. 0 of 398 finds stale.
+
+### Greenhouse and Lever, field by field
+
+Answered in `docs/reference/platform-fields.md`, measured over the 823 Greenhouse and 63 Lever postings saved whole [VERIFIED].
+
+**Greenhouse:**
+- `application_deadline` is already used, as the expiry, and is empty on all 823.
+- `internal_job_id` is the employer's job behind several city postings: 499 distinct, 380 shared. `requisition_id` is the employer's code: 484 distinct, 407 shared.
+- `updated_at` is bulk-stamped, not a freshness signal.
+- `metadata` is each employer's custom fields. Three of them carry meaning: one board's `Work Type`, another's `Job Type`, and Careem's `Country`. A fourth is one board's own grade code. Five fields name people, and no file here records them.
+
+**Lever:**
+- `lists` holds the requirements, and with them the years: 50 of 63 postings state years there, against 4 in `description`.
+- `opening` is the introduction, and `additional` the closing text.
+
+**Missed jobs: none found.**
+- **Greenhouse:** of the location-dropped postings whose description mentions Pakistan, "anywhere" or "worldwide remote", 3 pass every other rule, all correct drops.
+- **Lever:** no dropped posting lists Pakistan among its locations.
+
+**Jobs that should not be there: 59.**
+- **Where the location text is a city the rule cannot place,** the posting is kept as unclear. Lever's `country` places 40 of them outside Pakistan: 19 on-site United States jobs, 3 on-site European ones, and 18 remote ones in the United States, the Philippines, India, Colombia and Britain.
+- **Greenhouse's `offices` places 19 more** outside Pakistan, mostly Saudi cities.
+- **Not one of the 59** names a Pakistani place anywhere, or has a description mentioning Pakistan, "anywhere" or "worldwide".
+
+**Proposed, not built**, since it changes what reaches his table: where every part of the location text is unclear, let the source's structured place decide, and only ever to close.
+
+**Also found, for him:** one board's "Lahore, Punjab, Pakistan" postings say "onsite" in the description on 6 of 11, which the location field does not say. D13 drops on-site roles outside Karachi. Reading description text for location is a further proposal, and a riskier one.

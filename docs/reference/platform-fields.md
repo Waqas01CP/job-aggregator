@@ -92,6 +92,49 @@ operator's (ADR-0032 is the title-word rule).
 | `employment` | string | 0.9% | no | |
 | `application_deadline` | null | 0% | yes | read, never populated |
 
+### What the unread Greenhouse fields hold
+
+Measured 2026-10-02 over the same 823 postings `[VERIFIED]`.
+
+- **`application_deadline` is already used.** The adapter reads it as the
+  posting's expiry. A deadline already passed drops the posting at fetch
+  (the expiry rule), and one that passes while it is shown marks it
+  `Closed`. It is empty on all 823, on every board configured.
+- **`internal_job_id` is the employer's job behind the posting; one job can
+  have several postings**, one per city: 499 distinct over 823, and 380
+  postings share theirs. **`requisition_id` is the employer's own requisition
+  code**: 484 distinct, 407 shared. Either would group city copies exactly,
+  where the pipeline groups by employer, normalised title and publication
+  date (ADR-0001). Both bear on the repost question of 2026-09-30.
+- **`updated_at` is not a freshness signal.** Boards bulk-stamp it: 16 of 21
+  Careem postings share one instant, and on 2026-09-30, 303 postings first
+  published over 180 days earlier had been updated in the previous 30.
+  ADR-0018 bars it as a publication date.
+- **`metadata` is each employer's own custom fields**, on 5 of 9 boards. What
+  carries meaning for the operator:
+  - **`Work Type`**, one board, 269 postings: Hybrid 140, Remote 80, Office
+    Based 47. A structured workplace flag;
+  - **`Job Type`**, one board: Remote, 16;
+  - **`Country`**, one board, 21 postings: United Arab Emirates 12, Pakistan 7;
+  - **`Workday P Level`**, one board: P1 12, P2 31, P3 33, P4 84, P5 31. That
+    employer's internal grade; what each grade means is not published;
+  - **`Employment Type`**, `Time Type`, `Worker Type`: Regular, Full-time,
+    Fixed-Term, Contractor.
+
+  Five fields name people: `Hiring Manager`, `Job Approver`, `Job HRBP`,
+  `SOURCER (TA)`. They are public in the employer's API and are saved only
+  in the private full branch. **No file in this repository records them.**
+- **`content`, the description,** states a number of years on 53%. On the
+  location question: of the location-dropped postings whose description
+  mentions Pakistan, "anywhere" or "worldwide remote", 3 pass every other
+  rule, and all 3 are correct drops. One is "work from anywhere in Latin
+  America"; two are Vietnam roles whose company has a Pakistan office. **No
+  missed posting found.** Of 13 postings passing every rule but age, no
+  description restricts the role to a country.
+- **`offices` names a structured place,** "City, Region, Country", on 352 of
+  831 office entries. It is not authoritative: a "Remote - India, Pakistan"
+  posting lists offices in India and Mexico only.
+
 ## Lever
 
 | Field | Type | Populated | Read | Note |
@@ -117,6 +160,38 @@ operator's (ADR-0032 is the title-word rule).
 | `salaryDescription`, `salaryDescriptionPlain` | string | 1.6% | no | |
 
 **No employer field**, which is why ADR-0026 derives it from the board.
+
+### What the unread Lever fields hold
+
+Measured 2026-10-02 over the 63 postings `[VERIFIED]`.
+
+- **`lists` is the description's structured half:** headed sections, each
+  `{text, content}`. The headings seen include "Responsibilities",
+  "Requirements", "Nice to Have", "Benefits", and "What experiences will
+  help you in this role". **The years of experience live here: 50 of 63
+  postings state a number of years inside `lists`, and 4 inside
+  `description`.** A rule on experience over Lever must read `lists`.
+- **`opening` is the introduction**, median 31 words. `description` is the
+  opening plus the role's summary, median 128 words. `descriptionBody` is
+  the summary without the opening. Each has a `Plain` twin without HTML.
+- **`additional` is the closing text**, median 135 words: the company,
+  benefits, the equal-opportunity statement.
+- **`categories.location` is often a city:** "Dallas, TX", "Manila",
+  "Kochi", "Bucharest". The location rule recognises countries, regions
+  and Pakistani cities. A foreign city is unclear to it, so the posting is
+  kept.
+- **`country` and `workplaceType` say where the role is**, on 100%. On the 63:
+  - remote in Pakistan 9, kept;
+  - remote in India 15: 12 dropped on their "India" location, 3 kept as
+    unclear cities;
+  - remote in Romania 2, dropped;
+  - **kept, though Lever places them in another country:** 19 on site in
+    the United States, 3 on site in Germany, Britain and Romania, 7 remote
+    in the United States, 6 in the Philippines, 3 in India, 1 each in
+    Colombia and Britain.
+- **`categories.allLocations` lists every place a posting is open in,**
+  longer than one on 40 postings. None of the dropped postings lists
+  Pakistan there: no posting was missed.
 
 ## Himalayas, the Pakistan search
 
@@ -213,26 +288,43 @@ Reading the field from the response keeps every posting observable
 
 ## What is fetched and not used, worth deciding on
 
-Ordered by what each would change. Nothing here is a decision: reading a
-field means deciding what it means and what happens when it is absent.
+Ordered by what each would change. Reading a field means deciding what it
+means and what happens when it is absent.
 
-1. **Himalayas `seniority`.** Stated on 100%, and 35 of the 67 postings the
-   chain keeps are labelled Senior or above. ADR-0032 guesses from title
-   words what this source states. The operator's.
-2. **The description, on all three sources**, for years of experience: 50 to
-   67% state a number. The stated-experience rule is deferred by the
-   operator until filtering reads descriptions; these are the rates it
-   would start from. Every description is already saved privately (D11), so
-   a rule could be tested over them without a request.
-3. **Himalayas `employmentType`.** Contractor, part-time, intern, volunteer
-   and temporary postings are 228 of 809. Whether those are wanted is the
-   operator's.
-4. **Lever `workplaceType` and `country`.** Both 100%: a structured remote
-   flag and a country, where the location rule reads free text.
-5. **Salary**, on Himalayas 15.9% and Lever 12.7%. Greenhouse's
+**Decided 2026-10-02:**
+- **Himalayas `seniority` is read.** The level rule keeps a posting when any
+  level it states is Entry-level or Mid-level, the operator's option A
+  (`config/eligibility.json`). Over the 809 saved postings it takes the kept
+  count from 67 to 34.
+- **Job type is not filtered, on any source.** Interns, contract, part-time,
+  temporary and volunteer roles are all kept: the operator, "volunteer might
+  be a good opportunity and can become a stepping stone".
+- **Time zones are not filtered.** He works US hours remotely.
+
+**Open:**
+1. **Each source's structured place, where the location text names nothing
+   the rule recognises.** Lever's `country` and Greenhouse's `offices` would
+   close 59 postings he cannot take, measured over the saved postings: 40
+   Lever, from on-site United States jobs to remote Philippines ones, and 19
+   Greenhouse, mostly Saudi cities. They would lose none: they apply only to
+   a posting with no part the rule places, and never to one naming a
+   Pakistani place, and none of the 59 descriptions mentions Pakistan,
+   "anywhere" or "worldwide" `[VERIFIED]`. A posting with neither keeps
+   today's verdict.
+2. **On site, read from the description.** One board's "Lahore, Punjab,
+   Pakistan" postings say "onsite" in the description on 6 of 11; D13 drops
+   on-site roles outside Karachi, and the location field does not say it.
+   Reading description text for location is new, and words like "onsite"
+   occur in other senses.
+3. **Years of experience, from the description**, on all three sources: 50
+   to 67% state a number, and on Lever it is in `lists`. The
+   stated-experience rule is deferred by the operator until filtering reads
+   descriptions; these are the rates it would start from. Every description
+   is saved privately (D11), so a rule could be tested over them without a
+   request.
+4. **Salary**, on Himalayas 15.9% and Lever 12.7%. Greenhouse's
    `pay_transparency` costs a request per posting, rate unmeasured.
-6. **Greenhouse `offices` and `metadata`.** Structured locations, and one
-   board's custom fields; no level a rule could use across boards.
+5. **Greenhouse `internal_job_id`**, to group one job's city copies exactly.
 
 ## Inventorying a new source
 

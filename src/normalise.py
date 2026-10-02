@@ -39,7 +39,7 @@ FIELDS = (
     "published_at", "published_field", "published_meaning_unconfirmed",
     "first_seen", "ordering_date", "ordering_date_source",
     "url", "url_provenance",
-    "stated_experience", "expires_at",
+    "stated_experience", "expires_at", "stated_levels",
 )
 
 
@@ -74,6 +74,10 @@ class Row:
     published_meaning_unconfirmed: bool = False
     stated_experience: str = None      # no slice platform returns one
     expires_at: str = None             # null on every Greenhouse posting measured
+    # The level the source states, as a list, where it states one: Himalayas
+    # only. A row stored before 2026-10-02 has none, and the level rule keeps
+    # a row with none, so those rows keep their verdict.
+    stated_levels: list = None
 
     def as_record(self):
         """The canonical dict. Key order is fixed by FIELDS so two runs that
@@ -223,6 +227,7 @@ def normalise(postings, board, now, seen=None):
             url_provenance=p.url_provenance,
             stated_experience=None,
             expires_at=getattr(p, "expires_at", None),
+            stated_levels=list(p.levels) if getattr(p, "levels", None) else None,
         )
         rows.append(row)
     return rows

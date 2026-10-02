@@ -244,7 +244,8 @@ _ONLY = re.compile(r"\bonly\b")
 class Eligibility:
     """The operator's D13 and D14, from `config/eligibility.json`: where he
     can work from and how old a posting may be. Every place is a compiled
-    whole-word pattern over folded text."""
+    whole-word pattern over folded text. And the levels he takes where a
+    source states one, folded, with their names as configured."""
     max_age_days: int
     home: tuple
     onsite_home_city: tuple
@@ -254,6 +255,8 @@ class Eligibility:
     remote: tuple = ()
     home_cities: tuple = ()
     home_country_names: tuple = ()
+    levels_admitted: tuple = ()
+    level_names: tuple = ()
 
 
 def _words(terms):
@@ -279,9 +282,15 @@ def load_eligibility(path=None):
     country = {p.pattern for p in lists.pop("home_country")}
     if not country <= {p.pattern for p in lists["home"]}:
         raise FilterError("the home country must be one of the home places")
+    levels = raw.get("stated_levels_admitted")
+    if not isinstance(levels, list) or not levels or not all(isinstance(v, str) and v.strip()
+                                                             for v in levels):
+        raise FilterError("stated_levels_admitted must be a non-empty list of levels")
     return Eligibility(max_age_days=days,
                        home_cities=tuple(p for p in lists["home"] if p.pattern not in country),
-                       home_country_names=names["home_country"], **lists)
+                       home_country_names=names["home_country"],
+                       levels_admitted=tuple(fold(v) for v in levels),
+                       level_names=tuple(levels), **lists)
 
 
 def _qualifiers_removed(part):
@@ -454,6 +463,31 @@ def rule_seniority(row, matcher=None, **kw):
     return Verdict(True)
 
 
+def rule_level(row, eligibility, **kw):
+    """The level the source states, where it states one: the operator's
+    decision of 2026-10-02, for Himalayas, which labels every posting. He
+    takes roles up to mid level: "keep till mid", and the levels themselves
+    are configuration (ADR-0031).
+
+    **Kept when any level it states is one he takes**, his option A: a role
+    labelled both mid and senior is open to a mid-level candidate, and "i do
+    not want to miss any". **A posting that states no level is kept**, which
+    covers every employer board, and every row stored before this rule.
+
+    The title rule still runs: a title saying "Senior" is dropped there,
+    whatever level the source states. The level is not the job type:
+    interns, contract, part-time, temporary and volunteer roles are all kept,
+    his decision of the same day. Measured on the 809 Himalayas postings
+    saved by then: the chain kept 67, and this rule takes 33 of them."""
+    stated = [s for s in (getattr(row, "stated_levels", None) or []) if str(s).strip()]
+    if not stated or not eligibility.levels_admitted:
+        return Verdict(True)
+    if any(fold(s) in eligibility.levels_admitted for s in stated):
+        return Verdict(True)
+    return Verdict(False, "level", "the source states its level as %s, none of them %s"
+                   % (" and ".join(stated), " or ".join(eligibility.level_names)))
+
+
 def rule_location(row, eligibility, **kw):
     """D13, the operator's decision of 2026-09-26: "i do not want any jobs
     shown in the table which i am not eligible to while at the same time i
@@ -527,6 +561,7 @@ CHAIN = (("expiry", rule_expiry),
          ("annotation_vendor", rule_annotation_vendor),
          ("title", rule_title),
          ("seniority", rule_seniority),
+         ("level", rule_level),
          ("location", rule_location),
          ("age", rule_age))
 

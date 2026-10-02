@@ -6,6 +6,12 @@
       "date": "2026-09-26",
       "cause": "ADR-0053: Himalayas is polled through its search endpoint instead of the browse feed, so the check fingerprints a different response. Nothing changed at Himalayas.",
       "fields": ["response.nextCursor", "response.limit", "response.offset", "response.totalCount"]
+    },
+    {
+      "platform": "himalayas",
+      "date": "2026-10-02",
+      "cause": "The adapter now reads seniority, the level Himalayas states, for the level rule the operator decided on 2026-10-02, so the check fingerprints one more field. Nothing changed at Himalayas.",
+      "fields": ["posting.seniority"]
     }
   ]
 }

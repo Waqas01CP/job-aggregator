@@ -63,7 +63,7 @@ PUBLISHED_FIELD = "pubDate"
 CONSUMED_RESPONSE = ("jobs", "offset", "limit", "totalCount")
 POSTINGS_AT = "jobs"
 CONSUMED = ("guid", "title", "applicationLink", PUBLISHED_FIELD, "expiryDate", "companyName",
-            "locationRestrictions")
+            "locationRestrictions", "seniority")
 
 # Epoch seconds for plausible posting dates, so a millisecond value cannot
 # silently become the year 58000.
@@ -152,6 +152,15 @@ def parse(payload, board):
             # than read as worldwide.
             location = None
 
+        # The level Himalayas states on every posting, one or more of its
+        # own names, read verbatim; the level rule judges it against the
+        # operator's list in configuration (2026-10-02). Read from what the
+        # search returns, never asked of it: a posting the level rule drops
+        # is still fetched, stored and counted.
+        stated = entry.get("seniority")
+        levels = (tuple(str(s).strip() for s in stated if str(s).strip())
+                  if isinstance(stated, list) else ())
+
         result.postings.append(Posting(
             external_id=str(guid),
             title=title,
@@ -166,6 +175,7 @@ def parse(payload, board):
             url_provenance="payload",
             location=location,
             expires_at=expires.isoformat().replace("+00:00", "Z") if expires else None,
+            levels=levels or None,
             raw=entry,
         ))
     return result

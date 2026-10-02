@@ -143,9 +143,11 @@ fetch committed and nothing deleted on a write not yet read back: the
 operator approved it on 2026-09-25, the seat's decision 6 in the Brief 7
 report. **So does a clearing tool that refused or failed** (ADR-0055), with
 the fetch committed: the tool writes stores and deletes nothing, so a
-refused confirm costs only a second dispatch after a dry run. The
-implementing seat's choice in Brief 8's build, 2026-09-30, not yet put to
-the operator; the fourth audit (F13) found this paragraph silent on it.
+refused confirm costs only a second dispatch after a dry run, and a clear
+that failed part-way says how many rows it stored. The implementing seat's
+choice in Brief 8's build, 2026-09-30, which the fourth audit (F13) found
+this paragraph silent on; the operator approved it on 2026-10-02, once the
+consequences were set out: green, since the drawback is none.
 **The run is marked failed after its push**, so a failure cannot
 look healthy and marking it can never cost data: at once for a
 private-store failure, which needs fixing and does not clear on its own

@@ -43,6 +43,9 @@ class Posting:
     url_provenance: str = "payload"
     location: str = None
     expires_at: str = None      # ISO date or None; read where the platform has one
+    # The level the source states, verbatim, where it states one: Himalayas'
+    # `seniority`. No employer board gives one (docs/reference/platform-fields.md).
+    levels: tuple = None
     # The posting exactly as the board returned it, description included.
     # Carried, never read: the run saves it to the private store's full
     # branch and nothing else looks inside (the operator's D11, 2026-09-26:

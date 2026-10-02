@@ -349,10 +349,19 @@ class TestTheDeliberateRebaseline(unittest.TestCase):
     def test_the_search_move_is_on_file_with_the_fields_it_moved(self):
         """The check of 2026-09-27 reported exactly these four Himalayas
         fields; the entry that explains them must name exactly these."""
-        [entry] = [e for e in contract.load_rebaselines() if e["platform"] == "himalayas"]
-        self.assertEqual(entry["date"], "2026-09-26")
+        [entry] = [e for e in contract.load_rebaselines()
+                   if e["platform"] == "himalayas" and e["date"] == "2026-09-26"]
         self.assertEqual(sorted(entry["fields"]), ["response.limit", "response.nextCursor",
                                                    "response.offset", "response.totalCount"])
+
+    def test_reading_seniority_is_on_file_with_the_field_it_adds(self):
+        """2026-10-02: the adapter reads one more field, so the check would
+        report it as changed; the entry says it was ours."""
+        from src.adapters import himalayas
+        self.assertIn("seniority", himalayas.CONSUMED)
+        [entry] = [e for e in contract.load_rebaselines()
+                   if e["platform"] == "himalayas" and e["date"] == "2026-10-02"]
+        self.assertEqual(entry["fields"], ["posting.seniority"])
 
 
 class TestMain(unittest.TestCase):

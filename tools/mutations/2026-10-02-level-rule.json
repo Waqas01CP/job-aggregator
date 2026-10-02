@@ -1,0 +1,38 @@
+[
+  {
+    "label": "the level rule keeps every posting",
+    "path": "src/filters.py",
+    "find": "    if any(fold(s) in eligibility.levels_admitted for s in stated):\n        return Verdict(True)\n    return Verdict(False, \"level\",",
+    "replace": "    if True:\n        return Verdict(True)\n    return Verdict(False, \"level\","
+  },
+  {
+    "label": "a posting must state only levels he takes",
+    "path": "src/filters.py",
+    "find": "    if any(fold(s) in eligibility.levels_admitted for s in stated):",
+    "replace": "    if all(fold(s) in eligibility.levels_admitted for s in stated):"
+  },
+  {
+    "label": "a posting with no stated level is dropped",
+    "path": "src/filters.py",
+    "find": "    if not stated or not eligibility.levels_admitted:\n        return Verdict(True)",
+    "replace": "    if not eligibility.levels_admitted:\n        return Verdict(True)"
+  },
+  {
+    "label": "the adapter reads no level",
+    "path": "src/adapters/himalayas.py",
+    "find": "            levels=levels or None,",
+    "replace": "            levels=None,"
+  },
+  {
+    "label": "the row drops the stated level",
+    "path": "src/normalise.py",
+    "find": "            stated_levels=list(p.levels) if getattr(p, \"levels\", None) else None,",
+    "replace": "            stated_levels=None,"
+  },
+  {
+    "label": "the level rule is not in the chain",
+    "path": "src/filters.py",
+    "find": "         (\"level\", rule_level),\n",
+    "replace": ""
+  }
+]
