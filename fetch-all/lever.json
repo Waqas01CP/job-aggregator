@@ -1552,5 +1552,26 @@
   "url_provenance": "payload",
   "stated_experience": null,
   "expires_at": null
+ },
+ {
+  "identity": "lever:70d96c39-9c90-4fd0-b581-e42d294c5de6",
+  "source": "lever",
+  "board_id": "lever:spreetail",
+  "external_id": "70d96c39-9c90-4fd0-b581-e42d294c5de6",
+  "employer": "Spreetail",
+  "employer_provenance": "slug",
+  "title": "Principal Financial Analyst, Fulfillment Services",
+  "title_normalised": "Principal Financial Analyst, Fulfillment Services",
+  "location": "Nebraska",
+  "published_at": "2026-10-01T21:21:20.392000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-10-02T04:22:18.449303Z",
+  "ordering_date": "2026-10-01T21:21:20.392000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/spreetail/70d96c39-9c90-4fd0-b581-e42d294c5de6",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null
  }
 ]
