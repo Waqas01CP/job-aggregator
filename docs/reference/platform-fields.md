@@ -1,6 +1,6 @@
 ---
 type: reference
-description: Every field each ATS platform and aggregator returns, with its type, how often it is populated, and whether the pipeline reads it. The inventory that makes "use everything that is fetched" checkable.
+description: Every field each source returns and every query parameter its API accepts, measured over the full postings saved since 2026-09-26, with whether the pipeline reads each and where a posting states experience. The inventory that makes "use everything that is fetched" checkable, and the procedure for each new source.
 status: current
 ---
 
@@ -11,29 +11,271 @@ paid for that returns a structured field the pipeline throws away is the
 cheapest improvement available, and the most easily forgotten, because
 nothing anywhere says the field exists.
 
-Himalayas is the case that prompted this file. It returns `seniority` on
-every posting, as a list like `["Mid-level", "Senior"]`, and the pipeline
-does not read it: seniority is inferred from title words instead, by
-ADR-0032's rule, on a source that states it outright.
+**Re-measured 2026-10-02**, on what the pipeline fetches now. The first
+measurement, 2026-09-17, read Himalayas' browse feed and Greenhouse without
+descriptions; both changed on 2026-09-26. Its tables are kept at the end as
+history.
 
 ## How this was measured
 
-From the 84 saved responses in `raw_responses/`, captured by the spikes of
-2026-09-11 to 2026-09-16 and by the follow-up checks. Counted by walking
-every posting object in each file and recording, per field, its type and
-whether the value was present and non-empty. Sample sizes are given per
-platform and several are small.
+**The corpus is every posting the pipeline has saved whole**, the operator's
+D11 (ADR-0051): the private repository's full branch, one file per run since
+2026-09-26, each posting exactly as its board returned it. The first copy of
+each posting was counted:
 
-**Population rates are of the saved corpus, not of the platform.** Nine
-Greenhouse boards at 1840 postings is a fair picture; SmartRecruiters at 9
-postings from one board is a hint. A rate from a single board reflects that
-employer's habits as much as the platform's.
+| Source | Postings | Boards | Request |
+|---|---|---|---|
+| Greenhouse | 823 | 9 | `boards-api.greenhouse.io/v1/boards/<board>/jobs?content=true` |
+| Lever | 63 | 2 | `api.lever.co/v0/postings/<board>?mode=json` |
+| Himalayas | 809 | 1 | `himalayas.app/jobs/api/search?country=Pakistan&sort=recent&page=<n>` |
 
-**"Read" means the adapter names the field.** Determined by matching each
-observed field name against the adapter source, not by reading the docstring,
-so a field the docstring mentions and the code ignores counts as unread.
+For each field: its JSON type, and the share of postings where it is present
+and not empty. One level of nesting is shown, as `object.field`. **"Read"
+means the adapter's source names the field**, matched as a quoted string, so
+a field the docstring mentions and the code ignores counts as unread. Rates
+are of this corpus: Lever's 63 postings from two boards say more about two
+employers than about Lever.
 
-## Greenhouse, adapted. 1840 postings, 9 boards
+Nothing here identifies a posting: field names, types, rates, and the
+category names a provider defines. The measurement script is in
+`logs/2026-10-02-the-closure-test-and-every-field.md`.
+
+## Where a posting states experience
+
+**No source gives years of experience as a field.** A number of years
+appears only inside the description text. **One source states a level:
+Himalayas, on every posting**, and the pipeline does not read it.
+
+| Source | A stated level | Years as a field | Description states a number of years |
+|---|---|---|---|
+| Greenhouse | None standard. One board's custom `metadata` carries "Workday P Level", a grade code, on 269 postings | No | 435 of 823, 53% |
+| Lever | `categories.level` exists in Lever's schema and filters, and neither board sets it: 0 of 63 | No | 42 of 63, 67% |
+| Himalayas | `seniority`, 100%: Entry-level, Mid-level, Senior, Manager, Director, Executive, one or more | No | 406 of 809, 50% |
+
+"States a number of years" counts descriptions with a phrase like "3 years",
+"3+ years" or "3-5 yrs". It also matches "10 years in business", so it is an
+upper bound on postings that ask for experience in years, not a count of
+them.
+
+**What Himalayas' level would change, measured** over the 809 postings, each
+put through the real adapter and filter chain at the moment it was saved:
+- the chain keeps 67;
+- **Himalayas labels 35 of those 67 Senior or above**: 32 Senior alone, 3
+  with Senior among other levels;
+- the title rule's seniority words dropped 45 postings Himalayas labels
+  Senior or above (42 Senior alone), the ones whose title says so.
+
+So about half of the Himalayas rows reaching the display are, by the source's
+own label, senior roles. Reading the label is a rule change, and the
+operator's (ADR-0032 is the title-word rule).
+
+## Greenhouse
+
+| Field | Type | Populated | Read | Note |
+|---|---|---|---|---|
+| `id` | number | 100% | yes | identity |
+| `title` | string | 100% | yes | |
+| `absolute_url` | string | 100% | yes | canonical URL, given |
+| `company_name` | string | 100% | yes | |
+| `first_published` | string | 100% | yes | ISO-8601. Measure A's field |
+| `location`, `location.name` | object, string | 100% | yes | one free-text string |
+| `content` | string | 100% | no | the description, HTML-escaped. Saved privately (D11), never parsed. Since `?content=true` |
+| `departments` | list | 100% | no | since `?content=true` |
+| `offices` | list | 99.6% | no | structured office locations, beside the free-text one |
+| `updated_at` | string | 100% | no | deliberately: bulk-stamped, ADR-0018 |
+| `data_compliance` | list | 100% | no | GDPR flags |
+| `language` | string | 100% | no | |
+| `internal_job_id`, `requisition_id` | number, string | 99.6% | no | |
+| `metadata` | list | 61.0% | no | each board's custom fields. One board accounts for most: "Workday P Level", "Job Family", "Worker Type", "Time Type", "Pay Rate Type" and nine more on 269 postings; "Employment Type" on 196 |
+| `education` | string | 30.4% | no | a requirement flag, not a value |
+| `include_ai_disclaimer`, `ai_opt_out_request_url`, `ai_disclaimer` | bool, string | 2.6 to 10.3% | no | |
+| `employment` | string | 0.9% | no | |
+| `application_deadline` | null | 0% | yes | read, never populated |
+
+## Lever
+
+| Field | Type | Populated | Read | Note |
+|---|---|---|---|---|
+| `id` | string | 100% | yes | identity |
+| `text` | string | 100% | yes | the title |
+| `hostedUrl` | string | 100% | yes | canonical URL |
+| `createdAt` | number | 100% | yes | epoch ms. Meaning unconfirmed, so never dropped for age (D14) |
+| `categories.location` | string | 100% | yes | |
+| `categories.allLocations` | list | 100% | no | every location, where `location` is one |
+| `categories.team` | string | 100% | no | |
+| `categories.commitment` | string | 96.8% | no | full time, part time and the like |
+| `categories.department` | string | 63.5% | no | |
+| `workplaceType` | string | 100% | no | remote 41, on-site 22. A structured remote flag beside the free-text location |
+| `country` | string | 100% | no | ISO-2 |
+| `applyUrl` | string | 100% | no | |
+| `description`, `descriptionBody` | string | 100% | no | HTML. Saved privately, never parsed |
+| `descriptionPlain`, `descriptionBodyPlain` | string | 95.2%, 81.0% | no | the same as plain text |
+| `lists` | list | 100% | no | named sections: responsibilities, requirements |
+| `additional`, `additionalPlain` | string | 65.1% | no | |
+| `opening`, `openingPlain` | string | 61.9% | no | |
+| `salaryRange` (`min`, `max`, `currency`, `interval`) | object | 12.7% | no | |
+| `salaryDescription`, `salaryDescriptionPlain` | string | 1.6% | no | |
+
+**No employer field**, which is why ADR-0026 derives it from the board.
+
+## Himalayas, the Pakistan search
+
+| Field | Type | Populated | Read | Note |
+|---|---|---|---|---|
+| `guid` | string | 100% | yes | identity, a URL |
+| `title` | string | 100% | yes | |
+| `companyName` | string | 100% | yes | |
+| `applicationLink` | string | 100% | yes | |
+| `pubDate` | number | 100% | yes | epoch seconds |
+| `expiryDate` | number | 100% | yes | epoch seconds. Closes a posting on its date (ADR-0050), and since 2026-10-02 the only way a Himalayas posting closes |
+| `locationRestrictions` | list of country names | 10.8% | yes | empty on 722 of 809: open to every country, which the search returns with those listing Pakistan |
+| `seniority` | list | 100% | **no** | **the stated level.** Counts by label below |
+| `timezoneRestrictions` | list of numbers | 100% | no | UTC offsets the employer hires in. Never empty in this corpus. The operator: "time zone is not an issue" |
+| `employmentType` | string | 100% | no | Full Time 581, Contractor 178, Part Time 22, Intern 9, Temporary 8, Volunteer 8, Other 3 |
+| `categories` | list | 100% | no | role tags |
+| `parentCategories` | list | 79.5% | no | |
+| `excerpt` | string | 100% | no | the description's first sentences |
+| `description` | string | 100% | no | HTML. Saved privately, never parsed |
+| `companySlug` | string | 100% | no | |
+| `companyLogo` | string | 80.3% | no | |
+| `salaryPeriod` | string | 100% | no | |
+| `currency` | string | 30.3% | no | |
+| `minSalary`, `maxSalary` | number | 15.9% | no | |
+
+**`seniority` by label**, counting a posting under each level it lists:
+Mid-level 344, Senior 285, Entry-level 84, Manager 84, Director 44,
+Executive 28. 751 of 809 list one level.
+
+### The Himalayas job page, field by field
+
+What the operator reads on a posting's page, and where it is in what the
+pipeline receives:
+
+| On the page | In the API | Read |
+|---|---|---|
+| Apply before | `expiryDate` | yes: a passed date closes the posting |
+| Posted on | `pubDate` | yes: the publication date, judged at first sight (D14) |
+| Job type | `employmentType` | no |
+| Experience level | `seniority` | no |
+| Location requirements | `locationRestrictions`. Empty shows as "open to candidates from all countries" | yes: the location rule (D13) |
+| Hiring timezones | `timezoneRestrictions` | no, by the operator's ruling |
+| Job categories | `categories`, `parentCategories` | no |
+| Skills | **not in the API response.** None of the 20 fields carries them, so the site shows something the API does not give |  |
+| Browse similar jobs | the site's navigation, not data |  |
+| The description | `description`, `excerpt` | saved privately, not read |
+
+## What each API accepts
+
+From each provider's own documentation, read 2026-10-02 `[outside this
+repository]`. Rate limits are as documented.
+
+**Greenhouse Job Board API**, public, no authentication, no documented rate
+limit:
+
+| Endpoint | Parameters | Used |
+|---|---|---|
+| `/v1/boards/<board>/jobs` | `content=true`: adds the description, departments and offices | **yes, with `content=true`** |
+| `/v1/boards/<board>/jobs/<id>` | `questions=true`: the application form's `questions`, `location_questions`, `compliance`, `demographic_questions`. `pay_transparency=true`: `pay_input_ranges`, each with `min_cents`, `max_cents`, `currency_type`, `title`, `blurb` | no. One request per posting; whether these boards publish pay ranges is unmeasured |
+| `/v1/boards/<board>/offices`, `/departments` | `render_as=list` or `tree` | no |
+| `/v1/boards/<board>/sections`, `/education/degrees`, `/disciplines`, `/schools` | `term`, `page` | no |
+| `/v1/boards/<board>` | none | no |
+
+**Lever Postings API**, public. Rate limit documented only for applying, 2 a
+second:
+
+| Endpoint | Parameters | Used |
+|---|---|---|
+| `/v0/postings/<site>` | `mode` (json, iframe, html), `skip`, `limit`, and filters `location`, `commitment`, `team`, `department`, `level`, plus `group` | **yes, `mode=json`, unfiltered** |
+| `/v0/postings/<site>/<id>` | none | no |
+
+**Himalayas**, public. Rate-limited, 429 past the limit. Its terms ask that a
+user link back to the posting and name Himalayas as the source, and not
+submit its jobs to third-party aggregators (ADR-0020 keeps its rows private
+regardless).
+
+| Endpoint | Parameters | Used |
+|---|---|---|
+| `/jobs/api` (browse) | `cursor`, `limit` (at most 20), `offset` (deprecated) | **yes: one page each morning for ADR-0053's agreement check** |
+| `/jobs/api/search` | `q`, `country`, `worldwide`, `exclude_worldwide`, `seniority`, `employment_type`, `company`, `timezone`, `sort` (relevant, recent, salaryAsc, salaryDesc, nameAToZ, nameZToA, jobs), `page` | **yes: `country=Pakistan`, `sort=recent`, `page`** |
+
+**Its documentation says the data "is cached every 24 hours".** Observed
+otherwise on 2026-09-30: the search held a posting less than three hours old
+(the Brief 8 log). Its job object documents `timezoneRestriction` and
+`category`; the response carries `timezoneRestrictions` and `categories`,
+and `seniority`, which the documentation does not list.
+
+**Pushing a filter down is a decision, not a parameter.** `seniority` and
+`employment_type` on the search would drop postings before they are seen.
+ADR-0053 allows that only for a predicate duplicating one of the pipeline's
+own recorded rules, and only while its agreement with that rule is checked.
+Reading the field from the response keeps every posting observable
+(ADR-0005), at no extra request.
+
+## What is fetched and not used, worth deciding on
+
+Ordered by what each would change. Nothing here is a decision: reading a
+field means deciding what it means and what happens when it is absent.
+
+1. **Himalayas `seniority`.** Stated on 100%, and 35 of the 67 postings the
+   chain keeps are labelled Senior or above. ADR-0032 guesses from title
+   words what this source states. The operator's.
+2. **The description, on all three sources**, for years of experience: 50 to
+   67% state a number. The stated-experience rule is deferred by the
+   operator until filtering reads descriptions; these are the rates it
+   would start from. Every description is already saved privately (D11), so
+   a rule could be tested over them without a request.
+3. **Himalayas `employmentType`.** Contractor, part-time, intern, volunteer
+   and temporary postings are 228 of 809. Whether those are wanted is the
+   operator's.
+4. **Lever `workplaceType` and `country`.** Both 100%: a structured remote
+   flag and a country, where the location rule reads free text.
+5. **Salary**, on Himalayas 15.9% and Lever 12.7%. Greenhouse's
+   `pay_transparency` costs a request per posting, rate unmeasured.
+6. **Greenhouse `offices` and `metadata`.** Structured locations, and one
+   board's custom fields; no level a rule could use across boards.
+
+## Inventorying a new source
+
+So a new source is measured the same way, before its adapter decides what to
+read:
+1. **Save its responses whole.** For an adapted source D11 already does this,
+   privately. For a probe, keep the saved response out of the repository
+   (`raw_responses/` is gitignored).
+2. **Count every field** over every posting: JSON type, share present and not
+   empty, one level of nesting, and whether the adapter names it. The script
+   in the log of 2026-10-02 does this for the full branch's format.
+3. **Read the provider's documentation** for every endpoint and parameter,
+   and tag it as outside this repository. Compare it with the response: on
+   Himalayas the two disagree on three field names.
+4. **Look for the operator's questions first:** a publication date (Measure
+   A), a stated level or years, location and remote flags, salary.
+5. **Add its section here**, with the counts, and a Changes row.
+
+## The thirteen probed platforms
+
+Not adapted. Fields measured once, to decide adapter order (ADR-0029). Small
+samples: treat as a guide to what exists, not as population rates.
+
+| Platform | Postings | Publication date | Structured fields worth having |
+|---|---|---|---|
+| Ashby | 21 | `publishedAt` 100% | `isRemote` 100%, `workplaceType` 100%, `employmentType` 100%, `secondaryLocations` 47.6%, `address` 81% |
+| Workable | 12 | `published_on` 100% | **`experience` 41.7%**, `education` 50%, `telecommuting` 100%, `country` 100%, `locations` 100% |
+| SmartRecruiters | 9 | `releasedDate` 100% | **`experienceLevel` 100%**, as `{id: entry_level, label: Entry Level}`. Also `typeOfEmployment`, `industry`, `function`, `customField` |
+| Breezy | 191 | `published_date` 100% | `location` and `locations` 100%, `type` 100%, `salary` 99.5% |
+| Pinpoint | 4 | in RSS, not JSON | `workplace_type` 100%, `employment_type` 100%, `location` 100%, structured `skills_knowledge_expertise` |
+| BambooHR | 771 | detail request per posting | `atsLocation`, `locationType`, `employmentStatusLabel`, all on the 0.4% that are detail responses |
+| Manatal | 27 | **none, any field** | `city`, `country`, `location_display` 100%; `state` 7.4%. ADR-0007's material case |
+| Workday | 28 | `startDate` 28.6%, `postedOn` 100% as "Posted 5 Days Ago" | `timeType` 100%, `locationsText` 100% |
+| Zoho Recruit | 1 | `Date_Opened` 100% | **`Work_Experience` 100%, as "1-3 years"**, `Remote_Job` bool, `City`, `State`, `Country`, `Job_Type` |
+| Dover | 200 | `date_posted` 50% | `workplace_type` 100%, `locations` 100% with `location_type: REMOTE`. Dropped by ADR-0029 |
+| JazzHR, Freshteam, iCIMS | see logs | per-posting HTML only | not inventoried here; the saved probes are HTML, not JSON |
+
+## History: the measurement of 2026-09-17
+
+From the 84 responses saved by the spikes of 2026-09-11 to 09-16, before
+`?content=true` and before Himalayas moved to search. Kept as measured.
+
+### Greenhouse, adapted. 1840 postings, 9 boards
 
 | Field | Type | Populated | Read | Note |
 |---|---|---|---|---|
@@ -57,7 +299,7 @@ so a field the docstring mentions and the code ignores counts as unread.
 | `application_deadline` | null | 0% | yes | read, never populated in this corpus |
 | `ai_disclaimer`, `ai_opt_out_request_url`, `include_ai_disclaimer` | null | 0% | no | present in the schema, empty everywhere |
 
-## Lever, adapted. 92 postings, 2 boards
+### Lever, adapted. 92 postings, 2 boards
 
 | Field | Type | Populated | Read | Note |
 |---|---|---|---|---|
@@ -79,7 +321,7 @@ so a field the docstring mentions and the code ignores counts as unread.
 **No employer field**, which is why ADR-0026 derives it from the slug with
 provenance recorded.
 
-## Himalayas, adapted, aggregator. 146 postings, 91 unique
+### Himalayas, adapted, aggregator. 146 postings, 91 unique
 
 | Field | Type | Populated | Read | Note |
 |---|---|---|---|---|
@@ -112,26 +354,7 @@ postings, not on most of them.
 **None of the 74 lists names Pakistan.** On this corpus, the reachability
 answer for the operator is 74 excluded, 17 unstated.
 
-## The thirteen probed platforms
-
-Not adapted. Fields measured once, to decide adapter order (ADR-0029). Small
-samples: treat as a guide to what exists, not as population rates.
-
-| Platform | Postings | Publication date | Structured fields worth having |
-|---|---|---|---|
-| Ashby | 21 | `publishedAt` 100% | `isRemote` 100%, `workplaceType` 100%, `employmentType` 100%, `secondaryLocations` 47.6%, `address` 81% |
-| Workable | 12 | `published_on` 100% | **`experience` 41.7%**, `education` 50%, `telecommuting` 100%, `country` 100%, `locations` 100% |
-| SmartRecruiters | 9 | `releasedDate` 100% | **`experienceLevel` 100%**, as `{id: entry_level, label: Entry Level}`. Also `typeOfEmployment`, `industry`, `function`, `customField` |
-| Breezy | 191 | `published_date` 100% | `location` and `locations` 100%, `type` 100%, `salary` 99.5% |
-| Pinpoint | 4 | in RSS, not JSON | `workplace_type` 100%, `employment_type` 100%, `location` 100%, structured `skills_knowledge_expertise` |
-| BambooHR | 771 | detail request per posting | `atsLocation`, `locationType`, `employmentStatusLabel`, all on the 0.4% that are detail responses |
-| Manatal | 27 | **none, any field** | `city`, `country`, `location_display` 100%; `state` 7.4%. ADR-0007's material case |
-| Workday | 28 | `startDate` 28.6%, `postedOn` 100% as "Posted 5 Days Ago" | `timeType` 100%, `locationsText` 100% |
-| Zoho Recruit | 1 | `Date_Opened` 100% | **`Work_Experience` 100%, as "1-3 years"**, `Remote_Job` bool, `City`, `State`, `Country`, `Job_Type` |
-| Dover | 200 | `date_posted` 50% | `workplace_type` 100%, `locations` 100% with `location_type: REMOTE`. Dropped by ADR-0029 |
-| JazzHR, Freshteam, iCIMS | see logs | per-posting HTML only | not inventoried here; the saved probes are HTML, not JSON |
-
-## What is fetched and not used, worth deciding on
+### What it ranked, 2026-09-17
 
 Ordered by what each would change, not by effort.
 
@@ -160,4 +383,5 @@ what happens when it is absent, and each of these deserves that separately.
 
 | Date | Change | Reason |
 |---|---|---|
+| 2026-10-02 | Re-measured over the 1,695 postings saved whole since 2026-09-26, on what the pipeline fetches now: Greenhouse with descriptions, Himalayas' Pakistan search. Added: where each source states experience, the Himalayas job page mapped to its API fields, every endpoint and parameter each API documents, the unused fields re-ranked, and the procedure for a new source. The 2026-09-17 tables kept as history | The operator asked for every field each source gives, experience above all, after seeing senior Himalayas roles in his table, and for it to be repeatable as sources are added. Two of the 09-17 tables no longer described the requests made |
 | 2026-09-17 | File created. Twenty-three platform inventories from the 84 saved responses, with read and unread marked for the three adapted platforms | The architecture chat asked for it, on the rule that everything fetched should be used. Himalayas' `locationRestrictions` prompted it; measuring showed the adapter does read that field, lossily, and that the more valuable unread field is `seniority`, stated on every posting while the pipeline infers it from titles |

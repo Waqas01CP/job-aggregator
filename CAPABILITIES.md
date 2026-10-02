@@ -10,7 +10,7 @@ status: current
 - a person who wants to know what the system offers;
 - a chat drafting a CV, which should find every usable fact here without reading the tree.
 
-**Current as of 2026-10-01 UTC**, against `main` with the fourth audit's corrections. Every number carries its date and its source. A number that could not be measured is not here.
+**Current as of 2026-10-02 UTC**, against `main` with the closure test's fix of that day. Every number carries its date and its source. A number that could not be measured is not here.
 
 **Kept current.** Updated at the close of any session that changes a capability or a measured number. Sections that restate a decision name the record that holds it, so a reader who wants the reasoning can find it.
 
@@ -91,7 +91,7 @@ By his estimate, that took most of a working week. He usually found a posting th
     - anything he has already classified is skipped, so it never comes back.
 11. **Sweeps the display**, under ADR-0050:
     - **Every run:** copies each newly marked row into its classification table.
-    - **Every morning:** marks postings that have closed. It writes a row to a permanent store when its time comes:
+    - **Every morning:** marks postings that have closed: an employer board's posting absent on four consecutive runs, and any posting past its own expiry date, which is how a Himalayas posting closes, since its daily walk reads only its newest postings and an absence there proves nothing. It writes a row to a permanent store when its time comes:
       - fifteen days after it was classified or closed;
       - at once, if the current rules no longer admit it.
 
@@ -197,6 +197,8 @@ Each is measured, with its date and source. `data` is the public data branch.
 | Deduplication | 824 postings grouped into 527 display rows; the largest group, one role posted 134 times, once per city, became one row | 2026-09-26 | Run log |
 | Himalayas before the change | 500 postings a morning, the page cap, from about 1,600 published a day (inferred from 499 new postings spanning 7.3 hours). 93 of 100 postings sampled from the feed were closed to Pakistan | 2026-09-26 | Run logs, and a live sample of 100 postings |
 | Himalayas after the change | Only postings open to Pakistan requested. The first morning read back a week, 460 postings in 23 pages, stored 361 new and kept 31 | 2026-09-27 | Run log |
+| Himalayas' stated level | Himalayas labels every posting with a level. Of the 67 postings the filter chain kept from the 809 saved since 2026-09-26, it labels 35 Senior or above; the title rule, which reads only titles, dropped 45 others it labels Senior or above. The label is not read | 2026-10-02 | The private full postings, through the real adapter and chain; `docs/reference/platform-fields.md` |
+| Experience in the description | No source gives years of experience as a field. A number of years appears in the description text of 53% of Greenhouse postings, 67% of Lever's and 50% of Himalayas', an upper bound | 2026-10-02 | Same |
 | Himalayas completeness | Of the 420 postings a week-long read of the search held, published before the morning walk, the pipeline had stored all 420 | 2026-09-30 | A 26-page snapshot against the private seen store |
 | Location rule, its owed check | Exactly 74 of the saved 91 Himalayas postings dropped and 17 admitted, as the record predicted nine days before the rule was built | 2026-09-30 | ADR-0041's Confirmation, on `raw_responses/` |
 | Full postings saved privately | 824 postings in one 9.8 MB file, read back and matched by content hash | 2026-09-26 | Run log |
@@ -204,11 +206,11 @@ Each is measured, with its date and source. `data` is the public data branch.
 | Display intake | About one new display row a day under the current rules, so by arithmetic, not measurement, the display settles near thirty rows, and the cheaper delta projection is not yet needed | 2026-09-29 and 09-30 | Run logs, against ADR-0056's trigger of 100 |
 | Recurring cost | None | 2026-09-27 | Free plans only |
 | Feasibility research | 16 ATS platforms probed; 1,646 postings across the first 11 boards | 2026-09-11 to 09-16 | Spike logs |
-| Code | 25 source files, 6,386 lines; 32 test files, 10,006 lines; 9 tool files, 1,857 lines | 2026-10-01 | `git ls-files`, `wc` |
-| Tests | 723, passing on Python 3.11 and 3.12 | 2026-10-01 | `unittest` |
-| Mutations | 386 recorded across 30 files. Since 2026-10-01 the suite fails when a code change leaves any of them unable to run, which two commits had done to 10, unnoticed. A survivor is closed by a new test, or, where the mutation changes nothing, replaced and recorded as such | 2026-10-01 | `tools/mutations/`, run by `tools/mutate.py`; results in the session logs |
+| Code | 25 source files, 6,439 lines; 32 test files, 10,111 lines; 9 tool files, 1,857 lines | 2026-10-02 | `git ls-files`, `wc` |
+| Tests | 728, passing on Python 3.11 and 3.12 | 2026-10-02 | `unittest` |
+| Mutations | 392 recorded across 31 files. Since 2026-10-01 the suite fails when a code change leaves any of them unable to run, which two commits had done to 10, unnoticed. A survivor is closed by a new test, or, where the mutation changes nothing, replaced and recorded as such | 2026-10-02 | `tools/mutations/`, run by `tools/mutate.py`; results in the session logs |
 | Decision records | 55 (four superseded), plus the rules for amending them. 124 dated Changes rows across 42 records | 2026-09-30 | `docs/decisions/` |
-| History | 119 commits on `main`, the first on 2026-09-01 UTC; 22 session logs; one audit report in `logs/audit/` | 2026-10-01 | `git log`, `logs/` |
+| History | 120 commits on `main`, the first on 2026-09-01 UTC; 23 session logs; one audit report in `logs/audit/` | 2026-10-01 | `git log`, `logs/` |
 
 ---
 
@@ -332,7 +334,7 @@ Each dated item below has its source in the session log of that date. The design
 
 **Limits as of 2026-10-01:**
 - **Sources.** Eleven employer boards and one aggregator. Five more adapters are decided and unbuilt (Ashby, Workable, SmartRecruiters, Breezy and Manatal, ADR-0029), out of 53 boards in the operator's registry. On-site roles in Karachi are thin: Rozee.pk, the main Pakistani board, has no API, and it is deferred.
-- **Matching reads titles only.** Descriptions are now saved but never read, so a role whose title misses the pool is missed. The years-of-experience rule waits on reading descriptions.
+- **Matching reads titles only.** Descriptions are now saved but never read, so a role whose title misses the pool is missed. The years-of-experience rule waits on reading descriptions. Himalayas' own level label is fetched and not read, so about half the Himalayas rows shown are senior roles by that label.
 - **Duplicates across sources are not merged.** An employer's own posting and an aggregator's copy of it can both appear, because the aggregator stamps its own date.
 - **Lever's date is not proven to mean publication**, so Lever postings are never dropped for age.
 - **GitHub starts scheduled runs 3.3 to 7.0 hours late**, over the 29 scheduled runs to 2026-10-01. Freshness is measured from publication, so it includes that delay.
@@ -354,8 +356,8 @@ Short, role-neutral statements a reader can take as they are. Every figure is fr
 - Git branches serve as the database, with privacy enforced in code: employers' description text and aggregator data never reach the public repository. Every posting is saved in full to a private repository, verified by read-back.
 - A classification workflow: the operator's marks are copied to their own tables and stored permanently. Rows are deleted from the display only after the store is read back from the remote. The display is bounded by a thirty-day clock and a dry-run-first clearing tool.
 - A day's worth of an aggregator's feed went from about a third read, 93% of it irrelevant, to all of the relevant postings, by moving to a filtered endpoint an earlier measurement had wrongly rejected.
-- 723 tests, and 386 mutations that deliberately break the code to prove the tests notice.
-- Designed by the operator and built with AI agents in separate roles: architecture, implementation, and cold, read-only audit. The work was carried out under a written verification discipline and produced 55 decision records and 22 session logs.
+- 728 tests, and 392 mutations that deliberately break the code to prove the tests notice.
+- Designed by the operator and built with AI agents in separate roles: architecture, implementation, and cold, read-only audit. The work was carried out under a written verification discipline and produced 55 decision records and 23 session logs.
 
 ---
 

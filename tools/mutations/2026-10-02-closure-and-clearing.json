@@ -1,0 +1,38 @@
+[
+  {
+    "label": "a paginated walk's reach is its oldest posting",
+    "path": "src/closure.py",
+    "find": "            if paginated and not covered(board.get(\"walk\"), row.published_at):",
+    "replace": "            if paginated and not (board.get(\"oldest_published\") and row.published_at\n                                  and board[\"oldest_published\"] <= row.published_at):"
+  },
+  {
+    "label": "a capped walk counts as reaching back",
+    "path": "src/closure.py",
+    "find": "    if walk.get(\"stopped_by\") != \"mark\" or not walk.get(\"mark\"):",
+    "replace": "    if not walk.get(\"mark\"):"
+  },
+  {
+    "label": "a log with no walk record counts",
+    "path": "src/closure.py",
+    "find": "    if not isinstance(walk, dict) or not published:\n        return False",
+    "replace": "    if not isinstance(walk, dict) or not published:\n        return True"
+  },
+  {
+    "label": "a whole-feed walk proves nothing",
+    "path": "src/closure.py",
+    "find": "    if walk.get(\"stopped_by\") == \"end\":\n        return True",
+    "replace": "    if walk.get(\"stopped_by\") == \"end\":\n        return False"
+  },
+  {
+    "label": "the walk records no reach",
+    "path": "src/run.py",
+    "find": "        log[\"walk\"] = {\"stopped_by\": stopped_by, \"mark\": mark}",
+    "replace": "        pass"
+  },
+  {
+    "label": "a failed clear forgets what it stored",
+    "path": "src/run.py",
+    "find": "        if tool is not None:\n            report[\"stored_written\"] = dict(tool.stores.written)",
+    "replace": "        if False:\n            report[\"stored_written\"] = dict(tool.stores.written)"
+  }
+]

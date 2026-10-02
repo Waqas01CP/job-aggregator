@@ -74,7 +74,7 @@
   {
     "label": "a paginated run counts without reaching the posting",
     "path": "src/closure.py",
-    "find": "            if paginated:",
+    "find": "            if paginated and not covered(board.get(\"walk\"), row.published_at):",
     "replace": "            if False:"
   },
   {

@@ -163,7 +163,7 @@ store is marked failed at once, so an expired token shows on its first run.)*
 | `AGGREGATOR_STORE_TOKEN` | The GitHub token from step 5.2 |
 | `AGGREGATOR_STORE_REPO` | `Waqas01CP/job-aggregator-store`. The path only: no `https://`, no `.git`, no trailing slash |
 
-**Two secrets, not one, and the second holds nothing secret.** The repository's name is kept out of this public repository rather than put in a config file, because naming it here publishes the existence of a private store for no benefit. ADR-0011 keeps this repository to metadata only, and this follows the same line.
+**Two secrets, not one, and the second holds nothing secret.** The repository's name appears above and has been public in this repository's history since `fe07242`. That is harmless: the repository is private and answers 404 to anyone without the token. It is a secret rather than a line of configuration so that no code needs it written into a committed file, and the run log scrubs it like any secret all the same. *(2026-10-02: until now this paragraph said the name was kept out of this repository, two lines below where it is named. The fourth audit's F14; the operator chose to correct the sentence rather than remove the name.)*
 
 **Do not make this repository public later.** Anything committed to a public
 repository stays in that history and in every clone already made, which is
@@ -200,6 +200,7 @@ now.)*
 
 | Date | Change | Reason |
 |---|---|---|
+| 2026-10-02 | The paragraph on `AGGREGATOR_STORE_REPO` corrected: it said the private repository's name was kept out of this repository, two lines below the line naming it | The fourth audit's F14. The operator's choice, 2026-10-02: correct the sentence, since the name is harmless and already in the history |
 | 2026-09-27 | Steps 4 and 5 and the list of what happens next annotated as done; the three test-table secrets added beside step 2; the description made current | The file still said steps 4 and 5 were not done, three days after both were, and counted seven secrets where twelve are set. Found while updating `README.md`, which points here. Annotated rather than rewritten, as the row below did, so each original instruction survives beside what is true |
 | 2026-09-23 | Step 4 annotated as half done: `Classified at` exists, only the three `Status` choices remain | The step said "Not done" as a whole and still instructed creating `Classified at`, which was built on 2026-09-20. `STATE.md` and `airtable-schema.md` already said so, so the operator was being sent to do work that existed. Annotated rather than rewritten, so the original instruction survives beside what is true |
 | 2026-09-20 | Steps 1 to 3 marked done. Step 4 added for the `Status` choices and the `Classified at` field, step 5 for the private aggregator repository and an eighth secret. The `To review` explanation corrected, and the budget figure updated from 27% to 36% | ADR-0046 replaced classification-by-moving with classification-by-status, so a classified row now stays in `Jobs` for fifteen days and the view's filter is what hides it, not the row's absence. ADR-0047 added the private aggregator store and its token. The opening framing of this file as the only blocker was true when written and stopped being true when the operator completed steps 1 and 2 |

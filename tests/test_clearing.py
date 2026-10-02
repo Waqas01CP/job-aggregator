@@ -405,5 +405,47 @@ class TestRowsLeave(ClearingHarness):
         self.assertEqual(record["identity"], "himalayas:1")
 
 
+class TestAPartialClearSaysSo(ClearingHarness):
+    """A clear that fails part-way has stored some rows, which the next sweep
+    removes as asked. The run is green with a warning, so the line he reads
+    must say how many, or a partial clear looks like nothing happened."""
+
+    def setUp(self):
+        super().setUp()
+        self.real = (run_module.make_sweep_client, storage.read_recent_run_logs)
+        harness = self
+
+        def client(test_mode, used_this_month):
+            c = harness.client()
+            listing = c.list_records
+
+            def list_records(table, fields):
+                if table != JOBS:
+                    raise RuntimeError("the base stopped answering")
+                return listing(table, fields)
+            c.list_records = list_records
+            return c
+        run_module.make_sweep_client = client
+        storage.read_recent_run_logs = lambda count, test_mode=False: [
+            dry_run_log(JOBS, 30, rows=["greenhouse:1", "greenhouse:2"])]
+
+    def tearDown(self):
+        run_module.make_sweep_client, storage.read_recent_run_logs = self.real
+        super().tearDown()
+
+    def test_rows_stored_before_a_failure_are_counted_on_the_summary_line(self):
+        """Mutation: "a failed clear forgets what it stored"."""
+        unreviewed, classified = make_row(1, published=ago(40)), make_row(2, published=ago(40))
+        self.store_rows([unreviewed, classified])
+        self.in_jobs(unreviewed)
+        self.in_jobs(classified, status="rejected-not-a-fit", classified_days_ago=3)
+        run = SimpleNamespace(paths=self.paths, now=NOW)
+        report = run_module.clear_display(run, False, False, (JOBS, 30, True), True, 0, CONFIG)
+        self.assertIn("RuntimeError", report["failure"])
+        self.assertEqual(sum(report["stored_written"].values()), 1)
+        line = run_module.summarise(dict(EMPTY_RUN_LOG, clearing=report))
+        self.assertIn("1 row(s) stored before it failed", line)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

@@ -27,15 +27,23 @@ def row(identity, board=GH, published="2026-09-20T10:00:00Z", expires=None):
 
 
 def log(run_at, **boards):
-    """A run log. Each board is status, fetched[, oldest_published]."""
+    """A run log. Each board is status, fetched[, walk[, oldest_published]],
+    where walk is the paginated walk's record: (stopped_by, mark)."""
     out = []
     for name, spec in boards.items():
         board = {"greenhouse": GH, "himalayas": HIM}[name]
         entry = {"board": board, "status": spec[0], "fetched": spec[1]}
-        if len(spec) > 2:
-            entry["oldest_published"] = spec[2]
+        if len(spec) > 2 and spec[2]:
+            entry["walk"] = {"stopped_by": spec[2][0], "mark": spec[2][1]}
+        if len(spec) > 3:
+            entry["oldest_published"] = spec[3]
         out.append(entry)
     return {"run_at": run_at, "boards": out}
+
+
+# The search pins old postings on page one, so a walk's oldest posting is
+# this old whatever it read: every live walk from 2026-09-27 to 10-02 logged it.
+PINNED = "2026-09-16T06:15:55Z"
 
 
 def closure(logs, last_seen, runs_needed=4):
@@ -85,23 +93,43 @@ class TestAbsence(unittest.TestCase):
         self.assertEqual(c.closed_on(row("himalayas:1", board=HIM)), (None, None))
 
     def test_a_paginated_run_that_stopped_short_did_not_reach_the_posting(self):
-        """Himalayas is read only to what is stored. A morning that fetched
-        one page of newer postings never looked at an older one."""
-        newer = "2026-09-24T00:00:00Z"
-        logs = [log(t, himalayas=("ok", 20, newer)) for t in MORNINGS]
+        """Himalayas is read only to what is stored. A morning that stopped
+        at a mark newer than the posting never looked at it, though a pinned
+        posting makes its oldest fetched date older still. The first build
+        read that date as the walk's reach and marked 47 open rows closed on
+        2026-10-01 and 10-02. Mutation: "a paginated walk's reach is its
+        oldest posting"."""
+        walk = ("mark", "2026-09-24T00:00:00Z")
+        logs = [log(t, himalayas=("ok", 20, walk, PINNED)) for t in MORNINGS]
         c = closure(logs, {"himalayas:1": "2026-09-21T03:40:00Z"})
         self.assertEqual(c.closed_on(row("himalayas:1", board=HIM,
                                          published="2026-09-20T10:00:00Z")), (None, None))
 
     def test_a_paginated_run_that_reached_back_does_count(self):
-        older = "2026-09-10T00:00:00Z"
-        logs = [log(t, himalayas=("ok", 500, older)) for t in MORNINGS[:4]]
+        """A mark older than the posting: every posting newer than the mark
+        was read, so this one's absence is evidence."""
+        walk = ("mark", "2026-09-10T00:00:00Z")
+        logs = [log(t, himalayas=("ok", 500, walk, PINNED)) for t in MORNINGS[:4]]
         c = closure(logs, {"himalayas:1": "2026-09-21T03:40:00Z"})
         self.assertEqual(c.closed_on(row("himalayas:1", board=HIM)), ("2026-09-25", "absent"))
 
+    def test_a_walk_that_read_the_whole_feed_counts(self):
+        logs = [log(t, himalayas=("ok", 60, ("end", "2026-09-24T00:00:00Z"))) for t in MORNINGS[:4]]
+        c = closure(logs, {"himalayas:1": "2026-09-21T03:40:00Z"})
+        self.assertEqual(c.closed_on(row("himalayas:1", board=HIM)), ("2026-09-25", "absent"))
+
+    def test_a_capped_walk_never_counts(self):
+        """Stopped by the page cap, the walk proved nothing about what lies
+        beyond it. Mutation: "a capped walk counts as reaching back"."""
+        logs = [log(t, himalayas=("ok", 800, ("cap", "2026-09-10T00:00:00Z"))) for t in MORNINGS]
+        c = closure(logs, {"himalayas:1": "2026-09-21T03:40:00Z"})
+        self.assertEqual(c.closed_on(row("himalayas:1", board=HIM)), (None, None))
+
     def test_a_paginated_run_without_its_reach_recorded_never_counts(self):
-        """Logs written before the reach was recorded prove nothing."""
-        logs = [log(t, himalayas=("ok", 500)) for t in MORNINGS]
+        """Logs written before 2026-10-02 record only the oldest posting,
+        which the pins make meaningless, so they prove nothing: the 47 marks
+        clear on the next sweep. Mutation: "a log with no walk record counts"."""
+        logs = [log(t, himalayas=("ok", 500, None, PINNED)) for t in MORNINGS]
         c = closure(logs, {"himalayas:1": "2026-09-21T03:40:00Z"})
         self.assertEqual(c.closed_on(row("himalayas:1", board=HIM)), (None, None))
 

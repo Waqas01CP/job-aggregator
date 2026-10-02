@@ -407,11 +407,24 @@ class TestRunIntegration(unittest.TestCase):
         # (the fourth audit's F17). Mutation: "hitting the page cap is silent".
         self.assertIs(log["boards"][0]["capped"], True)
         self.assertIn("::warning::himalayas:browse: the walk reached its cap", out.getvalue())
+        self.assertEqual(log["boards"][0]["walk"]["stopped_by"], "cap")
 
     def test_a_walk_that_ends_on_its_own_is_not_capped(self):
+        """And it records what it covered, for the closure test: stopped at
+        its mark, here the age floor, it read every posting newer than the
+        mark. Mutation: "the walk records no reach"."""
         client = self._client(self._two_pages(1788220800))
         log = Run([SEARCH], client, now=NOW, matcher=MATCHER).execute()
         self.assertIs(log["boards"][0]["capped"], False)
+        self.assertEqual(log["boards"][0]["walk"],
+                         {"stopped_by": "mark", "mark": "2026-09-09T11:59:59Z"})
+
+    def test_a_walk_that_reads_to_the_end_of_the_feed_says_so(self):
+        page = {"jobs": [{"guid": "https://x.test/1", "title": "AI Engineer",
+                          "applicationLink": "https://x.test/1", "pubDate": 1789141813}],
+                "offset": 0, "limit": 20, "totalCount": 1}
+        log = Run([SEARCH], self._client([page]), now=NOW, matcher=MATCHER).execute()
+        self.assertEqual(log["boards"][0]["walk"]["stopped_by"], "end")
 
     # The catch-up, the operator's yes of 2026-09-26: the search board reads
     # back a week on its first walk instead of stopping at browse's mark.

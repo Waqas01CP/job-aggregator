@@ -453,6 +453,28 @@ class TestSteps4And5Closed(Harness):
         self.sweep()
         self.assertNotIn("Closed", self.jobs()[0])
 
+    def test_the_marks_the_pinned_posting_caused_clear_on_the_next_sweep(self):
+        """The live case of 2026-10-01 and 10-02: a Himalayas row marked
+        closed because every walk logged a pinned 2026-09-16 posting as its
+        oldest. Logs of that shape prove nothing now, so the sweep clears the
+        mark, and walks that stopped at marks newer than the row add none."""
+        r = make_row(7, source="himalayas", published="2026-10-01T10:00:00Z")
+        self.store_rows([r])
+        self.last_seen["himalayas:7"] = "2026-10-03T03:40:00Z"
+        for d in range(4, 9):
+            self.logs.append({"run_at": "2026-10-%02dT03:40:00Z" % d, "boards": [
+                {"board": "himalayas:acme", "status": "ok", "fetched": 120,
+                 "oldest_published": "2026-09-16T06:15:55Z"}]})
+        self.in_jobs(r, closed="2026-10-08")
+        report = self.sweep()
+        self.assertNotIn("Closed", self.jobs()[0])
+        self.assertEqual(report["closed_cleared"], 1)
+        for log in self.logs:
+            log["boards"][0]["walk"] = {"stopped_by": "mark",
+                                        "mark": log["run_at"][:10] + "T00:00:00Z"}
+        self.sweep()
+        self.assertNotIn("Closed", self.jobs()[0])
+
     def test_a_posting_that_returns_loses_its_mark(self):
         r = make_row(1)
         self.store_rows([r])

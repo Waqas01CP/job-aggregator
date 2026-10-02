@@ -13,11 +13,27 @@ often than an empty market, and counting it would close the whole board.
 **Nor does a run that did not reach the posting.** A paginated feed is read
 only until it meets what is already stored, so a run that stopped on its
 first page never looked at an older posting, and its absence there says
-nothing. For such a board a run counts only when the oldest posting it
-fetched is no newer than this one. The rule the brief names, "a run that did
-not poll the board never counts", applied posting by posting; without it,
-every Himalayas row would close four mornings after it was first seen. A
-board read whole on every run, Greenhouse and Lever, needs no such test.
+nothing. For such a board a run counts only when its walk covered the
+posting's date: stopped at its mark, the walk read every posting newer than
+the mark; read to the feed's end, every posting; stopped by the page cap,
+nothing is proved. The rule the brief names, "a run that did not poll the
+board never counts", applied posting by posting. A board read whole on every
+run, Greenhouse and Lever, needs no such test.
+
+**The walk's oldest posting is not its reach.** That was the first build's
+test, and the search pins old postings on page one, so every walk logged
+2026-09-16 as its oldest whether it read one page or thirty. Every Himalayas
+row was then marked closed four mornings after it was last seen: 47 open
+rows on 2026-10-01 and 10-02, hidden from the operator's `To review` view
+and fifteen days from being retired as closed, which never returns. A log
+written before the walk's reach was recorded counts for nothing, so those
+marks clear on the next sweep.
+
+**In practice a Himalayas posting now closes by its expiry date**, which the
+source gives on every posting. The mark advances each morning, so a walk
+covers a posting's date on about one morning after it was last seen, never
+four in a row. Absence on a feed read only to its newest postings is not
+evidence, and the test no longer pretends it is.
 
 **A display group has closed when every member has**, on the day the last of
 them closed. One city copy still listed keeps the role open.
@@ -25,6 +41,25 @@ them closed. One city copy still listed keeps the role open.
 Nothing here reads Airtable. Everything comes from the seen store's
 `last_seen`, the run logs and the rows themselves, all on the data branch.
 """
+
+from datetime import datetime, timezone
+
+
+def _when(value):
+    return datetime.fromisoformat(str(value).replace("Z", "+00:00")).astimezone(timezone.utc)
+
+
+def covered(walk, published):
+    """Whether a paginated walk, as its run log records it, read back far
+    enough that a posting published at `published` would have been fetched
+    had it still been listed."""
+    if not isinstance(walk, dict) or not published:
+        return False
+    if walk.get("stopped_by") == "end":
+        return True
+    if walk.get("stopped_by") != "mark" or not walk.get("mark"):
+        return False
+    return _when(published) > _when(walk["mark"])
 
 
 def history(run_logs):
@@ -65,10 +100,8 @@ class Closure:
             board = boards.get(row.board_id)
             if not board or board.get("status") != "ok" or not board.get("fetched"):
                 continue
-            if paginated:
-                oldest = board.get("oldest_published")
-                if not oldest or not row.published_at or oldest > row.published_at:
-                    continue
+            if paginated and not covered(board.get("walk"), row.published_at):
+                continue
             counted += 1
             if counted >= self._runs_needed:
                 return run_at[:10], "absent"

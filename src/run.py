@@ -394,12 +394,12 @@ def clear_display(run, no_commit, test_mode, request, private_ok, used_before, c
     if no_commit:
         return {"table": table, "older_than_days": days, "confirmed": confirmed,
                 "mode": "a no-commit run reaches no base", "failure": None}
-    client = None
+    client = tool = None
     try:
         client = make_sweep_client(test_mode, used_before)
         logs = storage.read_recent_run_logs(CLEARING_LOGS_READ, test_mode) if confirmed else []
-        report = clearing.Clearing(client, run.paths, run.now, private_ok, test_mode).run(
-            table, days, confirmed, logs, config.clearing_dry_run_valid_hours)
+        tool = clearing.Clearing(client, run.paths, run.now, private_ok, test_mode)
+        report = tool.run(table, days, confirmed, logs, config.clearing_dry_run_valid_hours)
         report.update(client.counters())
         return report
     except Exception as e:
@@ -410,6 +410,12 @@ def clear_display(run, no_commit, test_mode, request, private_ok, used_before, c
                   "failure": redact_secrets(failure)}
         if client is not None:
             report.update(client.counters())
+        # A clear that failed part-way has written some stores, and the next
+        # sweep removes those rows as he asked. Say how many, so a green run
+        # with a warning never hides a partial clear: confirming again
+        # finishes it, counting those as already leaving.
+        if tool is not None:
+            report["stored_written"] = dict(tool.stores.written)
         return report
 
 
@@ -676,19 +682,29 @@ class Run:
         and never look again."""
         mark = max(self.high_water.get(board.board_id) or "",
                    walk_floor(board.source, self.now) or "")
-        merged, cursor, pages, ended = {"jobs": []}, None, 0, False
+        merged, cursor, pages, stopped_by = {"jobs": []}, None, 0, "cap"
         while pages < MAX_PAGES:
             payload = self.client.get_json(adapter.url_for(board, cursor), board.source)
             pages += 1
             merged["jobs"].extend(payload.get("jobs", []))
             if adapter.stop_after(payload, mark):
-                ended = True
+                stopped_by = "mark"
                 break
             cursor = adapter.next_cursor(payload)
             if not cursor:
-                ended = True
+                stopped_by = "end"
                 break
+        ended = stopped_by != "cap"
         log["pages"] = pages
+        # What the walk covered, for ADR-0050's closure test: stopped at the
+        # mark, it read every posting newer than the mark; at the feed's end,
+        # every posting. Its oldest posting says nothing, because the search
+        # pins old postings on page one: every walk from 2026-09-27 to 10-02
+        # logged 2026-09-16 as its oldest, one page or thirty, and the
+        # closure test read that as reaching back to 09-16. It marked 47 open
+        # Himalayas rows closed on 10-01 and 10-02, hiding them from the
+        # `To review` view, fifteen days from being retired for good.
+        log["walk"] = {"stopped_by": stopped_by, "mark": mark}
         # The cap cuts the oldest days of the window unannounced, and only
         # `pages: 40` showed it: a recovery walk after several failed saves,
         # in a busy week, is the case (the fourth audit's F17). Logged and
@@ -923,6 +939,10 @@ def summarise(run_log):
         if c.get("aggregator_not_listed"):
             extra.append("%d aggregator row(s) not listed, the private store being "
                          "unavailable, so a confirm leaves them" % c["aggregator_not_listed"])
+        written_before = sum((c.get("stored_written") or {}).values())
+        if c.get("failure") and written_before:
+            extra.append("%d row(s) stored before it failed, which the next sweep removes; "
+                         "confirm again to finish the rest" % written_before)
         lines.append("  clearing (ADR-0055): %s older than %s days on its %s, %s%s%s%s" % (
             c.get("table"), c.get("older_than_days"), c.get("measured_on", "date"),
             "confirmed" if c.get("confirmed") else "dry run",
