@@ -69,10 +69,11 @@ class TestAdapter(unittest.TestCase):
         self.assertEqual(rows[0].stated_levels, ["Mid-level", "Senior"])
         self.assertEqual((rows[1].stated_levels, rows[2].stated_levels), (None, None))
 
-    def test_the_real_board_is_pakistan_on_the_morning_run(self):
+    def test_the_real_board_is_pakistan_on_both_runs(self):
         from src.config import load_boards
         [him] = [b for b in load_boards() if b.platform == "himalayas"]
-        self.assertEqual((him.board_id, him.poll_slots), ("himalayas:pakistan", ("morning",)))
+        self.assertEqual((him.board_id, him.poll_slots),
+                         ("himalayas:pakistan", ("morning", "evening")))
 
     def test_later_pages_go_by_number(self):
         self.assertIn("page=3", himalayas.url_for(BOARD, "3"))

@@ -3,7 +3,7 @@
 A scheduled pipeline that polls employer applicant-tracking-system job boards, deduplicates and filters the results against fixed rules, and writes what survives to a table for review.
 
 **Status: running in production.**
-- Nine Greenhouse boards and two Lever boards are polled twice a day by GitHub Actions. One aggregator, Himalayas, is polled once a day, limited to postings open to Pakistan.
+- Nine Greenhouse boards and two Lever boards are polled twice a day by GitHub Actions. One aggregator, Himalayas, limited to postings open to Pakistan, is polled on both runs too since 2026-10-03, and on the morning run only before.
 - Every posting is kept, and each is admitted or dropped by a named rule.
 - What survives is written to an Airtable table, where the operator marks each row. A daily sweep copies his marks to their own tables, stores them permanently, and clears the display after fifteen days.
 

@@ -467,8 +467,9 @@ AGREEMENT_PENDING_FILE = "agreement_pending.json"
 # How long a browse posting the search has not returned waits before its
 # absence can count. The search trails browse by hours: at the fourth audit's
 # sample its newest posting was 6.3 hours old, older than all 20 on browse's
-# first page. The search board is walked each morning only (ADR-0048), so in
-# practice the next morning's walk decides, about a day later.
+# first page. The search board is walked on both runs since 2026-10-03, so in
+# practice the next walk twelve hours on decides; the longest the search was
+# measured trailing a posting that day was 6.1 hours.
 AGREEMENT_WAIT_HOURS = 12
 
 

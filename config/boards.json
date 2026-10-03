@@ -75,8 +75,8 @@
       "platform": "himalayas",
       "slug": "pakistan",
       "normalisations": [],
-      "poll_slots": ["morning"],
-      "note": "Aggregator feed, not an employer board. ADR-0019 conditional. Since 2026-09-26 the search endpoint filtered to this country, which is the slug: only postings open to someone in Pakistan, worldwide ones included. The operator's go; the adapter's docstring has the measurement."
+      "poll_slots": ["morning", "evening"],
+      "note": "Aggregator feed, not an employer board. ADR-0019 conditional. Since 2026-09-26 the search endpoint filtered to this country, which is the slug: only postings open to someone in Pakistan, worldwide ones included. The operator's go; the adapter's docstring has the measurement. Polled on both runs since 2026-10-03, the operator's yes on the seat's measurement: on the morning run alone a posting waited a median of 10.2 hours from publication to first seen, 22.2 at the 90th percentile, over 448 postings, against Greenhouse's 4.6 and 9.7 twice a day. The search is not the once-a-day cache ADR-0048 assumed. About 4 to 6 requests an evening."
     }
   ]
 }

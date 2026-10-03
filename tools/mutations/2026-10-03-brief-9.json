@@ -106,5 +106,11 @@
     "path": "src/normalise.py",
     "find": "        identity = \"%s:%s\" % (p.source, p.external_id)",
     "replace": "        identity = \"%s:%s\" % (board.board_id, p.external_id)"
+  },
+  {
+    "label": "Himalayas goes back to the morning run only",
+    "path": "config/boards.json",
+    "find": "      \"poll_slots\": [\"morning\", \"evening\"],",
+    "replace": "      \"poll_slots\": [\"morning\"],"
   }
 ]

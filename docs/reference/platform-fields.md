@@ -273,7 +273,7 @@ regardless).
 
 | Endpoint | Parameters | Used |
 |---|---|---|
-| `/jobs/api` (browse) | `cursor`, `limit` (at most 20), `offset` (deprecated) | **yes: one page each morning for ADR-0053's agreement check** |
+| `/jobs/api` (browse) | `cursor`, `limit` (at most 20), `offset` (deprecated) | **yes: one page on each walk for ADR-0053's agreement check** |
 | `/jobs/api/search` | `q`, `country`, `worldwide`, `exclude_worldwide`, `seniority`, `employment_type`, `company`, `timezone`, `sort` (relevant, recent, salaryAsc, salaryDesc, nameAToZ, nameZToA, jobs), `page` | **yes: `country=Pakistan`, `sort=recent`, `page`** |
 
 **Its documentation says the data "is cached every 24 hours".** Observed

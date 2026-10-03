@@ -198,10 +198,15 @@ class TestPollSlots(RunHarness):
                 self.assertTrue(asked)
                 self.assertNotEqual(entry["status"], "skipped")
 
-    def test_the_real_config_polls_himalayas_on_the_morning_run_only(self):
+    def test_the_real_config_polls_himalayas_on_both_runs(self):
+        """The operator's yes of 2026-10-03, on the seat's measurement: on the
+        morning run alone a Himalayas posting waited a median of 10.2 hours
+        to be seen, against Greenhouse's 4.6 twice a day. The skip itself is
+        still configuration, tested above with a morning-only board.
+        Mutation: "Himalayas goes back to the morning run only"."""
         from src.config import load_boards
         [him] = [b for b in load_boards() if b.platform == "himalayas"]
-        self.assertEqual(him.poll_slots, ("morning",))
+        self.assertTrue(him.polled_on("morning") and him.polled_on("evening"))
         others = [b for b in load_boards() if b.platform != "himalayas"]
         self.assertTrue(all(b.polled_on("evening") for b in others))
 

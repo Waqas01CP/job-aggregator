@@ -32,8 +32,8 @@ written before the walk's reach was recorded counts for nothing, so those
 marks clear on the next sweep.
 
 **In practice a Himalayas posting now closes by its expiry date**, which the
-source gives on every posting. The mark advances each morning, so a walk
-covers a posting's date on about one morning after it was last seen, never
+source gives on every posting. The mark advances with each walk, so a walk
+covers a posting's date on about one run after it was last seen, never
 twelve in a row. Absence on a feed read only to its newest postings is not
 evidence, and the test no longer pretends it is.
 

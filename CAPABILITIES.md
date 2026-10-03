@@ -66,7 +66,7 @@ By his estimate, that took most of a working week. He usually found a posting th
 
    **Adapters are per platform, never per employer:** one Greenhouse adapter serves nine boards. An adapter only parses; it never fetches. The aggregator, Himalayas, is paginated. It is read newest first and stops at the first page that is either wholly older than what that board has already stored in full, or wholly older than the age limit. An 80-page cap guards against a runaway; it was 40 until 2026-10-02, when a week of the search outgrew it.
 
-   **The aggregator's own filter is checked every morning.** Himalayas is asked only for postings open to Pakistan, which hands part of the location rule to a third party. So one page of its whole feed is read beside the search. That page is minutes old and the search trails it by hours, so a posting there that the location rule would admit, and the search has not returned, waits privately for the next morning's walk. Still not returned by then, it is a disagreement: counted in the log and named in the private store (ADR-0053).
+   **The aggregator's own filter is checked on every walk.** Himalayas is asked only for postings open to Pakistan, which hands part of the location rule to a third party. So one page of its whole feed is read beside the search. That page is minutes old and the search trails it by hours, so a posting there that the location rule would admit, and the search has not returned, waits privately for a walk at least twelve hours later. Still not returned by then, it is a disagreement: counted in the log and named in the private store (ADR-0053).
 4. **Normalises** every posting to one row shape. The publication date and the moment the pipeline first saw the posting are recorded as separate fields, never confused. Where the employer name or URL is derived rather than given, the row says so.
 5. **Stores the raw layer.** Every posting never seen before is appended permanently, before anything is judged, and nothing is ever rewritten. So a filter mistake is recoverable: the rows it missed are still stored.
 6. **Filters**, cheapest rule first. Every drop is logged with the rule that caused it. The rules (the chain is in `src/filters.py`):
@@ -95,7 +95,7 @@ By his estimate, that took most of a working week. He usually found a posting th
     - anything he has already classified is skipped, so it never comes back.
 11. **Sweeps the display**, under ADR-0050:
     - **Every run:** copies each newly marked row into its classification table.
-    - **Every morning:** marks postings that have closed: an employer board's posting absent on twelve consecutive runs, about six days, and any posting past its own expiry date, which is how a Himalayas posting closes, since its daily walk reads only its newest postings and an absence there proves nothing. It writes a row to a permanent store when its time comes:
+    - **Every morning:** marks postings that have closed: an employer board's posting absent on twelve consecutive runs, about six days, and any posting past its own expiry date, which is how a Himalayas posting closes, since each walk reads only its newest postings and an absence there proves nothing. It writes a row to a permanent store when its time comes:
       - fifteen days after it was classified or closed;
       - at once, if the current rules no longer admit it.
 
@@ -258,7 +258,7 @@ Each is measured, with its date and source. `data` is the public data branch.
 | 2026-09-30 | The display bounded: an unreviewed row leaves after thirty days, the operator can clear any table himself, and a removed row stays removed for the reason it left. The aggregator's pushed-down filter and the contract check's own changes are now checked |
 | 2026-10-01 | The fourth code audit's corrections: a confirmed clear removes only what its dry run listed, the aggregator check judges each posting on a later walk, places the operator can take are kept, and the suite fails when a mutation goes stale |
 | 2026-10-02 | The level rule and the source's own place; the closure test's false marks on 47 open rows found and fixed |
-| 2026-10-03 | The description read for years asked, a right to work required and on-site work. Closure raised to twelve runs after reposts were measured; the contract check ordered by time rather than date; every Confirmation clause of the nine newest records held by a test or marked live |
+| 2026-10-03 | The description read for years asked, a right to work required and on-site work. Closure raised to twelve runs after reposts were measured; the contract check ordered by time rather than date; every Confirmation clause of the nine newest records held by a test or marked live; Himalayas polled on both runs, its wait from publication measured |
 
 ---
 
