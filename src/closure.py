@@ -2,7 +2,9 @@
 
 **A posting has closed when either holds.** Its own expiry date has passed.
 Or it was absent from its board on `closed_after_polled_runs` consecutive runs
-that polled that board: four, configuration under ADR-0031.
+that polled that board: twelve, configuration under ADR-0031. Four until
+2026-10-03, when the operator raised it: postings measured leaving their
+boards and coming back were gone up to 130 hours, and four runs is about 48.
 
 **A run that did not poll the board never counts.** ADR-0048 skips Himalayas
 on the evening run, and counting those runs would close every aggregator row
@@ -32,7 +34,7 @@ marks clear on the next sweep.
 **In practice a Himalayas posting now closes by its expiry date**, which the
 source gives on every posting. The mark advances each morning, so a walk
 covers a posting's date on about one morning after it was last seen, never
-four in a row. Absence on a feed read only to its newest postings is not
+twelve in a row. Absence on a feed read only to its newest postings is not
 evidence, and the test no longer pretends it is.
 
 **A display group has closed when every member has**, on the day the last of

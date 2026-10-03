@@ -4,13 +4,17 @@ No network and no branch: run logs and seen entries are written by hand in
 the shapes `src/run.py` writes them.
 """
 
+import json
 import os
 import sys
+import tempfile
 import unittest
+from datetime import datetime, timedelta, timezone
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.closure import Closure
+from src.config import SWEEP_PATH, ConfigError, load_sweep_config
 from src.normalise import Row
 
 NOW = "2026-10-01T12:00:00Z"
@@ -164,6 +168,53 @@ class TestGroups(unittest.TestCase):
                            "greenhouse:2": MORNINGS[1]})
         self.assertEqual(c.group_closed_on([row("greenhouse:1"), row("greenhouse:2")]),
                          "2026-09-27")
+
+
+class TestTheConfiguredCount(unittest.TestCase):
+    """ADR-0050, the operator's decision of 2026-10-03: twelve runs, not four.
+    Twelve Greenhouse postings left their boards and returned after 23 to 130
+    hours, median 59, measured over the run logs on 2026-09-30. Since
+    2026-09-30 a closed row is hidden from his `To review` view, so a false
+    closure hides a live job."""
+
+    LONGEST_ABSENCE_HOURS = 130
+    HOURS_BETWEEN_RUNS = 12
+
+    def test_the_shipped_count_outlasts_every_measured_absence(self):
+        """Mutation: "the closure count goes back to four"."""
+        runs = load_sweep_config().closed_after_polled_runs
+        self.assertGreaterEqual(runs * self.HOURS_BETWEEN_RUNS, self.LONGEST_ABSENCE_HOURS)
+
+    def test_it_closes_on_the_twelfth_polled_run_and_not_the_eleventh(self):
+        """A posting gone as long as the longest return measured, 130 hours,
+        about eleven runs, is still open; the twelfth run closes it."""
+        runs = load_sweep_config().closed_after_polled_runs
+        first = datetime(2026, 9, 22, 3, 40, tzinfo=timezone.utc)
+        timeline = [(first + timedelta(hours=self.HOURS_BETWEEN_RUNS * i))
+                    .isoformat().replace("+00:00", "Z") for i in range(runs)]
+        last_seen = {"greenhouse:1": "2026-09-21T17:40:00Z"}
+        for count, closed in ((runs - 1, None), (runs, timeline[runs - 1][:10])):
+            with self.subTest(runs=count):
+                logs = [log(t, greenhouse=("ok", 30)) for t in timeline[:count]]
+                c = Closure(last_seen, logs, lambda board: False, runs, NOW)
+                self.assertEqual(c.closed_on(row("greenhouse:1"))[0], closed)
+
+    def test_a_log_window_shorter_than_the_count_is_refused(self):
+        """The closure test counts runs in the logs it reads, so a window of
+        ten logs and a count of twelve would let nothing close, silently.
+        Mutation: "a window shorter than the count is accepted"."""
+        with open(SWEEP_PATH, encoding="utf-8") as f:
+            doc = json.load(f)
+        doc.update(closed_after_polled_runs=12, run_log_window=10)
+        path = os.path.join(tempfile.mkdtemp(), "sweep.json")
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(doc, f)
+        with self.assertRaises(ConfigError):
+            load_sweep_config(path)
+        doc.update(run_log_window=12)
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(doc, f)
+        self.assertEqual(load_sweep_config(path).run_log_window, 12)
 
 
 if __name__ == "__main__":

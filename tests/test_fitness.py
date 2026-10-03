@@ -30,6 +30,7 @@ from src.airtable_sweep import CLASSIFICATION_TABLES, COPY_FIELDS, JOBS, TOOL_WR
 from src.config import Board
 from src.filters import TitleMatcher
 from src.normalise import Row, normalise
+from tests.confirmations import CONFIRMATIONS, LIVE_ONLY_LEAD
 from tests.test_adapters import cassette
 from tests.test_normalise import NOW as NORMALISE_NOW
 from tests.test_normalise import SPEECHIFY
@@ -236,6 +237,104 @@ class TestTheFitnessFunctionsThemselves(unittest.TestCase):
                 ("a mutation not on file", good + ' Mutation: "nothing of the sort".')):
             with self.subTest(case=case):
                 self.assertTrue(problems(case, doc, labels))
+
+
+def confirmation_leads(text):
+    """The bold lead of each paragraph of a record's Confirmation section, or
+    None when it has none."""
+    found = re.search(r"^### Confirmation\n(.*?)(?=^## )", text, re.S | re.M)
+    return re.findall(r"^\*\*(.+?)\*\*", found.group(1), re.M) if found else None
+
+
+def tests_in_suite():
+    """Every test as `module.Class.method`, read from the files, so a name
+    on file is checked against what the suite actually holds."""
+    found = set()
+    for path in glob.glob(os.path.join(ROOT, "tests", "test_*.py")):
+        module = os.path.basename(path)[:-3]
+        with open(path, encoding="utf-8") as f:
+            tree = ast.parse(f.read())
+        for node in tree.body:
+            if isinstance(node, ast.ClassDef):
+                found |= {"%s.%s.%s" % (module, node.name, f.name) for f in node.body
+                          if isinstance(f, ast.FunctionDef) and f.name.startswith("test")}
+    return found
+
+
+def confirmation_problems(records, registry, suite):
+    """What is wrong with `registry` against `records`, {number: text}: a
+    clause held by nothing, an entry naming no test and no reason, a test
+    the suite lacks, and an entry for a clause the record no longer has.
+    Empty when all hold."""
+    out = []
+    for number, text in sorted(records.items()):
+        leads = confirmation_leads(text)
+        if leads is None:
+            out.append("ADR-%s has no Confirmation section" % number)
+            continue
+        held = registry.get(number, {})
+        for lead in leads:
+            if lead == LIVE_ONLY_LEAD:
+                continue
+            entry = held.get(lead)
+            if entry is None:
+                out.append("ADR-%s: %r is held by nothing on file" % (number, lead))
+                continue
+            if not (entry.get("tests") or entry.get("live") or entry.get("unbuilt")):
+                out.append("ADR-%s: %r names no test and no reason" % (number, lead))
+            for test in entry.get("tests", ()):
+                if test not in suite:
+                    out.append("ADR-%s: %r names %s, which is not in the suite"
+                               % (number, lead, test))
+        for lead in held:
+            if lead not in leads:
+                out.append("ADR-%s: %r is on file and no longer in the record" % (number, lead))
+    for number in registry:
+        if number not in records:
+            out.append("ADR-%s is on file and was not read" % number)
+    return out
+
+
+class TestEveryConfirmationIsHeld(unittest.TestCase):
+    """ADR-0049, amended 2026-10-03, over ADR-0050 to ADR-0058, the records
+    Brief 9 named. What holds each clause is `tests/confirmations.py`."""
+
+    NUMBERS = ["%04d" % n for n in range(50, 59)]
+
+    def records(self):
+        out = {}
+        for number in self.NUMBERS:
+            [path] = glob.glob(os.path.join(ROOT, "docs", "decisions", "%s-*.md" % number))
+            with open(path, encoding="utf-8") as f:
+                out[number] = f.read()
+        return out
+
+    def test_every_clause_is_a_test_or_says_why_it_cannot_be(self):
+        """Fitness function for ADR-0049, "Every Confirmation clause in a
+        record is either a test or explicitly marked as checkable only on
+        live runs.": a clause added to a record, or a test renamed away,
+        fails here until the file says what holds it. Mutation: "a
+        Confirmation clause held by nothing passes"."""
+        self.assertEqual(confirmation_problems(self.records(), CONFIRMATIONS, tests_in_suite()),
+                         [])
+
+    def test_the_check_can_fail(self):
+        """The cases built to defeat it, each through the same check."""
+        record = ("# ADR\n\n### Confirmation\n\n**Held.** x\n\n**Live only:** y\n\n## Next\n")
+        suite = {"test_x.TestX.test_held"}
+        good = {"9999": {"Held.": {"tests": ["test_x.TestX.test_held"]}}}
+        self.assertEqual(confirmation_problems({"9999": record}, good, suite), [])
+        for case, records, registry in (
+                ("a clause held by nothing", {"9999": record.replace("**Live", "**New.** z\n\n**Live")},
+                 good),
+                ("a test the suite lacks", {"9999": record},
+                 {"9999": {"Held.": {"tests": ["test_x.TestX.test_gone"]}}}),
+                ("an entry with nothing in it", {"9999": record}, {"9999": {"Held.": {}}}),
+                ("an entry for a clause the record dropped", {"9999": record},
+                 {"9999": dict(good["9999"], **{"Gone.": {"live": "x"}})}),
+                ("a record with no Confirmation", {"9999": "# ADR\n\n## Next\n"}, good)):
+            with self.subTest(case=case):
+                self.assertTrue(confirmation_problems(records, registry, suite))
 
 
 class TestTheMutationsOnFile(unittest.TestCase):

@@ -16,7 +16,9 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src import projection, storage
 from src import run as run_module
 from src.airtable_sweep import JOBS
-from src.clearing import DRY_RUN_FILE, Clearing, ClearingError, request_from
+from src.clearing import DRY_RUN_FILE, DRY_RUN_PATH, Clearing, ClearingError, request_from
+from src.normalise import dumps
+from src.private_store import files_to_push, local_path_for
 from tests.test_sweep import CONFIG, MATCHER, NOW, TABLES, Harness, make_row
 
 WINDOW = 48
@@ -79,6 +81,20 @@ class ClearingHarness(Harness):
             if os.path.isdir(directory):
                 found += sorted(os.listdir(directory))
         return found
+
+    def outcome_bytes(self):
+        """Every file under both outcome directories, with its contents."""
+        found = {}
+        for key in ("outcomes_dir", "local_outcomes_dir"):
+            directory = self.paths[key]
+            if os.path.isdir(directory):
+                for name in sorted(os.listdir(directory)):
+                    with open(os.path.join(directory, name), "rb") as f:
+                        found["%s/%s" % (key, name)] = f.read()
+        return found
+
+    def dry_run_list(self):
+        return storage.read_records("%s/%s" % (self.paths["local_clearing_dir"], DRY_RUN_FILE))
 
 
 class TestTheRequest(unittest.TestCase):
@@ -240,16 +256,37 @@ class TestTheConfirmIsBoundToItsDryRun(ClearingHarness):
         dry = self.clear(JOBS, 30, now=dry_at)
         self.assertEqual(sorted(dry["rows"]), ["<aggregator row>", "greenhouse:2"])
         self.assertEqual(dry["aggregator_listed_privately"], 1)
-        [entry] = self.store(DRY_RUN_FILE, private=True)
+        [entry] = self.dry_run_list()
         self.assertEqual((entry["identity"], entry["title"], entry["employer"], entry["dry_run_at"]),
                          ("himalayas:1", "AI Engineer", "Acme 1", at(dry_at)))
         self.assertEqual(projection.identities_in(projection.private_store_texts(self.paths)
                                                   + projection.public_store_texts(self.paths)),
                          set())
-        self.assertNotIn(DRY_RUN_FILE, os.listdir(self.paths["outcomes_dir"])
-                         if os.path.isdir(self.paths["outcomes_dir"]) else [])
         report = self.clear(JOBS, 30, confirmed=True, logs=[logged(dry, dry_at)])
         self.assertEqual((report["written"], report["not_in_the_dry_run"]), (2, 0))
+
+    def test_the_dry_runs_list_sits_outside_every_outcome_directory(self):
+        """ADR-0055, clarified 2026-10-03: "That list is not a store and lives
+        outside `outcomes/`, so the guarantee holds by where the file sits
+        and not only by a test." A dry run naming an aggregator row leaves
+        both outcome directories byte for byte as they were; its list goes
+        to the private store under `clearing/` and comes back to where the
+        confirm reads it. Mutation: "the dry run's list is kept among the
+        outcome stores"."""
+        agg = make_row(1, source="himalayas", published=ago(40))
+        self.store_rows([agg])
+        self.in_jobs(agg)
+        storage.write_atomic("%s/removed_unreviewed.json" % self.paths["local_outcomes_dir"],
+                             dumps([]))
+        before = self.outcome_bytes()
+        self.assertEqual(self.clear(JOBS, 30)["aggregator_listed_privately"], 1)
+        self.assertEqual(self.outcome_bytes(), before)
+        pushed = files_to_push(self.paths)
+        self.assertIn(DRY_RUN_PATH, pushed)
+        self.assertEqual([p for p in pushed if p.startswith("outcomes/")],
+                         ["outcomes/removed_unreviewed.json"])
+        self.assertEqual(local_path_for(DRY_RUN_PATH, self.paths),
+                         "%s/%s" % (self.paths["local_clearing_dir"], DRY_RUN_FILE))
 
     def test_a_dry_run_without_the_private_store_leaves_aggregator_rows_to_a_confirm(self):
         """Nowhere to list them, so nothing to bind to: the dry run says so,
@@ -274,7 +311,7 @@ class TestTheConfirmIsBoundToItsDryRun(ClearingHarness):
         dry_at = NOW - timedelta(hours=47)
         dry = self.clear(JOBS, 30, now=dry_at)
         line = run_module.summarise(dict(EMPTY_RUN_LOG, clearing=dry))
-        self.assertIn("1 aggregator row(s) listed in the private store's %s" % DRY_RUN_FILE,
+        self.assertIn("1 aggregator row(s) listed in the private store's clearing/dry_runs.json",
                       line)
         confirm = self.clear(JOBS, 30, confirmed=True, logs=[logged(dry, dry_at)])
         line += run_module.summarise(dict(EMPTY_RUN_LOG, clearing=confirm))
@@ -394,6 +431,34 @@ class TestRowsLeave(ClearingHarness):
         self.assertEqual((record["reason"], record["removed_by"]), ("salary", "operator"))
         self.sweep()
         self.assertEqual((self.jobs(), self.copies("rejected-not-a-fit")), ([], []))
+
+    def test_clearing_a_classified_jobs_row_stores_its_verdict_before_anything_leaves(self):
+        """ADR-0055, the operator's decision of 2026-10-03: clearing a
+        classified `Jobs` row takes its rejection copy with it, only after
+        the outcome and its reason are in the classification store. ADR-0050
+        writes that outcome fifteen days after classification, by reading
+        the row, so a row cleared sooner would otherwise take his verdict
+        with it. The confirm stores the status and the reason from the copy
+        and deletes nothing; the sweep then removes the row and the copy
+        together. Mutations: "clearing Jobs passes over a classified row",
+        "clearing Jobs stores a classified row without its reason"."""
+        r = make_row(1, published=ago(40))
+        self.store_rows([r])
+        self.in_jobs(r, status="rejected-not-a-fit", classified_days_ago=3)
+        self.base.seed(TABLES["rejected-not-a-fit"],
+                       {"Identity": "greenhouse:1", "Choice reason": "salary",
+                        "Published": ago(40)}, created=NOW - timedelta(days=3))
+        report = self.confirmed(JOBS, 30)
+        self.assertEqual(report["written"], 1)
+        [record] = self.store("rejected_not_a_fit.json")
+        self.assertEqual((record["identity"], record["status"], record["reason"],
+                          record["removed_by"]),
+                         ("greenhouse:1", "rejected-not-a-fit", "salary", "operator"))
+        self.assertEqual((len(self.jobs()), len(self.copies("rejected-not-a-fit"))), (1, 1),
+                         "the tool deletes nothing")
+        self.sweep()
+        self.assertEqual((self.jobs(), self.copies("rejected-not-a-fit")), ([], []))
+        self.assertEqual(self.store("removed_unreviewed.json"), [])
 
     def test_an_aggregator_row_is_masked_in_the_report_and_named_privately(self):
         r = make_row(1, source="himalayas", published=ago(40))

@@ -139,22 +139,35 @@ class TestRestore(Harness):
 
     def test_only_the_stores_layout_maps_to_a_working_copy(self):
         for stored in ("README.md", "fetch-all/sub/x.json", "fetch-all/x.txt",
-                       "logs-runs/20260924T000000Z.json", "outcomes/x.csv"):
+                       "logs-runs/20260924T000000Z.json", "outcomes/x.csv",
+                       "clearing/sub/x.json"):
             with self.subTest(stored=stored):
                 self.assertIsNone(local_path_for(stored, self.paths))
 
     def test_what_is_pushed_is_the_runs_aggregator_files_and_their_outcomes(self):
-        """The raw, filtered and seen files, and from ADR-0050 the outcome
-        stores the sweep writes for aggregator rows. Never a public file."""
+        """The raw, filtered and seen files, from ADR-0050 the outcome stores
+        the sweep writes for aggregator rows, and from ADR-0055 the clearing
+        tool's dry-run list, in its own directory. Never a public file."""
         storage.write_atomic("data/fetch-all-local/himalayas.json", "[\"raw\"]\n")
         storage.write_atomic(self.paths["local_filtered"], "[\"kept\"]\n")
         storage.write_atomic(self.paths["local_seen"], "{}\n")
         storage.write_atomic("data/local/outcomes/accepted.json", "[]\n")
+        storage.write_atomic("data/local/clearing/dry_runs.json", "[\"listed\"]\n")
         storage.write_atomic(self.paths["filtered"], "[\"public\"]\n")
         storage.write_atomic("data/outcomes/accepted.json", "[\"public\"]\n")
         self.assertEqual(files_to_push(self.paths), {
             "fetch-all/himalayas.json": "[\"raw\"]\n", "filtered.json": "[\"kept\"]\n",
-            "seen.json": "{}\n", "outcomes/accepted.json": "[]\n"})
+            "seen.json": "{}\n", "outcomes/accepted.json": "[]\n",
+            "clearing/dry_runs.json": "[\"listed\"]\n"})
+
+    def test_the_clearing_list_is_restored_to_where_the_tool_reads_it(self):
+        """A confirm runs on a later run than its dry run, so the list must
+        come back from the branch, and to its own directory, not the
+        outcome stores'."""
+        self.store().commit_and_push({"clearing/dry_runs.json": "[\"listed\"]\n"}, "run 1")
+        written = self.store().restore(self.paths)
+        self.assertEqual(written, ["data/local/clearing/dry_runs.json"])
+        self.assertEqual(self.read_local("data/local/clearing/dry_runs.json"), "[\"listed\"]\n")
 
 
 class TestTestModeIsolation(Harness):

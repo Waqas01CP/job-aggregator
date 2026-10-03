@@ -264,6 +264,18 @@ class TestTheAgeRule(unittest.TestCase):
         self.assertEqual(self.judged(self.row_dated("2026-09-02T11:59:00Z",
                                                     "2026-09-09T12:00:00Z")), (False, "age"))
 
+    def test_an_age_drop_names_both_dates(self):
+        """ADR-0052's Confirmation: "Every age drop names the rule, the
+        publication date and the first-seen date, so the judgement can be
+        re-derived from the log alone." The rule's name was tested and the
+        dates were not. Mutation: "an age drop does not say when it was
+        first seen"."""
+        r = self.row_dated("2026-09-02T11:59:00Z", "2026-09-09T12:00:00Z")
+        _, drops = apply_chain([r], NOW_ISO, matcher=MATCHER)
+        self.assertEqual(drops[0]["rule"], "age")
+        self.assertIn("published 2026-09-02T11:59:00Z", drops[0]["reason"])
+        self.assertIn("first seen at 2026-09-09T12:00:00Z", drops[0]["reason"])
+
     def test_the_boundary_to_the_second_and_a_week_later(self):
         """Fitness function for ADR-0052, "A posting exactly seven days old at
         first sight must be admitted, and one a second older must be
@@ -532,6 +544,15 @@ class TestTheSourcesOwnPlace(unittest.TestCase):
         self.assertTrue(self.judged("Remote - India, Pakistan",
                                     ["Mumbai, India", "Mexico City, Mexico"])[0])
         self.assertTrue(self.judged("Remote", ["US"])[0])
+
+    def test_a_posting_the_text_drops_is_never_kept_by_the_sources_place(self):
+        """ADR-0057: the structured place "decides only to close, never to
+        keep a posting the text would drop". A source listing a Pakistani
+        office cannot rescue text naming only the United States. Mutation:
+        "the source's place keeps a posting the text drops"."""
+        kept, drop = self.judged("New York, United States", ["PK"])
+        self.assertFalse(kept)
+        self.assertIn("the location field names only places closed", drop["reason"])
 
     def test_one_place_in_pakistan_keeps_it(self):
         """Only to close: every place the source gives must be elsewhere."""

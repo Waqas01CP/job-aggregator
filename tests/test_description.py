@@ -154,6 +154,16 @@ class TestRequirements(unittest.TestCase):
         self.assertEqual(required("You do not need to be located in the U.S. to join us."), ())
         self.assertEqual(required("US citizenship is not required."), ())
 
+    def test_citizens_of_anywhere_but_a_place_are_no_requirement(self):
+        """Found on 2026-10-03 while taking the countries out of the citizen
+        pattern: "non-US citizens" read as a US requirement, which drops a
+        job open to him. In no saved description that day. Mutation: "a
+        non- prefix is read as the place"."""
+        for text in ("Non-US citizens are welcome to apply.", "We hire non US nationals too."):
+            with self.subTest(text=text):
+                self.assertEqual(required(text), ())
+        self.assertEqual(required("US citizens only."), ("US",))
+
     def test_a_negation_elsewhere_in_the_sentence_cancels_nothing(self):
         """Mutation: "a negation anywhere before cancels"."""
         self.assertEqual(required("We don't sponsor visas, so you must be authorized to work "

@@ -13,7 +13,7 @@ import unittest
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from tools.preference_audit import (AuditError, exempt_lines, load_employers,
-                                    load_families, main, needles, scan)
+                                    load_families, load_places, main, needles, scan)
 
 
 def write(text):
@@ -24,11 +24,19 @@ def write(text):
 
 
 class TestWhatIsAudited(unittest.TestCase):
-    def test_the_four_preference_kinds_and_employers_are_all_loaded(self):
+    def test_the_four_preference_kinds_employers_and_places_are_all_loaded(self):
         found = needles()
         kinds = set(found.values())
         self.assertEqual(kinds, {"pool term", "seniority word", "annotation vendor",
-                                 "role family", "employer"})
+                                 "role family", "employer", "place"})
+
+    def test_places_come_from_the_eligibility_config(self):
+        """His home, his on-site city and the places closed to him; not the
+        open words, which are ordinary English."""
+        places = load_places()
+        for place in ("pakistan", "pk", "karachi", "united states", "us", "uk", "eu"):
+            self.assertIn(place, places)
+        self.assertNotIn("anywhere", places)
 
     def test_families_come_from_the_pool_headings(self):
         fams = load_families()
@@ -71,6 +79,16 @@ class TestTheAuditCanFail(unittest.TestCase):
     def test_a_seniority_word_in_code_is_a_violation(self):
         violations, _, _ = self._scan('WORDS = ("senior", "staff")\n')
         self.assertEqual({v["value"] for v in violations}, {"senior", "staff"})
+
+    def test_a_country_in_code_is_a_violation(self):
+        """ADR-0057: "ADR-0031's audit must still find no country named in
+        code." The case is the description reader's pattern of 2026-10-02,
+        which named nine and passed because places were not audited.
+        Mutation: "the audit reads no places"."""
+        violations, _, _ = self._scan(
+            'CITIZEN = r"(?:US|USA|united states|american|UK|british|EU) citizen"\n')
+        self.assertEqual({v["value"] for v in violations if v["kind"] == "place"},
+                         {"us", "usa", "united states", "uk", "eu"})
 
     def test_the_same_term_in_a_docstring_is_allowed(self):
         """The distinction the whole audit rests on. Identical text, and only

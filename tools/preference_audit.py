@@ -22,6 +22,12 @@ change. ADR-0027's per-source title normalisation is the case that could
 easily have gone wrong and did not, because the board configuration names a
 normaliser and the normaliser itself is generic.
 
+**So are the places the operator configured**, his home and the places
+closed to him, from 2026-10-03. ADR-0057's Confirmation says this audit
+"must still find no country named in code", and until then it read no
+place: the description reader of 2026-10-02 named nine countries and
+nationalities in a pattern, and nothing noticed.
+
 Exit codes follow tools/generate_map.py: 0 clean, 1 the audit could not run,
 2 violations found.
 """
@@ -42,6 +48,10 @@ from src.filters import (load_annotation_vendors, load_seniority_words,  # noqa:
 
 POOL_PATH = os.path.join(REPO_ROOT, "docs", "reference", "title-pool.md")
 BOARDS_PATH = os.path.join(REPO_ROOT, "config", "boards.json")
+ELIGIBILITY_PATH = os.path.join(REPO_ROOT, "config", "eligibility.json")
+# The place lists, by their keys in that file. The open words, "anywhere" and
+# the like, are ordinary English and name no place.
+PLACE_KEYS = ("home", "home_country", "home_country_codes", "onsite_home_city", "closed")
 
 # Everything the pipeline ships. Tests are excluded on purpose: a test that
 # names a pool term is a fixture, which ADR-0031 explicitly allows.
@@ -83,6 +93,21 @@ def load_employers(path=BOARDS_PATH):
     return sorted(out)
 
 
+def load_places(path=ELIGIBILITY_PATH):
+    try:
+        with io.open(path, encoding="utf-8") as f:
+            data = json.load(f)
+    except FileNotFoundError:
+        raise AuditError("eligibility config not found at %s" % path)
+    out = set()
+    for key in PLACE_KEYS:
+        values = data.get(key)
+        if not isinstance(values, list) or not values:
+            raise AuditError("eligibility config has no %r list to audit" % key)
+        out |= {str(v).lower() for v in values}
+    return sorted(out)
+
+
 def needles():
     terms, _ = load_title_pool()
     out = {}
@@ -96,6 +121,8 @@ def needles():
         out.setdefault(f, "role family")
     for e in load_employers():
         out.setdefault(e, "employer")
+    for p in load_places():
+        out.setdefault(p, "place")
     return out
 
 

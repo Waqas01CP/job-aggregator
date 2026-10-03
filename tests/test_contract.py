@@ -280,8 +280,8 @@ class TestCheck(unittest.TestCase):
 class TestTheDeliberateRebaseline(unittest.TestCase):
     """ADR-0036, 2026-09-28: a difference we caused is ours and says so."""
 
-    def entry(self, date, fields, platform="lever"):
-        return [{"platform": platform, "date": date, "cause": "we moved it", "fields": fields}]
+    def entry(self, at, fields, platform="lever"):
+        return [{"platform": platform, "at": at, "cause": "we moved it", "fields": fields}]
 
     def changed_lever(self):
         fp, _ = contract.check(BOARDS, client(responses()), {}, NOW)
@@ -291,19 +291,19 @@ class TestTheDeliberateRebaseline(unittest.TestCase):
     def test_a_recorded_change_is_ours(self):
         """Fitness function for ADR-0036, "A contract change we caused
         ourselves is re-baselined deliberately, and the re-baseline is
-        recorded.": the difference is named, marked ours with the date and
+        recorded.": the difference is named, marked ours with the time and
         cause on file, and the platform reads re-baselined, not changed.
         Mutation: "a recorded re-baseline is ignored"."""
         _, log = contract.check(BOARDS, client(responses()), self.changed_lever(), LATER,
-                                self.entry("2026-09-25", ["posting.hostedUrl"]))
+                                self.entry("2026-09-25T00:00:00Z", ["posting.hostedUrl"]))
         entry = log["platforms"]["lever"]
         self.assertEqual(entry["status"], "re-baselined")
-        self.assertEqual(entry["changes"][0]["ours"], "2026-09-25: we moved it")
-        self.assertIn("[ours, 2026-09-25: we moved it]", contract.summarise(log))
+        self.assertEqual(entry["changes"][0]["ours"], "2026-09-25T00:00:00Z: we moved it")
+        self.assertIn("[ours, 2026-09-25T00:00:00Z: we moved it]", contract.summarise(log))
 
     def test_an_unrecorded_change_is_still_a_change(self):
         _, log = contract.check(BOARDS, client(responses()), self.changed_lever(), LATER,
-                                self.entry("2026-09-25", ["posting.text"]))
+                                self.entry("2026-09-25T00:00:00Z", ["posting.text"]))
         self.assertEqual(log["platforms"]["lever"]["status"], "changed")
         self.assertNotIn("ours", log["platforms"]["lever"]["changes"][0])
 
@@ -312,14 +312,50 @@ class TestTheDeliberateRebaseline(unittest.TestCase):
         accepted, the entry that explained it is spent. The same field moving
         again, later, is the board, and must read changed. Mutation: "an old
         re-baseline excuses a later change"."""
-        rebaselines = self.entry("2026-09-25", ["posting.hostedUrl"])
+        rebaselines = self.entry("2026-09-25T00:00:00Z", ["posting.hostedUrl"])
         accepted, _ = contract.check(BOARDS, client(responses()), self.changed_lever(), LATER,
                                      rebaselines)
-        self.assertEqual(accepted["lever"]["since"], "2026-09-25")
+        self.assertEqual(accepted["lever"]["since"], "2026-09-25T06:30:00Z")
         del accepted["lever"]["posting"]["hostedUrl"]
         _, log = contract.check(BOARDS, client(responses()), accepted,
                                 datetime(2026, 9, 30, 6, 30, tzinfo=timezone.utc), rebaselines)
         self.assertEqual(log["platforms"]["lever"]["status"], "changed")
+
+    def test_a_change_of_ours_after_the_days_check_is_ours_next_day(self):
+        """The gap of 2026-10-03, the case built to defeat calendar dates: a
+        shape accepted at a morning check, then a change of ours committed
+        that afternoon. The next day's check must call it ours, and an entry
+        committed that morning before the check is spent. With dates both
+        read "the same day", the first had no true date that excused it.
+        Mutations: "a re-baseline compares dates, not times", "a shape is
+        accepted on a date, not at a time"."""
+        morning = datetime(2026, 10, 3, 11, 56, 7, tzinfo=timezone.utc)
+        accepted, _ = contract.check(BOARDS, client(responses()), {}, morning)
+        self.assertEqual(accepted["lever"]["since"], "2026-10-03T11:56:07Z")
+        del accepted["lever"]["posting"]["hostedUrl"]
+        next_check = datetime(2026, 10, 4, 12, 0, tzinfo=timezone.utc)
+        for at, status in (("2026-10-03T16:00:00Z", "re-baselined"),
+                           ("2026-10-03T09:46:55Z", "changed")):
+            with self.subTest(at=at):
+                _, log = contract.check(BOARDS, client(responses()), copy.deepcopy(accepted),
+                                        next_check, self.entry(at, ["posting.hostedUrl"]))
+                self.assertEqual(log["platforms"]["lever"]["status"], status)
+
+    def test_a_shape_accepted_on_a_date_reads_as_that_days_end(self):
+        """Shapes accepted before 2026-10-03's change carry only their day,
+        and all three stored then did. Read as the day's last second, an
+        entry of that day excuses nothing, as under the date rule, and one of
+        the next day does. Mutation: "a shape accepted on a date reads as the
+        day's start"."""
+        fp = self.changed_lever()
+        fp["lever"]["since"] = "2026-10-03"
+        later = datetime(2026, 10, 5, 12, 0, tzinfo=timezone.utc)
+        for at, status in (("2026-10-03T16:00:00Z", "changed"),
+                           ("2026-10-04T08:00:00Z", "re-baselined")):
+            with self.subTest(at=at):
+                _, log = contract.check(BOARDS, client(responses()), copy.deepcopy(fp), later,
+                                        self.entry(at, ["posting.hostedUrl"]))
+                self.assertEqual(log["platforms"]["lever"]["status"], status)
 
     def test_a_shape_with_no_acceptance_date_is_never_excused(self):
         """The fourth audit's F5, the case built to defeat the first build:
@@ -330,24 +366,29 @@ class TestTheDeliberateRebaseline(unittest.TestCase):
         fp = self.changed_lever()
         del fp["lever"]["since"]
         updated, log = contract.check(BOARDS, client(responses()), fp, LATER,
-                                      self.entry("2026-09-25", ["posting.hostedUrl"]))
+                                      self.entry("2026-09-25T00:00:00Z", ["posting.hostedUrl"]))
         self.assertEqual(log["platforms"]["lever"]["status"], "changed")
-        self.assertEqual(updated["lever"]["since"], "2026-09-25", "it gains its date now")
+        self.assertEqual(updated["lever"]["since"], "2026-09-25T06:30:00Z",
+                         "it gains its time now")
 
-    def test_an_entry_dated_after_today_excuses_nothing_yet(self):
-        """Mutation: "an entry dated in the future excuses a change today"."""
+    def test_an_entry_timed_after_the_check_excuses_nothing_yet(self):
+        """One second after the check is enough to wait. Mutation: "an entry
+        timed after the check excuses a change"."""
         _, log = contract.check(BOARDS, client(responses()), self.changed_lever(), LATER,
-                                self.entry("2026-12-31", ["posting.hostedUrl"]))
+                                self.entry("2026-09-25T06:30:01Z", ["posting.hostedUrl"]))
         self.assertEqual(log["platforms"]["lever"]["status"], "changed")
 
-    def test_a_date_that_is_not_a_calendar_date_is_refused(self):
-        """The fourth audit's probe H2 loaded both of these. Mutation: "any ten
-        characters pass as a date"."""
+    def test_a_time_that_is_not_a_utc_time_is_refused(self):
+        """The fourth audit's probe H2 loaded the first two as dates; a bare
+        date is no longer enough, and neither is a time without its zone or
+        in another one. Mutation: "any twenty characters pass as a time"."""
         path = os.path.join(tempfile.mkdtemp(), "r.json")
-        for date in ("2026-19-26", "9999-99-99", "2026-02-30"):
-            with self.subTest(date=date):
+        for at in ("2026-19-26T00:00:00Z", "9999-99-99T99:99:99Z", "2026-02-30T00:00:00Z",
+                   "2026-10-03", "2026-10-03T25:00:00Z", "2026-10-03T12:00:00",
+                   "2026-10-03T12:00:00+05:00", "2026-1-03T12:00:00Z"):
+            with self.subTest(at=at):
                 with open(path, "w", encoding="utf-8") as f:
-                    json.dump({"rebaselines": [{"platform": "lever", "date": date, "cause": "x",
+                    json.dump({"rebaselines": [{"platform": "lever", "at": at, "cause": "x",
                                                 "fields": ["posting.text"]}]}, f)
                 with self.assertRaises(contract.ConfigError):
                     contract.load_rebaselines(path)
@@ -356,31 +397,53 @@ class TestTheDeliberateRebaseline(unittest.TestCase):
         fp = self.changed_lever()
         del fp["lever"]["posting"]["text"]
         _, log = contract.check(BOARDS, client(responses()), fp, LATER,
-                                self.entry("2026-09-25", ["posting.hostedUrl"]))
+                                self.entry("2026-09-25T00:00:00Z", ["posting.hostedUrl"]))
         entry = log["platforms"]["lever"]
         self.assertEqual(entry["status"], "changed")
         self.assertEqual(sorted(c["field"] for c in entry["changes"] if c.get("ours")),
                          ["hostedUrl"])
 
     def test_a_malformed_entry_stops_the_check(self):
+        """The last is an entry still written the old way, with a date."""
         path = os.path.join(tempfile.mkdtemp(), "r.json")
-        for bad in ({"rebaselines": [{"platform": "lever", "date": "2026-9-1",
+        for bad in ({"rebaselines": [{"platform": "lever", "at": "2026-9-1T00:00:00Z",
                                       "cause": "x", "fields": ["a"]}]},
-                    {"rebaselines": [{"platform": "nowhere", "date": "2026-09-01",
+                    {"rebaselines": [{"platform": "nowhere", "at": "2026-09-01T00:00:00Z",
                                       "cause": "x", "fields": ["a"]}]},
+                    {"rebaselines": [{"platform": "lever", "at": "2026-09-01T00:00:00Z",
+                                      "fields": ["a"]}]},
                     {"rebaselines": [{"platform": "lever", "date": "2026-09-01",
-                                      "fields": ["a"]}]}):
+                                      "cause": "x", "fields": ["a"]}]}):
             with self.subTest(bad=bad):
                 with open(path, "w", encoding="utf-8") as f:
                     json.dump(bad, f)
                 with self.assertRaises(contract.ConfigError):
                     contract.load_rebaselines(path)
 
+    def test_every_entry_on_file_is_timed_by_the_commit_that_made_its_change(self):
+        """Each entry's time is when its change was committed to `main`, read
+        from git on 2026-10-03, so none can excuse a check that ran before
+        its change existed. Mutation: "an entry is timed by its day"."""
+        commits = {("himalayas", "posting.description"): "2026-10-03T09:46:55Z",
+                   ("greenhouse", "posting.content"): "2026-10-03T09:46:55Z",
+                   ("lever", "posting.description"): "2026-10-03T09:46:55Z",
+                   ("greenhouse", "posting.offices"): "2026-10-02T20:36:10Z",
+                   ("lever", "posting.country"): "2026-10-02T20:36:10Z",
+                   ("himalayas", "posting.seniority"): "2026-10-02T18:07:05Z",
+                   ("himalayas", "response.nextCursor"): "2026-09-26T13:35:27Z"}
+        entries = contract.load_rebaselines()
+        self.assertEqual(len(entries), len(commits))
+        for (platform, field), at in commits.items():
+            with self.subTest(platform=platform, field=field):
+                [entry] = [e for e in entries
+                           if e["platform"] == platform and field in e["fields"]]
+                self.assertEqual(entry["at"], at)
+
     def test_the_search_move_is_on_file_with_the_fields_it_moved(self):
         """The check of 2026-09-27 reported exactly these four Himalayas
         fields; the entry that explains them must name exactly these."""
         [entry] = [e for e in contract.load_rebaselines()
-                   if e["platform"] == "himalayas" and e["date"] == "2026-09-26"]
+                   if e["platform"] == "himalayas" and e["at"][:10] == "2026-09-26"]
         self.assertEqual(sorted(entry["fields"]), ["response.limit", "response.nextCursor",
                                                    "response.offset", "response.totalCount"])
 
@@ -403,7 +466,7 @@ class TestTheDeliberateRebaseline(unittest.TestCase):
         for date, by_adapter in added.items():
             on_file = {}
             for e in contract.load_rebaselines():
-                if e["date"] == date:
+                if e["at"][:10] == date:
                     on_file.setdefault(e["platform"], set()).update(e["fields"])
             for adapter, fields in by_adapter.items():
                 with self.subTest(date=date, platform=adapter.PLATFORM):

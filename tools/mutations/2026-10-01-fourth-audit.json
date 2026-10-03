@@ -44,20 +44,20 @@
   {
     "label": "a shape with no acceptance date reads as older than every entry",
     "path": "src/contract.py",
-    "find": "    if not since:\n        return changes\n",
-    "replace": "    since = since or \"\"\n"
+    "find": "    accepted = accepted_at(since)\n    if accepted is None:\n        return changes\n",
+    "replace": "    accepted = accepted_at(since) or datetime.min.replace(tzinfo=timezone.utc)\n"
   },
   {
-    "label": "an entry dated in the future excuses a change today",
+    "label": "an entry timed after the check excuses a change",
     "path": "src/contract.py",
-    "find": "name in e[\"fields\"] and since < e[\"date\"] <= today:",
-    "replace": "name in e[\"fields\"] and since < e[\"date\"]:"
+    "find": "                    and accepted < real_time(e[\"at\"]) <= now:",
+    "replace": "                    and accepted < real_time(e[\"at\"]):"
   },
   {
-    "label": "any ten characters pass as a date",
+    "label": "any twenty characters pass as a time",
     "path": "src/contract.py",
-    "find": "        datetime.strptime(value, \"%Y-%m-%d\")\n    except (TypeError, ValueError):\n",
-    "replace": "        str(value)\n    except (TypeError, ValueError):\n"
+    "find": "        parsed = datetime.strptime(value, \"%Y-%m-%dT%H:%M:%SZ\")",
+    "replace": "        parsed = datetime.strptime(str(value)[:4], \"%Y\")"
   },
   {
     "label": "a confirm removes rows its dry run never listed",
@@ -74,8 +74,8 @@
   {
     "label": "the dry run's list is written as a store",
     "path": "src/clearing.py",
-    "find": "DRY_RUN_FILE = \"clearing_dry_runs.json\"",
-    "replace": "DRY_RUN_FILE = \"removed_unreviewed.json\""
+    "find": "        self.dry_run_path = \"%s/%s\" % (paths[\"local_clearing_dir\"], DRY_RUN_FILE)",
+    "replace": "        self.dry_run_path = \"%s/%s\" % (paths[\"local_outcomes_dir\"], \"removed_unreviewed.json\")"
   },
   {
     "label": "a failed dry run validates a confirm",

@@ -95,7 +95,7 @@ By his estimate, that took most of a working week. He usually found a posting th
     - anything he has already classified is skipped, so it never comes back.
 11. **Sweeps the display**, under ADR-0050:
     - **Every run:** copies each newly marked row into its classification table.
-    - **Every morning:** marks postings that have closed: an employer board's posting absent on four consecutive runs, and any posting past its own expiry date, which is how a Himalayas posting closes, since its daily walk reads only its newest postings and an absence there proves nothing. It writes a row to a permanent store when its time comes:
+    - **Every morning:** marks postings that have closed: an employer board's posting absent on twelve consecutive runs, about six days, and any posting past its own expiry date, which is how a Himalayas posting closes, since its daily walk reads only its newest postings and an absence there proves nothing. It writes a row to a permanent store when its time comes:
       - fifteen days after it was classified or closed;
       - at once, if the current rules no longer admit it.
 
@@ -116,7 +116,7 @@ By his estimate, that took most of a working week. He usually found a posting th
 
 **The contract check** fetches one response per platform. It fingerprints the shape of exactly the fields each adapter reads: present or absent, type, null or not. It reports any change by field name. That tells a board that changed its API apart from a board with no new jobs (ADR-0018, ADR-0036). A change we caused ourselves, such as a new endpoint, is recorded in configuration with its date and cause and reported as ours, so it never reads as the board moving.
 
-**The clearing tool** is the operator's, run from the same workflow by hand (ADR-0055). He chooses a table and an age in days: publication date for `Jobs`, the date he classified for the other tables. The first run is a dry run: it reports what it would remove and changes nothing. A confirmed run is refused unless a dry run of the same request ran within two days, and it removes only the rows that dry run listed: a row that crossed the threshold since is left. The dry run names public rows in the run log and aggregator rows, with title and employer, in the private repository. It writes the stores and deletes nothing itself, so the next sweep removes the rows only after reading those records back. On `accepted` it only sets `Delete`. A row deleted by hand in Airtable would come back; one cleared this way does not.
+**The clearing tool** is the operator's, run from the same workflow by hand (ADR-0055). He chooses a table and an age in days: publication date for `Jobs`, the date he classified for the other tables. The first run is a dry run: it reports what it would remove and changes nothing. A confirmed run is refused unless a dry run of the same request ran within two days, and it removes only the rows that dry run listed: a row that crossed the threshold since is left. The dry run names public rows in the run log and aggregator rows, with title and employer, in the private repository, in a directory of its own outside the stores, so the list can never be read as one. It writes the stores and deletes nothing itself, so the next sweep removes the rows only after reading those records back. On `accepted` it only sets `Delete`. A row deleted by hand in Airtable would come back; one cleared this way does not.
 
 ---
 
@@ -131,7 +131,7 @@ By his estimate, that took most of a working week. He usually found a posting th
 | Display | The current projection of the filtered layer | Airtable. Never authoritative: losing it costs a screen, not data |
 
 **Git branches are the database.** There is no hosted database (ADR-0002):
-- **Public `data` branch:** employer-board metadata only, never description text (ADR-0011). Nothing from the aggregator either, because aggregator terms restrict redistribution (ADR-0020). The code refuses to commit a file holding either.
+- **Public `data` branch:** employer-board metadata only, never description text (ADR-0011). Nothing from the aggregator either, because aggregator terms restrict redistribution (ADR-0020). The code refuses to commit a file holding aggregator rows; description text has no field on a row to sit in, and only numbers, configured place names and a flag derived from it are kept.
 - **A private repository:**
   - the aggregator's rows;
   - the outcome stores for aggregator rows;
@@ -211,11 +211,11 @@ Each is measured, with its date and source. `data` is the public data branch.
 | Display intake | About one new display row a day under the current rules, so by arithmetic, not measurement, the display settles near thirty rows, and the cheaper delta projection is not yet needed | 2026-09-29 and 09-30 | Run logs, against ADR-0056's trigger of 100 |
 | Recurring cost | None | 2026-09-27 | Free plans only |
 | Feasibility research | 16 ATS platforms probed; 1,646 postings across the first 11 boards | 2026-09-11 to 09-16 | Spike logs |
-| Code | 26 source files, 7,008 lines; 33 test files, 10,788 lines; 9 tool files, 1,880 lines | 2026-10-03 | `git ls-files`, `wc` |
-| Tests | 794, passing on Python 3.11 and 3.12 | 2026-10-03 | `unittest` |
-| Mutations | 440 recorded across 35 files. Since 2026-10-01 the suite fails when a code change leaves any of them unable to run, which two commits had done to 10, unnoticed. A survivor is closed by a new test, or, where the mutation changes nothing, replaced and recorded as such | 2026-10-02 | `tools/mutations/`, run by `tools/mutate.py`; results in the session logs |
+| Code | 26 source files, 7,061 lines; 34 test files, 11,347 lines; 9 tool files, 1,907 lines | 2026-10-03 | `git ls-files`, `wc` |
+| Tests | 811, passing on Python 3.11 and 3.12 | 2026-10-03 | `unittest` |
+| Mutations | 458 recorded across 36 files. Since 2026-10-01 the suite fails when a code change leaves any of them unable to run, which two commits had done to 10, unnoticed. A survivor is closed by a new test, or, where the mutation changes nothing, replaced and recorded as such | 2026-10-02 | `tools/mutations/`, run by `tools/mutate.py`; results in the session logs |
 | Decision records | 55 (four superseded), plus the rules for amending them. 124 dated Changes rows across 42 records | 2026-09-30 | `docs/decisions/` |
-| History | 123 commits on `main`, the first on 2026-09-01 UTC; 24 session logs; one audit report in `logs/audit/` | 2026-10-03 | `git log`, `logs/` |
+| History | 130 commits on `main`, the first on 2026-09-01 UTC; 25 session logs; one audit report in `logs/audit/` | 2026-10-03 | `git log`, `logs/` |
 
 ---
 
@@ -255,8 +255,10 @@ Each is measured, with its date and source. `data` is the public data branch.
 | 2026-09-26 | Full postings saved privately; the location and age rules; Himalayas moved to search |
 | 2026-09-27 | A production failure: the second save of full postings failed on GitHub. Found in the morning's run log, reproduced, fixed and pushed the same morning, before the next run, with the postings it missed recovered by the next walk |
 | 2026-09-28 | The architecture chat recorded the operator's decisions of the week in six new records, ADR-0051 to ADR-0056 |
-| 2026-10-01 | The fourth code audit's corrections: a confirmed clear removes only what its dry run listed, the aggregator check judges each posting on a later walk, places the operator can take are kept, and the suite fails when a mutation goes stale |
 | 2026-09-30 | The display bounded: an unreviewed row leaves after thirty days, the operator can clear any table himself, and a removed row stays removed for the reason it left. The aggregator's pushed-down filter and the contract check's own changes are now checked |
+| 2026-10-01 | The fourth code audit's corrections: a confirmed clear removes only what its dry run listed, the aggregator check judges each posting on a later walk, places the operator can take are kept, and the suite fails when a mutation goes stale |
+| 2026-10-02 | The level rule and the source's own place; the closure test's false marks on 47 open rows found and fixed |
+| 2026-10-03 | The description read for years asked, a right to work required and on-site work. Closure raised to twelve runs after reposts were measured; the contract check ordered by time rather than date; every Confirmation clause of the nine newest records held by a test or marked live |
 
 ---
 
@@ -361,7 +363,7 @@ Short, role-neutral statements a reader can take as they are. Every figure is fr
 - Git branches serve as the database, with privacy enforced in code: employers' description text and aggregator data never reach the public repository. Every posting is saved in full to a private repository, verified by read-back.
 - A classification workflow: the operator's marks are copied to their own tables and stored permanently. Rows are deleted from the display only after the store is read back from the remote. The display is bounded by a thirty-day clock and a dry-run-first clearing tool.
 - A day's worth of an aggregator's feed went from about a third read, 93% of it irrelevant, to all of the relevant postings, by moving to a filtered endpoint an earlier measurement had wrongly rejected.
-- 794 tests, and 440 mutations that deliberately break the code to prove the tests notice.
+- 811 tests, and 458 mutations that deliberately break the code to prove the tests notice.
 - Designed by the operator and built with AI agents in separate roles: architecture, implementation, and cold, read-only audit. The work was carried out under a written verification discipline and produced 55 decision records and 24 session logs.
 
 ---

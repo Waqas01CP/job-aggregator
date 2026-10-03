@@ -951,7 +951,7 @@ def summarise(run_log):
                          % c["not_in_the_dry_run"])
         if c.get("aggregator_listed_privately") is not None:
             extra.append("%d aggregator row(s) listed in the private store's %s"
-                         % (c["aggregator_listed_privately"], clearing.DRY_RUN_FILE))
+                         % (c["aggregator_listed_privately"], clearing.DRY_RUN_PATH))
         if c.get("aggregator_not_listed"):
             extra.append("%d aggregator row(s) not listed, the private store being "
                          "unavailable, so a confirm leaves them" % c["aggregator_not_listed"])

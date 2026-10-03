@@ -1,0 +1,110 @@
+[
+  {
+    "label": "a re-baseline compares dates, not times",
+    "path": "src/contract.py",
+    "find": "                    and accepted < real_time(e[\"at\"]) <= now:",
+    "replace": "                    and accepted.date() < real_time(e[\"at\"]).date() <= now.date():"
+  },
+  {
+    "label": "a shape is accepted on a date, not at a time",
+    "path": "src/contract.py",
+    "find": "        fp[\"since\"] = iso(now) if previous is None",
+    "replace": "        fp[\"since\"] = iso(now)[:10] if previous is None"
+  },
+  {
+    "label": "a shape accepted on a date reads as the day's start",
+    "path": "src/contract.py",
+    "find": "            return day.replace(hour=23, minute=59, second=59, tzinfo=timezone.utc)",
+    "replace": "            return day.replace(tzinfo=timezone.utc)"
+  },
+  {
+    "label": "a time's length is not checked",
+    "path": "src/contract.py",
+    "find": "    return parsed.replace(tzinfo=timezone.utc) if len(value) == 20 else None",
+    "replace": "    return parsed.replace(tzinfo=timezone.utc)"
+  },
+  {
+    "label": "an entry is timed by its day",
+    "path": "config/contract_rebaselines.json",
+    "find": "\"platform\": \"greenhouse\",\n      \"at\": \"2026-10-03T09:46:55Z\",",
+    "replace": "\"platform\": \"greenhouse\",\n      \"at\": \"2026-10-03T00:00:00Z\","
+  },
+  {
+    "label": "the closure count goes back to four",
+    "path": "config/sweep.json",
+    "find": "  \"closed_after_polled_runs\": 12,",
+    "replace": "  \"closed_after_polled_runs\": 4,"
+  },
+  {
+    "label": "a window shorter than the count is accepted",
+    "path": "src/config.py",
+    "find": "    if window < runs:",
+    "replace": "    if False:"
+  },
+  {
+    "label": "the dry run's list is kept among the outcome stores",
+    "path": "src/clearing.py",
+    "find": "        self.dry_run_path = \"%s/%s\" % (paths[\"local_clearing_dir\"], DRY_RUN_FILE)",
+    "replace": "        self.dry_run_path = \"%s/%s\" % (paths[\"local_outcomes_dir\"], DRY_RUN_FILE)"
+  },
+  {
+    "label": "the clearing list is not pushed or restored",
+    "path": "src/private_store.py",
+    "find": ",\n               (CLEARING_DIR, \"local_clearing_dir\"))",
+    "replace": ")"
+  },
+  {
+    "label": "clearing Jobs passes over a classified row",
+    "path": "src/clearing.py",
+    "find": "            if status not in STORE_FOR:\n                continue\n            if copies is None:",
+    "replace": "            if True:\n                continue\n            if copies is None:"
+  },
+  {
+    "label": "clearing Jobs stores a classified row without its reason",
+    "path": "src/clearing.py",
+    "find": "            reason = copy[\"fields\"].get(OPERATOR_FIELD[status]) if copy else None",
+    "replace": "            reason = None"
+  },
+  {
+    "label": "the audit reads no places",
+    "path": "tools/preference_audit.py",
+    "find": "    for p in load_places():\n        out.setdefault(p, \"place\")\n",
+    "replace": ""
+  },
+  {
+    "label": "a non- prefix is read as the place",
+    "path": "src/description.py",
+    "find": "r\"[^.;,]{0,15}$|\\bnon[-\\s]?$\", re.I)",
+    "replace": "r\"[^.;,]{0,15}$\", re.I)"
+  },
+  {
+    "label": "the citizen pattern takes any word before the place",
+    "path": "src/description.py",
+    "find": "(?P<place>\\b(?:(?-i:[A-Z])[\\w.]*\\s)?[\\w.]+)",
+    "replace": "(?P<place>\\b(?:[\\w.]+\\s)?[\\w.]+)"
+  },
+  {
+    "label": "a Confirmation clause held by nothing passes",
+    "path": "tests/test_fitness.py",
+    "find": "            if entry is None:\n                out.append(\"ADR-%s: %r is held by nothing on file\" % (number, lead))\n                continue",
+    "replace": "            if entry is None:\n                continue"
+  },
+  {
+    "label": "an age drop does not say when it was first seen",
+    "path": "src/filters.py",
+    "find": "                   % (row.ordering_date, eligibility.max_age_days,\n                      getattr(row, \"first_seen\", None)))",
+    "replace": "                   % (row.ordering_date, eligibility.max_age_days, \"a run\"))"
+  },
+  {
+    "label": "the source's place keeps a posting the text drops",
+    "path": "src/filters.py",
+    "find": "    if parts and all(v == \"closed\" for v in verdicts):\n",
+    "replace": "    if parts and all(v == \"closed\" for v in verdicts) and not getattr(row, \"places\", None):\n"
+  },
+  {
+    "label": "a posting's identity names its board",
+    "path": "src/normalise.py",
+    "find": "        identity = \"%s:%s\" % (p.source, p.external_id)",
+    "replace": "        identity = \"%s:%s\" % (board.board_id, p.external_id)"
+  }
+]

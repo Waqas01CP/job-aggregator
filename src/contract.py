@@ -40,13 +40,19 @@ the second onward can detect a change.
 **A change we caused is ours, and says so.** ADR-0036, 2026-09-28: when an
 endpoint or the fields an adapter reads change, the diff the next check
 reports is not the board moving. `config/contract_rebaselines.json` records
-each such change, with its date, its cause and the fields it moves, in the
-same commit as the change. A difference matching an entry newer than the
-shape it replaces is marked ours and the platform reads `re-baselined`; any
-other difference still reads `changed`. Each stored shape carries the date it
-was accepted, so an old entry can never excuse a later change to the same
-field. On 2026-09-27 the check reported four Himalayas fields changed that
-ADR-0053's move to the search endpoint had caused, with nothing to say so.
+each such change, with the UTC time it was committed to `main`, its cause and
+the fields it moves, in the same commit as the change. A difference matching
+an entry newer than the shape it replaces is marked ours and the platform
+reads `re-baselined`; any other difference still reads `changed`. Each stored
+shape carries the time it was accepted, so an old entry can never excuse a
+later change to the same field. On 2026-09-27 the check reported four
+Himalayas fields changed that ADR-0053's move to the search endpoint had
+caused, with nothing to say so.
+
+**Times, not dates.** ADR-0036, 2026-10-03. With calendar dates, a change
+reaching `main` on the day a shape was accepted, after that day's check, had
+no date both true and later than the acceptance, so the next check would
+have called our own change the board's. A time orders the two within the day.
 """
 
 import argparse
@@ -167,43 +173,63 @@ def load_rebaselines(path=None):
         raise ConfigError("contract re-baselines: expected a 'rebaselines' list")
     for i, e in enumerate(entries):
         if not (isinstance(e, dict) and e.get("platform") in PLATFORMS
-                and real_date(e.get("date"))
+                and real_time(e.get("at"))
                 and e.get("cause") and isinstance(e.get("fields"), list) and e["fields"]):
-            raise ConfigError("contract re-baseline %d needs a platform, a YYYY-MM-DD date, "
-                              "a cause and the fields it moves" % i)
+            raise ConfigError("contract re-baseline %d needs a platform, a UTC time written "
+                              "YYYY-MM-DDTHH:MM:SSZ, a cause and the fields it moves" % i)
     return entries
 
 
-def real_date(value):
-    """A calendar date written YYYY-MM-DD. Ten characters are not enough: the
-    fourth audit loaded "2026-19-26" and "9999-99-99", each able to excuse
-    changes it was never written for."""
+def real_time(value):
+    """A UTC time written YYYY-MM-DDTHH:MM:SSZ, or None. Twenty characters
+    are not enough: the fourth audit loaded "2026-19-26" and "9999-99-99" as
+    dates, each able to excuse changes it was never written for."""
     try:
-        datetime.strptime(value, "%Y-%m-%d")
+        parsed = datetime.strptime(value, "%Y-%m-%dT%H:%M:%SZ")
     except (TypeError, ValueError):
-        return False
-    return len(value) == 10
+        return None
+    return parsed.replace(tzinfo=timezone.utc) if len(value) == 20 else None
 
 
-def explain(platform, changes, rebaselines, since, today):
+def accepted_at(since):
+    """When a stored shape was accepted, or None when that is unknown.
+
+    **A shape accepted before times were kept carries only its day**, and is
+    read as that day's last second, which is what the date rule meant: an
+    entry of the same day excuses nothing. It gains its time on its next
+    change."""
+    if not isinstance(since, str):
+        return None
+    try:
+        if len(since) == 10:
+            day = datetime.strptime(since, "%Y-%m-%d")
+            return day.replace(hour=23, minute=59, second=59, tzinfo=timezone.utc)
+        return datetime.fromisoformat(since.replace("Z", "+00:00")).astimezone(timezone.utc)
+    except ValueError:
+        return None
+
+
+def explain(platform, changes, rebaselines, since, now):
     """Mark each change a recorded re-baseline accounts for: same platform,
-    the field named, dated after the stored shape was accepted and not after
-    today.
+    the field named, committed after the stored shape was accepted and not
+    after this check.
 
-    **A shape whose acceptance date is unknown is never excused.** Shapes
-    stored before 2026-09-30 carry none, and reading the gap as "older than
+    **A shape whose acceptance is unknown is never excused.** Shapes stored
+    before 2026-09-30 carry none, and reading the gap as "older than
     everything" let the entry of 2026-09-26, already spent on the check of
     09-27, excuse any change to its four fields on the next check: the fourth
-    audit's F5. Such a shape gains its date on the first check that reads it.
-    **An entry dated after today excuses nothing yet**, so a mistyped future
-    date cannot hold a field open."""
-    if not since:
+    audit's F5. Such a shape gains its time on the first check that reads it.
+    **An entry timed after this check excuses nothing yet**, so a mistyped
+    future time cannot hold a field open."""
+    accepted = accepted_at(since)
+    if accepted is None:
         return changes
     for c in changes:
         name = "%s.%s" % (c["in"], c["field"])
         for e in rebaselines:
-            if e["platform"] == platform and name in e["fields"] and since < e["date"] <= today:
-                c["ours"] = "%s: %s" % (e["date"], e["cause"])
+            if e["platform"] == platform and name in e["fields"] \
+                    and accepted < real_time(e["at"]) <= now:
+                c["ours"] = "%s: %s" % (e["at"], e["cause"])
                 break
     return changes
 
@@ -241,15 +267,14 @@ def check(boards, client, stored, now, rebaselines=()):
         if previous is None:
             entry["status"] = "baseline"
         else:
-            entry["changes"] = explain(platform, compare(previous, fp), rebaselines, since,
-                                       iso(now)[:10])
+            entry["changes"] = explain(platform, compare(previous, fp), rebaselines, since, now)
             entry["status"] = ("unchanged" if not entry["changes"] else
                                "re-baselined" if all(c.get("ours") for c in entry["changes"])
                                else "changed")
-        # When this shape was accepted: today for a new or changed one, and
-        # for a stored one written before the date was kept, so no entry
+        # When this shape was accepted: now for a new or changed one, and for
+        # a stored one written before the acceptance was kept, so no entry
         # older than the shape in force can explain a later change.
-        fp["since"] = iso(now)[:10] if previous is None or entry.get("changes") or not since \
+        fp["since"] = iso(now) if previous is None or entry.get("changes") or not since \
             else since
         updated[platform] = fp
     return updated, log

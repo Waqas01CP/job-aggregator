@@ -44,9 +44,12 @@ confirm up to 48 hours later removed rows no dry run had shown him.
 **So every row the dry run lists is named where he can read it.** A public
 row by identity in the run log. An aggregator's is masked there (ADR-0020),
 so the dry run lists it, with its title, employer and date, in the private
-repository's `outcomes/clearing_dry_runs.json`. That file is a list for him
-and for the confirm, and is no store: neither the skip nor the sweep reads
-it, so it keeps nothing out of the display.
+repository's `clearing/dry_runs.json`. That file is a list for him and for
+the confirm, and is no store: neither the skip nor the sweep reads it, so it
+keeps nothing out of the display. **It sits outside `outcomes/`**, the
+architecture chat's ruling of 2026-10-03 in ADR-0055: a file there will one
+day be read as a store, so the guarantee holds by where the file sits and
+not only by what reads it today.
 
 **Clearing `Jobs` takes a classified row's rejection copy with it**, since
 both leave on the outcome the tool writes. An accepted copy stays until its
@@ -62,6 +65,7 @@ from .airtable_sweep import (CLASSIFICATION_TABLES, COPY_FIELDS, DELETE_FIELD, D
                              OPERATOR_FIELD)
 from .normalise import Row
 from .projection import REASON_OPERATOR, REMOVED_UNREVIEWED_STORE, removal_key
+from .storage import CLEARING_DIR
 from .sweep import (JOBS_FIELDS, REMOVED_BY_OPERATOR, STORE_FOR, Stores, jobs_fields_record,
                     masked, older_than, parse_time, source_of)
 
@@ -69,9 +73,10 @@ from .sweep import (JOBS_FIELDS, REMOVED_BY_OPERATOR, STORE_FOR, Stores, jobs_fi
 # `Jobs` or `Jobs test`, as the client binds it.
 TABLES = (JOBS,) + CLASSIFICATION_TABLES
 NONE = "none"
-# The dry run's aggregator rows, beside the private outcome stores so the
-# private store pushes it. Read by the confirm and by no store reader.
-DRY_RUN_FILE = "clearing_dry_runs.json"
+# The dry run's aggregator rows, in the private store's own directory for
+# the tool. Read by the confirm and by no store reader.
+DRY_RUN_FILE = "dry_runs.json"
+DRY_RUN_PATH = "%s/%s" % (CLEARING_DIR, DRY_RUN_FILE)
 
 
 class ClearingError(Exception):
@@ -127,7 +132,7 @@ class Clearing:
         self.now = now
         self.now_iso = now.isoformat().replace("+00:00", "Z")
         self.test_mode = test_mode
-        self.dry_run_path = "%s/%s" % (paths["local_outcomes_dir"], DRY_RUN_FILE)
+        self.dry_run_path = "%s/%s" % (paths["local_clearing_dir"], DRY_RUN_FILE)
         self.stores = Stores(paths, private_ok)
         rows = []
         for key in ("filtered", "local_filtered"):

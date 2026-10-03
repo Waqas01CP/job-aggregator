@@ -85,6 +85,11 @@ RUNLOG_DIR = "logs-runs"
 # ADR-0043's outcome stores. Written by the sweep, read by the projection's
 # skip, so they are state and are restored with the rest.
 OUTCOMES_DIR = "outcomes"
+# ADR-0055's clearing tool keeps its dry runs' private list here, in the
+# private store only. Not under OUTCOMES_DIR: the architecture chat's ruling
+# of 2026-10-03 is that a file there will one day be read as a store, so the
+# list's guarantee to keep nothing out holds by where it sits.
+CLEARING_DIR = "clearing"
 
 # What a committing run reads back from the branch before it starts. Run logs
 # are history rather than state, so they are not restored.
@@ -139,6 +144,7 @@ def layout(test_mode=False):
         # ADR-0047: the private repository's copies of the outcome stores,
         # restored beside the other aggregator working copies.
         "local_outcomes_dir": "%s/%s/%s" % (root, LOCAL_DIR, OUTCOMES_DIR),
+        "local_clearing_dir": "%s/%s/%s" % (root, LOCAL_DIR, CLEARING_DIR),
     }
 
 

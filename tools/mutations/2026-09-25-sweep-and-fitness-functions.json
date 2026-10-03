@@ -146,8 +146,8 @@
   {
     "label": "aggregator outcomes are not pushed privately",
     "path": "src/private_store.py",
-    "find": "    if os.path.isdir(outcomes):",
-    "replace": "    if False:"
+    "find": "        local = paths[key]\n        if os.path.isdir(local):",
+    "replace": "        local = paths[key]\n        if os.path.isdir(local) and directory != OUTCOMES_DIR:"
   },
   {
     "label": "a sweep failure exits 0",

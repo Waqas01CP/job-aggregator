@@ -147,10 +147,11 @@ def years_asked(lines):
 
 
 # ----------------------------------------------------------- requirements
-# "U.S." and "U.K." lose their dots first, or a place would end at the first
-# one, as a measured place ended at "the U".
-_DOTTED = ((re.compile(r"\bU\.\s?S\.(?:\s?A\.?)?(?=\W|$)", re.I), "US"),
-           (re.compile(r"\bU\.\s?K\.(?=\W|$)", re.I), "UK"))
+# Initials written with dots lose them first, or a place would end at the
+# first one, as a measured place ended at "the U". Any two or three capitals,
+# so that no module names a country (ADR-0031, ADR-0057): which initials name
+# a closed place is the configuration's to say.
+_DOTTED = re.compile(r"\b(?:[A-Z]\.\s?){1,2}[A-Z]\b\.?")
 _PLACE = r"(?P<place>[^.;:\n()!?]{1,70})"
 # Each a requirement on the candidate, naming a place. A match the place rule
 # cannot read as closed decides nothing: being able to work in fast-moving
@@ -162,9 +163,12 @@ _REQUIREMENTS = (
     re.compile(r"\b(?:work|employment)\s+(?:authori[sz]ation|eligibility|permit|rights?)"
                r"\s+(?:in|within|for)\s+" + _PLACE, re.I),
     re.compile(r"\bright\s+to\s+work\s+(?:in|within)\s+" + _PLACE, re.I),
-    re.compile(r"(?P<place>\b(?:US|USA|united states|american|UK|british|canadian|EU|australian)\b)"
-               r"\s+(?:citizen(?:ship|s)?|work\s+authori[sz]ation|work\s+permit|persons?"
-               r"|nationals?|nationality)\b", re.I),
+    # The word before "citizen" and its kind, and the one before that when it
+    # is capitalised, as in a two-word country; the configuration decides
+    # whether they name a place, so "valid" or "dual" name nothing.
+    re.compile(r"(?P<place>\b(?:(?-i:[A-Z])[\w.]*\s)?[\w.]+)\s+(?:citizen(?:ship|s)?"
+               r"|work\s+authori[sz]ation|work\s+permit|persons?|nationals?|nationality)\b",
+               re.I),
     re.compile(r"\b(?:must|should|need\s+to|needs\s+to|required\s+to|have\s+to|will\s+need\s+to)"
                r"\s+(?:be\s+)?(?:currently\s+)?(?:physically\s+)?(?:based|located|living|residing"
                r"|reside|live|resident)\s+(?:in|within)\s+" + _PLACE, re.I),
@@ -181,7 +185,7 @@ _REQUIREMENTS = (
 # must stand against it: in "we don't sponsor visas, so you must be
 # authorized to work in the US" the requirement holds.
 _NEGATED_BEFORE = re.compile(r"(?:\bnot\b|n['’]t\b|\bno\s+need\b|\bnever\b|\bwithout\b)"
-                             r"[^.;,]{0,15}$", re.I)
+                             r"[^.;,]{0,15}$|\bnon[-\s]?$", re.I)
 _NEGATED_PLACE = re.compile(r"\b(?:not|optional|no longer)\b", re.I)
 _NEGATED_AFTER = re.compile(r"^[^.;]{0,25}?\b(?:not\s+(?:required|necessary|needed|a\s+requirement)"
                             r"|optional)\b", re.I)
@@ -193,8 +197,7 @@ def requirements_named(lines):
     question, under the operator's configuration."""
     found = []
     for line in lines:
-        for pattern, plain in _DOTTED:
-            line = pattern.sub(plain, line)
+        line = _DOTTED.sub(lambda m: re.sub(r"[.\s]", "", m.group(0)), line)
         for pattern in _REQUIREMENTS:
             for m in pattern.finditer(line):
                 place = " ".join(m.group("place").split())

@@ -134,14 +134,14 @@
   {
     "label": "a recorded re-baseline is ignored",
     "path": "src/contract.py",
-    "find": "            entry[\"changes\"] = explain(platform, compare(previous, fp), rebaselines, since,\n                                       iso(now)[:10])",
+    "find": "            entry[\"changes\"] = explain(platform, compare(previous, fp), rebaselines, since, now)",
     "replace": "            entry[\"changes\"] = compare(previous, fp)"
   },
   {
     "label": "an old re-baseline excuses a later change",
     "path": "src/contract.py",
-    "find": "            if e[\"platform\"] == platform and name in e[\"fields\"] and since < e[\"date\"] <= today:",
-    "replace": "            if e[\"platform\"] == platform and name in e[\"fields\"]:"
+    "find": "                    and accepted < real_time(e[\"at\"]) <= now:",
+    "replace": "                    and real_time(e[\"at\"]) <= now:"
   },
   {
     "label": "the age rule is judged against the run's clock",

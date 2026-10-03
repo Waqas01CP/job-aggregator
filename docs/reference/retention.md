@@ -131,7 +131,8 @@ ran within `clearing_dry_run_valid_hours` of `config/sweep.json`, 48, and it
 removes only the rows that dry run listed: one that crossed the threshold
 since is left and counted (the fourth audit's F1, 2026-10-01). The dry run
 names a public row in the run log, and an aggregator's, with its title and
-employer, in the private repository's `outcomes/clearing_dry_runs.json`.
+employer, in the private repository's `clearing/dry_runs.json`, outside the
+outcome stores so that it can never be read as one (ADR-0055, 2026-10-03).
 Clearing `Jobs` takes a classified row's rejection copy with it, and the dry
 run counts those rows by status.
 

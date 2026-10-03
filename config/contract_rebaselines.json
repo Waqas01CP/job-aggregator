@@ -1,47 +1,47 @@
 {
-  "source": "ADR-0036, 2026-09-28: a fingerprint difference that follows a change of endpoint, or of the fields an adapter reads, is ours, and is recorded with its date and the change that caused it. Add an entry in the same commit as the change, naming every field of the contract check's fingerprint it moves, as <section>.<field>.",
+  "source": "ADR-0036, 2026-09-28: a fingerprint difference that follows a change of endpoint, or of the fields an adapter reads, is ours, and is recorded with its time and the change that caused it. Add an entry in the same commit as the change, naming every field of the contract check's fingerprint it moves, as <section>.<field>. `at` is the UTC time the change is committed to main, written YYYY-MM-DDTHH:MM:SSZ, a time and not a date since 2026-10-03 (ADR-0036): push it at once, since a contract check that records a change between the commit and the push leaves the entry older than the shape it must excuse.",
   "rebaselines": [
     {
       "platform": "himalayas",
-      "date": "2026-09-26",
+      "at": "2026-09-26T13:35:27Z",
       "cause": "ADR-0053: Himalayas is polled through its search endpoint instead of the browse feed, so the check fingerprints a different response. Nothing changed at Himalayas.",
       "fields": ["response.nextCursor", "response.limit", "response.offset", "response.totalCount"]
     },
     {
       "platform": "himalayas",
-      "date": "2026-10-02",
+      "at": "2026-10-02T18:07:05Z",
       "cause": "The adapter now reads seniority, the level Himalayas states, for the level rule the operator decided on 2026-10-02, so the check fingerprints one more field. Nothing changed at Himalayas.",
       "fields": ["posting.seniority"]
     },
     {
       "platform": "greenhouse",
-      "date": "2026-10-02",
+      "at": "2026-10-02T20:36:10Z",
       "cause": "The adapter now reads offices and metadata, for the location rule's structured place and stated workplace, the operator's go of 2026-10-02, so the check fingerprints two more fields. Nothing changed at Greenhouse.",
       "fields": ["posting.offices", "posting.offices.location", "posting.metadata",
                  "posting.metadata.name", "posting.metadata.value"]
     },
     {
       "platform": "lever",
-      "date": "2026-10-02",
+      "at": "2026-10-02T20:36:10Z",
       "cause": "The adapter now reads country and workplaceType, for the location rule's structured place and stated workplace, the operator's go of 2026-10-02, so the check fingerprints two more fields. Nothing changed at Lever.",
       "fields": ["posting.country", "posting.workplaceType"]
     },
     {
       "platform": "greenhouse",
-      "date": "2026-10-03",
+      "at": "2026-10-03T09:46:55Z",
       "cause": "The adapter now reads content, the description, for the experience, authorisation and on-site rules the operator decided on 2026-10-02, so the check fingerprints one more field. Nothing changed at Greenhouse.",
       "fields": ["posting.content"]
     },
     {
       "platform": "lever",
-      "date": "2026-10-03",
+      "at": "2026-10-03T09:46:55Z",
       "cause": "The adapter now reads description, lists and additional, the description's three parts, for the experience, authorisation and on-site rules the operator decided on 2026-10-02, so the check fingerprints them. Nothing changed at Lever.",
       "fields": ["posting.description", "posting.lists", "posting.lists.text",
                  "posting.lists.content", "posting.additional"]
     },
     {
       "platform": "himalayas",
-      "date": "2026-10-03",
+      "at": "2026-10-03T09:46:55Z",
       "cause": "The adapter now reads description, for the experience, authorisation and on-site rules the operator decided on 2026-10-02, so the check fingerprints one more field. Nothing changed at Himalayas.",
       "fields": ["posting.description"]
     }

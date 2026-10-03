@@ -1,7 +1,7 @@
 {
   "source": "ADR-0050, 2026-09-25. Numbers are configuration under ADR-0031, not constants.",
-  "closed_after_polled_runs": 4,
-  "closed_after_polled_runs_note": "A posting has closed when absent from its board on this many consecutive runs that polled it. The chat's starting value, approved by the operator 2026-09-25, unmeasured.",
+  "closed_after_polled_runs": 12,
+  "closed_after_polled_runs_note": "A posting has closed when absent from its board on this many consecutive runs that polled it. Twelve, about six days at two runs a day, the operator's decision of 2026-10-03: twelve Greenhouse postings left their boards and returned after 23 to 130 hours, median 59 (measured 2026-09-30 over the run logs), so the starting value of four, about 48 hours, would have closed more than half of them while open. A closed row is hidden from his To review view.",
   "retire_after_days": 15,
   "retire_after_days_note": "Classified rows are stored and leave Jobs, rejection copies are deleted, and closed rows are retired this many days after their clock starts. The operator's figure, carried from ADR-0046.",
   "unreviewed_after_days": 30,

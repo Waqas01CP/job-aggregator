@@ -208,9 +208,17 @@ def load_sweep_config(path=None):
     if day > 31:
         raise ConfigError("sweep config: budget_warning_before_day must be a day of the "
                           "month, got %r" % day)
-    return SweepConfig(closed_after_polled_runs=whole("closed_after_polled_runs", 1),
+    runs, window = whole("closed_after_polled_runs", 1), whole("run_log_window", 1)
+    # The closure test counts runs in the logs it reads, so a window shorter
+    # than the count would let no posting close, silently. The count went
+    # from four to twelve on 2026-10-03.
+    if window < runs:
+        raise ConfigError("sweep config: run_log_window (%d) must hold at least "
+                          "closed_after_polled_runs (%d) runs, or no posting can close"
+                          % (window, runs))
+    return SweepConfig(closed_after_polled_runs=runs,
                        retire_after_days=whole("retire_after_days", 1),
-                       run_log_window=whole("run_log_window", 1),
+                       run_log_window=window,
                        unreviewed_after_days=whole("unreviewed_after_days", 1),
                        clearing_dry_run_valid_hours=whole("clearing_dry_run_valid_hours", 1),
                        budget_warning_share=float(share),

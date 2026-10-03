@@ -467,6 +467,27 @@ class TestRunIntegration(unittest.TestCase):
         Run([SEARCH], client, now=NOW, matcher=MATCHER).execute()
         self.assertEqual(client.served["n"], 3)
 
+    def test_a_posting_browse_stored_is_not_new_to_search(self):
+        """ADR-0053's Confirmation: "A posting browse already stored must not
+        be new to search. Same `guid`, same identity, no second row and no
+        second publication date." The identity is the source's, never the
+        board's. Mutation: "a posting's identity names its board"."""
+        pages = self._two_pages(1789141800)
+        Run([BOARD], self._client(pages), now=NOW, matcher=MATCHER).execute()
+        self._saved_in_full()
+        path = storage.layout(False)["local_seen"]
+        before = dict(storage.SeenStore.load(path).entries)
+        log = Run([SEARCH], self._client(pages), now=NOW, matcher=MATCHER).execute()
+        self.assertEqual(log["totals"]["new"], 0)
+        after = storage.SeenStore.load(path).entries
+        self.assertEqual(set(after), set(before))
+        for identity, entry in before.items():
+            self.assertEqual((after[identity]["first_seen"], after[identity]["published_at"]),
+                             (entry["first_seen"], entry["published_at"]))
+        rows = storage.read_records(storage.layout(False)["local_filtered"])
+        identities = [r["identity"] for r in rows]
+        self.assertEqual(len(identities), len(set(identities)))
+
     def test_a_posting_not_saved_in_full_is_walked_to_again(self):
         """D11 on a paginated feed: the run of 2026-09-27T03:59Z stored its
         postings and could not save them in full. They set no mark, so the
