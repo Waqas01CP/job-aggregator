@@ -44,7 +44,7 @@ The word list is fourteen words: `senior`, `sr`, `staff`, `lead`, `principal`, `
 
 Chosen option: "a seniority rule after the title rule".
 
-**A rule running immediately after the title rule drops a posting whose title contains any word in the operator's seniority list.** The drop names the word. The list lives in `docs/reference/seniority-exclusions.md` with its own change log, which is ADR-0031's shape.
+**A rule running immediately after the title rule drops a posting whose title contains any word in the operator's seniority list.** The drop names the word. The list lives in `docs/reference/seniority-exclusions.md` with its own change log, which is ADR-0031's shape. *(Extended 2026-10-02: where a source states a posting's level, that statement is a second signal for the same question. See Changes.)*
 
 **ADR-0021's line 50 *(line 52 since `dc02b0f` added two frontmatter lines on 2026-09-18)* is reversed in this respect only.** A blocklist that deletes rows on a machine's judgement of category is still rejected, and nothing here reinstates one. What this record permits is narrower and different in kind: a list of words about the operator's own level, owned by him, in a file he edits, applied by a rule that names its match. ADR-0031 records why that is configuration rather than judgement.
 
@@ -112,3 +112,4 @@ The evidence for the numbered levels, the words, and the reasons `architect` and
 | Date | Change | Reason |
 |---|---|---|
 | 2026-09-24 | Three references to ADR-0021's line 50 annotated as line 52, and the status name annotated | `dc02b0f` added two frontmatter lines to every record on 2026-09-18, moving every cited line down by two. Annotated by the implementing seat under ADR-RULES, which allows a stale or wrong fact to be annotated unasked; the Decision Outcome is untouched. Found by the corpus audit of 2026-09-23 |
+| 2026-10-02 | A source's stated level is read beside the title. A posting is kept when any level it states is entry-level or mid-level, and dropped when every stated level is above; a posting stating none is kept. The title rule still runs, so a stated level never rescues a title this rule drops. The levels are configuration. Only Himalayas states one | The operator's decision, "keep till mid", option A, so a posting labelled both mid and senior is kept. The same question this record answers from the title, answered from a field: Himalayas labels every posting, and 35 of the 67 it kept were Senior or above. Measured over the 809 saved Himalayas postings, 67 kept before and 34 after. Rows stored before the rule keep their verdict and leave on the thirty-day clock (ADR-0040) |
