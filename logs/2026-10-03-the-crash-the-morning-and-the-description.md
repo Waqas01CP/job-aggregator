@@ -90,9 +90,22 @@ All four confirm what is built; no code changes.
 
 **The crash, his side:** he will stop OneDrive running in the background and remove VMware Workstation. Read on his machine [VERIFIED]: Docker Desktop is installed and starts at sign-in, and its virtual machine is WSL's only distribution, so the 3.2 GB `vmmem` was most likely Docker's [INFERRED], not VMware's, whose running services are a few megabytes. His Desktop, Documents and Pictures live inside OneDrive; no virtual machine files are there, so why OneDrive reached 10.6 GB stays unexplained.
 
+## The afternoon: the contract check, and the clearing tool's first live run [VERIFIED]
+
+From `data` and `data-test` in scratch clones.
+- **The contract check of 11:56Z** ran after the push of 09:47Z: all three platforms "re-baselined", every change marked ours, the description's fields beside 10-02's. `since` is now 2026-10-03.
+- **His clearing test, in test mode.**
+  - The confirm at 13:52Z was bound to his dry run of 10-02T18:54Z, with no row outside it. It stored 2 rows, not the 19 the dry run listed. The same run's sweep, which runs first, had deleted 52 `Jobs test` rows the location and age rules drop: rows from the test runs of September, before those rules. The dry run's own sweep had found and stored them, and deleted nothing until they were read back. 17 of the 19 were among them.
+  - The run at 13:55Z deleted the 2 rows and one classification copy.
+  - Nothing reached `data` or the real tables.
+- **The seat's error:** it told him "the 19 rows leave" without reading the dry run's sweep block, which showed 52 waiting.
+- **Proposed to him, not built:** a dry run could say how many of its rows the rules are already removing.
+
+**His instruction on the session:** its length and context are his to judge. The seat raises closing only when its own work degrades: recurring mistakes, invented facts, instructions not followed. Saved to the seat's memory.
+
 ## Open
 
-- **His:** the confirm of the clearing test, in test mode with table `jobs` and 30 days, before 18:54Z on 10-04; then one more test-mode run.
 - **His:** the three claude.ai connectors off with `/mcp`; OneDrive, VMware and Docker Desktop as he decides.
+- **His:** the proposal above.
 - **The seat's, tomorrow morning:** the first run with the description rules, its drops per rule, and today's contract check reading the new fields as re-baselined.
 - **The architecture chat's,** through Addendum 4: the three rules, the cap, the re-baseline gap, and stored rows keeping their verdict.
