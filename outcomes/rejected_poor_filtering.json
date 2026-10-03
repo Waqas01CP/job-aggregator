@@ -1,0 +1,33 @@
+[
+ {
+  "identity": "greenhouse:4918669101",
+  "source": "greenhouse",
+  "board_id": "greenhouse:joblogic",
+  "external_id": "4918669101",
+  "employer": "Joblogic",
+  "employer_provenance": "payload",
+  "title": "Mobile Developer (native iOS/Android & Flutter)",
+  "title_normalised": "Mobile Developer (native iOS/Android & Flutter)",
+  "location": "Ho Chi Minh City, Ho Chi Minh, Vietnam",
+  "published_at": "2026-07-03T12:40:35Z",
+  "published_field": "first_published",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-09-17T15:15:39.979813Z",
+  "ordering_date": "2026-07-03T12:40:35Z",
+  "ordering_date_source": "publication",
+  "url": "https://job-boards.eu.greenhouse.io/joblogic/jobs/4918669101",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": null,
+  "places": null,
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null,
+  "status": "rejected-poor-filtering",
+  "reason": null,
+  "classified_at": "2026-09-24T15:08:39.000Z",
+  "removed_by": "operator",
+  "swept_at": "2026-10-03T13:52:41.598864Z"
+ }
+]

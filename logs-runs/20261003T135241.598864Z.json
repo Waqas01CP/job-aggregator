@@ -1,0 +1,680 @@
+{
+ "run_at": "2026-10-03T13:52:41.598864Z",
+ "test_mode": true,
+ "boards": [
+  {
+   "board": "greenhouse:banyancanopygroup",
+   "fetched": 5,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 5
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-04-09T10:17:28Z"
+  },
+  {
+   "board": "greenhouse:brkz",
+   "fetched": 21,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 19,
+    "seniority": 2
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2025-04-20T12:44:09Z"
+  },
+  {
+   "board": "greenhouse:careem",
+   "fetched": 15,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 11,
+    "seniority": 3,
+    "age": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2023-11-02T16:13:14Z"
+  },
+  {
+   "board": "greenhouse:coderoad",
+   "fetched": 23,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "experience": 2,
+    "authorisation": 1,
+    "title": 13,
+    "location": 1,
+    "seniority": 6
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-01-26T00:58:51Z"
+  },
+  {
+   "board": "greenhouse:globalli",
+   "fetched": 14,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 1,
+   "drops": {
+    "title": 12,
+    "seniority": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-05-15T16:36:36Z"
+  },
+  {
+   "board": "greenhouse:gomotive",
+   "fetched": 150,
+   "parse_problems": 0,
+   "new": 1,
+   "kept": 0,
+   "drops": {
+    "title": 144,
+    "seniority": 5,
+    "experience": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2021-08-12T21:46:45Z"
+  },
+  {
+   "board": "greenhouse:joblogic",
+   "fetched": 35,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 2,
+   "drops": {
+    "age": 3,
+    "title": 27,
+    "experience": 2,
+    "seniority": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-06-26T10:54:09Z"
+  },
+  {
+   "board": "greenhouse:speechify",
+   "fetched": 6,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "experience": 2,
+    "title": 4
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2021-03-12T21:28:31Z"
+  },
+  {
+   "board": "greenhouse:veeamsoftware",
+   "fetched": 236,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 216,
+    "location": 10,
+    "experience": 1,
+    "seniority": 9
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2025-01-15T17:33:52Z"
+  },
+  {
+   "board": "himalayas:pakistan",
+   "fetched": 318,
+   "parse_problems": 0,
+   "new": 304,
+   "kept": 6,
+   "drops": {
+    "title": 286,
+    "level": 12,
+    "seniority": 14
+   },
+   "status": "ok",
+   "detail": null,
+   "pages": 16,
+   "walk": {
+    "stopped_by": "mark",
+    "mark": "2026-10-02T18:51:29Z"
+   },
+   "capped": false,
+   "agreement": {
+    "browse_read": 20,
+    "returned_by_search": 2,
+    "rule_excludes": 18,
+    "newly_waiting": 0,
+    "returned_since": 0,
+    "disagreements": 0,
+    "still_waiting": 0,
+    "gave_up": 0
+   },
+   "oldest_published": "2026-09-16T06:15:55Z"
+  },
+  {
+   "board": "lever:smart-working-solutions",
+   "fetched": 22,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 14,
+    "experience": 1,
+    "authorisation": 1,
+    "seniority": 6
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-07-03T10:32:20.479000Z"
+  },
+  {
+   "board": "lever:spreetail",
+   "fetched": 38,
+   "parse_problems": 0,
+   "new": 1,
+   "kept": 0,
+   "drops": {
+    "title": 35,
+    "location": 1,
+    "seniority": 2
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2025-09-23T21:08:41.072000Z"
+  }
+ ],
+ "totals": {
+  "fetched": 883,
+  "new": 306,
+  "kept": 9,
+  "written_raw": {
+   "greenhouse": 1,
+   "himalayas": 304,
+   "lever": 1
+  },
+  "written_filtered": 6,
+  "backfilled": 0,
+  "backfilled_public": 0,
+  "backfilled_local": 0,
+  "written_filtered_local": 6,
+  "drops": {
+   "expiry": 0,
+   "annotation_vendor": 0,
+   "title": 786,
+   "seniority": 49,
+   "level": 12,
+   "experience": 9,
+   "authorisation": 2,
+   "location": 12,
+   "age": 4
+  },
+  "dedupe": {
+   "postings": 883,
+   "groups": 836,
+   "collapsed": 47,
+   "largest_group": 5
+  }
+ },
+ "requests": {
+  "requests_used": 28,
+  "budget": 500,
+  "budget_remaining": 472,
+  "by_source": {
+   "greenhouse": 9,
+   "lever": 2,
+   "himalayas": 17
+  },
+  "retries": 0,
+  "failures": 0,
+  "refused": 0,
+  "circuit_open": false
+ },
+ "stopped": null,
+ "source_class": {
+  "greenhouse": "ats",
+  "lever": "ats",
+  "himalayas": "aggregator"
+ },
+ "private_store": {
+  "branch": "data-test",
+  "restored": 4,
+  "pushed": true,
+  "failure": null,
+  "full": {
+   "pending": 306,
+   "saved": 306,
+   "file": "full/20261003T135241.598864Z.json",
+   "verified": true,
+   "failure": null,
+   "bytes": 1750486
+  },
+  "files": 4,
+  "outcomes_pushed": false
+ },
+ "projection": {
+  "stored_identities": 0,
+  "rows_read": 432,
+  "rows_admitted": 50,
+  "groups": 50,
+  "groups_skipped_by_store": 0,
+  "groups_retired_closed": 0,
+  "rows_to_send": 50,
+  "rows_sent": 50
+ },
+ "airtable": {
+  "calls_used": 5,
+  "rows_sent": 50,
+  "monthly_ceiling": 1000,
+  "month_to_date_before_run": 86,
+  "month_remaining": 909,
+  "retries": 0,
+  "failures": 0,
+  "refused": 0,
+  "circuit_open": false,
+  "failure": null,
+  "month_to_date_by_branch": {
+   "data-test": 10,
+   "data": 76
+  }
+ },
+ "sweep": {
+  "copied": {},
+  "stale_copies_deleted": {},
+  "deleted_from_jobs": 52,
+  "copies_deleted": {},
+  "closed_marked": 0,
+  "closed_cleared": 0,
+  "waiting_for_the_store": 0,
+  "held_private_unavailable": 0,
+  "not_in_the_stored_layers": 28,
+  "kept_after_a_clear": 0,
+  "aged_out": 0,
+  "removals": [
+   {
+    "identity": "<aggregator row>",
+    "table": "jobs",
+    "reason": "dropped by the location rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "greenhouse:4926015101",
+    "table": "jobs",
+    "reason": "dropped by the location rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "jobs",
+    "reason": "dropped by the location rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "jobs",
+    "reason": "dropped by the location rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "jobs",
+    "reason": "dropped by the location rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "jobs",
+    "reason": "dropped by the location rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "jobs",
+    "reason": "dropped by the location rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "jobs",
+    "reason": "dropped by the location rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "greenhouse:4927594101",
+    "table": "jobs",
+    "reason": "dropped by the age rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "jobs",
+    "reason": "dropped by the location rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "jobs",
+    "reason": "dropped by the location rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "greenhouse:5533936004",
+    "table": "jobs",
+    "reason": "dropped by the age rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "greenhouse:4917583101",
+    "table": "jobs",
+    "reason": "dropped by the location rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "greenhouse:4906827101",
+    "table": "jobs",
+    "reason": "dropped by the age rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "jobs",
+    "reason": "dropped by the location rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "greenhouse:4968150101",
+    "table": "jobs",
+    "reason": "dropped by the location rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "jobs",
+    "reason": "dropped by the location rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "jobs",
+    "reason": "dropped by the location rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "jobs",
+    "reason": "dropped by the location rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "greenhouse:7107610002",
+    "table": "jobs",
+    "reason": "dropped by the age rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "jobs",
+    "reason": "dropped by the location rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "greenhouse:8693228002",
+    "table": "jobs",
+    "reason": "dropped by the location rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "jobs",
+    "reason": "dropped by the location rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "jobs",
+    "reason": "dropped by the location rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "greenhouse:4371859009",
+    "table": "jobs",
+    "reason": "dropped by the location rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "greenhouse:4376260009",
+    "table": "jobs",
+    "reason": "dropped by the location rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "jobs",
+    "reason": "dropped by the location rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "greenhouse:5211123007",
+    "table": "jobs",
+    "reason": "dropped by the age rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "greenhouse:4367876009",
+    "table": "jobs",
+    "reason": "dropped by the location rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "greenhouse:4965715101",
+    "table": "jobs",
+    "reason": "dropped by the location rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "jobs",
+    "reason": "dropped by the location rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "greenhouse:4906839101",
+    "table": "jobs",
+    "reason": "dropped by the age rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "jobs",
+    "reason": "dropped by the location rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "greenhouse:5058944004",
+    "table": "jobs",
+    "reason": "dropped by the age rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "greenhouse:8785037002",
+    "table": "jobs",
+    "reason": "dropped by the location rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "greenhouse:4110962009",
+    "table": "jobs",
+    "reason": "dropped by the location rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "jobs",
+    "reason": "dropped by the location rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "greenhouse:4414020009",
+    "table": "jobs",
+    "reason": "dropped by the location rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "jobs",
+    "reason": "dropped by the location rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "jobs",
+    "reason": "dropped by the location rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "jobs",
+    "reason": "dropped by the location rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "jobs",
+    "reason": "dropped by the location rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "greenhouse:4918361101",
+    "table": "jobs",
+    "reason": "dropped by the location rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "greenhouse:4131023009",
+    "table": "jobs",
+    "reason": "dropped by the location rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "jobs",
+    "reason": "dropped by the location rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "greenhouse:4855142101",
+    "table": "jobs",
+    "reason": "dropped by the location rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "jobs",
+    "reason": "dropped by the location rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "greenhouse:4952609101",
+    "table": "jobs",
+    "reason": "dropped by the location rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "jobs",
+    "reason": "dropped by the location rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "greenhouse:4971207101",
+    "table": "jobs",
+    "reason": "dropped by the location rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "jobs",
+    "reason": "dropped by the location rule",
+    "action": "deleted"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "jobs",
+    "reason": "dropped by the location rule",
+    "action": "deleted"
+   }
+  ],
+  "problems": [],
+  "daily": true,
+  "jobs_rows": 134,
+  "tables_read": true,
+  "stored_written": {},
+  "calls_used": 11,
+  "retries": 0,
+  "failures": 0,
+  "refused": 0,
+  "circuit_open": false,
+  "failure": null
+ },
+ "clearing": {
+  "table": "jobs",
+  "older_than_days": 30,
+  "confirmed": true,
+  "measured_on": "publication date",
+  "failure": null,
+  "dry_run_at": "2026-10-02T18:54:42.237732Z",
+  "not_in_the_dry_run": 0,
+  "would_remove": 2,
+  "oldest_published": "2026-07-03T12:40:35.000Z",
+  "newest_published": "2026-08-17T16:05:11.710Z",
+  "unreviewed": 1,
+  "without_a_date": 0,
+  "rows": [
+   "lever:f9f06e90-b991-4cff-92b9-5fb28b8919e6",
+   "greenhouse:4918669101"
+  ],
+  "classified": {
+   "rejected-poor-filtering": 1
+  },
+  "written": 2,
+  "already_leaving": 0,
+  "marked_delete": 0,
+  "held_private_unavailable": 0,
+  "problems": [],
+  "stored_written": {
+   "public removed_unreviewed.json": 1,
+   "public rejected_poor_filtering.json": 1
+  },
+  "mode": "confirmed: stores written; the next daily sweep removes the rows once origin holds them",
+  "calls_used": 4,
+  "retries": 0,
+  "failures": 0,
+  "refused": 0,
+  "circuit_open": false
+ },
+ "budget": {
+  "month_to_date": 102,
+  "allowance": 1000,
+  "share": 0.102,
+  "warning": null
+ },
+ "attention": {
+  "failed_in_a_row": 0,
+  "escalate": false
+ }
+}
