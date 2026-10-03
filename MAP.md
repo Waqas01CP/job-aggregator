@@ -214,7 +214,8 @@ Grouped by topic, in the order the pipeline runs. A record appears under exactly
 | File | Holds | Status |
 | --- | --- | --- |
 | `docs/deferred/employer-alias-map.md` | Deduplicating one role that arrives from two source classes, which needs an employer alias map. Deferred while one instance exists; revisit at the second or third, or when an accepted row turns out to have a twin. | current |
+| `docs/deferred/response-quality.md` | Recording what happened after he applied (a reply, an interview, a rejection, an offer), so that sources can one day be judged by how employers respond. Deferred until the operator has used the classification tables for long enough and decides to start. | current |
 | `docs/deferred/rozee-pk.md` | Adding Rozee.pk as a source. Deferred until the display works and until more ATS sources are added, either of which may remove the need for it. | current |
 | `docs/deferred/similarity-matching.md` | Ranking postings by similarity to accepted roles. Deferred because ADR-0010 forbids it and the deterministic star was built instead; revisit when the accepted store holds fifty rows or when the operator stops reading every row. | current |
 
-Files listed: 112
+Files listed: 113
