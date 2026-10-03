@@ -29,7 +29,7 @@ Eight items from the records the chat wrote on 2026-10-03, ADR-0057 and ADR-0058
 - `closed_marked` was 3 on 2026-09-25T20:10Z, the first sweep; 10 on 10-01 and 37 on 10-02; 0 on every other run.
 - The 3 were Greenhouse rows last seen on 09-17 and 09-21, and none has been seen on its board since, through the run of 10-03T04:04Z: true closures. All three later left `Jobs` for a rule's drop.
 - The 47 were the walk-reach defect on Himalayas, not the threshold, and cleared on 10-03 (`closed_cleared: 47`, the only non-zero clear).
-- A false closure would have shown as a clear when its posting returned, and no employer-board row was ever cleared. The twelve returning postings of 2026-09-30 were measured across the boards, not in `Jobs`; none was an unreviewed display row when it went.
+- A false closure would have shown as a clear when its posting returned, and no employer-board row was ever cleared. The twelve returning postings of 2026-09-30 were measured across the boards, not in `Jobs`, and none was ever marked; whether any sat in the display is not known.
 
 ## 2. Himalayas' freshness under the morning-only poll [VERIFIED]
 
@@ -127,16 +127,59 @@ Mutations ran in scratch clones identical to the tree in `src`, `tests`, `tools`
 - **Stale finds:** 0 of 458.
 - **Privacy, over the outgoing diff:** no Airtable identifier, token, email address, aggregator identity or URL, and none of the description lines read this session.
 
+## Evening: the operator's three answers, about 17:30Z [VERIFIED]
+
+His words: "you can do it to himalayas if justified"; "what is this morning's proposal?"; "yes, build the missing guard". And: make sure the brief to the chat is complete, with addenda for any work done since.
+
+**Himalayas now polled on both runs.**
+- **Judged justified:**
+  - it halves the wait measured in item 2, to about Greenhouse's;
+  - it costs about 4 to 6 fetch requests an evening on an ordinary day, against the 7 to 8 a morning walk spends on a whole day, and about 16 on a day like 10-03's;
+  - it adds no Airtable call, since the evening run already sends the whole display, 84 and 92 rows on 10-01 and 10-02;
+  - it is the same walk the morning runs.
+- **ADR-0048's reason, a once-a-day cache, is false for the search,** item 2's postings having been seen as little as 0.3 hours after publication.
+- **What changed:**
+  - `config/boards.json` names both slots;
+  - the agreement check's twelve-hour wait now usually settles at the next run, the search having trailed at most 6.1 hours;
+  - the skip itself stays configuration, still tested with a morning-only board.
+- **First live:** the evening run of 2026-10-04. The evening run of 2026-10-03 came at 17:04Z, before this push, and skipped Himalayas [VERIFIED from `data` at `40a38bf`]. That run was the description rules' first live one: of 565 postings read, none new, the experience rule dropped 9, authorisation 2 and location 12, with 11 requests and no failure.
+
+**The description guard built.** `storage.commit_files`, the one function every commit to the public branch goes through, now refuses the whole commit, before git is touched, when a file holds:
+- a description field holding text, anywhere: `content`, `description` and the other spellings the adapters meet;
+- in a record file, markup or a string over 1,000 characters.
+
+The public branch holds none of these today: the longest string in a record file is 135 characters, a location, and the longest anywhere 308, a failure message in a run log. Run logs are spared the markup and length rules, since failure text may carry either, and never the field rule. The refusal names the file, the field and the record, never the text. The contract check's fingerprint names the same fields holding only shapes, and passes. ADR-0051's and ADR-0058's clauses are now true, and the clause registry holds them by the new tests.
+
+**The agreement check's two files moved** to the private store's `agreement/`, out of `outcomes/`, on the chat's own reasoning for the clearing list; neither branch held them.
+
+**The morning's proposal, then built on his yes, about 17:40Z:** a dry run says how many of the rows it lists leave on a later run without the tool. The tool runs after the sweep, so such a row is:
+- one this run's sweep has just stored for removal under a rule's reason, read from the removal store by this run's time;
+- one kept out for good by an earlier removal;
+- a classified row whose outcome is stored;
+- on `accepted`, a copy whose `Delete` is set.
+
+Its summary line reads, for his dry run of 10-02, "would remove 19 ..., 17 of them already on their way out without it". Offline only; his next dry run is the first live one.
+
+**Verification, the evening:**
+- **The third batch: 10 of 10 caught, each by the test built for it,** with `--why` on a fresh clone. It held the guard's six, the agreement files' two, the Himalayas cadence, and the clearing list's mutation re-expressed for the rewrapped directory list. The mutation refusing a description field that holds a shape is also caught by the contract check's own end-to-end tests, which shows the guard sits in that check's path too.
+- **The fourth batch, first attempt: refused at its baseline, a slip of the seat's.** The dry-run count moved the text under an older mutation, "a dry run writes the stores", and the seat had run only the clearing tests before starting the batch, not the suite's stale-find check. Nothing was applied, so no result was wrong; it cost one baseline suite. Re-expressed in the same commit as the count, and rerun with it, six mutations.
+- **The fourth batch, rerun: 6 of 6 caught, each by the test built for it.** Five for the count, for each way a row can be leaving anyway, and the re-expressed one, caught by the dry run's own fitness function among others.
+- **Stale finds:** 0 of 472.
+- **The commits:** five, at his request, each holding its own code, tests, mutations and document lines: the evening poll, the guard, the agreement files, the dry run's count, and this record. Each was checked out alone in a scratch clone and its suite run before the push. They passed with 811, 814, 814, 816 and 816 tests.
+- **A second slip of the seat's, caught before the push:** the script that split the work into commits first built each commit's mutation file from the moving `HEAD`, not from the commit the evening started from. The mutation file landed in the wrong commits: the guard's commit carried a mutation whose code arrives only with the agreement move, and that commit carried the dry run's five. A count of each commit's mutations showed it before any suite ran. The five local commits were undone, the script fixed to a fixed base, every mutation's text checked against every commit's files, none stale, and the commits made again.
+
+**His other answers:** OneDrive, VMware and Docker Desktop are done, his side. He asked for the work committed in separate commits, each with its own message.
+
 ## Open
 
 - **The seat's:**
   - 2026-10-04 morning: the description rules' first live drops;
   - 2026-10-05: ADR-0056's clean week.
-- **The architecture chat's,** through the brief:
-  - the two guard sentences;
+  - 2026-10-04 evening: the first evening walk's requests, pages and new postings.
+- **The architecture chat's,** through the brief and its Addendum 1:
   - the live clauses to mark;
-  - the two agreement files;
-  - the freshness numbers for the operator's decision.
+  - ADR-0048's cadence, now both runs;
+  - the guard and the agreement files, recorded as built.
 - **His:**
-  - the evening poll, on item 2's numbers;
-  - the dry-run proposal of this morning.
+  - the dry-run proposal of this morning;
+  - sending the brief.
