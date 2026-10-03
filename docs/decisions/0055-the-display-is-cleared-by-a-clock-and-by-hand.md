@@ -16,7 +16,7 @@ ADR-0050 gives every classified row a way out of the display and gives an unrevi
 
 The operator raised it from the other end. He wanted to clear the table himself: "i decided i wanted to delete the last 1 month jobs and i selected that then it should delete the jobs which are older than 1 month", by table, with thresholds of a week, fifteen days and a month, and with `accepted` under his own control rather than a rule's. His purpose was a fresh start once he judged the system good enough to trust.
 
-**A deletion in the browser does not stick, and that is the fact the whole record turns on.** The projection re-applies the current rules over the whole filtered layer on every run and upserts on `Identity`, and the only thing that keeps a row out is its identity sitting in a store the skip reads. So rows cleared by hand return within about fourteen hours. An hour spent tidying the table would be undone before the next morning.
+**A deletion in the browser does not stick, and that is the fact the whole record turns on.** The projection re-applies the current rules over the whole filtered layer on every run and upserts on `Identity`, and the only thing that keeps a row out is its identity sitting in a store the skip reads. So rows cleared by hand return within about fourteen hours. *(Corrected 2026-10-03, the fourth audit's F10: on the next run, which has been as much as 16.0 hours away.)* An hour spent tidying the table would be undone before the next morning.
 
 ## Decision Drivers
 
@@ -72,7 +72,7 @@ The `Delete` field now has two writers, him in the browser and his own tool, and
 
 ### Confirmation
 
-**A dry run must change nothing**, proved by record counts before and after and by the absence of any store write.
+**A dry run must change nothing**, proved by record counts before and after and by the absence of any store write. *(Clarified 2026-10-03: the dry run writes one private list of the aggregator rows it would remove, so that the confirm can be bound to exactly those rows. That list is not a store and lives outside `outcomes/`, so the guarantee holds by where the file sits and not only by a test.)*
 
 **The confirmation must be required.** An invocation without it must refuse, and the mutation that removes the requirement must fail a test.
 
@@ -110,3 +110,8 @@ ADR-0050 owns the sweep this joins, its write-verify-delete order and the two-ru
 The operator's decisions, 2026-09-28: the tool and its per-table thresholds, the date field for each table on the chat's recommendation, and both mechanisms rather than one. His reason for both, in his words: "one is just to maintain while the other is manual meaning i can run whenever i want so keeping both should be reasonable."
 
 ## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-10-03 | Built and audited. The operator's three decisions recorded: a confirm must follow a dry run of the same table, days and mode within 48 hours (2026-09-30); a refused or failed clear exits 2 and shows green with a warning, and a partial clear reports how many rows it stored (2026-10-02); and clearing a classified `Jobs` row takes its rejection copy with it, only after the outcome and its reason are in the classification store (2026-10-03) | The last is the one with an edge: ADR-0050 writes a classified row's outcome to its store fifteen days after classification, by reading the `Jobs` row, so clearing that row earlier would skip the write and lose his verdict unless the tool writes it first. The chat recommended it on that condition and he accepted; the implementing seat confirms the code does it |
+| 2026-10-03 | Four clarifications of how it is built: the confirm acts only on rows its dry run listed (the audit's F1); the dry run's private list sits outside `outcomes/`; an aggregator's identity is masked in the public run log and named in the private store; and the latency to the next run is corrected from about fourteen hours | F1 found the confirm selecting afresh, so it could remove rows the dry run never showed. The masking satisfies "named by identity" here and ADR-0047's "never public" together, as an implementation of both and not a conflict. The list's location is the chat's ruling: a file in `outcomes/` will one day be read as a store |

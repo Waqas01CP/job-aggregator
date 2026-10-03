@@ -150,8 +150,10 @@ Grouped by topic, in the order the pipeline runs. A record appears under exactly
 | `docs/decisions/0031-preferences-are-configuration.md` | **ADR-0031: Personal preferences are configuration, not code.** The title pool, seniority list, role families and location targets are versioned configuration, and no module hard-codes a preference. | accepted |
 | `docs/decisions/0032-seniority-rule.md` | **ADR-0032: The seniority rule, and the clause of ADR-0021 it reverses.** The seniority word list, running after the title rule, and the clause of ADR-0021 it reverses. | accepted |
 | `docs/decisions/0038-family-views.md` | **ADR-0038: Role families are views, not a ranking.** Role families are a label derived from the matched term, with one date-ordered view each, and the boundary that keeps it from becoming a ranking. | accepted |
-| `docs/decisions/0041-location-admits-unless-excluded.md` | **ADR-0041: Location admits unless a source excludes, and keywords only tag.** Location admits on any signal or on none and drops only on an explicit exclusion; keywords tag reachability and never reject. | accepted |
+| `docs/decisions/0041-location-admits-unless-excluded.md` | **ADR-0041: Location admits unless a source excludes, and keywords only tag.** Location admits on any signal or on none and drops only on an explicit exclusion; keywords tag reachability and never reject. | superseded by ADR-0057 |
 | `docs/decisions/0052-age-judged-once-at-first-sight.md` | **ADR-0052: Age is judged once, at first sight.** A posting is admitted only if it was published no more than seven days before the pipeline first saw it, judged once at first sight and never again, so an admitted row never ages out unseen. | accepted |
+| `docs/decisions/0057-a-posting-is-shown-only-if-he-can-take-it.md` | **ADR-0057: A posting is shown only if he can take it, and none he can take is lost.** Eligibility in one record. A posting is kept unless every place it can be taken from is closed to the operator, judged from its location text, the source's own structured place, its stated workplace, and what its description requires; time zones and job type never exclude. Supersedes ADR-0041. | accepted |
+| `docs/decisions/0058-the-description-is-read-once-at-fetch.md` | **ADR-0058: The description is read once, at fetch, and only what is derived is kept.** The description is read once, at fetch, for three derived facts: the years of experience asked, the places a right to work is required in, and whether the role is on site. Only the derived values are kept on the row; the text stays private. Builds the experience rule ADR-0016 deferred. | accepted |
 
 ### Storage and the data branch
 
@@ -214,4 +216,4 @@ Grouped by topic, in the order the pipeline runs. A record appears under exactly
 | `docs/deferred/rozee-pk.md` | Adding Rozee.pk as a source. Deferred until the display works and until more ATS sources are added, either of which may remove the need for it. | current |
 | `docs/deferred/similarity-matching.md` | Ranking postings by similarity to accepted roles. Deferred because ADR-0010 forbids it and the deterministic star was built instead; revisit when the accepted store holds fifty rows or when the operator stops reading every row. | current |
 
-Files listed: 109
+Files listed: 111
