@@ -78,14 +78,21 @@ On this commit's code. The mutation clone's `src`, `tests`, `tools`, `config` an
 - **Stale finds:** 0 of 440.
 - **The effect:** measured the night before with the code, unchanged since: of the 50 postings kept apart from age, 7 drop and none is newly kept.
 
+## His answers, about 12:45Z
+
+All four confirm what is built; no code changes.
+1. **Citizenship:** "if someone is asking for citizenship of a specific country then that is already a signal to take the job out". **Security clearance:** not read, "this would become a concern when the percentage of this increases and that is for that time".
+2. **Fresh graduates:** kept. His reading of a mixed posting, "must be 0-1 years experience or a bachelors required and in preferred says 3+ or 3 years ... then this is a pass already", is what the rule does: its figures are 0 and 3, none over 3.
+3. **The four stored rows:** left to the thirty-day clock.
+4. **The five snippets in history:** left there. No forced push.
+
+**The diagnostic:** he chose both recommendations. The Figma plugin is disabled and auto mode is his default, in `~/.claude/settings.json`; the terminal Claude Code is 2.1.288, its first update attempt failing on a connection error and the second succeeding. The three unsigned claude.ai connectors are his to turn off with `/mcp`.
+
+**The crash, his side:** he will stop OneDrive running in the background and remove VMware Workstation. Read on his machine [VERIFIED]: Docker Desktop is installed and starts at sign-in, and its virtual machine is WSL's only distribution, so the 3.2 GB `vmmem` was most likely Docker's [INFERRED], not VMware's, whose running services are a few megabytes. His Desktop, Documents and Pictures live inside OneDrive; no virtual machine files are there, so why OneDrive reached 10.6 GB stays unexplained.
+
 ## Open
 
-- **His,** on the night's reading of his answers:
-  - the hard stops: a right to work, citizenship or residence required elsewhere; security clearance not read;
-  - the fresh-graduates line kept;
-  - the 4 public stored rows, and the Himalayas ones, left to the clock.
 - **His:** the confirm of the clearing test, in test mode with table `jobs` and 30 days, before 18:54Z on 10-04; then one more test-mode run.
-- **His:** the diagnostic's two questions.
-- **His:** whether the five snippets pushed on 10-02 stay in history, as the addresses do, or go by a forced push.
+- **His:** the three claude.ai connectors off with `/mcp`; OneDrive, VMware and Docker Desktop as he decides.
 - **The seat's, tomorrow morning:** the first run with the description rules, its drops per rule, and today's contract check reading the new fields as re-baselined.
 - **The architecture chat's,** through Addendum 4: the three rules, the cap, the re-baseline gap, and stored rows keeping their verdict.
