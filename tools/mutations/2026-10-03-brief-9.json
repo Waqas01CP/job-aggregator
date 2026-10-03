@@ -160,5 +160,35 @@
     "path": "src/private_store.py",
     "find": ",\n               (AGREEMENT_DIR, \"local_agreement_dir\"))",
     "replace": ")"
+  },
+  {
+    "label": "the dry run counts nothing as leaving anyway",
+    "path": "src/clearing.py",
+    "find": "            report[\"leaving_without_the_tool\"] = self.leaving_anyway(table, chosen)",
+    "replace": "            report[\"leaving_without_the_tool\"] = 0"
+  },
+  {
+    "label": "a row this run's sweep stored is not counted",
+    "path": "src/clearing.py",
+    "find": "                if r.get(\"swept_at\") == self.now_iso}",
+    "replace": "                if False}"
+  },
+  {
+    "label": "a row kept out for good is not counted",
+    "path": "src/clearing.py",
+    "find": "            elif self.stores.kept_out_reason(where, identity) is not None or identity in swept:",
+    "replace": "            elif identity in swept:"
+  },
+  {
+    "label": "a classified row with its outcome stored is not counted",
+    "path": "src/clearing.py",
+    "find": "                count += self.stores.durable_has(where, STORE_FOR[status], identity)",
+    "replace": "                count += 0"
+  },
+  {
+    "label": "a marked accepted copy is not counted",
+    "path": "src/clearing.py",
+    "find": "            return sum(1 for r in chosen if r[\"fields\"].get(DELETE_FIELD) == DELETE_YES)",
+    "replace": "            return 0"
   }
 ]

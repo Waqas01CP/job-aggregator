@@ -944,6 +944,9 @@ def summarise(run_log):
         # leave with their rows, rows newer than the dry run that stay, and
         # where the aggregator rows he cannot see here are listed.
         extra = []
+        if c.get("leaving_without_the_tool"):
+            extra.append("%d of them already on their way out without it"
+                         % c["leaving_without_the_tool"])
         if c.get("classified"):
             extra.append("classified among them %s, a rejection copy leaving with its row"
                          % c["classified"])

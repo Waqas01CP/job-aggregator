@@ -68,8 +68,8 @@
   {
     "label": "a dry run writes the stores",
     "path": "src/clearing.py",
-    "find": "        if not confirmed:\n            self.list_privately(table, days, chosen, report)\n            report[\"mode\"] = \"dry run: nothing was removed or stored\"",
-    "replace": "        if False:\n            self.list_privately(table, days, chosen, report)\n            report[\"mode\"] = \"dry run: nothing was removed or stored\""
+    "find": "        if not confirmed:\n            self.list_privately(table, days, chosen, report)\n",
+    "replace": "        if False:\n            self.list_privately(table, days, chosen, report)\n"
   },
   {
     "label": "the confirmation is not required",

@@ -55,6 +55,13 @@ not only by what reads it today.
 both leave on the outcome the tool writes. An accepted copy stays until its
 `Delete` (D12). The dry run counts the classified rows by status, so the
 copies leaving are not a surprise (the fourth audit's F16).
+
+**The dry run says how many of its rows are leaving without it.** The tool
+runs after the sweep, and a row the sweep has just stored for removal, or
+one already kept out for good, goes on a later run whatever he confirms. On
+2026-10-02 his dry run listed 19 rows and the confirm removed 2: the sweep
+had taken the other 17, and nothing on the line he read said so. The
+operator asked for the count on 2026-10-03.
 """
 
 from datetime import timedelta
@@ -209,6 +216,7 @@ class Clearing:
             report["classified"] = classified
         if not confirmed:
             self.list_privately(table, days, chosen, report)
+            report["leaving_without_the_tool"] = self.leaving_anyway(table, chosen)
             report["mode"] = "dry run: nothing was removed or stored"
             return report
         report.update({"written": 0, "already_leaving": 0, "marked_delete": 0,
@@ -223,6 +231,32 @@ class Clearing:
         report["mode"] = ("confirmed: stores written; the next daily sweep removes the rows "
                           "once origin holds them")
         return report
+
+    def leaving_anyway(self, table, chosen):
+        """How many of the rows a dry run lists leave on a later run without
+        the tool: on `accepted`, a copy whose `Delete` is already set; a
+        classified row whose outcome is already in its store; an unreviewed
+        row kept out for good, or one this run's sweep, which ran first,
+        has just stored for removal under a rule's reason."""
+        if table == "accepted":
+            return sum(1 for r in chosen if r["fields"].get(DELETE_FIELD) == DELETE_YES)
+        swept = set()
+        for directory in self.stores.dirs.values():
+            swept |= {r.get("identity") for r in storage.read_records(
+                "%s/%s" % (directory, REMOVED_UNREVIEWED_STORE))
+                if r.get("swept_at") == self.now_iso}
+        count = 0
+        for r in chosen:
+            identity = r["fields"].get("Identity")
+            where = self.stores.where(identity) if identity else None
+            if where is None:
+                continue
+            status = r["fields"].get("Status") if table == JOBS else table
+            if status in STORE_FOR:
+                count += self.stores.durable_has(where, STORE_FOR[status], identity)
+            elif self.stores.kept_out_reason(where, identity) is not None or identity in swept:
+                count += 1
+        return count
 
     def listed_by(self, dry):
         """The identities a dry run showed: a public row's from its run log,

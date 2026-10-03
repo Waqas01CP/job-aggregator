@@ -134,7 +134,12 @@ names a public row in the run log, and an aggregator's, with its title and
 employer, in the private repository's `clearing/dry_runs.json`, outside the
 outcome stores so that it can never be read as one (ADR-0055, 2026-10-03).
 Clearing `Jobs` takes a classified row's rejection copy with it, and the dry
-run counts those rows by status.
+run counts those rows by status. It also counts the rows it lists that leave
+on a later run without the tool, since the sweep runs first: one the sweep
+has just stored for removal, one kept out for good, a classified row whose
+outcome is stored, or an `accepted` copy already marked `Delete`. His dry run
+of 2026-10-02 listed 19 rows of which 17 were already leaving that way, and
+said nothing of it; the count was added on his request of 2026-10-03.
 
 **The tool writes stores and deletes nothing.** An unreviewed `Jobs` row is
 stored with `operator-removed`; a classified row or a rejection copy has its

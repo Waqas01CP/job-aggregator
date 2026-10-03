@@ -166,6 +166,54 @@ class TestTheDryRun(ClearingHarness):
         self.assertIn("a rejection copy leaving with its row", line)
 
 
+class TestWhatIsLeavingAnyway(ClearingHarness):
+    """The operator's request of 2026-10-03. His dry run of 10-02 listed 19
+    rows and his confirm removed 2: the same run's sweep, which runs first,
+    had stored the other 17 for removal, and nothing on the line he read
+    said so."""
+
+    def test_a_row_the_sweep_just_stored_for_removal_is_counted(self):
+        """A row a rule now drops is stored by the sweep and deleted on a later
+        run; the dry run counts it, and not the row nothing removes. Twenty
+        days old, so the thirty-day clock takes neither. Mutations: "the dry
+        run counts nothing as leaving anyway", "a row this run's sweep stored
+        is not counted"."""
+        dropped = make_row(1, published=ago(20), location="New York, United States")
+        kept = make_row(2, published=ago(20))
+        self.store_rows([dropped, kept])
+        self.in_jobs(dropped)
+        self.in_jobs(kept)
+        self.assertEqual(self.sweep()["waiting_for_the_store"], 1)
+        dry = self.clear(JOBS, 15)
+        self.assertEqual((dry["would_remove"], dry["leaving_without_the_tool"]), (2, 1))
+        line = run_module.summarise(dict(EMPTY_RUN_LOG, clearing=dry))
+        self.assertIn("would remove 2", line)
+        self.assertIn("1 of them already on their way out without it", line)
+
+    def test_rows_held_out_classified_or_marked_are_counted(self):
+        """A row kept out for good by an earlier removal, a classified row
+        whose outcome is stored, and an accepted copy whose Delete is set
+        all leave without the tool. A row nothing holds is not counted.
+        Mutation: "a row kept out for good is not counted"."""
+        held, classified, open_row = (make_row(i, published=ago(40)) for i in (1, 2, 3))
+        self.store_rows([held, classified, open_row])
+        self.in_jobs(held)
+        self.in_jobs(classified, status="rejected-not-a-fit", classified_days_ago=3)
+        self.in_jobs(open_row)
+        storage.write_atomic("%s/removed_unreviewed.json" % self.paths["outcomes_dir"], dumps([
+            dict(held.as_record(), reason="operator-removed", removal="greenhouse:1|operator-removed",
+                 swept_at=ago(2))]))
+        storage.write_atomic("%s/rejected_not_a_fit.json" % self.paths["outcomes_dir"], dumps([
+            dict(classified.as_record(), status="rejected-not-a-fit", swept_at=ago(2))]))
+        self.assertEqual(self.clear(JOBS, 30)["leaving_without_the_tool"], 2)
+        for i, delete in ((4, "yes"), (5, None)):
+            fields = {"Identity": "greenhouse:%d" % i, "Stage": "applied", "Published": ago(50)}
+            if delete:
+                fields["Delete"] = delete
+            self.base.seed(TABLES["accepted"], fields, created=NOW - timedelta(days=45))
+        self.assertEqual(self.clear("accepted", 15)["leaving_without_the_tool"], 1)
+
+
 class TestTheConfirmation(ClearingHarness):
     def setUp(self):
         super().setUp()
