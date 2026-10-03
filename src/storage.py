@@ -42,6 +42,7 @@ import shutil
 import subprocess
 import tempfile
 
+from .config import is_publishable
 from .normalise import dumps, loads
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -426,14 +427,83 @@ def _scrub(text, secrets):
     return text
 
 
+# ------------------------------------------------------ description guard
+# ADR-0011 and ADR-0058: no employer's description text on the public branch.
+# A row has no field for it, which is the first guard. This is the second, in
+# the one function every commit to the branch goes through, the run's and the
+# contract check's, so a field added to a row, a raw payload or a new writer
+# cannot carry text there unnoticed. ADR-0051 and ADR-0058 described it as
+# existing; it did not until 2026-10-03, when the implementing seat found it
+# missing and the operator said build it.
+#
+# The fields a source puts its description in, by every spelling the three
+# adapters meet. Holding text, never a shape: the contract fingerprint names
+# these same fields and holds only their shapes.
+DESCRIPTION_KEYS = frozenset({"content", "description", "descriptionplain", "descriptionbody",
+                              "additional", "additionalplain", "excerpt", "body",
+                              "job_description"})
+# A record file holds identifiers, titles, places, dates and links, so markup
+# or a long passage in one is text from a page. On 2026-10-03 the longest
+# string in any record file on the public branch was 135 characters, a
+# location. Run logs carry failure text and are checked by field only.
+_MARKUP = re.compile(r"<\s*/?\s*(?:p|li|ul|ol|br|div|h[1-6]|strong|em|span|table)\b"
+                     r"|&lt;\s*/?\s*(?:p|li|ul|ol|br|div)\b", re.I)
+LONGEST_RECORD_STRING = 1000
+LOG_DIRS = (RUNLOG_DIR, "logs-contract")
+
+
+def description_text_in(path, text):
+    """Why `text`, bound for the public branch at `path`, may hold an
+    employer's description, or None. Names the file and the field, and the
+    record when it has an identity, and never quotes the text: this reason
+    reaches the run log."""
+    try:
+        doc = loads(text)
+    except ValueError:
+        return "%s is not JSON, so it cannot be checked" % path
+    record_file = not path.startswith(tuple(d + "/" for d in LOG_DIRS))
+    stack = [(doc, None, None)]
+    while stack:
+        value, key, identity = stack.pop()
+        if isinstance(value, dict):
+            if isinstance(value.get("identity"), str):
+                identity = value["identity"]
+            stack.extend((v, k, identity) for k, v in value.items())
+        elif isinstance(value, list):
+            stack.extend((v, key, identity) for v in value)
+        elif isinstance(value, str) and value.strip():
+            if str(key).lower() in DESCRIPTION_KEYS:
+                why = "a %r field holding text" % key
+            elif record_file and _MARKUP.search(value):
+                why = "markup in its %r field" % key
+            elif record_file and len(value) > LONGEST_RECORD_STRING:
+                why = "%d characters in its %r field" % (len(value), key)
+            else:
+                continue
+            # An aggregator's identity is masked, as everywhere public (ADR-0020),
+            # though the aggregator guard refuses its rows before this.
+            if identity and not is_publishable(identity.split(":")[0]):
+                identity = "an aggregator row"
+            return "%s has %s%s" % (path, why, ", on %s" % identity if identity else "")
+    return None
+
+
 def commit_files(files, message, branch=DATA_BRANCH):
     """Commit a mapping of path to text onto an orphan branch.
 
     Plumbing only. The working tree and the real index are never touched, so
     this is safe to run while the operator has uncommitted work on main.
-    Returns the new commit sha, or None when nothing changed."""
+    Returns the new commit sha, or None when nothing changed.
+
+    **Nothing that may be description text is committed**, the guard above:
+    the whole commit is refused, before git is touched."""
     if not files:
         return None
+    for path, text in sorted(files.items()):
+        why = description_text_in(path, text)
+        if why:
+            raise StorageError("refusing to commit to %s: %s, and ADR-0011 keeps description "
+                               "text off the public branch" % (branch, why))
 
     parent = _git(["rev-parse", branch]) if branch_exists(branch) else None
 

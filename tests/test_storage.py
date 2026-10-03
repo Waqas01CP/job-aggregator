@@ -349,6 +349,65 @@ class TestDataBranch(unittest.TestCase):
             if kwargs.get("input") is not None:
                 self.assertIsInstance(kwargs["input"], bytes, " ".join(argv))
 
+    # Written for these tests, never copied from a posting (ADR-0011).
+    PASSAGE = ("<p>We are looking for an engineer to join our Thokar team.</p>"
+               "<ul><li>Build things with us</li></ul>")
+
+    def test_the_public_branch_refuses_description_text(self):
+        """Fitness function for ADR-0051, "The public branch must be seen
+        refusing description text": a description field holding text, in a
+        row, a raw payload or a list item; markup or a long passage under any
+        other name in a record file. The whole commit is refused, the branch
+        does not move, and the reason names the file and field without
+        quoting the text. Mutation: "the public branch takes description
+        text"."""
+        storage.commit_files({"seen.json": "{}\n"}, "run 1", branch="data")
+        before = storage._git(["rev-parse", "data"])
+        long = "Thokar " * 200
+        for path, records in (
+                ("filtered.json", [{"identity": "greenhouse:1", "description": self.PASSAGE}]),
+                ("fetch-all/greenhouse.json", [{"identity": "greenhouse:2", "content": "text"}]),
+                ("fetch-all/lever.json", [{"identity": "lever:3", "lists": [
+                    {"text": "Requirements", "content": self.PASSAGE}]}]),
+                ("outcomes/accepted.json", [{"identity": "greenhouse:4", "notes": self.PASSAGE}]),
+                ("filtered.json", [{"identity": "greenhouse:5", "summary": long}])):
+            with self.subTest(path=path, records=str(records)[:60]):
+                with self.assertRaises(StorageError) as caught:
+                    storage.commit_files({"seen.json": "{\"x\": 1}\n", path: dumps(records)},
+                                         "run 2", branch="data")
+                self.assertIn(path, str(caught.exception))
+                self.assertNotIn("Thokar", str(caught.exception))
+                self.assertNotIn("Build things", str(caught.exception))
+                self.assertEqual(storage._git(["rev-parse", "data"]), before)
+
+    def test_what_the_branch_holds_passes_the_guard(self):
+        """The cases built to defeat it the other way: the contract check's
+        fingerprint names the description fields and holds only their shapes;
+        a run log carries a long failure, and markup, as failure text may;
+        the derived values are numbers, place names and a flag. Mutations:
+        "a run log's failure text is refused", "a description field holding
+        a shape is refused"."""
+        fingerprint = {"greenhouse": {"posting": {"content": {"present": "all", "null": "never",
+                                                              "types": ["string"]}},
+                                      "since": "2026-10-03T11:56:07Z"}}
+        log = {"run_at": "2026-10-03T04:04:15Z",
+               "failure": "Traceback (most recent call last): " + "x" * 3000,
+               "detail": "a board answered <html><p>Service unavailable</p></html>"}
+        row = {"identity": "greenhouse:1", "title": "AI Engineer", "stated_experience": [3],
+               "required_places": ["united states"], "described_workplace": "on site"}
+        sha = storage.commit_files({"contract/fingerprint.json": dumps(fingerprint),
+                                    "logs-runs/20261003T040415Z.json": dumps(log),
+                                    "logs-contract/20261003T115607Z.json": dumps(log),
+                                    "filtered.json": dumps([row])}, "run", branch="data")
+        self.assertTrue(sha)
+
+    def test_a_description_field_in_a_run_log_is_refused(self):
+        """Logs are spared the markup and length rules, never the field rule.
+        Mutation: "a run log is never checked"."""
+        with self.assertRaises(StorageError):
+            storage.commit_files({"logs-runs/a.json": dumps({"description": self.PASSAGE})},
+                                 "run", branch="data")
+
 
 class TestCommitIdentity(unittest.TestCase):
     """Run 35179218050 fetched 1239 postings on a GitHub runner, then failed

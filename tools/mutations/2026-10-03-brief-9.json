@@ -112,5 +112,41 @@
     "path": "config/boards.json",
     "find": "      \"poll_slots\": [\"morning\", \"evening\"],",
     "replace": "      \"poll_slots\": [\"morning\"],"
+  },
+  {
+    "label": "the public branch takes description text",
+    "path": "src/storage.py",
+    "find": "        why = description_text_in(path, text)\n        if why:",
+    "replace": "        why = None\n        if why:"
+  },
+  {
+    "label": "markup in a record file passes",
+    "path": "src/storage.py",
+    "find": "            elif record_file and _MARKUP.search(value):",
+    "replace": "            elif False:"
+  },
+  {
+    "label": "a long passage in a record file passes",
+    "path": "src/storage.py",
+    "find": "            elif record_file and len(value) > LONGEST_RECORD_STRING:",
+    "replace": "            elif False:"
+  },
+  {
+    "label": "a run log's failure text is refused",
+    "path": "src/storage.py",
+    "find": "    record_file = not path.startswith(tuple(d + \"/\" for d in LOG_DIRS))\n",
+    "replace": "    record_file = True\n"
+  },
+  {
+    "label": "a run log is never checked",
+    "path": "src/storage.py",
+    "find": "    record_file = not path.startswith(tuple(d + \"/\" for d in LOG_DIRS))\n",
+    "replace": "    record_file = not path.startswith(tuple(d + \"/\" for d in LOG_DIRS))\n    if not record_file:\n        return None\n"
+  },
+  {
+    "label": "a description field holding a shape is refused",
+    "path": "src/storage.py",
+    "find": "        if isinstance(value, dict):\n            if isinstance(value.get(\"identity\"), str):",
+    "replace": "        if isinstance(value, dict):\n            if any(str(k).lower() in DESCRIPTION_KEYS for k in value):\n                return \"%s has a description field\" % path\n            if isinstance(value.get(\"identity\"), str):"
   }
 ]

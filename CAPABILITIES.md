@@ -131,7 +131,7 @@ By his estimate, that took most of a working week. He usually found a posting th
 | Display | The current projection of the filtered layer | Airtable. Never authoritative: losing it costs a screen, not data |
 
 **Git branches are the database.** There is no hosted database (ADR-0002):
-- **Public `data` branch:** employer-board metadata only, never description text (ADR-0011). Nothing from the aggregator either, because aggregator terms restrict redistribution (ADR-0020). The code refuses to commit a file holding aggregator rows; description text has no field on a row to sit in, and only numbers, configured place names and a flag derived from it are kept.
+- **Public `data` branch:** employer-board metadata only, never description text (ADR-0011). Nothing from the aggregator either, because aggregator terms restrict redistribution (ADR-0020). The code refuses to commit a file holding aggregator rows, or anything that may be description text: a description field holding text, markup, or a passage longer than any record field holds. A row has no field for the text in any case; only numbers, configured place names and a flag derived from it are kept.
 - **A private repository:**
   - the aggregator's rows;
   - the outcome stores for aggregator rows;
@@ -258,7 +258,7 @@ Each is measured, with its date and source. `data` is the public data branch.
 | 2026-09-30 | The display bounded: an unreviewed row leaves after thirty days, the operator can clear any table himself, and a removed row stays removed for the reason it left. The aggregator's pushed-down filter and the contract check's own changes are now checked |
 | 2026-10-01 | The fourth code audit's corrections: a confirmed clear removes only what its dry run listed, the aggregator check judges each posting on a later walk, places the operator can take are kept, and the suite fails when a mutation goes stale |
 | 2026-10-02 | The level rule and the source's own place; the closure test's false marks on 47 open rows found and fixed |
-| 2026-10-03 | The description read for years asked, a right to work required and on-site work. Closure raised to twelve runs after reposts were measured; the contract check ordered by time rather than date; every Confirmation clause of the nine newest records held by a test or marked live; Himalayas polled on both runs, its wait from publication measured |
+| 2026-10-03 | The description read for years asked, a right to work required and on-site work. Closure raised to twelve runs after reposts were measured; the contract check ordered by time rather than date; every Confirmation clause of the nine newest records held by a test or marked live; Himalayas polled on both runs, its wait from publication measured; a guard refusing description text on the public branch |
 
 ---
 

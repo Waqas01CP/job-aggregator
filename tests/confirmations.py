@@ -63,13 +63,12 @@ CONFIRMATIONS = {
             "test_private_store.TestTheFullBranch.test_a_later_save_never_needs_an_earlier_files_contents"]},
         "On-demand downloads must be refused for the whole save": {"tests": [
             "test_private_store.TestTheFullBranch.test_no_command_of_a_save_may_download_on_demand"]},
-        "The public branch must be seen refusing description text": {
-            "tests": ["test_normalise.TestRowShape.test_no_description_field_exists_on_a_row",
-                      "test_description.TestTheRowKeepsNoWords.test_greenhouse_reads_its_content",
-                      "test_description.TestTheRowKeepsNoWords.test_lever_reads_its_sections"],
-            "gap": "nothing refuses description text in a commit to the public branch; the "
-                   "row's shape, which has no field for it, is what keeps it out. The commit "
-                   "hook guards main against unsanitised cassettes, not the data branch"},
+        # Described from 2026-09-26 and missing until 2026-10-03, when the
+        # operator said build it: `storage.commit_files` refuses it now.
+        "The public branch must be seen refusing description text": {"tests": [
+            "test_storage.TestDataBranch.test_the_public_branch_refuses_description_text",
+            "test_storage.TestDataBranch.test_a_description_field_in_a_run_log_is_refused",
+            "test_normalise.TestRowShape.test_no_description_field_exists_on_a_row"]},
         "A `pending: 0` run must write no file at all": {"tests": [
             "test_run.TestMain.test_every_posting_is_saved_whole_to_the_private_full_branch"]},
     },
@@ -177,9 +176,8 @@ CONFIRMATIONS = {
                       "test_description.TestTheRowKeepsNoWords.test_lever_reads_its_sections",
                       "test_description.TestTheRowKeepsNoWords.test_himalayas_reads_its_description",
                       "test_description.TestTheRowKeepsNoWords."
-                      "test_a_requirement_naming_no_known_place_is_left_out"],
-            "gap": "its second sentence names a commit guard refusing description text on the "
-                   "public branch, and there is none: see ADR-0051's clause"},
+                      "test_a_requirement_naming_no_known_place_is_left_out",
+                      "test_storage.TestDataBranch.test_the_public_branch_refuses_description_text"]},
         "The experience rule's edges": {"tests": [
             "test_description.TestYears.test_a_range_counts_by_its_low_end",
             "test_description.TestYears.test_a_figure_glued_to_a_word_is_read",

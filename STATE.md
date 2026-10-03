@@ -6,7 +6,7 @@ status: current
 
 # STATE
 
-**Touched 2026-10-03T17:30Z by the implementing seat, for the operator's answers of the evening.** Himalayas is polled on both runs. The line that follows stands.
+**Touched 2026-10-03T17:30Z by the implementing seat, for the operator's answers of the evening.** Himalayas is polled on both runs. `storage.commit_files` refuses description text on the public branch, which held none [VERIFIED over every file on `data` at `0b6bb51`: longest string in a record file 135 characters, no description field holding text, no markup]. The line that follows stands.
 
 **Last verified 2026-10-03T17:10Z by the implementing seat, for Brief 9, against `main` at `9aeb263` plus this commit's work, `data` from a scratch clone at `0b6bb51` (the contract check of 2026-10-03), and the private repository read-only.** Checked for it: every sweep block on `data`, four runs having closed no open employer-board row falsely; the closure count at twelve; publication to first seen over 448 Himalayas and 48 employer-board postings; the clearing tool's handling of a classified row, in code and now in a test; neither private branch holding a dry-run list; the seven re-baselines' commit times from `git log`; every Confirmation clause of ADR-0050 to ADR-0058 against the suite; time zones over 2,271 saved postings; the description reader without country names, identical over the same 2,271. 811 tests on Python 3.11 and 3.12; 27 of 27 mutations caught; 0 of 458 finds stale. `2026-10-03-brief-9-twelve-runs-times-and-every-clause.md`. The line that follows stands.
 
