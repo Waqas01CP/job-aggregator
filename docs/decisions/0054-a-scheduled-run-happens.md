@@ -91,3 +91,7 @@ ADR-0007 is why a missed or delayed run costs latency rather than data, and it i
 Both halves are the operator's decisions of 2026-09-25, relayed by the implementing seat, which had found the concurrency gap and read GitHub's documentation for the numbers.
 
 ## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-10-02 | Both workflows pin the runner image to `ubuntu-24.04` | GitHub announced on every run that `ubuntu-latest` moves to Ubuntu 26 from 2026-10-19, and Python 3.11 is untested there; a run that fails on a new image is a run that does not happen. Sourced from that notice by the implementing seat, not verified by the chat. A test holds the pin. The pin is lifted deliberately, after a test run on the new image, and no later than GitHub's announcement that 24.04 is retiring |
