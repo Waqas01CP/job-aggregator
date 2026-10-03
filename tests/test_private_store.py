@@ -153,12 +153,14 @@ class TestRestore(Harness):
         storage.write_atomic(self.paths["local_seen"], "{}\n")
         storage.write_atomic("data/local/outcomes/accepted.json", "[]\n")
         storage.write_atomic("data/local/clearing/dry_runs.json", "[\"listed\"]\n")
+        storage.write_atomic("data/local/agreement/agreement_pending.json", "[\"waiting\"]\n")
         storage.write_atomic(self.paths["filtered"], "[\"public\"]\n")
         storage.write_atomic("data/outcomes/accepted.json", "[\"public\"]\n")
         self.assertEqual(files_to_push(self.paths), {
             "fetch-all/himalayas.json": "[\"raw\"]\n", "filtered.json": "[\"kept\"]\n",
             "seen.json": "{}\n", "outcomes/accepted.json": "[]\n",
-            "clearing/dry_runs.json": "[\"listed\"]\n"})
+            "clearing/dry_runs.json": "[\"listed\"]\n",
+            "agreement/agreement_pending.json": "[\"waiting\"]\n"})
 
     def test_the_clearing_list_is_restored_to_where_the_tool_reads_it(self):
         """A confirm runs on a later run than its dry run, so the list must

@@ -38,15 +38,16 @@ import shutil
 import subprocess
 import tempfile
 
-from .storage import (CLEARING_DIR, COMMIT_IDENTITY, FILTERED_FILE, OUTCOMES_DIR,
-                      PRIVATE_STORE_REPO_ENV, PRIVATE_STORE_TIMEOUT, PRIVATE_STORE_TOKEN_ENV,
-                      RAW_DIR, SEEN_FILE, PrivateStoreUnreachable, _scrub, data_branch,
-                      full_branch, private_store_basic, write_atomic)
+from .storage import (AGREEMENT_DIR, CLEARING_DIR, COMMIT_IDENTITY, FILTERED_FILE,
+                      OUTCOMES_DIR, PRIVATE_STORE_REPO_ENV, PRIVATE_STORE_TIMEOUT,
+                      PRIVATE_STORE_TOKEN_ENV, RAW_DIR, SEEN_FILE, PrivateStoreUnreachable,
+                      _scrub, data_branch, full_branch, private_store_basic, write_atomic)
 
 # The directories of single files the run restores and pushes, beside the
 # filtered rows and the seen entries.
 DIRECTORIES = ((RAW_DIR, "local_raw_dir"), (OUTCOMES_DIR, "local_outcomes_dir"),
-               (CLEARING_DIR, "local_clearing_dir"))
+               (CLEARING_DIR, "local_clearing_dir"),
+               (AGREEMENT_DIR, "local_agreement_dir"))
 
 
 def github_url(repo):
@@ -74,8 +75,9 @@ def local_path_for(stored, paths):
 def files_to_push(paths):
     """The run's aggregator files, keyed by their path on the private branch:
     every raw file, the filtered rows, the seen entries, the outcome stores
-    the sweep writes for aggregator rows (ADR-0050), and the clearing tool's
-    dry-run list (ADR-0055)."""
+    the sweep writes for aggregator rows (ADR-0050), the clearing tool's
+    dry-run list (ADR-0055), and the agreement check's waiting and
+    disagreeing postings (ADR-0053)."""
     files = {}
     for stored, key in ((FILTERED_FILE, "local_filtered"), (SEEN_FILE, "local_seen")):
         if os.path.exists(paths[key]):

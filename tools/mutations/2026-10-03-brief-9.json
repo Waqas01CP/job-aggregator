@@ -50,8 +50,8 @@
   {
     "label": "the clearing list is not pushed or restored",
     "path": "src/private_store.py",
-    "find": ",\n               (CLEARING_DIR, \"local_clearing_dir\"))",
-    "replace": ")"
+    "find": "               (CLEARING_DIR, \"local_clearing_dir\"),\n",
+    "replace": ""
   },
   {
     "label": "clearing Jobs passes over a classified row",
@@ -148,5 +148,17 @@
     "path": "src/storage.py",
     "find": "        if isinstance(value, dict):\n            if isinstance(value.get(\"identity\"), str):",
     "replace": "        if isinstance(value, dict):\n            if any(str(k).lower() in DESCRIPTION_KEYS for k in value):\n                return \"%s has a description field\" % path\n            if isinstance(value.get(\"identity\"), str):"
+  },
+  {
+    "label": "the agreement files sit among the outcome stores",
+    "path": "src/run.py",
+    "find": "pending_path = \"%s/%s\" % (self.paths[\"local_agreement_dir\"], AGREEMENT_PENDING_FILE)",
+    "replace": "pending_path = \"%s/%s\" % (self.paths[\"local_outcomes_dir\"], AGREEMENT_PENDING_FILE)"
+  },
+  {
+    "label": "the agreement files are not pushed or restored",
+    "path": "src/private_store.py",
+    "find": ",\n               (AGREEMENT_DIR, \"local_agreement_dir\"))",
+    "replace": ")"
   }
 ]

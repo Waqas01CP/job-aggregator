@@ -570,9 +570,9 @@ class TestRunIntegration(unittest.TestCase):
                                               "returned_since": 0, "disagreements": 1,
                                               "still_waiting": 0, "gave_up": 0})
         self.assertNotIn("x.test/9", json.dumps(first) + json.dumps(log))
-        [record] = load_json("data/local/outcomes/agreement_disagreements.json")
+        [record] = load_json("data/local/agreement/agreement_disagreements.json")
         self.assertEqual(record["identity"], "himalayas:https://x.test/9")
-        self.assertEqual(load_json("data/local/outcomes/agreement_pending.json"), [])
+        self.assertEqual(load_json("data/local/agreement/agreement_pending.json"), [])
 
     def test_a_posting_the_search_has_not_taken_in_waits_and_agrees_once_returned(self):
         """The live case. The first build compared only postings no newer
@@ -585,7 +585,7 @@ class TestRunIntegration(unittest.TestCase):
         agree = first["boards"][0]["agreement"]
         self.assertEqual((agree["browse_read"], agree["newly_waiting"], agree["disagreements"],
                           agree["still_waiting"]), (1, 1, 0, 1))
-        [waiting] = load_json("data/local/outcomes/agreement_pending.json")
+        [waiting] = load_json("data/local/agreement/agreement_pending.json")
         self.assertEqual(waiting["identity"], "himalayas:https://x.test/9")
         returned = self._search_page()
         returned["jobs"].insert(0, {"guid": "https://x.test/9", "title": "Data Scientist",
@@ -618,7 +618,7 @@ class TestRunIntegration(unittest.TestCase):
         agree = self._walk(self._browse(), days_later=9)["boards"][0]["agreement"]
         self.assertEqual((agree["gave_up"], agree["still_waiting"], agree["disagreements"]),
                          (1, 0, 0))
-        self.assertEqual(load_json("data/local/outcomes/agreement_pending.json"), [])
+        self.assertEqual(load_json("data/local/agreement/agreement_pending.json"), [])
 
     def test_a_posting_the_search_excluded_and_the_rule_would_too_is_agreement(self):
         """Mutation: "the agreement check ignores the location rule"."""

@@ -457,8 +457,8 @@ def sweep_display(run, no_commit, test_mode, slot, private_ok, closure, config, 
         return block
 
 
-# The private files ADR-0053's check keeps, beside the private outcome stores
-# so the private store pushes them: the postings in disagreement, and the
+# The private files ADR-0053's check keeps, in the private store's own
+# `agreement/`, which it pushes: the postings in disagreement, and the
 # ones waiting for a later walk to say whether the search returns them. The
 # public run log carries counts alone: an aggregator's postings never reach
 # the public branch.
@@ -656,10 +656,10 @@ class Run:
     def _agreement(self, adapter, board, search, log):
         """ADR-0053: one page of the whole feed against what the search
         returned, one request. Counts in the public log; the postings waiting
-        and the postings in disagreement in the private store beside the
-        outcomes. A failure here is recorded and never costs the board its
-        postings."""
-        pending_path = "%s/%s" % (self.paths["local_outcomes_dir"], AGREEMENT_PENDING_FILE)
+        and the postings in disagreement in the private store's `agreement/`,
+        out of its outcome stores since 2026-10-03. A failure here is recorded
+        and never costs the board its postings."""
+        pending_path = "%s/%s" % (self.paths["local_agreement_dir"], AGREEMENT_PENDING_FILE)
         try:
             payload = self.client.get_json(adapter.AGREEMENT_URL, board.source)
             browse = adapter.parse(payload, board).postings
@@ -681,7 +681,7 @@ class Run:
         if disagree:
             checked = iso(self.now)
             storage.append_delta(
-                "%s/%s" % (self.paths["local_outcomes_dir"], AGREEMENT_FILE),
+                "%s/%s" % (self.paths["local_agreement_dir"], AGREEMENT_FILE),
                 [dict(e, key="%s|%s" % (e["identity"], checked), checked_at=checked)
                  for e in disagree], key="key")
             print("::warning::ADR-0053: the %s search has not returned %d posting(s) the "
