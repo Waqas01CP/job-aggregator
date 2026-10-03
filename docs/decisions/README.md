@@ -24,12 +24,12 @@ Records are written at the moment a decision concludes. A record's factual error
 | 0008 | Title matching by allowlist, blocklist, and unmatched flag | Superseded by 0021 |
 | 0009 | Vertical slice first, adapters incremental | Accepted |
 | 0010 | No relevance scoring, ranking, or model-based screening | Accepted |
-| 0011 | Public repository, metadata only on the data branch | Accepted |
+| 0011 | Public repository, metadata only on the data branch | Accepted, clarified for derived values by 0058 |
 | 0012 | No email or search-alert ingestion path | Accepted |
 | 0013 | Three layers, filtered set persisted independently of the display | Accepted, clause reversed by 0030 |
 | 0014 | Weekly status sweep, with a four-status outcome taxonomy | Superseded by 0045 |
 | 0015 | Two measures, and the archive protocol | Accepted |
-| 0016 | Title-only matching against a versioned title pool | Accepted, one clause reversed by 0021, one built by 0051 |
+| 0016 | Title-only matching against a versioned title pool | Accepted, one clause reversed by 0021, one built by 0051, its deferred rule built by 0058 |
 | 0017 | Sanitised cassettes as adapter test fixtures | Accepted |
 | 0018 | Scheduled contract check against live boards | Accepted, clause reversed by 0036 |
 | 0019 | Add aggregator feeds as a second source class | Accepted, clauses reversed by 0026 and 0039; its removal condition tested against 0053 |
@@ -45,7 +45,7 @@ Records are written at the moment a decision concludes. A record's factual error
 | 0029 | Adapter order after the slice, and Dover dropped | Accepted |
 | 0030 | A rule change backfills the filtered layer | Accepted |
 | 0031 | Personal preferences are configuration, not code | Accepted |
-| 0032 | The seniority rule | Accepted |
+| 0032 | The seniority rule | Accepted, extended to a source's stated level |
 | 0033 | The data branch is the store, local files are working copies | Accepted |
 | 0034 | Airtable gets its own client | Accepted |
 | 0035 | The projection upserts on Identity | Accepted |
@@ -53,8 +53,8 @@ Records are written at the moment a decision concludes. A record's factual error
 | 0037 | The filtered layer stores rows, the projection groups them | Accepted |
 | 0038 | Role families are views, not a ranking | Accepted |
 | 0039 | The aggregator condition is the three components | Accepted |
-| 0040 | The current rules filter the projection, never the store | Accepted, extended by 0046, one clause narrowed by 0046 |
-| 0041 | Location admits unless a source excludes | Accepted, extended by D13, built |
+| 0040 | The current rules filter the projection, never the store | Accepted, extended by 0046, one clause narrowed by 0046, its convergence limited to rules a stored row can feed |
+| 0041 | Location admits unless a source excludes | Superseded by 0057 |
 | 0042 | *reserved for ADR-RULES, deliberately unused* | n/a |
 | 0043 | Three outcome stores, now five | Accepted, extended by 0050, 0051 and 0055 |
 | 0044 | The priority star, on named attributes only | Accepted |
@@ -62,14 +62,16 @@ Records are written at the moment a decision concludes. A record's factual error
 | 0046 | Classification by status, and the fifteen-day retention | Superseded by 0050 |
 | 0047 | Aggregator data lives in private destinations | Accepted, reverses one clause of 0020, extended by 0051 |
 | 0048 | A source is polled no faster than its feed refreshes | Accepted, extends 0006, one assumption failed then restored by 0053 |
-| 0049 | Architectural rules are guarded by fitness functions, not by prose | Accepted |
+| 0049 | Architectural rules are guarded by fitness functions, not by prose | Accepted, extended to every Confirmation clause |
 | 0050 | The classification flow, consolidated | Accepted, supersedes 0046 |
 | 0051 | Every field a board returns is saved, privately | Accepted |
 | 0052 | Age is judged once, at first sight | Accepted |
-| 0053 | Himalayas is polled through its search endpoint | Accepted, narrows one clause of 0005 |
+| 0053 | Himalayas is polled through its search endpoint | Accepted, narrows one clause of 0005; one assumption failed; cap 80 |
 | 0054 | A scheduled run happens, or it is not silently gone | Accepted |
-| 0055 | The display is cleared by a clock, and by hand | Accepted, decided, the tool and the clock unbuilt |
+| 0055 | The display is cleared by a clock, and by hand | Accepted, built |
 | 0056 | The projection sends the whole layer, and the delta design that will replace it | Accepted, the delta design decided and unbuilt |
+| 0057 | A posting is shown only if he can take it, and none he can take is lost | Accepted, supersedes 0041 |
+| 0058 | The description is read once, at fetch, and only what is derived is kept | Accepted |
 | RULES | How records are resolved, amended and retired | Accepted |
 
 ## Pending
@@ -77,7 +79,7 @@ Records are written at the moment a decision concludes. A record's factual error
 Decisions identified but not concluded.
 
 - Reuse boundary against the LinkedIn pipeline in fyp-career-guidance: which components are adopted, which are deliberately not.
-- Description matching, deferred by ADR-0016 until field coverage per platform is known. *(2026-09-28: half met. ADR-0051 now saves every field a board returns, descriptions included, so the data exists; nothing reads it, and the deferral stands.)*
+- Description matching, deferred by ADR-0016 until field coverage per platform is known. *(2026-10-03: built for three facts by ADR-0058; any further use of the description is a new decision.)*
 - Deduplication across source classes, and the employer alias map ADR-0019 makes necessary.
 - Whether Rozee.pk is added as a source. robots.txt permits the job paths and the terms carry no automated-access clause; a sitemap index publishes job URLs daily with the title in the slug.
 - An end-state document stating what the finished system is. Confirmed genuinely open by ADR-0023: no prior art exists in either project.
@@ -98,9 +100,9 @@ Records 0004 and 0008 were wrongly stamped superseded on 2026-09-09 and correcte
 
 ADR-0008 was then genuinely superseded by ADR-0021 on 2026-09-11, this time by the criteria: more than half its Decision Outcome was replaced. Its Changes table records both events, which is the point of keeping one.
 
-**Changes that are not supersessions are logged in a `## Changes` table at the bottom of the record.** As of 2026-09-28, **123 Changes rows sit across 42 records**, ADR-RULES included, and every table is the last section of its record. Sixteen records had it above More Information until 2026-09-22 and were moved; the move changed no text.
+**Changes that are not supersessions are logged in a `## Changes` table at the bottom of the record**, and every table is the last section of its record. Sixteen records had it above More Information until 2026-09-22 and were moved; the move changed no text.
 
-*(Corrected 2026-09-28. This file said "As of 2026-09-25, 92 Changes rows sit across 40 records", and the true count on that unchanged corpus was 106 across 41. The architecture chat wrote 92 before making its own edits of that day and then did not recount, which is the third time this index has carried a stale count. The count is now derived by reading every `## Changes` table rather than by remembering.)*
+*(Corrected 2026-10-03. This file used to state how many Changes rows the corpus holds, and every one of those hand counts went stale: six records where fifteen rows sat across eleven, found 2026-09-18; 92 against a true 106 on 2026-09-25; and 123 against a true 124 on 2026-09-28, the last written minutes after this file said the count was derived by reading every table. A number nobody can keep current by hand does not belong here. The count lives in `CAPABILITIES.md`, with its date and the command that produced it.)*
 
 **An extension is marked in two places, and they do different jobs.** The binding act is a Changes row in the extended record, which is what `CLAUDE.md` requires and what outranks this file. The Status cell here says "extended by NNNN" as a pointer for a reader scanning the table. Neither substitutes for the other, and ADR-RULES carries the ruling.
 

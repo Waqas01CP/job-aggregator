@@ -118,3 +118,7 @@ ADR-0031 owns the seven-day limit as configuration. ADR-0010 requires the rule t
 The operator's decision, 2026-09-26, and his correction of the same day, which is the part that made it right. The seat's first build is `4ff46dc`.
 
 ## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-10-03 | Evidence that the rule handles reposts correctly, from the operator's repost research: 57 of 560 employer-and-title pairs carry more than one publication date; 303 postings published over 180 days ago were updated within the last 30; Speechify's role sits under two requisitions, one per date. A relisting under an old date stays out and a new requisition's new date is admitted, so no repost rule is needed | The operator asked whether reposting is harvesting or genuine demand. The data cannot separate the two, but it shows evergreen postings are common, and this rule already does the right thing with both. Measured by the implementing seat, 2026-09-30, the requisitions from the full postings ADR-0051 keeps; no rule follows, by his decision of 2026-10-03 |

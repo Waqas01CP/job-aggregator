@@ -108,3 +108,7 @@ Sources: *Building Evolutionary Architectures*, Ford, Parsons and Kua, O'Reilly,
 The operator asked for this practice on 2026-09-25 after the ADR-0027 measurement, and asked whether it was an established principle. It is, and his instinct to keep the guards permanent rather than to re-measure by hand is what this record makes standing practice.
 
 ## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-10-03 | Every Confirmation clause in a record is either a test or explicitly marked as checkable only on live runs. None stays as prose | ADR-0050's Confirmation said, from 2026-09-28, that the closure test must not fire on a board polled but not read back far enough. No test enforced it, and on 2026-10-01 and 10-02 it fired on 47 open Himalayas rows, because the code took a pinned old posting as the walk's reach. A check that exists only in a record is the check this record was written to stop relying on |
