@@ -68,9 +68,49 @@
     "types": [
      "string"
     ]
+   },
+   "offices": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "array"
+    ]
+   },
+   "offices.location": {
+    "present": "some",
+    "null": "always",
+    "types": []
+   },
+   "metadata": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "array"
+    ]
+   },
+   "metadata.name": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "metadata.value": {
+    "present": "all",
+    "null": "some",
+    "types": [
+     "object"
+    ]
+   },
+   "content": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
    }
   },
-  "since": "2026-10-01"
+  "since": "2026-10-03"
  },
  "lever": {
   "response": {},
@@ -116,9 +156,58 @@
     "types": [
      "string"
     ]
+   },
+   "country": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "workplaceType": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "description": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "lists": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "array"
+    ]
+   },
+   "lists.text": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "lists.content": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "additional": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
    }
   },
-  "since": "2026-10-01"
+  "since": "2026-10-03"
  },
  "himalayas": {
   "response": {
@@ -200,8 +289,22 @@
     "types": [
      "array"
     ]
+   },
+   "seniority": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "array"
+    ]
+   },
+   "description": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
    }
   },
-  "since": "2026-10-01"
+  "since": "2026-10-03"
  }
 }

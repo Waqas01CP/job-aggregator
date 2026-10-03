@@ -1,0 +1,220 @@
+{
+ "run_at": "2026-10-03T11:56:07.909333Z",
+ "platforms": {
+  "greenhouse": {
+   "board": "greenhouse:veeamsoftware",
+   "postings": 236,
+   "changes": [
+    {
+     "field": "content",
+     "in": "posting",
+     "was": "not in the stored fingerprint",
+     "now": {
+      "present": "all",
+      "null": "never",
+      "types": [
+       "string"
+      ]
+     },
+     "ours": "2026-10-03: The adapter now reads content, the description, for the experience, authorisation and on-site rules the operator decided on 2026-10-02, so the check fingerprints one more field. Nothing changed at Greenhouse."
+    },
+    {
+     "field": "metadata",
+     "in": "posting",
+     "was": "not in the stored fingerprint",
+     "now": {
+      "present": "all",
+      "null": "never",
+      "types": [
+       "array"
+      ]
+     },
+     "ours": "2026-10-02: The adapter now reads offices and metadata, for the location rule's structured place and stated workplace, the operator's go of 2026-10-02, so the check fingerprints two more fields. Nothing changed at Greenhouse."
+    },
+    {
+     "field": "metadata.name",
+     "in": "posting",
+     "was": "not in the stored fingerprint",
+     "now": {
+      "present": "all",
+      "null": "never",
+      "types": [
+       "string"
+      ]
+     },
+     "ours": "2026-10-02: The adapter now reads offices and metadata, for the location rule's structured place and stated workplace, the operator's go of 2026-10-02, so the check fingerprints two more fields. Nothing changed at Greenhouse."
+    },
+    {
+     "field": "metadata.value",
+     "in": "posting",
+     "was": "not in the stored fingerprint",
+     "now": {
+      "present": "all",
+      "null": "some",
+      "types": [
+       "object"
+      ]
+     },
+     "ours": "2026-10-02: The adapter now reads offices and metadata, for the location rule's structured place and stated workplace, the operator's go of 2026-10-02, so the check fingerprints two more fields. Nothing changed at Greenhouse."
+    },
+    {
+     "field": "offices",
+     "in": "posting",
+     "was": "not in the stored fingerprint",
+     "now": {
+      "present": "all",
+      "null": "never",
+      "types": [
+       "array"
+      ]
+     },
+     "ours": "2026-10-02: The adapter now reads offices and metadata, for the location rule's structured place and stated workplace, the operator's go of 2026-10-02, so the check fingerprints two more fields. Nothing changed at Greenhouse."
+    },
+    {
+     "field": "offices.location",
+     "in": "posting",
+     "was": "not in the stored fingerprint",
+     "now": {
+      "present": "some",
+      "null": "always",
+      "types": []
+     },
+     "ours": "2026-10-02: The adapter now reads offices and metadata, for the location rule's structured place and stated workplace, the operator's go of 2026-10-02, so the check fingerprints two more fields. Nothing changed at Greenhouse."
+    }
+   ],
+   "status": "re-baselined"
+  },
+  "lever": {
+   "board": "lever:smart-working-solutions",
+   "postings": 22,
+   "changes": [
+    {
+     "field": "additional",
+     "in": "posting",
+     "was": "not in the stored fingerprint",
+     "now": {
+      "present": "all",
+      "null": "never",
+      "types": [
+       "string"
+      ]
+     },
+     "ours": "2026-10-03: The adapter now reads description, lists and additional, the description's three parts, for the experience, authorisation and on-site rules the operator decided on 2026-10-02, so the check fingerprints them. Nothing changed at Lever."
+    },
+    {
+     "field": "country",
+     "in": "posting",
+     "was": "not in the stored fingerprint",
+     "now": {
+      "present": "all",
+      "null": "never",
+      "types": [
+       "string"
+      ]
+     },
+     "ours": "2026-10-02: The adapter now reads country and workplaceType, for the location rule's structured place and stated workplace, the operator's go of 2026-10-02, so the check fingerprints two more fields. Nothing changed at Lever."
+    },
+    {
+     "field": "description",
+     "in": "posting",
+     "was": "not in the stored fingerprint",
+     "now": {
+      "present": "all",
+      "null": "never",
+      "types": [
+       "string"
+      ]
+     },
+     "ours": "2026-10-03: The adapter now reads description, lists and additional, the description's three parts, for the experience, authorisation and on-site rules the operator decided on 2026-10-02, so the check fingerprints them. Nothing changed at Lever."
+    },
+    {
+     "field": "lists",
+     "in": "posting",
+     "was": "not in the stored fingerprint",
+     "now": {
+      "present": "all",
+      "null": "never",
+      "types": [
+       "array"
+      ]
+     },
+     "ours": "2026-10-03: The adapter now reads description, lists and additional, the description's three parts, for the experience, authorisation and on-site rules the operator decided on 2026-10-02, so the check fingerprints them. Nothing changed at Lever."
+    },
+    {
+     "field": "lists.content",
+     "in": "posting",
+     "was": "not in the stored fingerprint",
+     "now": {
+      "present": "all",
+      "null": "never",
+      "types": [
+       "string"
+      ]
+     },
+     "ours": "2026-10-03: The adapter now reads description, lists and additional, the description's three parts, for the experience, authorisation and on-site rules the operator decided on 2026-10-02, so the check fingerprints them. Nothing changed at Lever."
+    },
+    {
+     "field": "lists.text",
+     "in": "posting",
+     "was": "not in the stored fingerprint",
+     "now": {
+      "present": "all",
+      "null": "never",
+      "types": [
+       "string"
+      ]
+     },
+     "ours": "2026-10-03: The adapter now reads description, lists and additional, the description's three parts, for the experience, authorisation and on-site rules the operator decided on 2026-10-02, so the check fingerprints them. Nothing changed at Lever."
+    },
+    {
+     "field": "workplaceType",
+     "in": "posting",
+     "was": "not in the stored fingerprint",
+     "now": {
+      "present": "all",
+      "null": "never",
+      "types": [
+       "string"
+      ]
+     },
+     "ours": "2026-10-02: The adapter now reads country and workplaceType, for the location rule's structured place and stated workplace, the operator's go of 2026-10-02, so the check fingerprints two more fields. Nothing changed at Lever."
+    }
+   ],
+   "status": "re-baselined"
+  },
+  "himalayas": {
+   "board": "himalayas:pakistan",
+   "postings": 20,
+   "changes": [
+    {
+     "field": "description",
+     "in": "posting",
+     "was": "not in the stored fingerprint",
+     "now": {
+      "present": "all",
+      "null": "never",
+      "types": [
+       "string"
+      ]
+     },
+     "ours": "2026-10-03: The adapter now reads description, for the experience, authorisation and on-site rules the operator decided on 2026-10-02, so the check fingerprints one more field. Nothing changed at Himalayas."
+    },
+    {
+     "field": "seniority",
+     "in": "posting",
+     "was": "not in the stored fingerprint",
+     "now": {
+      "present": "all",
+      "null": "never",
+      "types": [
+       "array"
+      ]
+     },
+     "ours": "2026-10-02: The adapter now reads seniority, the level Himalayas states, for the level rule the operator decided on 2026-10-02, so the check fingerprints one more field. Nothing changed at Himalayas."
+    }
+   ],
+   "status": "re-baselined"
+  }
+ },
+ "test_mode": false
+}
