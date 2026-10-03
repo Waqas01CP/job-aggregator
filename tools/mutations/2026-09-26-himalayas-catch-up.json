@@ -32,7 +32,7 @@
   {
     "label": "the cap stays at 25",
     "path": "src/run.py",
-    "find": "MAX_PAGES = 40",
+    "find": "MAX_PAGES = 80",
     "replace": "MAX_PAGES = 25"
   },
   {

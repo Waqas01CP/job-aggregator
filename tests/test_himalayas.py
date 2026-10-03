@@ -627,12 +627,13 @@ class TestRunIntegration(unittest.TestCase):
         self.assertEqual((board["status"], board["fetched"]), ("ok", 1))
 
     def test_the_cap_reaches_back_a_week(self):
-        """A first walk must reach the age limit before the cap. 92 eligible
-        postings a day is the higher of the two estimates of 2026-09-26, and
-        25 pages held only 6.4 days that day."""
+        """A first walk must reach the age limit before the cap, with room
+        for the feed to grow by half. Measured 2026-10-02: the test-mode walk
+        read 707 postings in 40 pages, 17.7 a page, without reaching a week,
+        and two mornings found 96 and 104 new postings. At 104 a day a week
+        is 728 postings, 41 pages; 40 pages was short of it."""
         from src.run import MAX_PAGES
-        self.assertGreaterEqual(MAX_PAGES * himalayas.PAGE_SIZE,
-                                7 * 92 + himalayas.PAGE_SIZE)
+        self.assertGreaterEqual(MAX_PAGES * 177, 7 * 104 * 10 * 3 // 2)
 
 
 if __name__ == "__main__":

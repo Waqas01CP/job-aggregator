@@ -21,7 +21,7 @@ status: current
 A personal job-discovery pipeline that runs itself.
 - **Twice a day**, on GitHub Actions, it reads the public job feeds of eleven employers' applicant-tracking-system (ATS) boards, and one aggregator narrowed to postings open to Pakistan.
 - **It keeps every posting it fetches, permanently.**
-- **It admits only postings the operator can use:** his target roles, his level, places he is eligible to work, and at most a week old when first seen. Each posting is admitted or dropped by a named, deterministic rule.
+- **It admits only postings the operator can use:** his target roles, his level and years of experience, places he is eligible to work, and at most a week old when first seen. Each posting is admitted or dropped by a named, deterministic rule.
 - **It shows what survives in an Airtable table.** The operator marks each row accepted, not a fit, or poorly filtered. The pipeline copies each mark to its own table, stores it for good, and clears the display after fifteen days. A row he never marks leaves after thirty, and he can clear any table himself, dry run first.
 - **It costs nothing to run.** It first sees a new posting a median of 5.4 hours after its employer publishes it.
 
@@ -64,7 +64,7 @@ By his estimate, that took most of a working week. He usually found a posting th
    - a request budget of 500 per run, counting every attempt including retries;
    - a circuit breaker on consecutive failures.
 
-   **Adapters are per platform, never per employer:** one Greenhouse adapter serves nine boards. An adapter only parses; it never fetches. The aggregator, Himalayas, is paginated. It is read newest first and stops at the first page that is either wholly older than what that board has already stored in full, or wholly older than the age limit. A 40-page cap guards against a runaway.
+   **Adapters are per platform, never per employer:** one Greenhouse adapter serves nine boards. An adapter only parses; it never fetches. The aggregator, Himalayas, is paginated. It is read newest first and stops at the first page that is either wholly older than what that board has already stored in full, or wholly older than the age limit. An 80-page cap guards against a runaway; it was 40 until 2026-10-02, when a week of the search outgrew it.
 
    **The aggregator's own filter is checked every morning.** Himalayas is asked only for postings open to Pakistan, which hands part of the location rule to a third party. So one page of its whole feed is read beside the search. That page is minutes old and the search trails it by hours, so a posting there that the location rule would admit, and the search has not returned, waits privately for the next morning's walk. Still not returned by then, it is a disagreement: counted in the log and named in the private store (ADR-0053).
 4. **Normalises** every posting to one row shape. The publication date and the moment the pipeline first saw the posting are recorded as separate fields, never confused. Where the employer name or URL is derived rather than given, the row says so.
@@ -74,15 +74,18 @@ By his estimate, that took most of a working week. He usually found a posting th
    | Rule | What it drops | Source of truth |
    |---|---|---|
    | Expiry | A posting past its stated expiry | The posting |
-   | Experience | Built and switched off: no board gives years of experience as a field, and the operator deferred the rule until filtering reads descriptions | `src/filters.py` |
    | Annotation vendor | Postings from data-labelling vendors | `docs/reference/annotation-vendors.md` |
    | Title | Titles matching none of 79 terms in four role families: agentic AI, LLM and applied AI, traditional AI and ML, software engineering | `docs/reference/title-pool.md` |
    | Seniority | Titles carrying a senior-level word (senior, staff, lead, principal, II, III and others) | `docs/reference/seniority-exclusions.md` |
    | Level | Where the source states a level, a posting none of whose levels is Entry-level or Mid-level. Only Himalayas states one; a posting that states none is kept | `config/eligibility.json` |
-   | Location | A posting only when *every* place it lists is closed to the operator. Examples: other countries only; a region without Pakistan; on-site in a Pakistani city other than Karachi. Where the text names only a city the rule does not know, the source's own country or office decides, and only to close; a workplace the source states as on site or hybrid counts as on site. Anything still unclear is kept | `config/eligibility.json` |
+   | Experience | A posting whose description asks for more than 3 years of experience, required or preferred. A range counts by its low end, so "3 to 5 years" is kept; a description stating no figure keeps the posting | `config/eligibility.json`, `src/description.py` |
+   | Authorisation | A posting whose description requires the right to work, citizenship or residence only in places closed to the operator, such as authorisation to work in the United States. "No visa sponsorship" is never read as one: on a role open worldwide it only says no one is relocated | `config/eligibility.json`, `src/description.py` |
+   | Location | A posting only when *every* place it lists is closed to the operator. Examples: other countries only; a region without Pakistan; on-site in a Pakistani city other than Karachi. Where the text names only a city the rule does not know, the source's own country or office decides, and only to close. A workplace the source states as on site or hybrid counts as on site, and so does a description saying so where the source states none. Anything still unclear is kept | `config/eligibility.json` |
    | Age | A posting published more than 7 days before the pipeline first saw it. Judged once, at first sight, so an admitted row never ages out unseen | `config/eligibility.json` |
 
    Title matching normalises both sides: case, punctuation, accents and plurals. Spelling variants such as "fullstack" and "full stack" are listed as terms of their own.
+
+   **The description is read once, for what stops him applying.** Fixed phrase patterns, each measured over every saved description before it was switched on, find the years asked, a place a right to work or residence is required in, and on-site work. The row keeps only those derived values: a number, configured place names, a flag. The description's words never reach the public branch.
 7. **Groups duplicates** by employer, normalised title and publication date. One role posted 134 times, once per city, becomes one display row listing every city.
 8. **Appends the filtered layer**, the rows that passed. When a rule widens, a backfill appends the rows it now admits, inside every run.
 9. **Saves every posting whole, privately** (the operator's D11). This includes the description text and every field the board returned. It goes to the private repository's `data-full` branch, one file per run. The file is read back by a fresh fetch and compared by content hash, and only then is each posting marked saved. A failed save is retried on the next run.
@@ -200,6 +203,7 @@ Each is measured, with its date and source. `data` is the public data branch.
 | Himalayas after the change | Only postings open to Pakistan requested. The first morning read back a week, 460 postings in 23 pages, stored 361 new and kept 31 | 2026-09-27 | Run log |
 | Himalayas' stated level | Himalayas labels every posting with a level. Of the 67 postings the filter chain kept from the 809 saved since 2026-09-26, it labels 35 Senior or above; the title rule, which reads only titles, dropped 45 others it labels Senior or above. Since 2026-10-02 the label is read, and the chain keeps 34 of the 809, not 67 | 2026-10-02 | The private full postings, through the real adapter and chain; `docs/reference/platform-fields.md` |
 | Experience in the description | No source gives years of experience as a field. A number of years appears in the description text of 53% of Greenhouse postings, 67% of Lever's and 50% of Himalayas', an upper bound | 2026-10-02 | Same |
+| The description rules | Over the 1,708 postings saved by 2026-10-02, the rules read years asked in 883, a required place in 17 and on-site work in 34. Of the 50 the chain kept apart from age, 7 now drop: 6 asking 5 or more years, and 1 on site in Lahore. None is newly kept | 2026-10-02 | The private full postings, through the real adapters and chain |
 | Himalayas completeness | Of the 420 postings a week-long read of the search held, published before the morning walk, the pipeline had stored all 420 | 2026-09-30 | A 26-page snapshot against the private seen store |
 | Location rule, its owed check | Exactly 74 of the saved 91 Himalayas postings dropped and 17 admitted, as the record predicted nine days before the rule was built | 2026-09-30 | ADR-0041's Confirmation, on `raw_responses/` |
 | Full postings saved privately | 824 postings in one 9.8 MB file, read back and matched by content hash | 2026-09-26 | Run log |
@@ -207,11 +211,11 @@ Each is measured, with its date and source. `data` is the public data branch.
 | Display intake | About one new display row a day under the current rules, so by arithmetic, not measurement, the display settles near thirty rows, and the cheaper delta projection is not yet needed | 2026-09-29 and 09-30 | Run logs, against ADR-0056's trigger of 100 |
 | Recurring cost | None | 2026-09-27 | Free plans only |
 | Feasibility research | 16 ATS platforms probed; 1,646 postings across the first 11 boards | 2026-09-11 to 09-16 | Spike logs |
-| Code | 25 source files, 6,636 lines; 32 test files, 10,381 lines; 9 tool files, 1,880 lines | 2026-10-02 | `git ls-files`, `wc` |
-| Tests | 754, passing on Python 3.11 and 3.12 | 2026-10-02 | `unittest` |
-| Mutations | 410 recorded across 34 files. Since 2026-10-01 the suite fails when a code change leaves any of them unable to run, which two commits had done to 10, unnoticed. A survivor is closed by a new test, or, where the mutation changes nothing, replaced and recorded as such | 2026-10-02 | `tools/mutations/`, run by `tools/mutate.py`; results in the session logs |
+| Code | 26 source files, 7,008 lines; 33 test files, 10,788 lines; 9 tool files, 1,880 lines | 2026-10-03 | `git ls-files`, `wc` |
+| Tests | 794, passing on Python 3.11 and 3.12 | 2026-10-03 | `unittest` |
+| Mutations | 440 recorded across 35 files. Since 2026-10-01 the suite fails when a code change leaves any of them unable to run, which two commits had done to 10, unnoticed. A survivor is closed by a new test, or, where the mutation changes nothing, replaced and recorded as such | 2026-10-02 | `tools/mutations/`, run by `tools/mutate.py`; results in the session logs |
 | Decision records | 55 (four superseded), plus the rules for amending them. 124 dated Changes rows across 42 records | 2026-09-30 | `docs/decisions/` |
-| History | 122 commits on `main`, the first on 2026-09-01 UTC; 23 session logs; one audit report in `logs/audit/` | 2026-10-01 | `git log`, `logs/` |
+| History | 123 commits on `main`, the first on 2026-09-01 UTC; 24 session logs; one audit report in `logs/audit/` | 2026-10-03 | `git log`, `logs/` |
 
 ---
 
@@ -333,9 +337,9 @@ Each dated item below has its source in the session log of that date. The design
 - no reading of email job alerts;
 - no paid service.
 
-**Limits as of 2026-10-01:**
+**Limits as of 2026-10-02:**
 - **Sources.** Eleven employer boards and one aggregator. Five more adapters are decided and unbuilt (Ashby, Workable, SmartRecruiters, Breezy and Manatal, ADR-0029), out of 53 boards in the operator's registry. On-site roles in Karachi are thin: Rozee.pk, the main Pakistani board, has no API, and it is deferred.
-- **Matching reads titles only.** Descriptions are now saved but never read, so a role whose title misses the pool is missed. The years-of-experience rule waits on reading descriptions. Himalayas' own level label is read since 2026-10-02; Himalayas rows stored before then carry none and keep their verdict.
+- **Matching reads titles only**, so a role whose title misses the pool is missed. Descriptions are read since 2026-10-02, but only for what stops him applying. They are read by fixed phrases, so a requirement worded in a way not yet measured is missed, and the posting stays in his table. Himalayas' own level label is read since the same day. Rows stored before then carry neither, and keep their verdict.
 - **Duplicates across sources are not merged.** An employer's own posting and an aggregator's copy of it can both appear, because the aggregator stamps its own date.
 - **Lever's date is not proven to mean publication**, so Lever postings are never dropped for age.
 - **GitHub starts scheduled runs 3.3 to 7.0 hours late**, over the 29 scheduled runs to 2026-10-01. Freshness is measured from publication, so it includes that delay.
@@ -357,8 +361,8 @@ Short, role-neutral statements a reader can take as they are. Every figure is fr
 - Git branches serve as the database, with privacy enforced in code: employers' description text and aggregator data never reach the public repository. Every posting is saved in full to a private repository, verified by read-back.
 - A classification workflow: the operator's marks are copied to their own tables and stored permanently. Rows are deleted from the display only after the store is read back from the remote. The display is bounded by a thirty-day clock and a dry-run-first clearing tool.
 - A day's worth of an aggregator's feed went from about a third read, 93% of it irrelevant, to all of the relevant postings, by moving to a filtered endpoint an earlier measurement had wrongly rejected.
-- 754 tests, and 410 mutations that deliberately break the code to prove the tests notice.
-- Designed by the operator and built with AI agents in separate roles: architecture, implementation, and cold, read-only audit. The work was carried out under a written verification discipline and produced 55 decision records and 23 session logs.
+- 794 tests, and 440 mutations that deliberately break the code to prove the tests notice.
+- Designed by the operator and built with AI agents in separate roles: architecture, implementation, and cold, read-only audit. The work was carried out under a written verification discipline and produced 55 decision records and 24 session logs.
 
 ---
 

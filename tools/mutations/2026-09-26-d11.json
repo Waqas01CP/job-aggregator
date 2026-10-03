@@ -8,8 +8,8 @@
   {
     "label": "a posting's entry is not carried",
     "path": "src/adapters/greenhouse.py",
-    "find": "            workplace=workplace,\n            raw=entry,",
-    "replace": "            workplace=workplace,\n            raw=None,"
+    "find": "            description=(entry.get(\"content\"),),\n            raw=entry,",
+    "replace": "            description=(entry.get(\"content\"),),\n            raw=None,"
   },
   {
     "label": "an aggregator posting's entry is not carried",

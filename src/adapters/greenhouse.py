@@ -14,10 +14,12 @@ re-derived here:
 `?content=true` is sent, since 2026-09-26: the operator's D11 keeps every
 field a board returns, descriptions included (ADR-0016). It makes the
 response larger, 6.7 times on Careem's board measured that day and 9.5 times
-where this was first measured, for the same one request. The description is
-never parsed and never reaches this repository: the run saves each posting
-whole to the private store's full branch only, which keeps ADR-0011's public
-branch metadata-only.
+where this was first measured, for the same one request. The description,
+`content`, is handed to the normaliser, which keeps only what it states
+(years asked, a place required, on-site work), never its words; the run
+saves each posting whole to the private store's full branch only, which
+keeps ADR-0011's public branch metadata-only. Read since 2026-10-02, the
+operator's decision.
 
 `updated_at` is present and is never used. It is written in bulk, not on edit:
 Greenhouse rewrote roughly 265 Speechify postings on each of four dates.
@@ -43,7 +45,8 @@ CONSUMED_RESPONSE = ("jobs",)
 POSTINGS_AT = "jobs"
 CONSUMED = ("id", "title", "absolute_url", PUBLISHED_FIELD, "application_deadline",
             "application_deadline.date", "company_name", "location", "location.name",
-            "offices", "offices.location", "metadata", "metadata.name", "metadata.value")
+            "offices", "offices.location", "metadata", "metadata.name", "metadata.value",
+            "content")
 
 # Custom fields, which each employer names itself, that say where a posting
 # is or how it is worked, by the names measured on the boards configured on
@@ -135,6 +138,7 @@ def parse(payload, board):
             expires_at=expires_at,
             places=places or None,
             workplace=workplace,
+            description=(entry.get("content"),),
             raw=entry,
         ))
     return result

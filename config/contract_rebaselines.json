@@ -25,6 +25,25 @@
       "date": "2026-10-02",
       "cause": "The adapter now reads country and workplaceType, for the location rule's structured place and stated workplace, the operator's go of 2026-10-02, so the check fingerprints two more fields. Nothing changed at Lever.",
       "fields": ["posting.country", "posting.workplaceType"]
+    },
+    {
+      "platform": "greenhouse",
+      "date": "2026-10-03",
+      "cause": "The adapter now reads content, the description, for the experience, authorisation and on-site rules the operator decided on 2026-10-02, so the check fingerprints one more field. Nothing changed at Greenhouse.",
+      "fields": ["posting.content"]
+    },
+    {
+      "platform": "lever",
+      "date": "2026-10-03",
+      "cause": "The adapter now reads description, lists and additional, the description's three parts, for the experience, authorisation and on-site rules the operator decided on 2026-10-02, so the check fingerprints them. Nothing changed at Lever.",
+      "fields": ["posting.description", "posting.lists", "posting.lists.text",
+                 "posting.lists.content", "posting.additional"]
+    },
+    {
+      "platform": "himalayas",
+      "date": "2026-10-03",
+      "cause": "The adapter now reads description, for the experience, authorisation and on-site rules the operator decided on 2026-10-02, so the check fingerprints one more field. Nothing changed at Himalayas.",
+      "fields": ["posting.description"]
     }
   ]
 }

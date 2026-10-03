@@ -63,7 +63,7 @@ PUBLISHED_FIELD = "pubDate"
 CONSUMED_RESPONSE = ("jobs", "offset", "limit", "totalCount")
 POSTINGS_AT = "jobs"
 CONSUMED = ("guid", "title", "applicationLink", PUBLISHED_FIELD, "expiryDate", "companyName",
-            "locationRestrictions", "seniority")
+            "locationRestrictions", "seniority", "description")
 
 # Epoch seconds for plausible posting dates, so a millisecond value cannot
 # silently become the year 58000.
@@ -176,6 +176,8 @@ def parse(payload, board):
             location=location,
             expires_at=expires.isoformat().replace("+00:00", "Z") if expires else None,
             levels=levels or None,
+            # HTML, for the normaliser to read and keep only what it states.
+            description=(entry.get("description"),),
             raw=entry,
         ))
     return result

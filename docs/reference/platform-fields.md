@@ -43,8 +43,9 @@ category names a provider defines. The measurement script is in
 ## Where a posting states experience
 
 **No source gives years of experience as a field.** A number of years
-appears only inside the description text. **One source states a level:
-Himalayas, on every posting**, and the pipeline does not read it.
+appears only inside the description text, which the pipeline reads for it
+since 2026-10-02 (below, "Decided"). **One source states a level:
+Himalayas, on every posting**, which the level rule reads since the same day.
 
 | Source | A stated level | Years as a field | Description states a number of years |
 |---|---|---|---|
@@ -55,7 +56,9 @@ Himalayas, on every posting**, and the pipeline does not read it.
 "States a number of years" counts descriptions with a phrase like "3 years",
 "3+ years" or "3-5 yrs". It also matches "10 years in business", so it is an
 upper bound on postings that ask for experience in years, not a count of
-them.
+them. The rule's own reading is stricter (`src/description.py`): over the
+1,708 postings saved by the evening of 2026-10-02 it finds years asked in
+447 of 834 Greenhouse postings, 50 of 65 Lever and 386 of 809 Himalayas.
 
 **What Himalayas' level would change, measured** over the 809 postings, each
 put through the real adapter and filter chain at the moment it was saved:
@@ -65,9 +68,9 @@ put through the real adapter and filter chain at the moment it was saved:
 - the title rule's seniority words dropped 45 postings Himalayas labels
   Senior or above (42 Senior alone), the ones whose title says so.
 
-So about half of the Himalayas rows reaching the display are, by the source's
-own label, senior roles. Reading the label is a rule change, and the
-operator's (ADR-0032 is the title-word rule).
+So about half of the Himalayas rows reaching the display were, by the
+source's own label, senior roles. Reading the label was a rule change, and
+the operator's (ADR-0032 is the title-word rule): he made it on 2026-10-02.
 
 ## Greenhouse
 
@@ -79,7 +82,7 @@ operator's (ADR-0032 is the title-word rule).
 | `company_name` | string | 100% | yes | |
 | `first_published` | string | 100% | yes | ISO-8601. Measure A's field |
 | `location`, `location.name` | object, string | 100% | yes | one free-text string |
-| `content` | string | 100% | no | the description, HTML-escaped. Saved privately (D11), never parsed. Since `?content=true` |
+| `content` | string | 100% | **yes**, since 2026-10-02 | the description, HTML-escaped, since `?content=true`. Read for the years asked, a required place and on-site work; the row keeps only those. Saved whole privately (D11) |
 | `departments` | list | 100% | no | since `?content=true` |
 | `offices` | list | 99.6% | **yes**, since 2026-10-02 | each office's `location`, "City, Region, Country": the posting's structured place, read by the location rule only where the free text names nothing it knows |
 | `updated_at` | string | 100% | no | deliberately: bulk-stamped, ADR-0018 |
@@ -127,8 +130,8 @@ Measured 2026-10-02 over the same 823 postings `[VERIFIED]`.
 - **`content`, the description,** states a number of years on 53%. On the
   location question: of the location-dropped postings whose description
   mentions Pakistan, "anywhere" or "worldwide remote", 3 pass every other
-  rule, and all 3 are correct drops. One is "work from anywhere in Latin
-  America"; two are Vietnam roles whose company has a Pakistan office. **No
+  rule, and all 3 are correct drops. One is open to anywhere in Latin
+  America only; two are Vietnam roles whose company has a Pakistan office. **No
   missed posting found.** Of 13 postings passing every rule but age, no
   description restricts the role to a country.
 - **`offices` names a structured place,** "City, Region, Country", on 352 of
@@ -151,10 +154,10 @@ Measured 2026-10-02 over the same 823 postings `[VERIFIED]`.
 | `workplaceType` | string | 100% | **yes**, since 2026-10-02 | remote 41, on-site 22. The stated workplace: on site or hybrid feeds D13's on-site rule; remote adds nothing |
 | `country` | string | 100% | **yes**, since 2026-10-02 | ISO-2. The posting's structured place, read where the free text names nothing the rule knows |
 | `applyUrl` | string | 100% | no | |
-| `description`, `descriptionBody` | string | 100% | no | HTML. Saved privately, never parsed |
+| `description`, `descriptionBody` | string | 100% | **`description`**, since 2026-10-02 | HTML. Read with `lists` and `additional` for the description rules; the row keeps only what they derive. `descriptionBody`, the same without the opening, is not read |
 | `descriptionPlain`, `descriptionBodyPlain` | string | 95.2%, 81.0% | no | the same as plain text |
-| `lists` | list | 100% | no | named sections: responsibilities, requirements |
-| `additional`, `additionalPlain` | string | 65.1% | no | |
+| `lists` | list | 100% | **yes**, since 2026-10-02 | named sections: responsibilities, requirements. Where Lever's years are stated |
+| `additional`, `additionalPlain` | string | 65.1% | **`additional`**, since 2026-10-02 | the closing text |
 | `opening`, `openingPlain` | string | 61.9% | no | |
 | `salaryRange` (`min`, `max`, `currency`, `interval`) | object | 12.7% | no | |
 | `salaryDescription`, `salaryDescriptionPlain` | string | 1.6% | no | |
@@ -167,8 +170,8 @@ Measured 2026-10-02 over the 63 postings `[VERIFIED]`.
 
 - **`lists` is the description's structured half:** headed sections, each
   `{text, content}`. The headings seen include "Responsibilities",
-  "Requirements", "Nice to Have", "Benefits", and "What experiences will
-  help you in this role". **The years of experience live here: 50 of 63
+  "Requirements", "Nice to Have", "Benefits", and one board's heading on the
+  experience that helps. **The years of experience live here: 50 of 63
   postings state a number of years inside `lists`, and 4 inside
   `description`.** A rule on experience over Lever must read `lists`.
 - **`opening` is the introduction**, median 31 words. `description` is the
@@ -204,13 +207,13 @@ Measured 2026-10-02 over the 63 postings `[VERIFIED]`.
 | `pubDate` | number | 100% | yes | epoch seconds |
 | `expiryDate` | number | 100% | yes | epoch seconds. Closes a posting on its date (ADR-0050), and since 2026-10-02 the only way a Himalayas posting closes |
 | `locationRestrictions` | list of country names | 10.8% | yes | empty on 722 of 809: open to every country, which the search returns with those listing Pakistan |
-| `seniority` | list | 100% | **no** | **the stated level.** Counts by label below |
+| `seniority` | list | 100% | **yes**, since 2026-10-02 | **the stated level**, read by the level rule. Counts by label below |
 | `timezoneRestrictions` | list of numbers | 100% | no | UTC offsets the employer hires in. Never empty in this corpus. The operator: "time zone is not an issue" |
 | `employmentType` | string | 100% | no | Full Time 581, Contractor 178, Part Time 22, Intern 9, Temporary 8, Volunteer 8, Other 3 |
 | `categories` | list | 100% | no | role tags |
 | `parentCategories` | list | 79.5% | no | |
 | `excerpt` | string | 100% | no | the description's first sentences |
-| `description` | string | 100% | no | HTML. Saved privately, never parsed |
+| `description` | string | 100% | **yes**, since 2026-10-02 | HTML. Read for the description rules; the row keeps only what they derive. Saved whole privately |
 | `companySlug` | string | 100% | no | |
 | `companyLogo` | string | 80.3% | no | |
 | `salaryPeriod` | string | 100% | no | |
@@ -231,13 +234,13 @@ pipeline receives:
 | Apply before | `expiryDate` | yes: a passed date closes the posting |
 | Posted on | `pubDate` | yes: the publication date, judged at first sight (D14) |
 | Job type | `employmentType` | no |
-| Experience level | `seniority` | no |
+| Experience level | `seniority` | yes: the level rule |
 | Location requirements | `locationRestrictions`. Empty shows as "open to candidates from all countries" | yes: the location rule (D13) |
 | Hiring timezones | `timezoneRestrictions` | no, by the operator's ruling |
 | Job categories | `categories`, `parentCategories` | no |
 | Skills | **not in the API response.** None of the 20 fields carries them, so the site shows something the API does not give |  |
 | Browse similar jobs | the site's navigation, not data |  |
-| The description | `description`, `excerpt` | saved privately, not read |
+| The description | `description`, `excerpt` | `description` read for the description rules; `excerpt` not |
 
 ## What each API accepts
 
@@ -311,30 +314,39 @@ means and what happens when it is absent.
   naming Pakistan are six Islamabad roles whose field says hybrid, which D13
   drops.
 
-**Open: the description, decided in direction on 2026-10-02.** The operator:
-use the description to find what stops him applying, such as years of
-experience, a work permit in another country, or on-site work, even on a
-posting every other check passes. The design and its thresholds wait on his
-answers (the log of 2026-10-02, its last section). Measured on the saved
-postings that pass every rule but age: about a third state a number of years;
-of 15 Greenhouse postings, 3 ask 5 or more; of 35 Himalayas postings, 1 asks
-5 or more and 6 ask 3. Phrases need care: "hybrid" matched "hybrid/vector
-search", and "visa sponsorship is not available" sat on a fully remote role.
+- **The description is read**, on all three sources, for what stops him
+  applying even when every other rule passes a posting: the operator, "high
+  time that we use the description". Greenhouse's `content`, Lever's
+  `description`, `lists` and `additional`, Himalayas' `description`.
+  `src/description.py` reads each once, at normalisation, and the row keeps
+  only what it derives: the years asked, the place names a requirement
+  names, and an on-site flag. His answers the same evening:
+  - **Experience:** "3 or 3+ is the max accepted years"; a preferred figure
+    over it is out like a required one, "5+ years preferred is already
+    out". A range counts by its low end.
+  - **Authorisation:** a right to work, citizenship or residence required
+    only in places closed to him drops the posting, his "work permit of us
+    required". "No visa sponsorship" is never read as a requirement: on a
+    role open worldwide it says only that no one is relocated, and he wants
+    those roles.
+  - **On site:** a description saying the role is on site counts as a
+    stated workplace where the source states none, so D13 drops it outside
+    Karachi.
 
-1. **On site, read from the description.** One board's "Lahore, Punjab,
-   Pakistan" postings say "onsite" in the description on 6 of 11; D13 drops
-   on-site roles outside Karachi, and the location field does not say it.
-   Reading description text for location is new, and words like "onsite"
-   occur in other senses.
-2. **Years of experience, from the description**, on all three sources: 50
-   to 67% state a number, and on Lever it is in `lists`. The
-   stated-experience rule is deferred by the operator until filtering reads
-   descriptions; these are the rates it would start from. Every description
-   is saved privately (D11), so a rule could be tested over them without a
-   request.
-3. **Salary**, on Himalayas 15.9% and Lever 12.7%. Greenhouse's
+  Each phrase was measured over the 1,708 postings saved by then before it
+  was switched on; the log of 2026-10-02, its night section, has every count
+  and the sentences behind each guard. Over those postings the rules read
+  years in 883, a required place in 17 and on-site work in 34. Of the 50 the
+  chain kept apart from age, 7 now drop: 6 asking 5 or more years, and 1
+  Lahore role whose description says it is on site. None is newly kept.
+
+**Open:**
+1. **Salary**, on Himalayas 15.9% and Lever 12.7%. Greenhouse's
    `pay_transparency` costs a request per posting, rate unmeasured.
-4. **Greenhouse `internal_job_id`**, to group one job's city copies exactly.
+2. **Greenhouse `internal_job_id`**, to group one job's city copies exactly.
+3. **Security clearance in the description.** Not read: 6 mentions in the
+   1,708, two of them saying it is not required and one in a legal sense. A
+   US citizenship requirement, which a US clearance implies, is read.
 
 ## Inventorying a new source
 
@@ -485,5 +497,6 @@ what happens when it is absent, and each of these deserves that separately.
 
 | Date | Change | Reason |
 |---|---|---|
+| 2026-10-02, night | The description is read, on the operator's answers: the fields each adapter now reads are marked, the "Open" description item moved to "Decided" with its measured effect, and security clearance added as open. Himalayas `seniority`, read since the evening's level rule, was still marked unread in two tables and in the experience section: corrected | His thresholds arrived; the seniority rows were stale since `d5dda62`, the implementing seat's miss |
 | 2026-10-02 | Re-measured over the 1,695 postings saved whole since 2026-09-26, on what the pipeline fetches now: Greenhouse with descriptions, Himalayas' Pakistan search. Added: where each source states experience, the Himalayas job page mapped to its API fields, every endpoint and parameter each API documents, the unused fields re-ranked, and the procedure for a new source. The 2026-09-17 tables kept as history | The operator asked for every field each source gives, experience above all, after seeing senior Himalayas roles in his table, and for it to be repeatable as sources are added. Two of the 09-17 tables no longer described the requests made |
 | 2026-09-17 | File created. Twenty-three platform inventories from the 84 saved responses, with read and unread marked for the three adapted platforms | The architecture chat asked for it, on the rule that everything fetched should be used. Himalayas' `locationRestrictions` prompted it; measuring showed the adapter does read that field, lossily, and that the more valuable unread field is `seniority`, stated on every posting while the pipeline infers it from titles |

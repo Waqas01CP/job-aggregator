@@ -1,6 +1,6 @@
 ---
 type: log
-description: The first live checks of the fourth audit's fixes; a defect found in the closure test that had marked 47 open Himalayas rows closed, fixed before the next morning; the Himalayas logic checked against the live search; every field and parameter of the three sources measured over the saved full postings; and the operator's answers on the audit's questions.
+description: The first live checks of the fourth audit's fixes; a defect found in the closure test that had marked 47 open Himalayas rows closed, fixed before the next morning; the Himalayas logic checked against the live search; every field and parameter of the three sources measured over the saved full postings; and the operator's answers on the audit's questions. Later the level rule and the structured place, and at night the description read for experience, a right to work elsewhere and on-site work, and the Himalayas page cap raised to 80.
 status: current
 ---
 
@@ -400,8 +400,10 @@ His questions were whether the days are hours, and whether test mode is the `Job
 
 Over the saved postings that pass every rule but age [VERIFIED]:
 - **Years** are stated on about a third. Greenhouse: of 15, 3 ask 5 or more and 1 asks 3. Himalayas: of 35, 1 asks 5 or more, 6 ask 3, and 4 ask 2 or fewer. The sampled matches read right.
-- **Work authorisation** is rare here. The one match, "visa sponsorship is not available", sat on a fully remote role: no stop for him.
-- **On-site wording** on postings in Pakistani cities other than Karachi: 2 of 6. One is real, "Onsite job with offices in our Thokar office"; one is false, "hybrid/vector search".
+- **Work authorisation** is rare here. The one match, a statement that visa sponsorship is not offered, sat on a fully remote role: no stop for him.
+- **On-site wording** on postings in Pakistani cities other than Karachi: 2 of 6. One is real, a location given as an on-site office; one is false, "hybrid" said of a kind of search.
+
+*(Corrected 2026-10-03: this section quoted both phrases verbatim, against ADR-0011, which keeps description text, snippets included, out of this repository. They remain in the history of `d515b3b`.)*
 
 **Proposed design:**
 - **Read the description once, at fetch,** where it is in hand. Store only what is derived, as row fields: the least years asked, a stated authorisation or residence requirement and where, and a stated on-site arrangement. The text never leaves the private full branch.
@@ -427,3 +429,86 @@ All `[VERIFIED]` on this commit's code; each clone's `src`, `tests`, `tools`, `c
 - **The survivor, "the home country's code reads as closed":** its test used "Lahore", which the text admits before the source's place is asked, so the test could not fail. Rebuilt on text the rule cannot place, and re-run in a fresh clone: caught, by that test. 19 of 19.
 - **Stale finds:** 0 of 410.
 - **Privacy:** both Greenhouse fixtures carry no address, and the outgoing diff holds no Himalayas URL, no Airtable ID and no token.
+
+
+## The night: his thresholds, the description read, the cap raised
+
+He wrote at about 20:50Z, 01:50 on 10-03 his time; the UTC date is still 10-02, so this section stays in this log.
+
+### His answers
+
+1. **Years:** "the most it can say is 3+ and not 4+ years like 3 or 3+ is the max accepted years".
+2. **Preferred:** "the preferred should not count as required. this is just a plus point but then again, the preferred would again be in the point 1 answer meaning 5+ years preferred is already out since the max is 3 or 3+ years". Read as: a years figure over 3 drops the posting, preferred or required; anything else marked preferred is a plus and never drops.
+3. **Hard stops:** he agreed "no visa sponsorship" on a remote role is no stop, "and this is true for other things as well which are similar": a worldwide remote role saying it must stay in his table, since it only tells applicants they will not be relocated. He did not list the stops themselves. Read from his words of the same day, "work permit of us required" and "if the job is remote but is us only then it should not be shown": a right to work, or residence, required only in places closed to him. Citizenship is read with them, as the stronger form of a right to work. Security clearance is not read (below). **Flagged to him for confirmation.**
+4. **The cap:** "yes, you may."
+5. **The addresses in history:** "leaving them is fine as that history is buried. no need to do a forced history rewrite."
+
+Also: the old Himalayas rows without a level are left to leave by the clock, and he will say when the brief is sent.
+
+### His test: the order holds [VERIFIED from the code and `data-test`]
+
+He asked whether the confirm and the run after it may be done in either order.
+- **His dry run** is `data-test`'s log `20261002T185442.237732Z`: table `jobs`, 30 days, test mode, would remove 19, nothing written.
+- **The clear runs after the sweep**, `src/run.py`'s `clear_display`: a row it stores leaves at a later run's daily sweep, never in its own run.
+- **A dispatch is the `manual` slot**, which runs the daily steps (`RUN_SLOT` in `fetch.yml`, `daily = slot != "evening"`), and a second dispatch queues behind the first (`queue: max`).
+- So the confirm comes first, before 18:54Z on 10-04, and one more test-mode run after it. Run the other way, the later run finds nothing to delete.
+
+### The description, built
+
+- **`src/description.py`** reads a description once and returns what it states: each years figure by its low end, the place each requirement names, and whether it says the role is worked on site with no remote option.
+- **Each adapter hands over its parts:** Greenhouse's `content`, Lever's `description`, `lists` and `additional`, Himalayas' `description`. The normaliser reads them, and the row keeps three derived fields: `stated_experience`, `required_places` (configured place names, never the employer's words) and `described_workplace`.
+- **The rules:**
+  - **experience** reads `max_years_experience`, 3, in `config/eligibility.json`. It moved from second in the chain to after the level rule: it was never on, and its count should be of relevant roles, so the title drop log stays the pool's whole signal;
+  - **authorisation** is new: it drops when every place the requirements name is closed, as D13 does for a location;
+  - **location** reads the described workplace where the source states none.
+- **The contract check:** an entry for every field newly read. Their date, and why it is 10-03, is in the next log.
+- **A stale docstring:** the rule's said "the run log says it is off", and nothing in `src/run.py` ever said so. Gone with the rewrite.
+
+### Measured before switching on [VERIFIED]
+
+Over the 1,708 postings on the private full branch, cloned read-only: 834 Greenhouse, 65 Lever, 809 Himalayas. 50 pass every rule but age: 15 Greenhouse, 35 Himalayas, and no Lever, since the structured place closed every saved Lever posting.
+
+**Years:**
+- On the 50, the reading with "experience" beside the figure matched 21 times, every one a real requirement; 6 ask 5 or more.
+- Over the corpus, 487 such figures over three years: 437 open their line and 50 sit mid-sentence. Of the 50, 45 are requirements and 5 are a company's own boast of its decades of experience. Hence the company-voice guard, which yields when the sentence also addresses the candidate.
+- 89 figures over three open their line with no "experience" beside them. 30 sampled, all requirements, bullets of the kind "6+ years in a field". Read.
+- 99 figures over three sit mid-sentence with no "experience". 30 sampled: about half not requirements, such as a growth target over the next few years, or a task about the past five years. Not read: a miss leaves a posting in his table, a false read removes it.
+- **One case for him:** on a remote Pakistan role, a preferred range of 4 to 6 years in the same line as an invitation to fresh graduates. A figure glued to a word is read, and a line opening the role to fresh graduates is not a minimum, under D13's "i do not want to miss any to which i am eligible to". Kept.
+
+**Requirements:**
+- 17 postings name a place the rules know. 16 are closed: Mexico 4, Africa 3, Turkey 2, the US 2, Argentina, the UK, the EU, Latin America, Romania. One names Pakistan, eligible. The rest name US states, cities, time zones, or whichever country the applicant applies from, none of which can close a posting.
+- **Guards, each from a measured sentence:**
+  - "U.S." loses its dots, or the place ends at "the U";
+  - a requirement said not to apply is not one, as on a remote role saying the candidate need not be in the US. The negation must stand within 15 characters, so "we don't sponsor visas, so you must be authorized to work in the US", a sentence written for the test, still holds.
+- **Not read:**
+  - security clearance: 6 mentions, two saying it is not required, one in a legal sense;
+  - "work visa for": never fired, and an offer would read as a requirement.
+
+**On site:**
+- Joblogic's "Lahore, Punjab, Pakistan" postings: 5 give their location as an on-site office and are read. One also lists remote working among its terms and is kept: a remote option anywhere outweighs.
+- Motive's "Pakistan - Lahore": full-time on-site night work, with no remote or hybrid option. The first build missed both halves; both fixed.
+- Not read: "hybrid" said of search and of cloud, "on-site" said of a team and of an interview round.
+
+**The effect, with the code:** of the 50, **7 now drop and none is newly kept**. Experience 6: two Speechify postings, Motive's "Hybrid - Vancouver", and three Himalayas postings, each asking 5 or more years. Location 1: Joblogic's Lahore role on site.
+
+Every sentence above is described, not quoted: ADR-0011 keeps description text, snippets included, out of this repository. The tests use sentences written to each measured shape.
+
+### Rows already stored keep their verdict [VERIFIED]
+
+The filtered layer appends only postings never seen before (`src/run.py`, `split_new` before `append_delta`), and the projection and the sweep re-judge the stored copies. A row stored before a field existed has none, and every new rule keeps a row without its field. So the level rule, the structured place and tonight's rules judge postings first seen from now on; rows already stored leave by the thirty-day clock or his marks. For Himalayas' level he knew and accepted it ("they will be out later on anyway"). **For the structured place it was not said to him:** the evening's "67 kept postings now dropped" was the saved postings judged afresh, not rows leaving his table.
+
+Measured over `data`'s filtered layer at `c72251a`, 348 public rows, each judged as stored and again with its fields re-derived from its saved full posting: 341 are dropped already as stored, chiefly for age; 7 are kept. **4 of the 7 are kept only because they were stored first:** Spreetail's Manila role, placed in the Philippines by Lever; Motive's "Hybrid - Vancouver" and a Kingswinford role, each asking 5 or more years; and a Bucharest role requiring the right to work in Romania. Told to him, with the choice of leaving them to the clock.
+
+### The cap
+
+80 pages, from 40. That day's test-mode walk read 707 postings in 40 pages without reaching a week; the mornings of 10-01 and 10-02 found 96 and 104 new postings; a week is about 41 pages at 17.7 a page. The test holds the cap at a week with room for the feed to grow by half, and 40 now fails it. A walk at the cap costs 80 of the run's 500 requests.
+
+### My mistakes, caught
+
+- **A heredoc carrying backslashes,** against his standing rule. Its first assertion failed, so nothing was written; the edits went through the Edit tool.
+- **`docs/reference/platform-fields.md` still marked Himalayas' `seniority` unread** in two tables and a paragraph, since `d5dda62`. Corrected.
+- **A test of mine expected the wrong phrase** for "U.S.": the module keeps the phrase to the next stop, and the row keeps only the place names in it.
+
+### Verification, and what stopped it
+
+The mutation run that began at 21:25Z, three batches in parallel, was cut short at 21:49Z when the laptop ran out of virtual memory and the Claude process died. Batch 1's 11 had all been caught. The rest, the suite on Python 3.11, and the commit followed on 2026-10-03: the next log, `2026-10-03-the-crash-the-morning-and-the-description.md`.

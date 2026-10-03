@@ -54,9 +54,14 @@ class Posting:
     # The workplace the source states, verbatim: Lever's `workplaceType`, a
     # Greenhouse board's custom work-type field. Feeds D13's on-site rule.
     workplace: str = None
+    # The description's parts as the platform returned them, HTML or text:
+    # the normaliser reads them once (src/description.py) and keeps only what
+    # they state, never the words. Out of equality and repr, as `raw` is.
+    description: tuple = field(default=None, compare=False, repr=False)
     # The posting exactly as the board returned it, description included.
     # Carried, never read: the run saves it to the private store's full
-    # branch and nothing else looks inside (the operator's D11, 2026-09-26:
+    # branch, and the adapter hands the description to `description` above,
+    # so nothing looks inside this (the operator's D11, 2026-09-26:
     # every field a board returns is kept, ADR-0016). Out of equality and
     # repr, so it never changes what two postings compare as or what a log
     # prints.

@@ -50,8 +50,8 @@
   {
     "label": "an adapter declares a field it never reads",
     "path": "src/adapters/greenhouse.py",
-    "find": "\"metadata\", \"metadata.name\", \"metadata.value\")",
-    "replace": "\"metadata\", \"metadata.name\", \"metadata.value\", \"updated_at\")"
+    "find": "\"metadata.value\",\n            \"content\")",
+    "replace": "\"metadata.value\",\n            \"content\", \"updated_at\")"
   },
   {
     "label": "the check runs in its own concurrency group",

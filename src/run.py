@@ -78,8 +78,13 @@ ADAPTERS = {"greenhouse": greenhouse, "lever": lever,
 # postings too old for the age rule to admit. The cap is a runaway guard on top
 # of both, in the same spirit as ADR-0028. 40, not 25, since 2026-09-26: a
 # board's first walk reads back a week, and Himalayas' Pakistan search held 25
-# pages across 6.4 days that day, so a week is about 28 pages.
-MAX_PAGES = 40
+# pages across 6.4 days that day, so a week was about 28 pages. 80, not 40,
+# since 2026-10-02, the operator's yes: that day's test-mode walk stopped at
+# 40 pages and 707 postings, about 17.7 a page, short of a week, and the
+# mornings of 10-01 and 10-02 found 96 and 104 new postings, so a week is now
+# about 41 pages. 80 holds a week with room for the feed to grow by half, and
+# a walk that reaches it uses 80 of the run's 500 requests.
+MAX_PAGES = 80
 
 
 def walk_floor(source, now):

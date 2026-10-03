@@ -384,14 +384,31 @@ class TestTheDeliberateRebaseline(unittest.TestCase):
         self.assertEqual(sorted(entry["fields"]), ["response.limit", "response.nextCursor",
                                                    "response.offset", "response.totalCount"])
 
-    def test_reading_seniority_is_on_file_with_the_field_it_adds(self):
-        """2026-10-02: the adapter reads one more field, so the check would
-        report it as changed; the entry says it was ours."""
-        from src.adapters import himalayas
-        self.assertIn("seniority", himalayas.CONSUMED)
-        [entry] = [e for e in contract.load_rebaselines()
-                   if e["platform"] == "himalayas" and e["date"] == "2026-10-02"]
-        self.assertEqual(entry["fields"], ["posting.seniority"])
+    def test_every_field_first_read_since_2026_10_02_is_on_file(self):
+        """The adapters began reading the level and the structured place on
+        2026-10-02, and the description on 2026-10-03, the day that change
+        reached `main`; the check would report each field as changed, and an
+        entry of the day says each was ours, naming nothing else. Mutation:
+        "an adapter declares a field it never reads" adds one without its
+        entry."""
+        from src.adapters import greenhouse, himalayas, lever
+        added = {"2026-10-02": {himalayas: {"seniority"},
+                                greenhouse: {"offices", "offices.location", "metadata",
+                                             "metadata.name", "metadata.value"},
+                                lever: {"country", "workplaceType"}},
+                 "2026-10-03": {himalayas: {"description"},
+                                greenhouse: {"content"},
+                                lever: {"description", "lists", "lists.text", "lists.content",
+                                        "additional"}}}
+        for date, by_adapter in added.items():
+            on_file = {}
+            for e in contract.load_rebaselines():
+                if e["date"] == date:
+                    on_file.setdefault(e["platform"], set()).update(e["fields"])
+            for adapter, fields in by_adapter.items():
+                with self.subTest(date=date, platform=adapter.PLATFORM):
+                    self.assertLessEqual(fields, set(adapter.CONSUMED))
+                    self.assertEqual(on_file[adapter.PLATFORM], {"posting." + f for f in fields})
 
 
 class TestMain(unittest.TestCase):

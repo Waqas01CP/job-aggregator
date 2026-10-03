@@ -29,6 +29,8 @@ import unicodedata
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 
+from . import description
+
 # ADR-0011 fixes what the data branch may hold. Description text is not on the
 # list and never reaches a row.
 FIELDS = (
@@ -40,6 +42,7 @@ FIELDS = (
     "first_seen", "ordering_date", "ordering_date_source",
     "url", "url_provenance",
     "stated_experience", "expires_at", "stated_levels", "places", "workplace",
+    "required_places", "described_workplace",
 )
 
 
@@ -72,7 +75,14 @@ class Row:
     published_at: str = None
     published_field: str = None
     published_meaning_unconfirmed: bool = False
-    stated_experience: str = None      # no slice platform returns one
+    # What the description says, read once here and kept as derived values
+    # only, never its words (src/description.py): each number of years of
+    # experience it asks, by its low end; the places its requirements of a
+    # right to work, citizenship or residence name, as configured place
+    # names; and "on site" where it says the role is worked there with no
+    # remote option. None on rows stored before 2026-10-02, and where the
+    # description says none, which the rules read alike: kept.
+    stated_experience: list = None
     expires_at: str = None             # null on every Greenhouse posting measured
     # The level the source states, as a list, where it states one: Himalayas
     # only. A row stored before 2026-10-02 has none, and the level rule keeps
@@ -84,6 +94,8 @@ class Row:
     # 2026-10-02, which the location rule judges by their text alone.
     places: list = None
     workplace: str = None
+    required_places: list = None
+    described_workplace: str = None
 
     def as_record(self):
         """The canonical dict. Key order is fixed by FIELDS so two runs that
@@ -212,6 +224,7 @@ def normalise(postings, board, now, seen=None):
         else:
             # ADR-0007. Recorded, never disguised as a publication date.
             ordering_date, ordering_source = first_seen, "first_seen"
+        facts = description.read(getattr(p, "description", None))
 
         row = Row(
             identity=identity,
@@ -231,14 +244,33 @@ def normalise(postings, board, now, seen=None):
             ordering_date_source=ordering_source,
             url=p.url,
             url_provenance=p.url_provenance,
-            stated_experience=None,
+            stated_experience=list(facts.years) if facts and facts.years else None,
             expires_at=getattr(p, "expires_at", None),
             stated_levels=list(p.levels) if getattr(p, "levels", None) else None,
             places=list(p.places) if getattr(p, "places", None) else None,
             workplace=getattr(p, "workplace", None),
+            required_places=_required_places(facts),
+            described_workplace="on site" if facts and facts.on_site else None,
         )
         rows.append(row)
     return rows
+
+
+def _required_places(facts):
+    """Each requirement's place, as the place names the operator's
+    configuration knows, joined: "us, canada". A requirement naming none is
+    left out, since it could only keep the posting. Imported here, not at
+    the top: the filter module, which holds the configuration, imports this
+    one's `fold`."""
+    if not facts or not facts.requirements:
+        return None
+    from .filters import ELIGIBILITY, place_names
+    named = []
+    for phrase in facts.requirements:
+        joined = ", ".join(place_names(phrase, ELIGIBILITY))
+        if joined and joined not in named:
+            named.append(joined)
+    return named or None
 
 
 # ------------------------------------------------------------ serialisation

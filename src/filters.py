@@ -1,7 +1,7 @@
 """The filter chain. Cheapest disqualifier first, every drop naming its rule.
 
-Order: expiry, stated experience, annotation vendors, title, seniority,
-location, age.
+Order: expiry, annotation vendors, title, seniority, level, experience,
+authorisation, location, age.
 
 **Seniority runs after the title rule on purpose.** It drops a posting the
 pool admitted, so its count in the run log is the number of relevant roles
@@ -19,17 +19,21 @@ everything fetched. Both lists and the limit live in `config/eligibility.json`
 under ADR-0031, and neither decision has a record yet: the architecture
 chat's to write.
 
-**Two rules in the chain have no definition anywhere in the records.**
-
-*Stated experience.* No record names a threshold, and neither Greenhouse nor
-Lever returns a structured experience field, so nothing reads one today. The
-rule is implemented and disabled: it activates only when a maximum is supplied,
-and the run log says it is off. Inventing a threshold would be policy invented
-by an implementing session. **Deferred by the operator on 2026-09-17** until
-filtering reads descriptions as well as titles, since stated experience lives
-in description text; the operator's reference maximum for that time is three
-years. Seniority words in titles are a separate matter, raised with the
-operator, and are not this rule.
+**The description, the operator's decisions of 2026-10-02.** What
+`src/description.py` reads from it reaches three rules. *Experience* drops a
+posting that asks for more years than he takes: "3 or 3+ is the max accepted
+years", whether required or preferred ("5+ years preferred is already out").
+It was deferred by him on 2026-09-17 until filtering read descriptions, with
+three years as his reference then. *Authorisation* drops a posting that
+requires the right to work, citizenship or residence only in places closed to
+him: "work permit of us required". "No visa sponsorship" is not such a
+requirement, and is never read: on a role open worldwide it only says no one
+will be moved ("i want these kinds of jobs present in table"). *Location*
+reads a description saying the role is worked on site as it reads a stated
+workplace. All three run after the title and seniority rules, so the title
+drop log stays the pool's whole feedback signal, and all three can only drop:
+a description that says nothing leaves a posting's verdict as it was. No
+record carries them yet: the architecture chat's to write.
 
 *Annotation vendors.* No record carries the list. Three employers are named in
 `docs/reference/title-pool.md`, which observes that one census measured 17 of
@@ -258,6 +262,7 @@ class Eligibility:
     levels_admitted: tuple = ()
     level_names: tuple = ()
     home_country_codes: tuple = ()
+    max_years_experience: int = None
 
 
 def _words(terms):
@@ -291,11 +296,15 @@ def load_eligibility(path=None):
     if not isinstance(levels, list) or not levels or not all(isinstance(v, str) and v.strip()
                                                              for v in levels):
         raise FilterError("stated_levels_admitted must be a non-empty list of levels")
+    years = raw.get("max_years_experience")
+    if not isinstance(years, int) or isinstance(years, bool) or years < 0:
+        raise FilterError("max_years_experience must be a whole number of years, 0 or more")
     return Eligibility(max_age_days=days,
                        home_cities=tuple(p for p in lists["home"] if p.pattern not in country),
                        home_country_names=names["home_country"],
                        levels_admitted=tuple(fold(v) for v in levels),
-                       level_names=tuple(levels), home_country_codes=tuple(codes), **lists)
+                       level_names=tuple(levels), home_country_codes=tuple(codes),
+                       max_years_experience=years, **lists)
 
 
 def _qualifiers_removed(part):
@@ -354,6 +363,25 @@ def classify_place(part, eligibility):
     if names(eligibility.remote):
         return "eligible"
     return "unclear"
+
+
+def place_names(phrase, eligibility):
+    """The places a description's requirement names, as the configured names
+    they match, in order: what a row keeps of it, never the employer's words
+    (ADR-0011). Empty when it names none the rule knows, or says "except" or
+    its kind, which would turn "anywhere except the US" into the US. Time
+    zones and preferences go first, as for a location: "must be located in
+    a US time zone" names no place."""
+    text = _qualifiers_removed(phrase)
+    if not text or _NEGATIONS.search(text):
+        return ()
+    found = sorted((m.start(), m.group(0)) for p in eligibility.home + eligibility.open
+                   + eligibility.closed for m in p.finditer(text))
+    names = []
+    for _, name in found:
+        if name not in names:
+            names.append(name)
+    return tuple(names)
 
 
 def compile_terms(terms):
@@ -418,20 +446,37 @@ def rule_expiry(row, now_iso, **kw):
     return Verdict(True)
 
 
-def rule_experience(row, max_years, **kw):
-    """Disabled until a threshold exists. See the module docstring."""
-    if max_years is None:
+def rule_experience(row, eligibility, **kw):
+    """Drop a posting whose description asks for more years of experience
+    than the operator takes, under `max_years_experience`: "the most it can
+    say is 3+ and not 4+ years". **Any figure over it drops**, a preferred
+    one included: "5+ years preferred is already out". A range counts by its
+    low end, so "3 to 5 years" is kept. A posting whose description states
+    no figure, or a row stored before descriptions were read, is kept."""
+    limit = eligibility.max_years_experience
+    stated = [y for y in (getattr(row, "stated_experience", None) or [])
+              if isinstance(y, int) and not isinstance(y, bool)]
+    over = [y for y in stated if limit is not None and y > limit]
+    if not over:
         return Verdict(True)
-    stated = row.stated_experience
-    if stated is None:
-        return Verdict(True)
-    try:
-        years = float(stated)
-    except (TypeError, ValueError):
-        return Verdict(True)
-    if years > max_years:
-        return Verdict(False, "experience",
-                       "stated experience %s exceeds %s" % (stated, max_years))
+    return Verdict(False, "experience", "the description asks for %d or more years of "
+                   "experience; at most %d are admitted" % (max(over), limit))
+
+
+def rule_authorisation(row, eligibility, **kw):
+    """Drop a posting whose description requires the right to work,
+    citizenship or residence only in places closed to the operator: his
+    "work permit of us required", and "if the job is remote but is us only
+    then it should not be shown". As D13 does for a location, **every place
+    the requirements name must be closed**: one naming a home place, or a
+    region that can include it, keeps the posting, and so does a requirement
+    naming no place the rule knows. "No visa sponsorship" is never read as
+    one: on a role open worldwide it says only that no one is moved."""
+    named = [str(n) for n in (getattr(row, "required_places", None) or []) if str(n).strip()]
+    if named and all(classify_place(n, eligibility) == "closed" for n in named):
+        return Verdict(False, "authorisation", "the description requires the right to work, "
+                       "citizenship or residence in %s, none of them %s"
+                       % ("; ".join(named)[:120], " or ".join(eligibility.home_country_names)))
     return Verdict(True)
 
 
@@ -520,6 +565,19 @@ def rule_location(row, eligibility, **kw):
                        "operator, none of them %s or a remote role open to it: %r"
                        % (" or ".join(eligibility.home_country_names),
                           str(text).replace("\n", "; ")[:120]))
+    # A description saying the role is worked on site is read as a stated
+    # workplace is, when the source states none: a "Lahore, Punjab, Pakistan"
+    # posting whose description gives its location as an on-site office is
+    # on site outside Karachi, which D13 drops. The source's own field,
+    # where it has one, is never overridden by the description.
+    described = (None if getattr(row, "workplace", None)
+                 else _workplace_words(getattr(row, "described_workplace", None), eligibility))
+    if described and parts and all(
+            classify_place(_with_workplace(p, described, eligibility), eligibility) == "closed"
+            for p in parts):
+        return Verdict(False, "location", "the description says the role is worked on site, "
+                       "and the location field names only places closed to the operator for "
+                       "on-site work: %r" % str(text).replace("\n", "; ")[:120])
     # The text names nothing eligible, and something it cannot place: a city
     # such as "Dallas, TX" or "Manila". Where the source says where the
     # posting is, that decides, and only ever to close: a home place there
@@ -614,21 +672,23 @@ def rule_age(row, now_iso, eligibility, **kw):
                       getattr(row, "first_seen", None)))
 
 
-# Location and age run last, after the title and seniority rules, so their
-# counts in the run log are relevant roles lost to place and to age, and the
-# title rule's drop log stays the pool's whole feedback signal.
+# Experience, authorisation, location and age run last, after the title and
+# seniority rules, so their counts in the run log are relevant roles lost to
+# what the description asks, to place and to age, and the title rule's drop
+# log stays the pool's whole feedback signal. Experience ran second until
+# 2026-10-02, when it was never on: moved, it counts relevant roles only.
 CHAIN = (("expiry", rule_expiry),
-         ("experience", rule_experience),
          ("annotation_vendor", rule_annotation_vendor),
          ("title", rule_title),
          ("seniority", rule_seniority),
          ("level", rule_level),
+         ("experience", rule_experience),
+         ("authorisation", rule_authorisation),
          ("location", rule_location),
          ("age", rule_age))
 
 
-def apply_chain(rows, now_iso, matcher=None, max_years=None,
-                vendors=ANNOTATION_VENDORS, eligibility=None):
+def apply_chain(rows, now_iso, matcher=None, vendors=ANNOTATION_VENDORS, eligibility=None):
     """Returns (kept, drops). Each drop names the rule that caused it.
     `eligibility` is read at the call, not at import, so a test of another
     mechanism can hold the operator's D13 and D14 aside explicitly."""
@@ -639,7 +699,7 @@ def apply_chain(rows, now_iso, matcher=None, max_years=None,
         verdict, reason = Verdict(True), None
         for name, rule in CHAIN:
             verdict = rule(row, now_iso=now_iso, matcher=matcher,
-                           max_years=max_years, vendors=vendors, eligibility=eligibility)
+                           vendors=vendors, eligibility=eligibility)
             reason = verdict.reason or reason
             if not verdict.keep:
                 drops.append({"identity": row.identity, "rule": verdict.rule,

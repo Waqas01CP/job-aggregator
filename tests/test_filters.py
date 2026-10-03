@@ -18,7 +18,7 @@ from src.filters import (ANNOTATION_VENDORS, FilterError, TitleMatcher,
                          apply_chain, compile_terms, drop_counts,
                          load_annotation_vendors, load_seniority_words,
                          load_title_pool, rule_annotation_vendor,
-                         rule_experience, rule_expiry, rule_seniority)
+                         rule_expiry, rule_seniority)
 from src.normalise import normalise
 
 NOW = datetime(2026, 9, 16, 12, 0, tzinfo=timezone.utc)
@@ -324,33 +324,153 @@ class TestExpiry(unittest.TestCase):
         self.assertTrue(keep(expires_at=None)[0])
 
 
-class TestExperienceRuleIsDisabled(unittest.TestCase):
-    def test_disabled_without_a_threshold(self):
-        """No record names one, so the rule keeps everything."""
-        r = row(stated_experience="12")
-        self.assertTrue(rule_experience(r, max_years=None).keep)
+def _config_with(**changes):
+    """The operator's eligibility file with some keys changed or removed
+    (None removes), written to a temporary path."""
+    import json
+    import tempfile
+    from src.filters import ELIGIBILITY_PATH
+    with open(ELIGIBILITY_PATH, encoding="utf-8") as f:
+        config = json.load(f)
+    for key, value in changes.items():
+        if value is None:
+            config.pop(key, None)
+        else:
+            config[key] = value
+    path = os.path.join(tempfile.mkdtemp(), "e.json")
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(config, f)
+    return path
 
-    def test_the_chain_leaves_it_disabled_by_default(self):
-        """Through apply_chain, not by calling the rule directly: it is the
-        chain's default that decides whether an invented threshold is in
-        force, and a row claiming twelve years must survive."""
-        kept, drops = apply_chain([row(stated_experience="12")], NOW_ISO,
+
+class TestTheExperienceRule(unittest.TestCase):
+    """The operator's decisions of 2026-10-02: "3 or 3+ is the max accepted
+    years", and a preferred figure over it is out as a required one is. The
+    limit comes from configuration, so the tests follow what he decided."""
+
+    def setUp(self):
+        from src.filters import ELIGIBILITY
+        self.limit = ELIGIBILITY.max_years_experience
+
+    def judged(self, years, title="AI Engineer"):
+        kept, drops = apply_chain([row(title=title, stated_experience=years)], NOW_ISO,
                                   matcher=MATCHER)
-        self.assertEqual(len(kept), 1)
-        self.assertEqual(drop_counts(drops)["experience"], 0)
+        return bool(kept), (drops[0] if drops else None)
 
-    def test_it_works_once_a_threshold_is_supplied(self):
-        """Implemented and tested so that supplying a threshold is a
-        one-line change, not a rewrite."""
-        r = row(stated_experience="12")
-        verdict = rule_experience(r, max_years=5)
-        self.assertFalse(verdict.keep)
-        self.assertEqual(verdict.rule, "experience")
+    def test_the_configured_limit_is_his(self):
+        """"the most it can say is 3+ and not 4+ years"."""
+        self.assertEqual(self.limit, 3)
 
-    def test_absent_experience_is_kept_even_with_a_threshold(self):
-        """Neither slice platform returns the field. Dropping on absence
-        would drop every row."""
-        self.assertTrue(rule_experience(row(stated_experience=None), max_years=5).keep)
+    def test_a_figure_over_the_limit_drops_and_says_so(self):
+        """Mutation: "the experience rule keeps every posting"."""
+        kept, drop = self.judged([self.limit + 2])
+        self.assertFalse(kept)
+        self.assertEqual(drop["rule"], "experience")
+        self.assertIn("%d or more years" % (self.limit + 2), drop["reason"])
+        self.assertIn("at most %d" % self.limit, drop["reason"])
+
+    def test_the_limit_itself_is_kept(self):
+        """"3 or 3+ is the max accepted". Mutation: "the limit itself drops"."""
+        self.assertEqual(self.judged([self.limit]), (True, None))
+        self.assertEqual(self.judged([0, 1, self.limit]), (True, None))
+
+    def test_any_figure_over_drops_not_only_the_first(self):
+        """"5+ years preferred is already out": a description asking 2 years
+        of one thing and 5 of another asks 5. Mutation: "only the first
+        figure is judged"."""
+        self.assertFalse(self.judged([2, self.limit + 2])[0])
+
+    def test_a_description_stating_no_figure_keeps(self):
+        """Rows stored before descriptions were read, and the two thirds of
+        descriptions that state none. Mutation: "no figure drops"."""
+        self.assertEqual(self.judged(None), (True, None))
+        self.assertEqual(self.judged([]), (True, None))
+
+    def test_a_value_that_is_not_a_whole_number_decides_nothing(self):
+        self.assertTrue(self.judged(["12"])[0])
+        self.assertTrue(self.judged([True, None])[0])
+
+    def test_the_title_rule_still_runs_first(self):
+        """The title drop log is the pool's whole feedback signal, so a title
+        the pool never admits stays a title drop. Mutation: "experience runs
+        before the title rule"."""
+        kept, drop = self.judged([12], title="Storage Engineer")
+        self.assertEqual(drop["rule"], "title")
+
+    def test_the_configuration_refuses_a_missing_or_malformed_limit(self):
+        from src.filters import load_eligibility
+        for value in (None, -1, True, "3", 3.5):
+            with self.subTest(value=value), self.assertRaises(FilterError):
+                load_eligibility(_config_with(max_years_experience=value))
+
+
+class TestTheAuthorisationRule(unittest.TestCase):
+    """The operator, 2026-10-02: "work permit of us required" stops him, and
+    "if the job is remote but is us only then it should not be shown". The
+    places come from configuration, as for a location."""
+
+    def judged(self, required, location="Remote", title="AI Engineer"):
+        r = row(title=title, location=location)
+        r.required_places = required
+        kept, drops = apply_chain([r], NOW_ISO, matcher=MATCHER)
+        return bool(kept), (drops[0] if drops else None)
+
+    def test_a_requirement_naming_only_closed_places_drops(self):
+        """Mutation: "the authorisation rule keeps every posting"."""
+        for required in (["united states"], ["us, canada"], ["eu"], ["africa", "uk"]):
+            with self.subTest(required=required):
+                kept, drop = self.judged(required)
+                self.assertFalse(kept)
+                self.assertEqual(drop["rule"], "authorisation")
+                self.assertIn(required[0], drop["reason"])
+
+    def test_a_requirement_naming_home_or_an_open_region_keeps(self):
+        """A home place, or a region that can include it, in any requirement
+        keeps the posting, as D13 keeps a location. Mutation: "one closed
+        requirement drops"."""
+        for required in (["pakistan"], ["us, pakistan"], ["asia"], ["united states", "pakistan"]):
+            with self.subTest(required=required):
+                self.assertEqual(self.judged(required), (True, None))
+
+    def test_no_requirement_keeps(self):
+        self.assertEqual(self.judged(None), (True, None))
+        self.assertEqual(self.judged([]), (True, None))
+
+    def test_the_title_rule_still_runs_first(self):
+        self.assertEqual(self.judged(["us"], title="Storage Engineer")[1]["rule"], "title")
+
+
+class TestTheDescribedWorkplace(unittest.TestCase):
+    """A description saying the role is worked on site is read as a stated
+    workplace is, where the source states none: measured 2026-10-02 on Lahore
+    postings whose description gives their location as an on-site office."""
+
+    def judged(self, location, described="on site", workplace=None):
+        r = row(location=location)
+        r.described_workplace, r.workplace = described, workplace
+        kept, drops = apply_chain([r], NOW_ISO, matcher=MATCHER)
+        return bool(kept), (drops[0] if drops else None)
+
+    def test_it_makes_a_city_outside_karachi_on_site(self):
+        """D13. Mutation: "the described workplace is ignored"."""
+        kept, drop = self.judged("Lahore, Punjab, Pakistan")
+        self.assertFalse(kept)
+        self.assertEqual(drop["rule"], "location")
+        self.assertIn("the description says the role is worked on site", drop["reason"])
+
+    def test_karachi_and_the_country_alone_stay(self):
+        self.assertTrue(self.judged("Karachi, Sindh, Pakistan")[0])
+        self.assertTrue(self.judged("Pakistan")[0])
+
+    def test_the_sources_own_workplace_is_never_overridden(self):
+        """Mutation: "the description overrides the source's workplace"."""
+        self.assertTrue(self.judged("Lahore, Pakistan", workplace="Remote")[0])
+
+    def test_text_that_says_remote_wins(self):
+        self.assertTrue(self.judged("Remote - Lahore")[0])
+
+    def test_no_described_workplace_changes_nothing(self):
+        self.assertTrue(self.judged("Lahore, Pakistan", described=None)[0])
 
 
 class TestAnnotationVendors(unittest.TestCase):
@@ -538,6 +658,7 @@ class TestChainOrder(unittest.TestCase):
         self.assertEqual(counts["expiry"], 0)
         self.assertEqual(counts["annotation_vendor"], 0)
         self.assertEqual(counts["experience"], 0)
+        self.assertEqual(counts["authorisation"], 0)
 
 
 class TestRoleFamilies(unittest.TestCase):

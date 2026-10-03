@@ -1,0 +1,182 @@
+[
+  {
+    "label": "block tags do not end a line",
+    "path": "src/description.py",
+    "find": "        text = _BLOCK.sub(\"\\n\", html.unescape(part))",
+    "replace": "        text = _BLOCK.sub(\" \", html.unescape(part))"
+  },
+  {
+    "label": "a figure after a letter is missed",
+    "path": "src/description.py",
+    "find": "r\"(?:(?<![\\d.,])(?P<digits>\\d{1,2})",
+    "replace": "r\"(?:(?<![\\w.,])(?P<digits>\\d{1,2})"
+  },
+  {
+    "label": "a line opened to fresh graduates is read as a minimum",
+    "path": "src/description.py",
+    "find": "        if _OPENED.search(line):\n            continue",
+    "replace": "        if False:\n            continue"
+  },
+  {
+    "label": "a figure that is not a minimum is read",
+    "path": "src/description.py",
+    "find": "            if _NOT_A_MINIMUM_BEFORE.search(before):\n                continue",
+    "replace": "            if False:\n                continue"
+  },
+  {
+    "label": "a line's opening figure is not trusted",
+    "path": "src/description.py",
+    "find": "            if not _LINE_START.match(before):",
+    "replace": "            if True:"
+  },
+  {
+    "label": "a figure mid-sentence without experience is read",
+    "path": "src/description.py",
+    "find": "                if not beside or (",
+    "replace": "                if False or ("
+  },
+  {
+    "label": "a sentence about the company is read as a requirement",
+    "path": "src/description.py",
+    "find": "                if not beside or (_COMPANY_VOICE.search(sentence)",
+    "replace": "                if not beside or (False"
+  },
+  {
+    "label": "U.S. keeps its dots",
+    "path": "src/description.py",
+    "find": "        for pattern, plain in _DOTTED:",
+    "replace": "        for pattern, plain in ():"
+  },
+  {
+    "label": "a negated requirement is read",
+    "path": "src/description.py",
+    "find": "                if (_NEGATED_BEFORE.search(line[:m.start()]) or _NEGATED_PLACE.search(place)",
+    "replace": "                if (False or _NEGATED_PLACE.search(place)"
+  },
+  {
+    "label": "a negation anywhere before cancels",
+    "path": "src/description.py",
+    "find": "r\"[^.;,]{0,15}$\", re.I)",
+    "replace": "r\"[^.;]{0,60}$\", re.I)"
+  },
+  {
+    "label": "a requirement said not to be required is read",
+    "path": "src/description.py",
+    "find": "                        or _NEGATED_AFTER.search(line[m.end():]) or place in found):",
+    "replace": "                        or place in found):"
+  },
+  {
+    "label": "a remote option is ignored",
+    "path": "src/description.py",
+    "find": "    return not any(_REMOTE_OPTION.search(_NOT_REMOTE.sub(\" \", line)) for line in lines)",
+    "replace": "    return True"
+  },
+  {
+    "label": "remote said not to be offered is an option",
+    "path": "src/description.py",
+    "find": "_NOT_REMOTE.sub(\" \", line)",
+    "replace": "line"
+  },
+  {
+    "label": "the experience rule keeps every posting",
+    "path": "src/filters.py",
+    "find": "    if not over:\n        return Verdict(True)",
+    "replace": "    if True:\n        return Verdict(True)"
+  },
+  {
+    "label": "the limit itself drops",
+    "path": "src/filters.py",
+    "find": "    over = [y for y in stated if limit is not None and y > limit]",
+    "replace": "    over = [y for y in stated if limit is not None and y >= limit]"
+  },
+  {
+    "label": "only the first figure is judged",
+    "path": "src/filters.py",
+    "find": "              if isinstance(y, int) and not isinstance(y, bool)]",
+    "replace": "              if isinstance(y, int) and not isinstance(y, bool)][:1]"
+  },
+  {
+    "label": "experience runs before the title rule",
+    "path": "src/filters.py",
+    "find": "CHAIN = ((\"expiry\", rule_expiry),\n         (\"annotation_vendor\", rule_annotation_vendor),",
+    "replace": "CHAIN = ((\"expiry\", rule_expiry),\n         (\"experience\", rule_experience),\n         (\"annotation_vendor\", rule_annotation_vendor),"
+  },
+  {
+    "label": "the authorisation rule keeps every posting",
+    "path": "src/filters.py",
+    "find": "    if named and all(classify_place(n, eligibility) == \"closed\" for n in named):",
+    "replace": "    if False:"
+  },
+  {
+    "label": "one closed requirement drops",
+    "path": "src/filters.py",
+    "find": "    if named and all(classify_place(n, eligibility) == \"closed\" for n in named):",
+    "replace": "    if named and any(classify_place(n, eligibility) == \"closed\" for n in named):"
+  },
+  {
+    "label": "the described workplace is ignored",
+    "path": "src/filters.py",
+    "find": "    if described and parts and all(",
+    "replace": "    if False and parts and all("
+  },
+  {
+    "label": "the description overrides the source's workplace",
+    "path": "src/filters.py",
+    "find": "    described = (None if getattr(row, \"workplace\", None)",
+    "replace": "    described = (None if False"
+  },
+  {
+    "label": "except is read as the place it excludes",
+    "path": "src/filters.py",
+    "find": "    if not text or _NEGATIONS.search(text):\n        return ()",
+    "replace": "    if not text:\n        return ()"
+  },
+  {
+    "label": "a time zone is read as a place",
+    "path": "src/filters.py",
+    "find": "    text = _qualifiers_removed(phrase)",
+    "replace": "    text = fold(phrase)"
+  },
+  {
+    "label": "the row keeps the requirement's words",
+    "path": "src/normalise.py",
+    "find": "        joined = \", \".join(place_names(phrase, ELIGIBILITY))",
+    "replace": "        joined = phrase"
+  },
+  {
+    "label": "the row reads no description",
+    "path": "src/normalise.py",
+    "find": "        facts = description.read(getattr(p, \"description\", None))",
+    "replace": "        facts = None"
+  },
+  {
+    "label": "Greenhouse hands over no description",
+    "path": "src/adapters/greenhouse.py",
+    "find": "            description=(entry.get(\"content\"),),",
+    "replace": "            description=None,"
+  },
+  {
+    "label": "Lever's sections are not read",
+    "path": "src/adapters/lever.py",
+    "find": "            parts.extend((section.get(\"text\"), section.get(\"content\")))",
+    "replace": "            pass"
+  },
+  {
+    "label": "Himalayas hands over no description",
+    "path": "src/adapters/himalayas.py",
+    "find": "            description=(entry.get(\"description\"),),",
+    "replace": "            description=None,"
+  },
+  {
+    "label": "the experience limit is not configuration",
+    "path": "src/filters.py",
+    "find": "    if not isinstance(years, int) or isinstance(years, bool) or years < 0:",
+    "replace": "    if False:"
+  },
+  {
+    "label": "the cap stays at 40",
+    "path": "src/run.py",
+    "find": "MAX_PAGES = 80",
+    "replace": "MAX_PAGES = 40"
+  }
+]

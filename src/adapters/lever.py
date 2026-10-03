@@ -39,7 +39,8 @@ PUBLISHED_FIELD = "createdAt"
 CONSUMED_RESPONSE = ()
 POSTINGS_AT = None
 CONSUMED = ("id", "text", "hostedUrl", PUBLISHED_FIELD, "categories", "categories.location",
-            "country", "workplaceType")
+            "country", "workplaceType", "description", "lists", "lists.text", "lists.content",
+            "additional")
 
 # Recorded on every Lever row. Removed when a second observation settles it.
 PUBLISHED_MEANING_UNCONFIRMED = True
@@ -127,6 +128,20 @@ def parse(payload, board):
             places=(str(entry["country"]).strip().upper(),)
             if str(entry.get("country") or "").strip() else None,
             workplace=str(entry.get("workplaceType") or "").strip() or None,
+            description=_description(entry),
             raw=entry,
         ))
     return result
+
+
+def _description(entry):
+    """The description's parts, HTML, for the normaliser to read: the
+    summary, each headed section of `lists`, and the closing text. Lever
+    puts the requirements in `lists`: 50 of 63 postings measured on
+    2026-10-02 state their years there and 4 in `description`."""
+    parts = [entry.get("description")]
+    for section in entry.get("lists") or []:
+        if isinstance(section, dict):
+            parts.extend((section.get("text"), section.get("content")))
+    parts.append(entry.get("additional"))
+    return tuple(p for p in parts if isinstance(p, str) and p.strip())
