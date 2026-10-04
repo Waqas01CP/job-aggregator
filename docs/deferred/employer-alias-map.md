@@ -89,3 +89,9 @@ become one. Neither half is worth anything without the other.
 `CHAT_STATE.md` items 104 and 108. The duplicate itself is in `Jobs`, read
 through the connector on 2026-09-25, and named in the implementing seat's
 brief of 2026-09-24, part 1, item E2.
+
+## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-10-04 | Outside version 1, by ADR-0059 | The operator's decision: duplicates across sources stay an open issue, not part of version 1. ADR-0059 also adds aggregators only after employer boards and only by measured yield, which slows the growth of duplicates while this waits. The trigger is unchanged |

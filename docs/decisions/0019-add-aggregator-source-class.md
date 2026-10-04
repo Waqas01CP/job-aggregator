@@ -58,7 +58,7 @@ We will add Himalayas first, inside the vertical slice, on condition. It is the 
 
 If it is removed, it returns after the slice is live, alongside the other five.
 
-We will add the remaining five after the slice, in survey order.
+We will add the remaining five after the slice, in survey order. *(Replaced 2026-10-04 by ADR-0059. See Changes.)*
 
 We will record the source of every row, because ADR-0020 routes storage by source class.
 
@@ -115,4 +115,5 @@ One clause is reversed by ADR-0026: employer read from the payload in every case
 | 2026-09-11 | The employer-from-payload clause is reversed by ADR-0026 | The endpoint spike enumerated all 18 keys across 48 Lever postings and found none containing compan, employ or org. The rule assumed every payload names its employer; two of three platforms measured do |
 | 2026-09-17 | The condition is the three components; the Confirmation's narrower sentence is an error | ADR-0039. The criterion names the shared HTTP module, the normaliser's row shape and the filter chain. 'A diff touching only a config entry and a new adapter file' is shorthand that came out narrower than the thing it summarised, and the real diff satisfied the criterion while failing the shorthand. Himalayas passes on the criterion. Whether it stays on the schedule is a separate and open question, on cost and visibility grounds |
 | 2026-09-28 | The removal condition was tested against ADR-0053's move to the search endpoint and does not fire. Recorded so a reader knows it was checked rather than forgotten | This record removes Himalayas from the slice if adding it forces a change to the shared HTTP module, the normaliser's row shape, or the filter chain. The search change altered the seen store's stop mark, now kept per board, and added two stop rules to the walk. Neither is one of the three named components, so the criterion holds and Himalayas stays. A criterion nobody records having checked is indistinguishable from one nobody remembered |
+| 2026-10-04 | The remaining five are no longer added in survey order. ADR-0059 sets the order by value: employer ATS boards first, Himalayas kept, then Hacker News "Who is Hiring", Jobicy, We Work Remotely and RemoteOK, each by the postings he can take that it yields, measured before it is built. ai-jobs.net is out, and Arbeitnow is not a candidate until it is re-read | Research 0005: every ai-jobs.net path now redirects to foorilla, whose API is paid, and Arbeitnow was not re-read in that pass. The source class itself stands, with the employer read from the payload where it exists, attribution, and the record of every row's source |
 

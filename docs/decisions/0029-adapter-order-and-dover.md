@@ -16,9 +16,9 @@ ADR-0009 deferred adapter order, blocked on feasibility spikes for Ashby, Workab
 
 The measured picture separates them by cost of obtaining a publication date, not by the tier assignments made before any endpoint was tested.
 
-**One unauthenticated GET per board, publication date at 100% under an unambiguous name:** Ashby (`publishedAt`), Workable (`published_on`), SmartRecruiters (`releasedDate`), Breezy (`published_date`). Pinpoint is equally cheap but its date is in RSS rather than the JSON.
+**One unauthenticated GET per board, publication date at 100% under an unambiguous name:** Ashby (`publishedAt`), Workable (`published_on`), SmartRecruiters (`releasedDate`), Breezy (`published_date`). *(Annotated 2026-10-04: Breezy's own documentation lists no public endpoint, so the one measured here is undocumented. And Ashby documents `publishedAt` as when a job was last published, so a republished job reads as new; the name is unambiguous, its meaning is not the first publication. Research 0005.)* Pinpoint is equally cheap but its date is in RSS rather than the JSON.
 
-**One GET per board, no date at all:** Manatal, across 34 postings on two boards. It holds eight or nine registry boards and is one of the two dominant Pakistani platforms.
+**One GET per board, no date at all:** Manatal, across 34 postings on two boards. It holds eight or nine registry boards and is one of the two dominant Pakistani platforms. *(Annotated 2026-10-04: Manatal documents a keyless career-page endpoint, `api.careers-page.com/open/v1/career-pages/{slug}/job-posts`, that filters on `created_at`. Whether its postings carry that date is re-measured before the adapter is built. Research 0005.)*
 
 **One request per posting:** JazzHR, Freshteam, iCIMS, Zoho Recruit. BambooHR and Workday need a detail endpoint per posting. ADR-0028 governs these.
 
@@ -47,7 +47,7 @@ The apparent tension is between cost and coverage, and it dissolves on inspectio
 
 Chosen option: "cost-first including Manatal".
 
-**After the slice, in this order: Ashby, Workable, SmartRecruiters, Breezy, Manatal.** Five adapters, one GET each, roughly fifteen registry boards.
+**After the slice, in this order: Ashby, Workable, SmartRecruiters, Breezy, Manatal.** Five adapters, one GET each, roughly fifteen registry boards. *(Replaced 2026-10-04 by ADR-0059. See Changes.)*
 
 Manatal is included despite having no date field. Its rows order by first-seen under ADR-0007 and are excluded from Measure A, with their share reported alongside the measure so the coverage cost is visible rather than hidden.
 
@@ -95,3 +95,9 @@ Closes the adapter-order item ADR-0009 deferred.
 Manatal's datelessness is the material case ADR-0007 was written for, and the first one found. Before the spikes it rested on a registry note with no endpoint tested.
 
 ADR-0028 governs the platforms that need a request per posting.
+
+## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-10-04 | The order of the five adapters is replaced by ADR-0059's: Ashby, Workable, SmartRecruiters and Manatal, the four with a documented keyless endpoint, ordered by the postings he can take that their registry boards carry, measured with one request a board before the order is fixed. Breezy waits for a documented endpoint, or for the operator to accept an undocumented one | This record ranked platforms by the cost of a date, on which four of the five now tie, and the operator chose value to him as the measure of a source on 2026-10-04. The rest of this record stands: Dover dropped, the tiers obsolete, EY and Recruitee out, Pinpoint deferred, and JazzHR waiting on ADR-0028 |

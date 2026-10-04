@@ -106,3 +106,4 @@ ADR-0043 owns the accepted store. `src/star.py` implements it, and `src/filters.
 | Date | Change | Reason |
 |---|---|---|
 | 2026-09-23 | The star's home is named: a pipeline-owned `Star reason` field on `Jobs`, long text, empty meaning not starred | ADR-0035 requires a new field to be classified before the writer sends it. The star is derived from three named attributes against the accepted store and is recomputed every run. One field rather than a checkbox plus a reason, so the mark and its explanation cannot disagree. The field waits on the accepted store, which waits on the sweep. The operator's decision, 2026-09-23 |
+| 2026-10-04 | Deferred to version 2 by ADR-0059. The decision is unchanged | The operator's decision: the star compares against accepted rows, which come only from his using the tables, so it waits until there are rows to compare against |

@@ -85,6 +85,7 @@ supersedes and superseded-by links, deliberately not duplicated here.
 | `docs/research/0002-agentic-implementation.md` | Pass 0002. Agentic implementation flow. Thinnest of the three passes; read the sourcing caveat before relying on it. | current |
 | `docs/research/0003-job-source-survey.md` | Pass 0003. Survey of free, pollable job board and aggregator APIs. Six keyless feeds recommended; Rozee.pk has no API path. | current |
 | `docs/research/0004-project-context-documentation.md` | Pass 0004. Project context documentation for humans and AI agents. Corrects pass 0002 on CLAUDE.md length; finds the strongest source was the operator's own prior repository. | current |
+| `docs/research/0005-job-source-value.md` | Pass 0005. Which job sources are worth integrating, judged by their value to the operator rather than by whether they can be polled. Every load-bearing claim checked against its primary source; employer ATS boards first, Himalayas kept, four feeds as a second wave, the rest out. | current |
 
 ## log
 
@@ -134,7 +135,7 @@ Grouped by topic, in the order the pipeline runs. A record appears under exactly
 | `docs/decisions/0028-fetch-budget-and-detail-once.md` | **ADR-0028: Per-run fetch budget, and detail fetched once per posting.** A per-run request ceiling, and a posting's detail fetched once ever rather than once per run. | accepted |
 | `docs/decisions/0029-adapter-order-and-dover.md` | **ADR-0029: Adapter order after the slice, and Dover dropped.** Which adapters are built after the slice and in what order, ranked by the cost of obtaining a publication date. | accepted |
 | `docs/decisions/0039-aggregator-condition-three-components.md` | **ADR-0039: The aggregator condition is the three components.** Which of ADR-0019's two contradictory conditions governs when a source is added, and the rule the next aggregator faces. | accepted |
-| `docs/decisions/0048-poll-no-faster-than-the-feed-refreshes.md` | **ADR-0048: A source is polled no faster than its feed refreshes.** A source is polled no faster than its feed refreshes. Himalayas moves to the morning run only. The offset against its refresh stays unset until the refresh moment is measured. | accepted |
+| `docs/decisions/0048-poll-no-faster-than-the-feed-refreshes.md` | **ADR-0048: A source is polled no faster than its feed refreshes.** A source is polled no faster than its feed refreshes. Himalayas moved to the morning run only, and back to both runs on 2026-10-03. The offset against its refresh stays unset until the refresh moment is measured. | accepted |
 | `docs/decisions/0053-himalayas-polled-through-its-search-endpoint.md` | **ADR-0053: Himalayas is polled through its search endpoint.** Himalayas is polled through its Pakistan search endpoint instead of the browse feed, so a morning reads every eligible posting rather than a third of all postings. The walk's two stop rules, the runaway cap, and the check that keeps a pushed-down predicate honest. | accepted |
 | `docs/decisions/0054-a-scheduled-run-happens.md` | **ADR-0054: A scheduled run happens, or it is not silently gone.** A run that should happen, happens. Runs queue rather than cancel each other, up to GitHub's hundred, and the sixty-day shutoff of scheduled workflows is disregarded on the operator's evidence from another project. | accepted |
 
@@ -207,6 +208,7 @@ Grouped by topic, in the order the pipeline runs. A record appears under exactly
 | `docs/decisions/0024-session-log-format.md` | **ADR-0024: Session log format.** What a session log must contain: tagged claims, evidence behind each one, and what was not done. | accepted |
 | `docs/decisions/0025-auto-memory-not-authoritative.md` | **ADR-0025: Auto Memory is not authoritative.** Auto Memory ranks below every document in this repository and nothing is designed around it. | accepted |
 | `docs/decisions/0049-fitness-functions-guard-architectural-rules.md` | **ADR-0049: Architectural rules are guarded by fitness functions, not by prose.** Every architectural rule that code can break silently gets a test that fails when it is broken, named for the record it guards and proved by a mutation. | accepted |
+| `docs/decisions/0059-version-one-works-for-him-on-sources-worth-having.md` | **ADR-0059: Version 1 is the system working for him, on the sources worth having.** The end state ADR-0023 left open. Version 1 is the system working for the operator himself, fed by sources chosen for their value to him rather than for their reach, integrated employer boards first, each source with its own isolated contract check that reaches Airtable. The priority star, cross-source duplicates and response quality wait. | accepted |
 | `docs/decisions/ADR-RULES.md` | **ADR-RULES: how records are resolved, amended and retired.** How records are resolved, amended and retired. Two ranks the authority order lacks, the difference between stale and wrong, and what a seat may correct without asking. Read through, not in sequence. | accepted |
 
 ## deferred
@@ -215,7 +217,7 @@ Grouped by topic, in the order the pipeline runs. A record appears under exactly
 | --- | --- | --- |
 | `docs/deferred/employer-alias-map.md` | Deduplicating one role that arrives from two source classes, which needs an employer alias map. Deferred while one instance exists; revisit at the second or third, or when an accepted row turns out to have a twin. | current |
 | `docs/deferred/response-quality.md` | Recording what happened after he applied (a reply, an interview, a rejection, an offer), so that sources can one day be judged by how employers respond. Deferred until the operator has used the classification tables for long enough and decides to start. | current |
-| `docs/deferred/rozee-pk.md` | Adding Rozee.pk as a source. Deferred until the display works and until more ATS sources are added, either of which may remove the need for it. | current |
+| `docs/deferred/rozee-pk.md` | Adding Rozee.pk as a source. Out of automated use since 2026-10-04, because its privacy policy prohibits networked use of its material; revisiting needs Rozee's permission first. | current |
 | `docs/deferred/similarity-matching.md` | Ranking postings by similarity to accepted roles. Deferred because ADR-0010 forbids it and the deterministic star was built instead; revisit when the accepted store holds fifty rows or when the operator stops reading every row. | current |
 
-Files listed: 113
+Files listed: 115

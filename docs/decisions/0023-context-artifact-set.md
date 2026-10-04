@@ -65,7 +65,7 @@ Log format is ADR-0024.
 
 **Deferred, not rejected:** an in-flight register separate from `STATE.md`, wanted once work is genuinely in flight and held defects exist.
 
-**Confirmed open, not deferred:** an end-state document. The operator's prior project was checked for prior art and has none. `SPRINT_PLAN.md` is a task breakdown with per-person assignments, gates and a deadline, which is a plan rather than a statement of what the finished system is. No artifact in either project says what this is ultimately for. That gap is real and stays open until it is decided deliberately.
+**Confirmed open, not deferred:** an end-state document. The operator's prior project was checked for prior art and has none. `SPRINT_PLAN.md` is a task breakdown with per-person assignments, gates and a deadline, which is a plan rather than a statement of what the finished system is. No artifact in either project says what this is ultimately for. That gap is real and stays open until it is decided deliberately. *(Decided 2026-10-04 by ADR-0059: version 1 is the system working for the operator himself. See Changes.)*
 
 **Rejected:** hand-written per-folder overview files, which duplicate the generated map and drift. A separate history document, since history is the records plus the log index. `llms.txt`, a web-publishing convention with around 10% adoption that crawlers largely do not request. *(Unmeasured: the adoption figure has no source in this repository.)* Repository-packaging tools, since the agent has filesystem access and `MAP.md` already routes. Reorganising documentation into Diataxis folders, since the frontmatter `type` field already carries that distinction.
 
@@ -81,7 +81,7 @@ The `[VERIFIED]` and `[BELIEVED]` split means the state file is honest about its
 
 Auto Memory continues running outside all of this. Nothing here controls it, and any fact it holds is unreviewable.
 
-Trajectory remains uncovered. The prior project has no artifact for it either, so there is nothing to port. That is a known gap, not an oversight.
+Trajectory remains uncovered. The prior project has no artifact for it either, so there is nothing to port. That is a known gap, not an oversight. *(Annotated 2026-10-04: covered by ADR-0059.)*
 
 ### Confirmation
 
@@ -115,3 +115,4 @@ Reading order is authoritative per ADR-0022. Log format is ADR-0024.
 | 2026-09-18 | The artifact set gains `docs/reference/completed.md`, and `STATE.md` holds only what is unsettled | Measured: 60 of `STATE.md`'s 69 table rows were DONE and were 18.7KB of a 42,036-byte file that every session reads at the start, so a session read finished history to reach the nine rows that were not finished. The 60 moved verbatim, and the reading order is unchanged: the four files a session starts with are the same, and the completed rows are read on demand like `MAP.md`. This record's own point stands, that `STATE.md` is the artifact most able to lie; the split makes the part that can lie smaller |
 | 2026-09-24 | The onboarding order annotated as stale | `CLAUDE.md` now requires `MAP.md` and the seats file. Annotated by the implementing seat under ADR-RULES, which allows a stale or wrong fact to be annotated unasked; the Decision Outcome is untouched. Found by the corpus audit of 2026-09-23 |
 | 2026-09-25 | An unsourced adoption figure marked unmeasured | The corpus audit found "around 10% adoption" outside Assumptions with no basis. Annotated by the implementing seat under ADR-RULES, on Brief 7's corpus work; the Decision Outcome is untouched. |
+| 2026-10-04 | The end state this record kept open is decided, by ADR-0059: version 1 is the system working for the operator himself, fed by sources chosen for their value to him | The gap was confirmed open on 2026-09-11 and left until it could be decided deliberately. The operator decided it once the building had reached the point where the remaining pieces had to be sorted into finishing and later. This record's decisions about the artifact set are unchanged |

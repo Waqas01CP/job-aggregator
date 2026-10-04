@@ -1,6 +1,6 @@
 ---
 type: deferred
-description: Adding Rozee.pk as a source. Deferred until the display works and until more ATS sources are added, either of which may remove the need for it.
+description: Adding Rozee.pk as a source. Out of automated use since 2026-10-04, because its privacy policy prohibits networked use of its material; revisiting needs Rozee's permission first.
 status: current
 ---
 
@@ -20,10 +20,10 @@ carry remote roles rather than local ones.
 Checked in an earlier session and unchanged since:
 
 - **robots.txt permits the job paths.**
-- **The terms carry no automated-access clause.**
+- **The terms carry no automated-access clause.** *(Annotated 2026-10-04: true of the terms, whose page now returns 404. The privacy policy's "Use of Material" section prohibits use of Rozee's material in a networked computer environment for any purpose. Research 0005.)*
 - **A sitemap index publishes job URLs daily, with the title in the slug.**
 
-So it is not blocked by permission or by access. It is deferred on priority.
+So it is not blocked by permission or by access. It is deferred on priority. *(Annotated 2026-10-04: no longer true. It is blocked by permission, and ADR-0059 keeps it out of automated use. By hand it stays useful.)*
 
 ## Why it is deferred
 
@@ -51,7 +51,7 @@ cheapest adapter might deliver anyway.
 
 ## The trigger
 
-Revisit when **all three** hold:
+Revisit when **all three** hold: *(Annotated 2026-10-04: a condition now comes before these three, Rozee's permission in writing.)*
 
 1. The display works and the operator has used it for long enough to know
    what is missing from it.
@@ -76,3 +76,4 @@ been true for the whole project and has never been a number.
 | Date | Change | Reason |
 |---|---|---|
 | 2026-09-18 | File created | The operator deferred it explicitly and named the condition that may remove the need for it entirely: more sources first, after which Rozee may not be required. Recording only "deferred" would have lost that reasoning and left the next session to rediscover that the access questions are already answered |
+| 2026-10-04 | Out of automated use, by ADR-0059 | Research 0005 read the privacy policy pass 0003 had not fully reviewed: it prohibits use of Rozee's material in a networked computer environment. Rozee also won an interim order in 2016 against a site that copied its postings. The access findings above stand; the permission finding is what changed |
