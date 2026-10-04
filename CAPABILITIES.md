@@ -56,7 +56,7 @@ By his estimate, that took most of a working week. He usually found a posting th
 **Sources are chosen by their value to him, not by their size or reputation:** whether postings are genuine rather than ghost posts or CV harvesting, how fairly applicants are treated, how long hiring takes, and whether he can take the role. Claims about a source count only from primary sources; a recommendation by an influencer counts for nothing. Research pass 0005 assessed the candidates on 2026-10-04 and found that no public study ranks job sources by how genuine their postings are, so each source's genuineness is measured from the project's own data.
 
 **The order.**
-1. Employer boards on four more ATS platforms, Ashby, Workable, SmartRecruiters and Manatal, because the application goes straight to the employer, and a date, where the platform gives one, comes from the employer's own system. What each date means differs by platform, and whether Manatal's postings carry one is still to be measured. Their order is set by measuring how many postings he can take their registry boards carry.
+1. Employer boards on four more ATS platforms, Ashby, Workable, SmartRecruiters and Manatal, because the application goes straight to the employer, and a date, where the platform gives one, comes from the employer's own system. What each date means differs by platform, and Manatal's postings carry none: no date on 779 postings across its 9 registry boards, measured 2026-10-04, though its documented creation filter brackets the day a posting was created. Their order is set by measuring how many postings he can take their registry boards carry. Measured 2026-10-04 through the real filter chain: Manatal 10, none under a week old, and the other three none (`2026-10-04-brief-10-yields-isolation-and-genuineness.md`).
 2. Himalayas stays, the only aggregator of those read that lists per posting the countries a role is open to.
 3. A second wave, Hacker News "Who is Hiring", Jobicy, We Work Remotely and RemoteOK, each only if its measured yield is worth its upkeep, his call.
 
@@ -230,11 +230,11 @@ Each is measured, with its date and source. `data` is the public data branch.
 | Display intake | About one new display row a day under the current rules, so by arithmetic, not measurement, the display settles near thirty rows, and the cheaper delta projection is not yet needed | 2026-09-29 and 09-30 | Run logs, against ADR-0056's trigger of 100 |
 | Recurring cost | None | 2026-09-27 | Free plans only |
 | Feasibility research | 16 ATS platforms probed; 1,646 postings across the first 11 boards | 2026-09-11 to 09-16 | Spike logs |
-| Code | 26 source files, 7,176 lines; 34 test files, 11,460 lines; 9 tool files, 1,907 lines | 2026-10-03 | `git ls-files`, `wc` |
-| Tests | 816, passing on Python 3.11 and 3.12 | 2026-10-03 | `unittest` |
-| Mutations | 472 recorded across 36 files. Since 2026-10-01 the suite fails when a code change leaves any of them unable to run, which two commits had done to 10, unnoticed. A survivor is closed by a new test, or, where the mutation changes nothing, replaced and recorded as such | 2026-10-02 | `tools/mutations/`, run by `tools/mutate.py`; results in the session logs |
-| Decision records | 55 (four superseded), plus the rules for amending them. 124 dated Changes rows across 42 records | 2026-09-30 | `docs/decisions/` |
-| History | 135 commits on `main`, the first on 2026-09-01 UTC; 25 session logs; one audit report in `logs/audit/` | 2026-10-03 | `git log`, `logs/` |
+| Code | 26 source files, 7,235 lines; 34 test files, 11,662 lines; 9 tool files, 1,915 lines | 2026-10-04 | `git ls-files`, `wc` |
+| Tests | 826, passing on Python 3.11 and 3.12 | 2026-10-04 | `unittest` |
+| Mutations | 481 recorded across 38 files. Since 2026-10-01 the suite fails when a code change leaves any of them unable to run, which two commits had done to 10, unnoticed. A survivor is closed by a new test, or, where the mutation changes nothing, replaced and recorded as such | 2026-10-04 | `tools/mutations/`, run by `tools/mutate.py`; results in the session logs |
+| Decision records | 58 (five superseded), plus the rules for amending them. 159 dated Changes rows across 52 records | 2026-10-04 | `docs/decisions/` |
+| History | 145 commits on `main`, the first on 2026-09-01 UTC; 26 session logs; one audit report in `logs/audit/` | 2026-10-04 | `git log`, `logs/` |
 
 ---
 
@@ -281,7 +281,7 @@ Each is measured, with its date and source. `data` is the public data branch.
 | 2026-10-01 | The fourth code audit's corrections: a confirmed clear removes only what its dry run listed, the aggregator check judges each posting on a later walk, places the operator can take are kept, and the suite fails when a mutation goes stale |
 | 2026-10-02 | The level rule and the source's own place; the closure test's false marks on 47 open rows found and fixed |
 | 2026-10-03 | The description read for years asked, a right to work required and on-site work. Closure raised to twelve runs after reposts were measured; the contract check ordered by time rather than date; every Confirmation clause of the nine newest records held by a test or marked live; Himalayas polled on both runs, its wait from publication measured; a guard refusing description text on the public branch; the clearing tool's dry run saying what is leaving anyway |
-| 2026-10-04 | The end state decided: version 1.0.0 is the system working for the operator himself, its sources chosen by their value to him (ADR-0059), on a research pass whose every load-bearing claim was checked at its primary source (research 0005) |
+| 2026-10-04 | The end state decided: version 1.0.0 is the system working for the operator himself, its sources chosen by their value to him (ADR-0059), on a research pass whose every load-bearing claim was checked at its primary source (research 0005). Each source's contract check isolated, so one source's failure reaches no other; the four employer platforms' yield measured on the registry's boards; Himalayas' date found to be its own listing date |
 | 2026-10-05 | The previous day's records audited cold and corrected; version 1.0.0 given a file of its own, with the test for done the operator accepted (`docs/versions/v1.0.0.md`) |
 
 ---
@@ -343,7 +343,7 @@ Each dated item below has its source in the session log of that date. The design
 - **His targets.** The role families and their order; the seniority rule, after asking for evidence that levels II and III expect more than his three years.
 - **Retention.** The fifteen days and their two clocks; closed postings shown for fifteen days, then stored.
 - **Clearing the display himself.** 2026-09-28: he asked to clear any table by age, a week, fifteen days or a month, for a fresh start once he judged the system right. The seats worked it into the clearing tool, dry run first, and he kept it beside the thirty-day clock: "one is just to maintain while the other is manual meaning i can run whenever i want so keeping both should be reasonable" (ADR-0055).
-- **Who the system keeps.** Job type never filters: internships, contracts, part-time and volunteer roles all stay, since volunteering "might be a good opportunity and can become a stepping stone". A time zone about working hours never excludes, since he is open to working any hours; a time zone used as a residence requirement is a location restriction in substance, and when measured, 14 of the 2,271 saved postings used one and every one was already dropped by another rule, so no rule was needed (ADR-0057).
+- **Who the system keeps.** Job type never filters: internships, contracts, part-time and volunteer roles all stay, since volunteering "might be a good opportunity and can become a stepping stone". A time zone about working hours never excludes, since he is open to working any hours; a time zone used as a residence requirement is a location restriction in substance, and when measured, 14 to 18 of the 2,271 saved postings used one, depending on how a phrase is read, and every one was already dropped by another rule, so no rule was needed (ADR-0057).
 - **Closure and cadence.** 2026-10-03: a posting closes after twelve runs absent, about six days, once postings that leave a board and return were measured, after 23 to 130 hours (ADR-0050); Himalayas is polled on both runs, his yes "if justified" on the measured wait (ADR-0048).
 - **The `Status` values** named after their tables. He renamed them in the browser, so no mark was lost.
 - **Failure handling.**
@@ -394,7 +394,7 @@ Short, role-neutral statements a reader can take as they are. Every figure is fr
 - Git branches serve as the database, with privacy enforced in code: employers' description text and aggregator data never reach the public repository. Every posting is saved in full to a private repository, verified by read-back.
 - A classification workflow: the operator's marks are copied to their own tables and stored permanently. Rows are deleted from the display only after the store is read back from the remote. The display is bounded by a thirty-day clock and a dry-run-first clearing tool.
 - A day's worth of an aggregator's feed went from about a third read, 93% of it irrelevant, to all of the relevant postings, by moving to a filtered endpoint an earlier measurement had wrongly rejected.
-- 816 tests, and 472 mutations that deliberately break the code to prove the tests notice.
+- 826 tests, and 481 mutations that deliberately break the code to prove the tests notice.
 - Assessed candidate data sources by evidence of their value to the user, genuine postings and a fair route to the employer, rather than by their reach, with every load-bearing claim checked at its primary source, and set the integration order from that.
 - Designed by the operator and built with AI agents in separate roles: architecture, implementation, and cold, read-only audit. The work was carried out under a written verification discipline and produced 55 decision records and 24 session logs.
 
