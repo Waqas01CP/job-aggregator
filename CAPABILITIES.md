@@ -6,11 +6,11 @@ status: current
 
 # Capabilities
 
-**What this file is.** Everything this repository is and does, in one place, for a reader who will open nothing else. Two readers are expected:
-- a person who wants to know what the system offers;
-- a chat drafting a CV, which should find every usable fact here without reading the tree.
+**What this file is.** Everything this repository is and does, in one place, for a reader who will open nothing else. The operator set two purposes for it, in his account to the architecture chat:
+- **any chat** that needs to know the project, a chat drafting his CV among them, should learn everything from this file without exploring the repository;
+- **a person** reads `README.md` to set the system up and run it, and this file for the nuance: the measured numbers, how it was built and by whom, its decisions and where it is going.
 
-**Current as of 2026-10-02 UTC**, against `main` with the closure test's fix of that day. Every number carries its date and its source. A number that could not be measured is not here.
+**Current as of 2026-10-02 UTC**, against `main` with the closure test's fix of that day. Every number carries its date and its source. A number that could not be measured is not here. **The end state, the sources' order, the timeline's last rows and the operator's role are current as of 2026-10-05**, updated by the architecture chat from the decision records, the commit history and, where marked, the operator's own account to the chat.
 
 **Kept current.** Updated at the close of any session that changes a capability or a measured number. Sections that restate a decision name the record that holds it, so a reader who wants the reasoning can find it.
 
@@ -46,6 +46,25 @@ By his estimate, that took most of a working week. He usually found a posting th
 | 4 | Runs unattended | An absence of days costs latency, never data |
 
 **One user.** The operator is the only user, reviewer and decision maker.
+
+---
+
+## Where it is going: version 1.0.0
+
+**Version 1.0.0 is the system working for the operator himself, as he intends it** (ADR-0059, 2026-10-04). Making it work for anyone else is a later version, and a separate decision. What 1.0.0 includes, each part's status and the test for done are kept in `docs/versions/v1.0.0.md`, a file of its own because a version's status changes as the work does while a decision record is concluded once.
+
+**Sources are chosen by their value to him, not by their size or reputation:** whether postings are genuine rather than ghost posts or CV harvesting, how fairly applicants are treated, how long hiring takes, and whether he can take the role. Claims about a source count only from primary sources; a recommendation by an influencer counts for nothing. Research pass 0005 assessed the candidates on 2026-10-04 and found that no public study ranks job sources by how genuine their postings are, so each source's genuineness is measured from the project's own data.
+
+**The order.**
+1. Employer boards on four more ATS platforms, Ashby, Workable, SmartRecruiters and Manatal, because the application goes straight to the employer, and a date, where the platform gives one, comes from the employer's own system. What each date means differs by platform, and whether Manatal's postings carry one is still to be measured. Their order is set by measuring how many postings he can take their registry boards carry.
+2. Himalayas stays, the only aggregator of those read that lists per posting the countries a role is open to.
+3. A second wave, Hacker News "Who is Hiring", Jobicy, We Work Remotely and RemoteOK, each only if its measured yield is worth its upkeep, his call.
+
+**"Preferred" means integrated first, and nothing else.** A source never moves its postings up the display, which stays ordered by date, newest first.
+
+**The test for done**, accepted by him on 2026-10-05: freshness (Measure A) holds over a window he chooses; nothing is lost silently, every drop and every closure naming its rule; the system runs unattended, every scheduled run happening and every failure reaching Airtable; every integrated source has its own contract check, isolated from the rest; and then he uses the tables for a period he chooses. Only he declares 1.0.0 done.
+
+**Waiting for later:** the priority star (ADR-0044), deduplication across sources, and a record of what happened after he applied, which waits until he has used the tables.
 
 ---
 
@@ -225,14 +244,16 @@ Each is measured, with its date and source. `data` is the public data branch.
 
 | Seat | Who | Does | May not |
 |---|---|---|---|
-| Operator | Waqas Sharif | Drafts the skeleton of each design. Decides scope, cost, roles and anything that changes what the project is. Approves every override of a recorded decision. Relays between the seats | |
+| Operator | Waqas Sharif | Drafts the skeleton of each design. Looks at the system from outside, as its user, and raises issues with simple solutions that the seats work into designs (his account; see the operator's role). Decides scope, cost, roles and anything that changes what the project is. Approves every override of a recorded decision. Relays between the seats | |
 | Architecture chat | Claude, in a chat | Works the operator's designs through with him, concludes decisions, writes the records and the briefs | Write code, run the pipeline, commit |
 | Implementing seat | Claude Code | Builds to briefs, tests, logs every session, keeps the state file current | Amend a decision beyond what the rules allow, push before the full suite passes, work around the scope floor |
 | Audit seat | Claude Code, in a fresh chat | Audits a range of commits cold, read-only, and reports to the operator | Edit anything |
 
-**Six independent audits so far:** two of documents (the writer's constraints, and the decision corpus) and four of code ranges. Each was run by an audit chat reading the work cold, with the operator routing its findings. Since 2026-09-30 each report is kept in `logs/audit/`, in the auditor's own words. The latest, on 2026-09-30, audited every new way out of the display:
+**Six independent audits by the audit seat so far:** two of documents (the writer's constraints, and the decision corpus) and four of code ranges. Each was run by an audit chat reading the work cold, with the operator routing its findings. Since 2026-09-30 each report is kept in `logs/audit/`, in the auditor's own words. The latest, on 2026-09-30, audited every new way out of the display:
 - no deletion was wrong, and the paths that delete held;
 - it found five defects, none yet triggered, and wrong documents; the seat corrected them on 2026-10-01, the defects first.
+
+**The architecture chat's records are audited too.** On 2026-10-05, at the operator's request after a long session had been interrupted at a usage limit and resumed, an independent agent that had not seen the work audited the previous day's records and brief cold, over three rounds. Every figure taken from the seat's report matched it. The defects were overstatements and unmarked stale lines; each round's findings were corrected before the next, and the third round's few were corrected the same day (ADR-0059's Changes; the commit message of 2026-10-05).
 
 **The working method is written down and enforced:**
 - **"Verify, do not trust."** Every claim, including a handoff or the seat's own memory, is checked with a command before anything is built on it. Every claim passed on is tagged verified or believed.
@@ -241,6 +262,7 @@ Each is measured, with its date and source. `data` is the public data branch.
 - **Every session writes a log**, indexed and chained backwards.
 - **Every documented file is indexed** in a generated map, and a stale map blocks the commit.
 - **"A check that cannot fail is worse than no check."** Each check is proved by the case built to defeat it.
+- **A claim about the world is checked at its primary source.** The source research of 2026-10-04 was followed by three independent passes reading the primary source behind every load-bearing claim, and the corrections they made are listed in the research record itself (`docs/research/0005-job-source-value.md`).
 
 **Timeline, UTC.**
 
@@ -259,12 +281,15 @@ Each is measured, with its date and source. `data` is the public data branch.
 | 2026-10-01 | The fourth code audit's corrections: a confirmed clear removes only what its dry run listed, the aggregator check judges each posting on a later walk, places the operator can take are kept, and the suite fails when a mutation goes stale |
 | 2026-10-02 | The level rule and the source's own place; the closure test's false marks on 47 open rows found and fixed |
 | 2026-10-03 | The description read for years asked, a right to work required and on-site work. Closure raised to twelve runs after reposts were measured; the contract check ordered by time rather than date; every Confirmation clause of the nine newest records held by a test or marked live; Himalayas polled on both runs, its wait from publication measured; a guard refusing description text on the public branch; the clearing tool's dry run saying what is leaving anyway |
+| 2026-10-04 | The end state decided: version 1.0.0 is the system working for the operator himself, its sources chosen by their value to him (ADR-0059), on a research pass whose every load-bearing claim was checked at its primary source (research 0005) |
+| 2026-10-05 | The previous day's records audited cold and corrected; version 1.0.0 given a file of its own, with the test for done the operator accepted (`docs/versions/v1.0.0.md`) |
 
 ---
 
 ## The operator's role
 
 **The division of work.**
+- **He looks at the system from outside.** In his phrase, he views it "from outside the box": as its user rather than its builder. He raises an issue and a simple solution, and the seats work the solution into a design, a record and code. *(His account to the architecture chat; no record holds the phrase.)* The age rule is the clearest case below. In his account, a date is absolute only at the moment of the fetch and relative afterwards, which became the rule that a posting is judged once, when first seen. ADR-0052 holds the rule, the record's own phrasing of that point, and his words on why it matters.
 - **The design starts with him.** He drafts the skeleton of each design himself and works it through with the architecture chat: they discuss it, improve it, and the chat writes the decision records from the result.
 - **The code and the audits are the AI seats' work:** the implementing seat writes the code and the audit seat audits it.
 - **Whether it is right is his:**
@@ -272,13 +297,15 @@ Each is measured, with its date and source. `data` is the public data branch.
   - he caught mistakes in what the seats built and proposed, and corrected them;
   - he made every decision that changed what the system does.
 
-Each dated item below has its source in the session log of that date. The design process is his own account, 2026-09-27, and is not recorded in any repository file, since the architecture conversations are not. The architecture chat is asked to check it and add what it knows.
+Each dated item below has its source in the session log of that date. The design process is his own account, 2026-09-27, and is not recorded in any repository file, since the architecture conversations are not. The architecture chat was asked to check it and add what it knows. It did so on 2026-10-05: each item it added names its source, a decision record or the commit history, or is marked as his account to the chat where no record holds it.
 
 ### He defined and designed it
 
 - **He architects it:** the skeleton of a design is his, developed with the architecture chat into the records (his account, above).
 - **The problem and the measure of success are his:** the week lost to searching by hand, the three-to-six-day baseline, and freshness as the one binding measure. `docs/architecture-2.0.md` carries his name; the measure is ADR-0015.
 - **The scope floor is his standing decision,** with no record behind it: no user interface, no notifications, no paid services.
+- **What version 1.0.0 is.** 2026-10-04: the system working for him, as he intends; working for others is a later version. He set what makes a source worth having, genuine postings, fairness to applicants and time to get hired, ruled that a recommendation without evidence counts for nothing, and ruled that a better source is integrated first and never moved up the display. 2026-10-05: he accepted the test for done (ADR-0059).
+- **When the description should be read.** 2026-10-02: "high time that we use the description", for the three things that stop him applying even when a posting passes every other rule: the years of experience asked, a right to work somewhere he cannot, and on-site work the location field does not state. He set three years as the most he will consider and preferred counting like required, and on 2026-10-03 a line welcoming fresh graduates as setting no minimum (ADR-0058).
 - **The design drew on his earlier projects.** A LinkedIn job pipeline of his had run over 100 times on scheduled commits, and his Rahzaan project's patterns were read into this one. A research pass found his own earlier repository the strongest source for how to document a project like this (`docs/research/0004-project-context-documentation.md`).
 - **The working method is his:**
   - the four seats, with every brief and audit relayed through him;
@@ -298,7 +325,7 @@ Each dated item below has its source in the session log of that date. The design
 
 ### He caught errors in what the seats built or proposed
 
-- **The age rule was built wrong.** 2026-09-26: the seat judged a posting's age against each run's clock, so a row admitted today would vanish a week later, possibly before he had seen it. He caught it from the seat's description alone and restated the rule: age is judged once, at first sight. It was rebuilt the same day.
+- **The age rule was built wrong.** 2026-09-26: the seat judged a posting's age against each run's clock, so a row admitted today would vanish a week later, possibly before he had seen it. He caught it from the seat's description alone and restated the rule: age is judged once, at first sight. His words: "i might not see the table for a few days then it would mean some posts will be out without my knowledge which i do not want" (ADR-0052). It was rebuilt the same day.
 - **An aggregator was fetched mostly as waste.** 2026-09-26: he asked why the feed could not be trimmed before fetching. Answering that, the seat re-measured the search endpoint it had rejected on 2026-09-16, and found the rejection had tested the wrong parameter. The move to search took the feed from a third read, 93% of it irrelevant, to every relevant posting.
 - **A deletion flaw.** 2026-09-26: the latest audit found that clearing or changing a `Status` would delete his record of a role he had applied to. He did not take the proposed fix as given. He designed his own: a `Delete` field whose only choice is yes, empty meaning keep, and every store kept forever (D12).
 - **What is stored.** 2026-09-25: two records disagreed, one keeping every field and one keeping metadata only, and the code had followed the second. He settled it for keeping everything, because a fetch can fail or come back without its description (D11). Where to keep it was settled on the seat's recommendation: privately, checked by reading it back.
@@ -309,17 +336,21 @@ Each dated item below has its source in the session log of that date. The design
 - **The order of work.** 2026-09-18: he had test rows put into the display before the code that writes it was built. That way a display that could never fill would show at once, not after the build.
 - **Care before a risky change.** 2026-09-24: a "Sênior" title had slipped past the seniority rule. He approved stripping accents from titles only if every title's verdict was compared before and after. Of 1,458 titles, exactly one changed: that one.
 - **Where the guard tests run.** 2026-09-25: he questioned putting the tests that guard the architecture in a separate suite. They went into the ordinary one, which always runs (ADR-0049).
+- **Whether interrupted work was right.** 2026-10-05: a long session had stopped at a usage limit and been resumed, and he asked for its output to be checked rather than trusted. The files matched what was written, but an independent audit then found overstatements and stale lines in the records, corrected the same day (ADR-0059's Changes; the commit message of 2026-10-05).
 
 ### He made the decisions that set what it does
 
 - **His targets.** The role families and their order; the seniority rule, after asking for evidence that levels II and III expect more than his three years.
 - **Retention.** The fifteen days and their two clocks; closed postings shown for fifteen days, then stored.
+- **Clearing the display himself.** 2026-09-28: he asked to clear any table by age, a week, fifteen days or a month, for a fresh start once he judged the system right. The seats worked it into the clearing tool, dry run first, and he kept it beside the thirty-day clock: "one is just to maintain while the other is manual meaning i can run whenever i want so keeping both should be reasonable" (ADR-0055).
+- **Who the system keeps.** Job type never filters: internships, contracts, part-time and volunteer roles all stay, since volunteering "might be a good opportunity and can become a stepping stone". A time zone about working hours never excludes, since he is open to working any hours; a time zone used as a residence requirement is a location restriction in substance, and when measured, 14 of the 2,271 saved postings used one and every one was already dropped by another rule, so no rule was needed (ADR-0057).
+- **Closure and cadence.** 2026-10-03: a posting closes after twelve runs absent, about six days, once postings that leave a board and return were measured, after 23 to 130 hours (ADR-0050); Himalayas is polled on both runs, his yes "if justified" on the measured wait (ADR-0048).
 - **The `Status` values** named after their tables. He renamed them in the browser, so no mark was lost.
 - **Failure handling.**
   - The public display always updates, even when the private store fails, and such a failure must reach him (D9).
   - Three failed display updates in a row mark the run failed (D1).
   - Runs queue rather than drop: "I do not want anything to be dropped".
-- **Records.** The record standard is followed rather than bent: ADR-0046 was replaced only at its eighth amendment, by ADR-0050.
+- **Records.** The record standard is followed rather than bent: ADR-0046 was replaced only at its eighth amendment, by ADR-0050. 2026-09-28: a record's two-hundred-line limit is soft, and a threshold not yet reached is not reported at all: "when the conditions are met only then the consequence will trigger and there is no near so just do it" (ADR-RULES).
 - **Permission to push.** The implementing seat may push its own commits after the full suite passes (D10).
 
 ### And he did what only he could
@@ -339,15 +370,15 @@ Each dated item below has its source in the session log of that date. The design
 - no reading of email job alerts;
 - no paid service.
 
-**Limits as of 2026-10-02:**
-- **Sources.** Eleven employer boards and one aggregator. Five more adapters are decided and unbuilt (Ashby, Workable, SmartRecruiters, Breezy and Manatal, ADR-0029), out of 53 boards in the operator's registry. On-site roles in Karachi are thin: Rozee.pk, the main Pakistani board, has no API, and it is deferred.
+**Limits as of 2026-10-02; the sources and the end state as of 2026-10-05:**
+- **Sources.** Eleven employer boards and one aggregator. Four more platforms come next, Ashby, Workable, SmartRecruiters and Manatal, in the order their registry boards' measured yield sets; Breezy waits for a documented public endpoint (ADR-0059, which replaced ADR-0029's order on 2026-10-04). The registry holds 53 boards. On-site roles in Karachi are thin: Rozee.pk, the main Pakistani board, has no API and its privacy policy forbids automated use, so it stays his to use by hand (research 0005, `docs/deferred/rozee-pk.md`).
 - **Matching reads titles only**, so a role whose title misses the pool is missed. Descriptions are read since 2026-10-02, but only for what stops him applying. They are read by fixed phrases, so a requirement worded in a way not yet measured is missed, and the posting stays in his table. Himalayas' own level label is read since the same day. Rows stored before then carry neither, and keep their verdict.
 - **Duplicates across sources are not merged.** An employer's own posting and an aggregator's copy of it can both appear, because the aggregator stamps its own date.
 - **Lever's date is not proven to mean publication**, so Lever postings are never dropped for age.
 - **GitHub starts scheduled runs 3.3 to 7.0 hours late**, over the 29 scheduled runs to 2026-10-01. Freshness is measured from publication, so it includes that delay.
-- **Unbuilt:** the priority star (a mark on postings sharing a named attribute with an accepted one, ADR-0044) and the contract check's Airtable row. The cheaper projection that sends only changed rows is designed and deliberately waits on its triggers (ADR-0056).
+- **Unbuilt:** the priority star (a mark on postings sharing a named attribute with an accepted one, ADR-0044), which waits for a version after 1.0.0, and the contract check's Airtable row, which 1.0.0 requires. The cheaper projection that sends only changed rows is designed and deliberately waits on its triggers (ADR-0056).
 - **The clearing tool and the thirty-day clock have not run live yet**; both are proved offline.
-- **"Finished" is not yet defined.** The end-state document is open by decision (ADR-0023).
+- **"Finished" is defined** since 2026-10-04 as version 1.0.0 (ADR-0059), and since 2026-10-05 it has a file of its own, `docs/versions/v1.0.0.md`, with the test for done he accepted that day. Until then it was open by decision (ADR-0023).
 - **The private store's token expires on 2027-01-01**; the operator rotates it before then.
 
 ---
@@ -364,6 +395,7 @@ Short, role-neutral statements a reader can take as they are. Every figure is fr
 - A classification workflow: the operator's marks are copied to their own tables and stored permanently. Rows are deleted from the display only after the store is read back from the remote. The display is bounded by a thirty-day clock and a dry-run-first clearing tool.
 - A day's worth of an aggregator's feed went from about a third read, 93% of it irrelevant, to all of the relevant postings, by moving to a filtered endpoint an earlier measurement had wrongly rejected.
 - 816 tests, and 472 mutations that deliberately break the code to prove the tests notice.
+- Assessed candidate data sources by evidence of their value to the user, genuine postings and a fair route to the employer, rather than by their reach, with every load-bearing claim checked at its primary source, and set the integration order from that.
 - Designed by the operator and built with AI agents in separate roles: architecture, implementation, and cold, read-only audit. The work was carried out under a written verification discipline and produced 55 decision records and 24 session logs.
 
 ---
@@ -372,6 +404,9 @@ Short, role-neutral statements a reader can take as they are. Every figure is fr
 
 | For | Read |
 |---|---|
+| How to set it up and run it | `README.md` |
+| Where it is going, and what is left for version 1.0.0 | `docs/versions/v1.0.0.md` |
+| Which sources, and why | `docs/research/0005-job-source-value.md` |
 | What exists now and what is blocked | `STATE.md` |
 | What was finished, with proof | `docs/reference/completed.md` |
 | Why the system is shaped as it is | `docs/architecture-2.0.md` and `docs/decisions/` |
