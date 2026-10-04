@@ -1,0 +1,14 @@
+[
+  {
+    "label": "a platform the fetch polls has no contract check",
+    "path": "src/contract.py",
+    "find": "PLATFORMS = {\"greenhouse\": greenhouse, \"lever\": lever, \"himalayas\": himalayas}",
+    "replace": "PLATFORMS = {\"greenhouse\": greenhouse, \"lever\": lever}"
+  },
+  {
+    "label": "an aggregator's rows are ordered by first sight, not their date",
+    "path": "src/projection.py",
+    "find": "        \"Order date\": airtable_datetime(rep.ordering_date),",
+    "replace": "        \"Order date\": airtable_datetime(rep.ordering_date if is_publishable(rep.source) else rep.first_seen),"
+  }
+]

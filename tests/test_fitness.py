@@ -154,6 +154,22 @@ class TestFitnessFunctions(unittest.TestCase):
                 self.assertEqual(copies.get(field), "operator", "%s on %s" % (field, table))
 
 
+    def test_every_source_has_its_own_contract_check(self):
+        """Fitness function for ADR-0059, "No source is built without its
+        contract check": every platform with an adapter, and every platform a
+        board is configured on, is checked by the contract check through the
+        same adapter, so a source added to the fetch without its check fails
+        here before its first production run. Mutation: "a platform the fetch
+        polls has no contract check"."""
+        from src import contract, run
+        from src.config import load_boards
+        configured = {b.platform for b in load_boards()}
+        self.assertTrue(configured <= set(run.ADAPTERS), configured - set(run.ADAPTERS))
+        self.assertEqual(set(contract.PLATFORMS), set(run.ADAPTERS))
+        for platform, adapter in run.ADAPTERS.items():
+            self.assertIs(contract.PLATFORMS[platform], adapter, platform)
+
+
 def normalised(text):
     """Whitespace collapsed and Markdown emphasis dropped, so a clause quoted
     across docstring lines matches the record line it came from."""
@@ -296,18 +312,28 @@ def confirmation_problems(records, registry, suite):
 
 
 class TestEveryConfirmationIsHeld(unittest.TestCase):
-    """ADR-0049, amended 2026-10-03, over ADR-0050 to ADR-0058, the records
-    Brief 9 named. What holds each clause is `tests/confirmations.py`."""
+    """ADR-0049, amended 2026-10-03, over every record from ADR-0050 on: the
+    nine Brief 9 named, and since Brief 10 each record written after them,
+    so a new record is held from the day it lands. What holds each clause is
+    `tests/confirmations.py`."""
 
-    NUMBERS = ["%04d" % n for n in range(50, 59)]
+    FIRST = 50
 
     def records(self):
         out = {}
-        for number in self.NUMBERS:
-            [path] = glob.glob(os.path.join(ROOT, "docs", "decisions", "%s-*.md" % number))
-            with open(path, encoding="utf-8") as f:
-                out[number] = f.read()
+        for path in glob.glob(os.path.join(ROOT, "docs", "decisions", "[0-9][0-9][0-9][0-9]-*.md")):
+            number = os.path.basename(path)[:4]
+            if int(number) >= self.FIRST:
+                with open(path, encoding="utf-8") as f:
+                    out[number] = f.read()
         return out
+
+    def test_the_records_read_include_every_one_from_the_first(self):
+        """A glob that matched nothing would hold every clause vacuously."""
+        numbers = sorted(self.records())
+        self.assertEqual(numbers[0], "%04d" % self.FIRST)
+        self.assertIn("0059", numbers)
+        self.assertEqual(numbers, ["%04d" % n for n in range(self.FIRST, int(numbers[-1]) + 1)])
 
     def test_every_clause_is_a_test_or_says_why_it_cannot_be(self):
         """Fitness function for ADR-0049, "Every Confirmation clause in a

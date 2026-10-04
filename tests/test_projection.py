@@ -141,6 +141,21 @@ class TestTheRowSent(Harness):
         self.assertEqual(record["Identity"], "greenhouse:3")
         self.assertEqual(record["Location"].split("\n"), ["Karachi", "Lahore"])
 
+    def test_a_sources_place_never_moves_its_order_date(self):
+        """ADR-0059: "preferred" means integrated first and nothing else, and
+        the display is ordered by date alone. The view sorts on `Order date`,
+        so rows from every source with the same dates must carry the same
+        one, an employer board's and an aggregator's alike."""
+        published = "2026-09-20T10:00:00Z"
+        self.write_filtered(
+            [make_row(1, source="greenhouse", employer="Acme", published=published),
+             make_row(2, source="lever", employer="Globex", published=published)],
+            local=[make_row(3, source="himalayas", employer="Initech", published=published)])
+        client, _ = self.project()
+        dates = {r["Identity"].split(":")[0]: r["Order date"] for r in client.sent}
+        self.assertEqual(sorted(dates), ["greenhouse", "himalayas", "lever"])
+        self.assertEqual(set(dates.values()), {projection.airtable_datetime(published)})
+
     def test_the_fields_are_exactly_the_pipeline_owned_ones(self):
         """Against the set written out by hand, never against
         PIPELINE_FIELDS: the audit of 2026-09-24 added Status to both the

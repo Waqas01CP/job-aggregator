@@ -1,4 +1,4 @@
-"""Every Confirmation clause of ADR-0050 to ADR-0058, and what holds it.
+"""Every Confirmation clause from ADR-0050 on, and what holds it.
 
 ADR-0049, amended 2026-10-03: "Every Confirmation clause in a record is
 either a test or explicitly marked as checkable only on live runs. None stays
@@ -190,5 +190,23 @@ CONFIRMATIONS = {
         "A posting with no description must be kept.": {"tests": [
             "test_description.TestLines.test_nothing_to_read",
             "test_filters.TestTheExperienceRule.test_a_description_stating_no_figure_keeps"]},
+    },
+    "0059": {
+        "A source's place must never change the display's order.": {"tests": [
+            "test_projection.TestTheRowSent.test_a_sources_place_never_moves_its_order_date"]},
+        "One source's check must not touch another's.": {"tests": [
+            "test_contract.TestEachSourceOnItsOwn.test_one_check_raising_leaves_the_others_found_and_fetched",
+            "test_contract.TestEachSourceOnItsOwn.test_a_failed_check_names_where_it_raised_and_never_its_message",
+            "test_contract.TestEachSourceOnItsOwn.test_a_failing_board_cannot_spend_another_platforms_budget",
+            "test_contract.TestEachSourceOnItsOwn.test_a_failing_board_cannot_open_another_platforms_breaker",
+            "test_contract.TestMain."
+            "test_one_platforms_failed_check_commits_the_others_and_exits_2",
+            "test_workflow.TestContractWorkflow.test_a_failed_platform_is_pushed_and_then_marked_failed"]},
+        "A contract finding must be seen as a row in Airtable": {
+            "unbuilt": "the findings table and the check's writer to it are not built: the table "
+                       "and two secrets are the operator's to create, Brief 10's report"},
+        "No source is built without its contract check": {"tests": [
+            "test_fitness.TestFitnessFunctions.test_every_source_has_its_own_contract_check",
+            "test_contract.TestConsumedFields.test_every_platform_the_run_polls_is_checked"]},
     },
 }
