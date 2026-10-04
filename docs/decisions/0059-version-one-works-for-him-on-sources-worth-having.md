@@ -25,22 +25,22 @@ Four questions followed, and he answered each.
 
 Research pass 0005 assessed the candidates on those criteria. Its central finding is uncomfortable: no public evidence ranks sources by how genuine their postings are. The only measured figures are vendors', or a preprint's, and they put ghost and long-open postings on direct employer boards too. What can be established from primary sources is narrower: which sources can be read under their own terms, which send the applicant to the employer, and which say who may apply.
 
-The tension is between reach and value. A large aggregator brings many postings, many of them carried by an employer board already read directly, with an apply link that passes through the aggregator and eligibility that is often unstated. An employer board brings fewer postings, each from the employer's own system. And the pending cross-source duplicates grow with every aggregator added.
+The tension is between reach and value. A large aggregator brings many postings, many of them carried by an employer board already read directly, with an apply link that passes through the aggregator and eligibility that is often unstated. *(Corrected 2026-10-05: "many of them" is not measured; one duplicate was seen in 44 rows on 2026-09-25.)* An employer board brings fewer postings, each from the employer's own system. And the pending cross-source duplicates grow with every aggregator added.
 
 ## Decision Drivers
 
 - Version 1 serves one person, so value to him is the only measure of a source.
 - The application should reach the employer, and his CV should go nowhere else.
 - What cannot be established from public evidence is measured from the project's own data, per source, with its count.
-- A source must be readable under its own terms, free (the operator's standing cost constraint), with a date on each posting.
+- A source must be readable under its own terms, free (the operator's standing cost constraint), with a date on each posting. *(Corrected 2026-10-05: with a date where it gives one; a source without one orders by first seen, as ADR-0007 allows and ADR-0029 accepted for Manatal.)*
 - Nothing about a source may reorder the display, which is ordered by date alone (ADR-0010, ADR-0057).
 - A failure in one source must not reach any other.
 
 ## Assumptions
 
-- No public study ranks job sources by ghost-posting or CV-harvesting rate. **Sourced**: CRS In Focus IF12977 (2025) states there are no official statistics on ghost jobs, and a 2026 peer-reviewed scoping review names comparative data by channel as a gap. Research 0005.
+- No public study ranks job sources by ghost-posting or CV-harvesting rate. **Sourced**: CRS In Focus IF12977 (2025) states there are no official statistics on ghost jobs, and a 2026 peer-reviewed scoping review names comparative data by channel as a gap. Research 0005. *(Corrected 2026-10-05: these sources cover ghost postings only. Research 0005 found none ranking sources by CV harvesting either.)*
 - Direct employer boards are not proof of genuineness. **Sourced, weakly**: Greenhouse's own unexplained 18 to 22% a quarter, and a September 2026 vendor report finding 28% of ATS postings open over 90 days. Research 0005.
-- Ashby, Workable, SmartRecruiters and Manatal each publish a keyless endpoint with a date on each posting. **Sourced** from each vendor's own documentation, 2026-10-04, with differing meanings: Ashby's date is the last publication, Workable's and SmartRecruiters' are undefined, and Manatal's endpoint filters on a creation date. Breezy documents no public endpoint. Research 0005.
+- Ashby, Workable, SmartRecruiters and Manatal each publish a keyless endpoint with a date on each posting. **Sourced** from each vendor's own documentation, 2026-10-04, with differing meanings: Ashby's date is the last publication, Workable's and SmartRecruiters' are undefined, and Manatal's endpoint filters on a creation date. Breezy documents no public endpoint. Research 0005. *(Corrected 2026-10-05: Manatal's endpoint filters on a creation date, but whether its postings carry that date is **not measured**; ADR-0029's spike found none on two boards.)*
 - Which platforms yield the most postings he can take. **Not measured.** The implementing seat measures it before the order is fixed.
 - A recommendation without evidence carries no weight. **Stated**: "you do not need to prioritize influencers or other fake sources as they are of no value", 2026-10-04.
 
@@ -62,15 +62,15 @@ Chosen option: "order by value to him".
 **We will integrate in this order.**
 1. **Employer boards on further ATS platforms**: Ashby, Workable, SmartRecruiters and Manatal. Their order among themselves is set by measurement: one request to each registry board the platform hosts, and the platform whose boards carry the most postings passing the current rules goes first, the number of registry boards breaking a tie. **Breezy waits** until its public endpoint is documented by Breezy, or the operator accepts an undocumented one.
 2. **Himalayas stays.**
-3. **A second wave**: Hacker News "Who is Hiring", Jobicy, We Work Remotely and RemoteOK, ordered the same way, by the postings each yields that he can take, measured before it is built. A feed whose yield is negligible is not built.
+3. **A second wave**: Hacker News "Who is Hiring", Jobicy, We Work Remotely and RemoteOK, ordered the same way, by the postings each yields that he can take, measured before it is built. A feed whose yield is negligible is not built. *(Changed 2026-10-05: whether a feed's yield is worth its upkeep is the operator's call on the measured number. See Changes.)*
 
-**Not integrated**: foorilla, formerly ai-jobs.net, whose API now costs $64 a month; Remotive, whose 24-hour delay alone breaks Measure A's median (ADR-0015); hiring.cafe; Y Combinator Work at a Startup; Welcome to the Jungle; Wellfound; Adzuna; and Rozee.pk, Mustakbil and Bayt, whose terms or privacy policy forbid automated use and which stay his to use by hand. Each reason is in research 0005.
+**Not integrated**: foorilla, formerly ai-jobs.net, whose API now costs $64 a month; Remotive, whose 24-hour delay alone breaks Measure A's median (ADR-0015); hiring.cafe; Y Combinator Work at a Startup; Welcome to the Jungle; Wellfound; Adzuna; and Rozee.pk, Mustakbil and Bayt, whose terms or privacy policy forbid automated use and which stay his to use by hand. Each reason is in research 0005. *(Corrected 2026-10-05: Remotive's delay does not break Measure A, which is one median over all postings (ADR-0015). It means each Remotive posting reaches him later than that median's 24-hour target, however often it is polled.)*
 
 **Not candidates until each passes the access gate on its own documentation**: Arbeitnow, Working Nomads, and every other source research 0005 did not re-read.
 
 **We will treat "preferred" as integrated first, and as nothing else.** A source never moves its postings up the display. A mark naming a source as better, a star or a note, is added only if he asks for one, and never orders a view.
 
-**We will let the implementing seat research each source as it integrates it**, and report for every claim research 0005 makes about that source whether it was confirmed or contradicted. The result is recorded in 0005's Corrections table, and a contradiction that changes a source's place is brought back here.
+**We will let the implementing seat research each source as it integrates it**, and report for every claim research 0005 makes about that source whether it was confirmed or contradicted. The result is recorded in 0005's Corrections table, and a contradiction that changes a source's place is brought back here. *(Clarified 2026-10-05: only a claim found wrong goes into 0005's Corrections table, whether it was wrong when written or has changed since, marked as which, as pass 0003's corrections were; a confirmation stays in the seat's report and log.)*
 
 **We will measure each source's genuineness from the project's own data**, per source and with its count: how long postings stay up, reposting under a new identity or a reset date, postings that never close, the source's date against the employer board's for the same role, and where the apply link lands. No threshold is set in advance; thresholds come from this project's own distributions.
 
@@ -78,7 +78,7 @@ Chosen option: "order by value to him".
 
 **We will keep three things out of version 1**: the priority star (ADR-0044), for version 2; deduplication across sources (`docs/deferred/employer-alias-map.md`); and response quality (`docs/deferred/response-quality.md`).
 
-**We will declare version 1 done only when he says so**, on a test he sets. The chat's proposal is in Consequences.
+**We will declare version 1 done only when he says so**, on a test he sets. The chat's proposal is in Consequences. *(Test accepted by the operator on 2026-10-05. See Changes.)*
 
 ### Consequences
 
@@ -94,7 +94,7 @@ Pass 0003's best AI-specific source no longer exists in the form 0003 read. No A
 
 The contract findings table is a new Airtable table, small, against the base's 1,000 records (ADR-0004).
 
-**The chat's proposed test for "done"**, for him to confirm or change: Measure A (ADR-0015) holds over a window he chooses; nothing is lost silently, every drop and every closure naming its rule; the system runs unattended, every scheduled run happening (ADR-0054) and every failure reaching Airtable; every integrated source has its isolated contract check; and he then uses the tables for a period he chooses.
+**The chat's proposed test for "done"**, for him to confirm or change: Measure A (ADR-0015) holds over a window he chooses; nothing is lost silently, every drop and every closure naming its rule; the system runs unattended, every scheduled run happening (ADR-0054) and every failure reaching Airtable; every integrated source has its isolated contract check; and he then uses the tables for a period he chooses. *(Accepted by the operator on 2026-10-05. See Changes.)*
 
 ### Confirmation
 
@@ -113,12 +113,17 @@ The contract findings table is a new Airtable table, small, against the base's 1
 ### Order by reach or recommendation
 
 Good, because the largest feeds bring the most postings soonest.
-Bad, because reach is not value: most large feeds state eligibility weakly and carry postings already read from employer boards, and a recommendation without evidence is the thing he ruled out.
+Bad, because reach is not value: most large feeds state eligibility weakly and carry postings already read from employer boards, and a recommendation without evidence is the thing he ruled out. *(Corrected 2026-10-05: they may carry such postings; the overlap is not measured.)*
 
 ### Keep the recorded orders
 
 Good, because nothing is re-decided.
-Bad, because ADR-0029 ranked platforms by the cost of a date, on which four now tie, and ADR-0019's survey order includes a board that no longer exists in that form.
+Bad, because ADR-0029 ranked platforms by the cost of a date, on which four now tie, and ADR-0019's survey order includes a board that no longer exists in that form. *(Corrected 2026-10-05: four of ADR-0029's five already tied there, and Manatal was not one of them.)*
+
+### Order by value to him
+
+Good, because each source earns its place by what it measurably gives him, and the fairest route to the employer comes first.
+Bad, because it is slower: every platform and feed waits for a measurement, and employers seen only on aggregators arrive later.
 
 ### Every passing source at once
 
@@ -131,6 +136,14 @@ Closes the end-state gap ADR-0023 kept open, which carries a Changes row pointin
 
 Evidence: `docs/research/0005-job-source-value.md`, which corrects pass 0003 on ai-jobs.net, Jobicy and Rozee.pk.
 
+**Where version 1 is tracked: `docs/versions/v1.0.0.md`.** What 1.0.0 includes, its sources, its test for done and what waits, each with its current status. This record keeps the decisions; that file says where each stands. Added 2026-10-05.
+
 The operator's decisions of 2026-10-04: version 1 as the system working for him; the four answers above; the integration order, approved that day; and the seat's leave to research each source as it integrates it.
 
 ## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-10-05 | The operator accepted the proposed test for "done". The window over which Measure A must hold and the period of use stay his to choose | His decision, 2026-10-05, given after he asked for the round's work to be checked. The rule that version 1 is declared done only by him is unchanged |
+| 2026-10-05 | Eight statements annotated as corrected or clarified, the original text kept: the aggregators' overlap with employer boards and the ghost-job evidence's reach, both overstated; the driver's date requirement, which now admits a source without a date as ADR-0007 already did; Manatal's date, unmeasured; Remotive's delay, stated against its own postings rather than against the pipeline's median; where the seat's findings are recorded; and the tie on the cost of a date. One clause changed: a feed's yield is the operator's call rather than an unstated threshold. The chosen option gains the pros and cons it lacked | An independent audit of the round, run on the operator's request. Each statement claimed more than its source shows. The chat's errors |
+| 2026-10-05 | Version 1's definition and status are kept in `docs/versions/v1.0.0.md`, a file of its own; this record keeps the decisions | The operator's decision, 2026-10-05: the end state should be distinct from the decision records in its name and convention. He chose a separate version file over renaming this record, since a version's status changes as the work does while a record is concluded once |
