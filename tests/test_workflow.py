@@ -18,7 +18,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
 from src import run as run_module
-from src import storage
+from src import contract, storage
 
 WORKFLOW = os.path.join(ROOT, ".github", "workflows", "fetch.yml")
 CONTRACT = os.path.join(ROOT, ".github", "workflows", "contract.yml")
@@ -224,6 +224,24 @@ class TestContractWorkflow(unittest.TestCase):
     def test_no_secret_reaches_it(self):
         """Every board it asks is public."""
         self.assertNotIn("secrets.", self.text)
+
+    def test_a_failed_platform_is_pushed_and_then_marked_failed(self):
+        """ADR-0059: a platform whose check failed exits 2. Its push must
+        happen, so the other platforms' findings survive, and the step that
+        marks the run failed comes after it and last."""
+        lines = self.text.splitlines()
+        names = [l.strip() for l in lines if l.strip().startswith("- name:")]
+        self.assertEqual(names[-1], "- name: Fail the run if a platform's check failed")
+        self.assertEqual(names[-2], "- name: Push the data branch")
+        push = self.text[self.text.index(names[-2]):self.text.index(names[-1])]
+        self.assertIn("if: steps.check.outputs.exit_code != '1'", push)
+        tail = self.text[self.text.index(names[-1]):]
+        self.assertIn("if: steps.check.outputs.exit_code == '%d'" % contract.EXIT_A_CHECK_FAILED,
+                      tail)
+        self.assertIn("exit 1", tail)
+        check = self.text[self.text.index("- name: Check"):self.text.index(names[-2])]
+        self.assertIn('echo "exit_code=$code" >> "$GITHUB_OUTPUT"', check)
+        self.assertIn("set +e", check)
 
 
 class TestBothWorkflows(unittest.TestCase):

@@ -3,8 +3,9 @@ name: contract
 # ADR-0018 and ADR-0036: once a day, one response per platform, fingerprinted
 # over the fields each adapter consumes and compared with the last check. A
 # change is written to the check's own log on the data branch and the run
-# still succeeds; the run fails only when the check itself does. Daily is the
-# operator's cadence, ADR-0036's Changes.
+# still succeeds; the run fails when the check itself does, or, after its
+# push, when one platform's check failed (ADR-0059). Daily is the operator's
+# cadence, ADR-0036's Changes.
 #
 # 06:30 UTC, 11:30 PKT, sits between the fetch runs at 00:00 and 13:00 UTC, so
 # neither waits for the other in the shared concurrency group below.
@@ -81,14 +82,39 @@ jobs:
 
       # No secret reaches this step: every board it asks is public.
       - name: Check
+        id: check
         env:
           TEST_MODE: ${{ inputs.test_mode && '1' || '0' }}
-        run: python -m src.contract
+        run: |
+          set +e
+          python -m src.contract
+          code=$?
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          #   0 checked, every finding in the log
+          #   2 one platform's check failed (ADR-0059): its last fingerprint
+          #     stands, the others' findings are committed, and the step
+          #     after the push marks the run failed
+          #   1 the check itself failed and committed nothing
+          if [ "$code" -eq 1 ]; then
+            echo "::error::the contract check itself failed and committed nothing; this is not a finding about any board"
+            exit 1
+          fi
+          exit 0
 
       - name: Push the data branch
+        if: steps.check.outputs.exit_code != '1'
         run: |
           if git rev-parse --verify --quiet "refs/heads/$DATA_BRANCH" >/dev/null; then
             git push origin "refs/heads/$DATA_BRANCH:refs/heads/$DATA_BRANCH"
           else
             echo "no $DATA_BRANCH branch was written, so nothing to push"
           fi
+
+      # ADR-0059: a platform whose check failed must not look healthy, and
+      # marking it must not cost the others their findings, so this is the
+      # last step, after the push, as in fetch.yml.
+      - name: Fail the run if a platform's check failed
+        if: steps.check.outputs.exit_code == '2'
+        run: |
+          echo "::error::a platform's contract check failed; the other platforms' findings are committed and pushed, and the log names where it raised"
+          exit 1

@@ -8,8 +8,8 @@
   {
     "label": "a shape is accepted on a date, not at a time",
     "path": "src/contract.py",
-    "find": "        fp[\"since\"] = iso(now) if previous is None",
-    "replace": "        fp[\"since\"] = iso(now)[:10] if previous is None"
+    "find": "    fp[\"since\"] = iso(now) if previous is None",
+    "replace": "    fp[\"since\"] = iso(now)[:10] if previous is None"
   },
   {
     "label": "a shape accepted on a date reads as the day's start",

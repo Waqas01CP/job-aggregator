@@ -1,0 +1,44 @@
+[
+  {
+    "label": "one client is shared by every platform's check",
+    "path": "src/contract.py",
+    "find": "    updated = dict(stored)\n    log = {\"run_at\": iso(now), \"platforms\": {}}\n",
+    "replace": "    updated = dict(stored)\n    log = {\"run_at\": iso(now), \"platforms\": {}}\n    shared = new_client()\n    new_client = lambda: shared  # noqa: E731\n"
+  },
+  {
+    "label": "an exception in one platform's check ends the whole check",
+    "path": "src/contract.py",
+    "find": "        except Exception as e:\n            # Its own boundary",
+    "replace": "        except HttpError as e:\n            # Its own boundary"
+  },
+  {
+    "label": "a failed check's message reaches the public log",
+    "path": "src/contract.py",
+    "find": "    return \"%s raised at %s:%d in %s\" % (type(error).__name__, os.path.basename(last.filename),",
+    "replace": "    return \"%s %s raised at %s:%d in %s\" % (type(error).__name__, error, os.path.basename(last.filename),"
+  },
+  {
+    "label": "a failed check drops its stored fingerprint",
+    "path": "src/contract.py",
+    "find": "            entry.update(board=board.board_id, status=CHECK_FAILED, detail=where_raised(e))\n            continue",
+    "replace": "            entry.update(board=board.board_id, status=CHECK_FAILED, detail=where_raised(e))\n            updated.pop(platform, None)\n            continue"
+  },
+  {
+    "label": "a platform's failed check exits 0",
+    "path": "src/contract.py",
+    "find": "        return EXIT_A_CHECK_FAILED",
+    "replace": "        return 0"
+  },
+  {
+    "label": "a contract run with a failed platform is not pushed",
+    "path": ".github/workflows/contract.yml",
+    "find": "        if: steps.check.outputs.exit_code != '1'",
+    "replace": "        if: steps.check.outputs.exit_code == '0'"
+  },
+  {
+    "label": "the report names no failed check",
+    "path": "tools/run_log_report.py",
+    "find": "            if entry.get(\"status\") in (CHECK_FAILED, \"unreachable\"):",
+    "replace": "            if entry.get(\"status\") == \"unreachable\":"
+  }
+]

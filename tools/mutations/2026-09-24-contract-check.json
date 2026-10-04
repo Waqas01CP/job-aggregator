@@ -44,8 +44,8 @@
   {
     "label": "an empty response wipes the stored posting fingerprint",
     "path": "src/contract.py",
-    "find": "            fp[\"posting\"] = (stored.get(platform) or {}).get(\"posting\", {})",
-    "replace": "            pass"
+    "find": "        fp[\"posting\"] = (stored.get(platform) or {}).get(\"posting\", {})",
+    "replace": "        pass"
   },
   {
     "label": "an adapter declares a field it never reads",

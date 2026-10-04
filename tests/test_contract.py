@@ -67,9 +67,17 @@ def responses():
             "himalayas": cassette("himalayas-browse.json")}
 
 
-def client(routes):
-    return HttpClient(session=FakeSession(routes), sleep=lambda s: None, min_interval=0,
-                      max_attempts=1)
+def client(routes, max_attempts=1, budget=contract.PER_PLATFORM_BUDGET):
+    """What `check` takes: a maker of one client per platform, as `main`
+    builds them, each with its own budget and breaker. They share one fake
+    session, whose calls are every platform's."""
+    session = FakeSession(routes)
+
+    def new_client():
+        return HttpClient(session=session, sleep=lambda s: None, min_interval=0,
+                          max_attempts=max_attempts, budget=budget)
+    new_client.session = session
+    return new_client
 
 
 def reads_of(module):
@@ -274,7 +282,78 @@ class TestCheck(unittest.TestCase):
     def test_one_request_per_platform(self):
         c = client(responses())
         contract.check(BOARDS, c, {}, NOW)
-        self.assertEqual(len(c._session.calls), len(contract.PLATFORMS))
+        self.assertEqual(len(c.session.calls), len(contract.PLATFORMS))
+
+
+class TestEachSourceOnItsOwn(unittest.TestCase):
+    """ADR-0059, the operator's decision of 2026-10-04: one source's trigger
+    must not affect the rest."""
+
+    def test_one_check_raising_leaves_the_others_found_and_fetched(self):
+        """ADR-0059's Confirmation: make one source's check raise and change
+        another's response. The first reads as a failed check for that source,
+        the second's change is still found, and the third is still asked."""
+        fp, _ = contract.check(BOARDS, client(responses()), {}, NOW)
+        stored = copy.deepcopy(fp)
+        stored["greenhouse"] = "a stored shape nobody can compare"
+        routes = responses()
+        for job in routes["smart-working"]:
+            job["url"] = job.pop("hostedUrl")
+        c = client(routes)
+        after, log = contract.check(BOARDS, c, stored, LATER)
+        entry = log["platforms"]["greenhouse"]
+        self.assertEqual(entry["status"], contract.CHECK_FAILED)
+        self.assertRegex(entry["detail"], r"^AttributeError raised at contract\.py:\d+ in \w+$")
+        self.assertEqual(after["greenhouse"], stored["greenhouse"])
+        self.assertEqual(log["platforms"]["lever"]["status"], "changed")
+        self.assertIn("hostedUrl", [c["field"] for c in log["platforms"]["lever"]["changes"]])
+        self.assertEqual(log["platforms"]["himalayas"]["status"], "unchanged")
+        self.assertEqual(len(c.session.calls), len(contract.PLATFORMS))
+        self.assertEqual(contract.failed_platforms(log), ["greenhouse"])
+
+    def test_a_failed_check_names_where_it_raised_and_never_its_message(self):
+        """The log is public. A message can carry a posting's text, and
+        Himalayas' must never reach the public branch (ADR-0020)."""
+        real = contract.fingerprint
+
+        def leaking(adapter, payload):
+            if adapter is himalayas:
+                raise ValueError("a posting's own words")
+            return real(adapter, payload)
+        contract.fingerprint = leaking
+        try:
+            _, log = contract.check(BOARDS, client(responses()), {}, NOW)
+        finally:
+            contract.fingerprint = real
+        entry = log["platforms"]["himalayas"]
+        self.assertEqual(entry["status"], contract.CHECK_FAILED)
+        self.assertNotIn("own words", json.dumps(log))
+        self.assertTrue(entry["detail"].startswith("ValueError raised at "))
+        self.assertEqual(log["platforms"]["greenhouse"]["status"], "baseline")
+
+    def test_a_failing_board_cannot_spend_another_platforms_budget(self):
+        """Shared, the budget was six for three platforms: two boards failing
+        three attempts each spent it, and the third was refused unasked."""
+        routes = responses()
+        routes["careem"] = 503
+        routes["smart-working"] = 503
+        c = client(routes, max_attempts=3)
+        _, log = contract.check(BOARDS, c, {}, NOW)
+        self.assertEqual(log["platforms"]["greenhouse"]["status"], "unreachable")
+        self.assertEqual(log["platforms"]["lever"]["status"], "unreachable")
+        self.assertEqual(log["platforms"]["himalayas"]["status"], "baseline")
+        asked = [url for url in c.session.calls if "himalayas" in url]
+        self.assertEqual(len(asked), 1)
+
+    def test_a_failing_board_cannot_open_another_platforms_breaker(self):
+        """Shared, five failures in a row opened one breaker for everyone."""
+        routes = responses()
+        routes["careem"] = 503
+        routes["smart-working"] = 503
+        # A budget no board can spend, so only the breaker can stop the third.
+        _, log = contract.check(BOARDS, client(routes, max_attempts=3, budget=50), {}, NOW)
+        self.assertEqual(log["platforms"]["lever"]["status"], "unreachable")
+        self.assertEqual(log["platforms"]["himalayas"]["status"], "baseline")
 
 
 class TestTheDeliberateRebaseline(unittest.TestCase):
@@ -487,7 +566,7 @@ class TestMain(unittest.TestCase):
         subprocess.run(["git", "init", "-q"], cwd=self.dir)
         self.routes = responses()
         contract.load_boards = lambda: BOARDS
-        contract.HttpClient = lambda **kw: client(self.routes)
+        contract.HttpClient = lambda **kw: client(self.routes)()
 
     def tearDown(self):
         storage.REPO_ROOT, contract.load_boards, contract.HttpClient = self.real
@@ -530,14 +609,40 @@ class TestMain(unittest.TestCase):
 
     def test_a_crash_exits_1_and_commits_no_log(self):
         """ADR-0036's check that can fail: a crash and a finding never share
-        a channel."""
-        def broken(**kw):
+        a channel. Since ADR-0059 a crash is the check's own, outside every
+        platform: here, the boards cannot be loaded."""
+        def broken():
             raise RuntimeError("the check itself is broken")
-        contract.HttpClient = broken
+        contract.load_boards = broken
         code, _, err = self.main()
         self.assertEqual(code, 1)
         self.assertIn("the contract check itself failed", err)
         self.assertEqual(self.logs(), [])
+
+    def test_one_platforms_failed_check_commits_the_others_and_exits_2(self):
+        """ADR-0059: the other platforms' findings reach the branch, and the
+        exit says a check failed, so the workflow marks the run after its
+        push."""
+        def broken(**kw):
+            raise RuntimeError("no client for anyone")
+        self.assertEqual(self.main()[0], 0)
+        for job in self.routes["smart-working"]:
+            job["url"] = job.pop("hostedUrl")
+        made = []
+
+        def one_broken(**kw):
+            made.append(1)
+            if len(made) == 1:
+                return broken(**kw)
+            return client(self.routes)()
+        contract.HttpClient = one_broken
+        code, _, err = self.main(now=LATER)
+        self.assertEqual(code, contract.EXIT_A_CHECK_FAILED)
+        self.assertIn("the check of greenhouse failed", err)
+        log = json.loads(self.on_branch("data", self.logs()[-1]))
+        self.assertEqual(log["platforms"]["greenhouse"]["status"], contract.CHECK_FAILED)
+        self.assertEqual(log["platforms"]["lever"]["status"], "changed")
+        self.assertEqual(len(self.logs()), 2)
 
     def test_its_logs_never_land_among_the_fetch_run_logs(self):
         """The fetch counts failed projections in a row from logs-runs/. A

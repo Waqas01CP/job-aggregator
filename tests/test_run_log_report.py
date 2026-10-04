@@ -287,6 +287,26 @@ class TestReadingTheBranch(unittest.TestCase):
         self.assertIn("lever posting field hostedUrl", out)
         self.assertIn("lever changed", out)
 
+    def test_a_failed_or_unreachable_check_is_named_with_its_detail(self):
+        """ADR-0059: a platform whose check failed is named with where it
+        raised, after the next check has overwritten its latest status."""
+        failed = {"run_at": "2026-10-05T06:30:00Z", "test_mode": False,
+                  "platforms": {"greenhouse": {"status": "check failed",
+                                               "detail": "KeyError raised at contract.py:9 in shape"},
+                                "lever": {"status": "unreachable", "detail": "503 from the board"}}}
+        healed = {"run_at": "2026-10-06T06:30:00Z", "test_mode": False,
+                  "platforms": {"greenhouse": {"status": "unchanged", "changes": []},
+                                "lever": {"status": "unchanged", "changes": []}}}
+        storage.commit_files({
+            "logs-runs/p.json": dumps(log("2026-10-05T00:00:00Z", 12, {"greenhouse": 12})),
+            "logs-contract/20261005T063000Z.json": dumps(failed),
+            "logs-contract/20261006T063000Z.json": dumps(healed)}, "run", branch="data")
+        code, out, _ = self.run_tool("--repo", self.dir)
+        self.assertEqual(code, 0)
+        self.assertIn("greenhouse unchanged", out)
+        self.assertIn("greenhouse check failed: KeyError raised at contract.py:9 in shape", out)
+        self.assertIn("lever unreachable: 503 from the board", out)
+
     def test_no_contract_logs_says_so(self):
         storage.commit_files({"logs-runs/p.json": dumps(log("2026-09-17T00:00:00Z", 12,
                                                             {"greenhouse": 12}))},

@@ -59,7 +59,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT))
 
 from src import storage  # noqa: E402  the names come from the writer, never repeated
-from src.contract import LOG_DIR as CONTRACT_LOG_DIR  # noqa: E402
+from src.contract import CHECK_FAILED, LOG_DIR as CONTRACT_LOG_DIR  # noqa: E402
 
 RUNLOG_DIR = storage.RUNLOG_DIR
 BRANCHES = {False: storage.DATA_BRANCH, True: storage.TEST_DATA_BRANCH}
@@ -135,7 +135,7 @@ def contract_findings(named_texts, test_mode, since=None):
     """The contract check's logs, ADR-0036: how many checks, each platform's
     latest status, and every change found, oldest first. A log that cannot
     be read is counted, never fatal."""
-    found = {"checks": 0, "latest": {}, "changes": [], "unreadable": 0}
+    found = {"checks": 0, "latest": {}, "changes": [], "failures": [], "unreadable": 0}
     for name, text in sorted(named_texts):
         try:
             log = json.loads(text)
@@ -151,6 +151,12 @@ def contract_findings(named_texts, test_mode, since=None):
             found["latest"][platform] = (when, entry.get("status"))
             for change in entry.get("changes") or []:
                 found["changes"].append((when, platform, change))
+            # ADR-0059: a platform whose check failed, or whose board could
+            # not be answered, is named with its detail, not only counted in
+            # the latest status, which the next check overwrites.
+            if entry.get("status") in (CHECK_FAILED, "unreachable"):
+                found["failures"].append((when, platform, entry.get("status"),
+                                          entry.get("detail")))
     return found
 
 
@@ -172,6 +178,8 @@ def render_contract(found):
                             c.get("field"), shape(c.get("was")), shape(c.get("now"))))
     else:
         lines.append("  no field changed")
+    for when, platform, status, detail in found["failures"]:
+        lines.append("  %s  %s %s: %s" % (when.strftime("%Y-%m-%d %H:%M"), platform, status, detail))
     if found["unreadable"]:
         lines.append("  unreadable contract logs: %d" % found["unreadable"])
     return "\n".join(lines)

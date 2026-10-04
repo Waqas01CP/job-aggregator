@@ -24,6 +24,22 @@ finding or a finding as a crash. A board that cannot be reached is neither:
 it is logged, its last fingerprint is kept, and the next check compares
 against that.
 
+**Each source is checked on its own.** ADR-0059, the operator's decision of
+2026-10-04: one source's trigger must not affect the rest. Until this was built
+it could, three ways: an exception in one platform's check other than an
+HTTP error reached `main`, which exited 1 and committed no log, so every
+other platform's findings for the day were lost; and the platforms shared
+one budget of six requests and one circuit breaker, so two failing boards
+could spend the budget or open the breaker before the third was asked. Now
+each platform has its own client, so its own budget and breaker, and its own
+boundary: an exception there reads `check failed` for that platform alone,
+naming the exception's class and where it was raised but never its message,
+which could carry an aggregator's text into this public log. Its last
+fingerprint is kept, the other platforms are checked, the log is committed,
+and `main` exits 2. The workflow pushes on 2 and then marks the run failed,
+so a failed check never looks healthy and marking it never costs the other
+findings.
+
 **Its logs have their own directory**, `logs-contract/`, never `logs-runs/`.
 The fetch run counts failed projections in a row from the logs in
 `logs-runs/`, and a contract log there would read as a run that succeeded and
@@ -73,9 +89,16 @@ FINGERPRINT_FILE = "contract/fingerprint.json"
 REBASELINES_PATH = os.path.join(REPO_ROOT, "config", "contract_rebaselines.json")
 LOG_DIR = "logs-contract"
 
-# One request per platform, and a little room: the shared client counts every
-# attempt, including retries, against this.
-BUDGET = 2 * len(PLATFORMS)
+# One request per platform, and a little room: each platform's own client
+# counts every attempt, including retries, against this, so a failing board
+# spends its own allowance and never another platform's.
+PER_PLATFORM_BUDGET = 2
+
+# The exit code of a check that committed its log with at least one platform's
+# check failed: resumable, as the fetch run's 2 is, and marked failed by the
+# workflow after the push.
+EXIT_A_CHECK_FAILED = 2
+CHECK_FAILED = "check failed"
 
 TYPE_NAMES = {bool: "boolean", int: "number", float: "number", str: "string",
               list: "array", dict: "object"}
@@ -238,10 +261,22 @@ def first_board(boards, platform):
     return next((b for b in boards if b.platform == platform), None)
 
 
-def check(boards, client, stored, now, rebaselines=()):
+def where_raised(error):
+    """The innermost frame of an exception, as file, line and function: enough
+    to find the fault, and nothing from the response that caused it."""
+    frames = traceback.extract_tb(error.__traceback__)
+    if not frames:
+        return type(error).__name__
+    last = frames[-1]
+    return "%s raised at %s:%d in %s" % (type(error).__name__, os.path.basename(last.filename),
+                                        last.lineno, last.name)
+
+
+def check(boards, new_client, stored, now, rebaselines=()):
     """One check. Returns (the new fingerprint file, the log). Never reaches
     the branch; main does. A board that cannot be answered keeps its old
-    fingerprint and is logged as such."""
+    fingerprint and is logged as such, and so does one whose check raised.
+    `new_client` makes the client for one platform, called once each."""
     updated = dict(stored)
     log = {"run_at": iso(now), "platforms": {}}
     for platform, adapter in PLATFORMS.items():
@@ -252,32 +287,51 @@ def check(boards, client, stored, now, rebaselines=()):
         entry = {"board": board.board_id}
         log["platforms"][platform] = entry
         try:
-            payload = client.get_json(adapter.url_for(board), board.source)
-        except HttpError as e:
-            entry.update(status="unreachable", detail=str(e))
+            fp = check_one(platform, adapter, board, new_client(), stored, entry, now, rebaselines)
+        except Exception as e:
+            # Its own boundary: whatever one platform's check raises is that
+            # platform's failure, and the next platform is still asked.
+            entry.clear()
+            entry.update(board=board.board_id, status=CHECK_FAILED, detail=where_raised(e))
             continue
-        fp, count = fingerprint(adapter, payload)
-        entry["postings"] = count
-        if not count:
-            # Nothing to fingerprint the postings over. The response's own
-            # fields are still compared, since a renamed list lands here.
-            fp["posting"] = (stored.get(platform) or {}).get("posting", {})
-        previous = stored.get(platform)
-        since = (previous or {}).get("since")
-        if previous is None:
-            entry["status"] = "baseline"
-        else:
-            entry["changes"] = explain(platform, compare(previous, fp), rebaselines, since, now)
-            entry["status"] = ("unchanged" if not entry["changes"] else
-                               "re-baselined" if all(c.get("ours") for c in entry["changes"])
-                               else "changed")
-        # When this shape was accepted: now for a new or changed one, and for
-        # a stored one written before the acceptance was kept, so no entry
-        # older than the shape in force can explain a later change.
-        fp["since"] = iso(now) if previous is None or entry.get("changes") or not since \
-            else since
-        updated[platform] = fp
+        if fp is not None:
+            updated[platform] = fp
     return updated, log
+
+
+def check_one(platform, adapter, board, client, stored, entry, now, rebaselines):
+    """One platform's check, filling `entry`. Returns its new fingerprint, or
+    None when the board could not be answered and the old one stands."""
+    try:
+        payload = client.get_json(adapter.url_for(board), board.source)
+    except HttpError as e:
+        entry.update(status="unreachable", detail=str(e))
+        return None
+    fp, count = fingerprint(adapter, payload)
+    entry["postings"] = count
+    if not count:
+        # Nothing to fingerprint the postings over. The response's own
+        # fields are still compared, since a renamed list lands here.
+        fp["posting"] = (stored.get(platform) or {}).get("posting", {})
+    previous = stored.get(platform)
+    since = (previous or {}).get("since")
+    if previous is None:
+        entry["status"] = "baseline"
+    else:
+        entry["changes"] = explain(platform, compare(previous, fp), rebaselines, since, now)
+        entry["status"] = ("unchanged" if not entry["changes"] else
+                           "re-baselined" if all(c.get("ours") for c in entry["changes"])
+                           else "changed")
+    # When this shape was accepted: now for a new or changed one, and for
+    # a stored one written before the acceptance was kept, so no entry
+    # older than the shape in force can explain a later change.
+    fp["since"] = iso(now) if previous is None or entry.get("changes") or not since \
+        else since
+    return fp
+
+
+def failed_platforms(log):
+    return sorted(p for p, entry in log["platforms"].items() if entry.get("status") == CHECK_FAILED)
 
 
 def summarise(log):
@@ -324,7 +378,7 @@ def main(argv=None, now=None):
         boards = load_boards()
         stored = read_stored(test_mode, args.no_commit)
         now = now or datetime.now(timezone.utc)
-        updated, log = check(boards, HttpClient(budget=BUDGET), stored, now,
+        updated, log = check(boards, lambda: HttpClient(budget=PER_PLATFORM_BUDGET), stored, now,
                              load_rebaselines())
         log["test_mode"] = test_mode
         print(summarise(log))
@@ -344,6 +398,11 @@ def main(argv=None, now=None):
         print("the contract check itself failed; this is not a finding about any board",
               file=sys.stderr)
         return 1
+    failed = failed_platforms(log)
+    if failed:
+        print("the check of %s failed; the other platforms' findings are written, and the log "
+              "names where it raised" % ", ".join(failed), file=sys.stderr)
+        return EXIT_A_CHECK_FAILED
     return 0
 
 
