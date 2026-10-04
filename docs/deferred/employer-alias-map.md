@@ -66,7 +66,7 @@ applied to, and two identities for one application corrupt ADR-0044's
 comparisons and the operator's own history.
 
 **Or a third source class arrives.** Two aggregators multiply the pairs rather
-than adding to them.
+than adding to them. *(Annotated 2026-10-05: ADR-0059 adds aggregators within version 1 while keeping deduplication outside it. When this trigger fires, the revisit is raised with the operator; firing does not by itself bring deduplication into version 1.)*
 
 ## What revisiting would have to produce
 
@@ -95,3 +95,4 @@ brief of 2026-09-24, part 1, item E2.
 | Date | Change | Reason |
 |---|---|---|
 | 2026-10-04 | Outside version 1, by ADR-0059 | The operator's decision: duplicates across sources stay an open issue, not part of version 1. ADR-0059 also adds aggregators only after employer boards and only by measured yield, which slows the growth of duplicates while this waits. The trigger is unchanged |
+| 2026-10-05 | The third trigger read against ADR-0059 | Adding a second aggregator under ADR-0059 fires it, while ADR-0059 keeps deduplication out of version 1. Two live documents pointing different ways is raised, not resolved silently (ADR-RULES), so the trigger now says who decides. Found by an independent audit |

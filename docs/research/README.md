@@ -2,7 +2,7 @@
 
 Dated snapshots of what was found and when. Numbered by the order the pass was run, so a later reader knows what was known at each point.
 
-A research record is never edited to reflect a later finding. A new pass gets a new number and supersedes the earlier one, with links both directions, exactly as decision records do.
+A research record is never edited to reflect a later finding. A new pass gets a new number and supersedes the earlier one, with links both directions, exactly as decision records do. *(Annotated 2026-10-05: a claim later found wrong, whether it was wrong when written or the world has changed since, is recorded in that pass's own Corrections table, marked as which, as pass 0003's were on 2026-09-15, and the pass's text may be corrected with it. A new question, or enough change to make a pass unreliable as a whole, gets a new pass. Pass 0005 records the implementing seat's contradictions this way.)*
 
 **Findings go stale. The record does not.** A pass reporting an endpoint as free in September 2026 stays a true record of September 2026 even after that endpoint moves behind a paywall. Check the pass date before relying on any figure in one.
 

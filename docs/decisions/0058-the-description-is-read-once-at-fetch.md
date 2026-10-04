@@ -109,3 +109,4 @@ The operator's decisions: reading the description, 2026-10-02; the three-year li
 | Date | Change | Reason |
 |---|---|---|
 | 2026-10-03 | The commit guard this record's Confirmation names is built, in `storage.commit_files` | Written as though it existed; it did not. Found and built by the implementing seat the same evening on the operator's yes. ADR-0051's Changes carry the detail |
+| 2026-10-04 | The Confirmation's first clause annotated as wrong when written: it named a commit guard that did not exist until 2026-10-03 | From the implementing seat's report on Brief 9. The row of 2026-10-03 records the build; this one records the annotation |

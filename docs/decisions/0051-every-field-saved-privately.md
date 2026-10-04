@@ -63,7 +63,7 @@ Chosen option: "save everything on a branch of the private repository ADR-0047 a
 
 **The whole entry is carried and saved, never read.** `CLAUDE.md`'s rule that only the fields a filter consumes are read is untouched: the filters still read the 19 normalised keys, and nothing reads the saved entry at all today.
 
-**ADR-0011 is untouched.** The public branch keeps metadata only, and the code still refuses to commit a file holding description text or an aggregator's rows.
+**ADR-0011 is untouched.** The public branch keeps metadata only, and the code still refuses to commit a file holding description text or an aggregator's rows. *(Annotated 2026-10-05, wrong when written for description text: only an aggregator's rows were refused. True since the guard of 2026-10-03, commit `eb0134e`.)*
 
 ### Consequences
 
@@ -100,7 +100,7 @@ Bad, because it decides now, on no evidence, that no unbuilt rule will ever need
 
 ### Everything on the public branch
 
-Good, because it is one store, already built, already verified by the commit guard.
+Good, because it is one store, already built, already verified by the commit guard. *(Annotated 2026-10-05: no guard against description text existed until 2026-10-03.)*
 Bad, and decisively so: it republishes an employer's text and any personal data inside it, permanently and publicly, which is the exact thing ADR-0011 exists to prevent. The operator ruled it out himself once the difference was named.
 
 ### A local file the workflow discards
@@ -121,3 +121,4 @@ The operator's decision, 2026-09-25, in two halves: what to save, in his words a
 | Date | Change | Reason |
 |---|---|---|
 | 2026-10-03 | The commit guard the Confirmation names is built. `storage.commit_files`, through which every commit to the public branch passes, refuses the whole commit when a description field holds text anywhere, or when a record file holds markup or a string over 1,000 characters; the refusal names the file, field and record, never the text | The implementing seat found on 2026-10-03 that the clause described a guard that did not exist. Built the same evening on the operator's yes. The public branch passed it at `0b6bb51`, its longest string in a record file a 135-character location |
+| 2026-10-05 | Two more sentences that assumed the guard annotated: the Decision Outcome's statement that the code refused description text, and a Pros and Cons line calling the store already verified by the guard | Both were wrong when written and true only since 2026-10-03. The chat annotated only the Confirmation on 2026-10-04; an independent audit found the other two |

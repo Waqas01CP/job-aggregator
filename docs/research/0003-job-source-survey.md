@@ -6,7 +6,7 @@ status: current
 
 # Research 0003: Job source survey
 
-Run 2026-09-10. Findings reflect that date and nothing later. Quotas, terms and endpoints change; reconfirm before relying on any figure here.
+Run 2026-09-10. Findings reflect that date and nothing later. Quotas, terms and endpoints change; reconfirm before relying on any figure here. *(2026-10-05: pass 0005 corrects this pass on ai-jobs.net, Jobicy's delay and Rozee.pk's terms.)*
 
 **Question asked.** Which job aggregators and job boards expose a free, pollable endpoint that would extend coverage beyond the 53 employer ATS boards already in the registry?
 

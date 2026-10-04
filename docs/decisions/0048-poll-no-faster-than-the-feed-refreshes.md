@@ -44,7 +44,7 @@ There is a second question underneath, and it does not have an answer yet. If th
 
 Chosen option: "poll Himalayas on one run a day, at the existing morning slot".
 
-**We will poll a source no faster than its own documented refresh interval.** Where a source states one, that interval is the ceiling on how often the pipeline asks it. This is a property of the source, configured per source under ADR-0031, not a property of the run.
+**We will poll a source no faster than its own documented refresh interval.** Where a source states one, that interval is the ceiling on how often the pipeline asks it. This is a property of the source, configured per source under ADR-0031, not a property of the run. *(Annotated 2026-10-05: Himalayas is now the exception. Its documentation still states a 24-hour refresh, and it is polled on both runs because that refresh was measured not to describe the search endpoint. See Changes.)*
 
 **We will poll Himalayas on the morning run only.** The evening run skips it and says so in the run log, so a skipped source is visible rather than absent. *(Reversed for Himalayas on 2026-10-03, on the operator's yes: it is polled on both runs. The skip remains, as configuration. See Changes.)*
 
@@ -54,9 +54,9 @@ Chosen option: "poll Himalayas on one run a day, at the existing morning slot".
 
 ### Consequences
 
-Himalayas' request cost halves, from about 50 requests a day to about 25, against both ADR-0028's budget and a documented rate limit.
+Himalayas' request cost halves, from about 50 requests a day to about 25, against both ADR-0028's budget and a documented rate limit. *(Stale since 2026-10-03: Himalayas is polled on both runs. See Changes.)*
 
-Worst-case discovery latency for Himalayas rises from 12 hours to 24, and its feed is already up to 24 hours stale at the source, so the poll interval was never the binding constraint there. Measure A is defined over the pipeline as a whole and will now mix a 12-hour source class with a 24-hour one, which anyone reading that figure needs to know.
+Worst-case discovery latency for Himalayas rises from 12 hours to 24, and its feed is already up to 24 hours stale at the source, so the poll interval was never the binding constraint there. Measure A is defined over the pipeline as a whole and will now mix a 12-hour source class with a 24-hour one, which anyone reading that figure needs to know. *(Stale since 2026-10-03, as above.)*
 
 A source can be skipped on a run, which is a new state in the run log and a new thing a reader must not mistake for a failure.
 
@@ -64,7 +64,7 @@ The best polling moment stays unknown until the spike runs. Until then the morni
 
 ### Confirmation
 
-After one day: the morning run log shows Himalayas fetched, the evening run log shows it skipped with a reason, and the evening run's request count falls by about 25.
+After one day: the morning run log shows Himalayas fetched, the evening run log shows it skipped with a reason, and the evening run's request count falls by about 25. *(Stale since 2026-10-03, as above.)*
 
 **The check that can fail:** compare the identities Himalayas returns on the morning poll against those it returned the previous morning, for a week. If postings appear that are older than the previous poll and were absent from it, the one-poll-a-day assumption is losing rows and this record is wrong.
 
@@ -95,3 +95,4 @@ The `updatedAt` finding is in `docs/research/0003-job-source-survey.md`, in its 
 | 2026-09-26 | The 25-page cap becomes 40, and a walk gains a second stop rule: a page wholly older than the age limit ends it. The cap is now a runaway guard alone, not a normal terminator | A full week of the filtered feed is about 28 pages, measured 2026-09-26 as 25 pages holding 6.4 days, so a first walk with no mark needs more than 25 and an ordinary morning needs four to six. The age-limit stop is set one second beyond ADR-0052's seven days so a posting sitting exactly on the limit cannot end a walk before it is fetched. The old cap was doing two jobs, bounding a runaway and silently truncating every normal walk, and only the first is a job worth having |
 | 2026-10-03 | The reason restored on 2026-09-26 is half withdrawn. The search is not a daily snapshot, so a second poll would not read the same data. The cadence still loses nothing, because each morning walk reads back to its stop mark. Whether an evening poll is worth its cost is now a freshness question: the implementing seat measures Himalayas' publication-to-first-seen delay under morning-only polling, and the operator decides on that number. The 25-page arithmetic in the Assumptions is further out of date: the cap is 80 under ADR-0053 | One of the two facts the restoration rested on has failed, which is the second time this record's cadence assumption has been tested and found wrong in a week. The cadence is unchanged until the measurement. The operator's decision to measure first, 2026-10-03 |
 | 2026-10-03 | Himalayas is polled on both runs. The morning-only rule is reversed for it; the principle stands, and the skip stays configuration, a source's slots in `config/boards.json`, still tested with a morning-only board | Measured by the implementing seat over postings published 2026-09-27 to 10-02: under morning-only polling, Himalayas' publication to first seen had a median of 10.2 hours and a 90th percentile of 22.2, against Greenhouse's 4.6 and 9.7. An evening walk, simulated over the same postings, gives 6.4 and 12.1, for about 4 to 6 requests on an ordinary evening and no extra Airtable call. The documented daily cache does not describe the search endpoint, where postings were seen as little as 0.3 hours after publication. The operator's yes, "if justified", 2026-10-03. An amendment rather than a supersession: three of the four rules stand, and the principle fails only where a source's own documentation does |
+| 2026-10-05 | The row of 2026-10-03 miscounted: the Decision Outcome has three "We will" rules, and two stand, the principle and the unset offset, with the statement that ADR-0006's cadence is unchanged. The principle is annotated where Himalayas is its exception, and the Consequences and Confirmation lines the both-runs change made untrue are marked stale | The chat's errors and omissions, found by an independent audit run on the operator's request. Still an amendment, not a supersession |

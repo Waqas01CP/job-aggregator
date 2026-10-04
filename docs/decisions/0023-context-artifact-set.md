@@ -81,7 +81,7 @@ The `[VERIFIED]` and `[BELIEVED]` split means the state file is honest about its
 
 Auto Memory continues running outside all of this. Nothing here controls it, and any fact it holds is unreviewable.
 
-Trajectory remains uncovered. The prior project has no artifact for it either, so there is nothing to port. That is a known gap, not an oversight. *(Annotated 2026-10-04: covered by ADR-0059.)*
+Trajectory remains uncovered. The prior project has no artifact for it either, so there is nothing to port. That is a known gap, not an oversight. *(Annotated 2026-10-04: covered by ADR-0059.)* *(Corrected 2026-10-05: partly covered. ADR-0059 states the end state of version 1 and that later versions follow it; a trajectory beyond that is still uncovered.)*
 
 ### Confirmation
 
@@ -116,3 +116,4 @@ Reading order is authoritative per ADR-0022. Log format is ADR-0024.
 | 2026-09-24 | The onboarding order annotated as stale | `CLAUDE.md` now requires `MAP.md` and the seats file. Annotated by the implementing seat under ADR-RULES, which allows a stale or wrong fact to be annotated unasked; the Decision Outcome is untouched. Found by the corpus audit of 2026-09-23 |
 | 2026-09-25 | An unsourced adoption figure marked unmeasured | The corpus audit found "around 10% adoption" outside Assumptions with no basis. Annotated by the implementing seat under ADR-RULES, on Brief 7's corpus work; the Decision Outcome is untouched. |
 | 2026-10-04 | The end state this record kept open is decided, by ADR-0059: version 1 is the system working for the operator himself, fed by sources chosen for their value to him | The gap was confirmed open on 2026-09-11 and left until it could be decided deliberately. The operator decided it once the building had reached the point where the remaining pieces had to be sorted into finishing and later. This record's decisions about the artifact set are unchanged |
+| 2026-10-05 | The annotation of 2026-10-04 saying ADR-0059 covers the trajectory corrected to partly | This record keeps trajectory and end state as separate gaps. ADR-0059 decides the end state of version 1 and that later versions follow; nothing yet carries a trajectory beyond that. The chat's overstatement, found by an independent audit |

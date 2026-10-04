@@ -112,3 +112,7 @@ ADR-0004 owns the allowance, its once-ever grace period and where the counter is
 The operator's decisions, 2026-09-28: the design recorded now rather than built now, the build pre-authorised on a week's measurement, and the observation that makes the guard permanent rather than a one-off, which is that adding boards and platforms will raise the display again whatever it settles at today.
 
 ## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-10-04 | The week's measurement marked live only | ADR-0049, as amended 2026-10-03, asks every Confirmation clause to be a test or to say it can be seen only on live runs; this one is counts over production mornings |

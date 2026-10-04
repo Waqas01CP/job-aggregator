@@ -81,7 +81,7 @@ Decisions identified but not concluded.
 
 - Reuse boundary against the LinkedIn pipeline in fyp-career-guidance: which components are adopted, which are deliberately not.
 - Description matching, deferred by ADR-0016 until field coverage per platform is known. *(2026-10-03: built for three facts by ADR-0058; any further use of the description is a new decision.)*
-- Deduplication across source classes, and the employer alias map ADR-0019 makes necessary.
+- Deduplication across source classes, and the employer alias map ADR-0019 makes necessary. *(2026-10-04: outside version 1 by ADR-0059.)*
 - Whether Rozee.pk is added as a source. robots.txt permits the job paths and the terms carry no automated-access clause; a sitemap index publishes job URLs daily with the title in the slug. *(2026-10-04: decided against automated use by ADR-0059. Rozee's privacy policy prohibits use of its material in a networked computer environment, which pass 0003 had not fully reviewed; research 0005.)*
 - An end-state document stating what the finished system is. Confirmed genuinely open by ADR-0023: no prior art exists in either project. *(Decided 2026-10-04 by ADR-0059.)*
 - An in-flight register separate from `STATE.md`, wanted once work is in flight.
