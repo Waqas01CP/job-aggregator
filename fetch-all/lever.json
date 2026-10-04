@@ -1643,5 +1643,41 @@
    "US"
   ],
   "workplace": "onsite"
+ },
+ {
+  "identity": "lever:5e9b8865-cd10-4924-bdd0-0e432bfaf15f",
+  "source": "lever",
+  "board_id": "lever:smart-working-solutions",
+  "external_id": "5e9b8865-cd10-4924-bdd0-0e432bfaf15f",
+  "employer": "Smart Working Solutions",
+  "employer_provenance": "slug",
+  "title": "Sr. PHP Symfony Engineer (Remote, Full-Time) [AR024]",
+  "title_normalised": "Sr. PHP Symfony Engineer (Remote, Full-Time) [AR024]",
+  "location": "London",
+  "published_at": "2026-10-04T16:11:09.777000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-10-04T17:21:01.851866Z",
+  "ordering_date": "2026-10-04T16:11:09.777000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/smart-working-solutions/5e9b8865-cd10-4924-bdd0-0e432bfaf15f",
+  "url_provenance": "payload",
+  "stated_experience": [
+   8,
+   5,
+   7,
+   3,
+   4,
+   2,
+   1
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "GB"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null
  }
 ]
