@@ -76,7 +76,7 @@ ADR-0055's two mechanisms are the other lever on the same number, and they are t
 
 ### Confirmation
 
-**The week's measurement is the first check, and it is the one that decides the build.** Morning group counts and groups kept per day, reported from the run logs, with the implied steady state stated as a number rather than as a direction.
+**The week's measurement is the first check, and it is the one that decides the build.** Morning group counts and groups kept per day, reported from the run logs, with the implied steady state stated as a number rather than as a direction. *(Live only, marked 2026-10-04 under ADR-0049: counts over a clean week of production mornings, due 2026-10-05.)*
 
 **When the delta is built, these must hold, each with a mutation that breaks it.**
 

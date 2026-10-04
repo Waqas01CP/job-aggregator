@@ -32,7 +32,7 @@ Since then the rule has grown by four more decisions: the fourth audit's refinem
 - A place the rule cannot name is more likely one he can take than one he cannot. **Stated** by the operator: unclear is kept. Confirmed by him on 2026-09-26 for "Kingswinford", on site in England, which the lists cannot name.
 - When the text names nothing the rule knows, the source's structured place is where the role is open. **Measured**: over the saved postings it newly drops 67 that were kept, Lever 42 by country and Greenhouse 25, 19 by office or country and 6 by a stated hybrid workplace, and keeps none newly; the only ones naming Pakistan are 6 hybrid Islamabad roles, which this record drops on purpose. The implementing seat found no newly dropped description mentioning "anywhere" or "worldwide". The architecture chat checked independently on 2026-10-03, over the current listings of all eleven employer boards, every posting naming no Pakistani place and not plainly remote, against about twenty-five phrases of global or open hiring: every match was company boilerplate or a restriction to another region, and none was a job he could take.
 - Time zones about working hours do not affect him. **Stated**: "time zone is not an issue", 2026-09-26, and "i am open to working at any time", 2026-10-03.
-- How often a time zone is used as a residence requirement rather than as working hours. **Not established.** It is measured before any rule is built.
+- How often a time zone is used as a residence requirement rather than as working hours. **Not established.** It is measured before any rule is built. *(Annotated 2026-10-04: **measured** by the implementing seat over the 2,271 saved postings. 211 name a time zone; 14 state one as a residence requirement excluding Pakistan, 6 Greenhouse and 8 Himalayas, with up to 4 more the classifier missed; every one is already dropped by another rule, most on the title. Of the 57 kept apart from age, 3 name a time zone, all about working hours. No rule is warranted.)*
 - The configured place lists name the closed cases well enough. **Not established**, and safe either way: what they cannot name is kept.
 
 ## Considered Options
@@ -56,7 +56,7 @@ Chosen option: "the location text, then the source's structured place, the state
 3. **The workplace**, as the source states it or as ADR-0058 reads it from the description. On site or hybrid makes a Pakistani city other than Karachi closed. A stated remote workplace adds nothing.
 4. **The description's requirements**, as ADR-0058 reads them: a posting is dropped when every place it requires a right to work, citizenship or residence in is closed. "No visa sponsorship" is never read as a requirement, because on a worldwide remote role it only says nobody is relocated. Citizenship of a specific other country drops a posting. A security clearance is not read until it becomes common.
 
-**We will never exclude on a time zone that is about working hours.** A time zone used as a residence requirement, "only applicants located in these time zones", is a location restriction in substance. It is built only after the implementing seat measures how often it occurs; until then such a posting is kept.
+**We will never exclude on a time zone that is about working hours.** A time zone used as a residence requirement, "only applicants located in these time zones", is a location restriction in substance. It is built only after the implementing seat measures how often it occurs; until then such a posting is kept. *(Measured 2026-10-03: no posting he would see turns on it, so no rule is built. Re-measured on request.)*
 
 **We will never filter on job type.** Internships, contracts, part-time, temporary and volunteer roles all stay. In his words, volunteering "might be a good opportunity and can become a stepping stone".
 
@@ -72,7 +72,7 @@ ADR-0041's warning stands and is answered rather than ignored: a text matcher dr
 
 On Himalayas this rule drops nothing by construction, because ADR-0053 asks the source for Pakistan-eligible postings only. A drop count of zero there is the endpoint working, not the rule failing.
 
-A residence requirement phrased as a time zone is kept until it is measured. That shows him a job he cannot take, which is the lesser of the two errors and still breaks the first half of his sentence.
+A residence requirement phrased as a time zone is kept until it is measured. That shows him a job he cannot take, which is the lesser of the two errors and still breaks the first half of his sentence. *(Annotated 2026-10-04: measured; none reaches him today.)*
 
 Rules that need a field a stored row lacks judge postings first seen after them, and older rows leave by the thirty-day clock (ADR-0040).
 
@@ -86,11 +86,11 @@ Rules that need a field a stored row lacks judge postings first seen after them,
 
 **"No visa sponsorship" must never drop a posting, and a working-hours time zone must never drop one.**
 
-**ADR-0041's corpus check stands as a regression check**: on the saved 91-posting Himalayas corpus, exactly 74 drop and 17 are kept. It held exactly on 2026-09-30.
+**ADR-0041's corpus check stands as a regression check**: on the saved 91-posting Himalayas corpus, exactly 74 drop and 17 are kept. It held exactly on 2026-09-30. *(Live only, marked 2026-10-04 under ADR-0049: the 91 postings are aggregator content, which ADR-0020 keeps out of this repository, so the check runs by hand against the private copy.)*
 
-**Every drop must name its field and quote the home country from configuration**, and ADR-0031's audit must still find no country named in code.
+**Every drop must name its field and quote the home country from configuration**, and ADR-0031's audit must still find no country named in code. *(Held since 2026-10-03: the audit now reads the 366 configured places and codes, and on its first run found countries named in the implementing seat's own `src/description.py`, since replaced by generic patterns with no change over the 2,271 saved postings.)*
 
-**Live only:** the residence-by-time-zone measurement, before any rule.
+**Live only:** the residence-by-time-zone measurement, before any rule. *(Reported 2026-10-03; see the Assumptions.)*
 
 ## Pros and Cons of the Options
 
@@ -118,3 +118,7 @@ ADR-0058 reads the description that items 3 and 4 depend on. ADR-0053 is why Him
 The operator's decisions this record carries: D13, 2026-09-26, and his two judgements of that day; job types and time zones, 2026-10-02; the structured place and stated workplace, 2026-10-02; the description's requirements, 2026-10-02, with "if the job is remote but is us only then it should not be shown"; citizenship and security clearance, 2026-10-03; and his clarification of time zones, 2026-10-03. The fourth audit's F4 refinements of 2026-10-01 were measured over 413 public locations, 118 Himalayas and the 146-entry corpus with no verdict changed.
 
 ## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-10-04 | The residence-by-time-zone measurement of 2026-10-03 is in, and no rule is built; ADR-0031's audit now reads the configured places; and the corpus check of 74 and 17 is marked live only | The measurement is the condition this record set before any rule, and no posting he would see turns on it. The audit read no places until the implementing seat extended it, which is how it found the country names in its own code. The corpus check's postings cannot enter this repository |

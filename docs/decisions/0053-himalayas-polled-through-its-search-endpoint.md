@@ -45,7 +45,7 @@ It broke exactly there. Measured 2026-09-26: the 500-posting page cap held on th
 
 Chosen option: "poll the search endpoint, filtered to Pakistan, on the morning run". The operator's decision, 2026-09-26: "himalays search: go."
 
-**The board is `himalayas:pakistan`** and it is polled with `country=Pakistan&sort=recent&page=N`, on the morning run only. ADR-0048's cadence is kept, with a new reason: the endpoint behaves as a daily snapshot, so a second poll would read the same data.
+**The board is `himalayas:pakistan`** and it is polled with `country=Pakistan&sort=recent&page=N`, on the morning run only. ADR-0048's cadence is kept, with a new reason: the endpoint behaves as a daily snapshot, so a second poll would read the same data. *(Annotated 2026-10-04: polled on both runs since 2026-10-03; see ADR-0048's Changes.)*
 
 **The walk pages by number and reads every page whole.** The endpoint pins four items at the top, so order is not strictly monotonic and a stop rule that trusted the first old posting it saw would end the walk on page one. The rule reads the page and then decides.
 
@@ -81,11 +81,11 @@ ADR-0028's budget of 500 requests a run is untouched. The morning run's total wa
 
 **The age limit must stop a walk, and must not stop it one posting early.** A page wholly older than the limit ends the walk; a posting sitting exactly on seven days does not.
 
-**The snapshot assumption must be measured as a series, not once.** Log the newest posting and the reported total on both runs for a week, and report whether the evening ever differs from the morning. This is the check that failed last time, and it failed because one reading was treated as a property.
+**The snapshot assumption must be measured as a series, not once.** Log the newest posting and the reported total on both runs for a week, and report whether the evening ever differs from the morning. This is the check that failed last time, and it failed because one reading was treated as a property. *(Live only, marked 2026-10-04 under ADR-0049: a property of the live endpoint across days. Answered 2026-10-03: not a snapshot.)*
 
 **The agreement check must be seen disagreeing.** Hand it a browse posting that the search filter excludes and that ADR-0041 would admit, and confirm it reports. A check that only ever sees agreement is asserting nothing.
 
-**Pages per morning must be reported for a week**, so that four to six is measured rather than projected, and so the cap is shown to be unreachable in normal operation.
+**Pages per morning must be reported for a week**, so that four to six is measured rather than projected, and so the cap is shown to be unreachable in normal operation. *(Live only, marked 2026-10-04 under ADR-0049: a count over production mornings.)*
 
 ## Pros and Cons of the Options
 
@@ -119,4 +119,5 @@ The operator's decisions: the move to search, 2026-09-26, and the catch-up walk 
 | Date | Change | Reason |
 |---|---|---|
 | 2026-10-02 | The runaway cap goes from 40 pages to 80 | A week of the eligible feed no longer fits in 40 pages: about 41 at the rate of 10-01 and 10-02. Only a walk that must read back a week meets the cap, a first walk or recovery after failed saves, and such a walk was stopping short of the age limit. 80 is about two weeks at that rate and 80 requests against the run's 500. The operator's decision |
-| 2026-10-03 | Two facts corrected and one recorded. The daily-snapshot assumption is false; the week arithmetic behind the cap is out of date; and in practice a Himalayas posting closes by its own expiry date, which is 60 days after posting on 99 of 100 current postings, so the 15-day and 30-day clocks act first | The snapshot reading was one reading, and the Confirmation's weekly report is what showed it wrong. The closure fact follows from the fix of 2026-10-02: a walk's mark advances daily, so a Himalayas posting's absence is never observed across twelve covering runs. That is ADR-0050's rule working as written, since a run counts only when its read reached the posting's date; the defect before the fix was the code taking a pinned old posting as the walk's reach, which marked 47 open rows closed for a day |
+| 2026-10-03 | Two facts corrected and one recorded. The daily-snapshot assumption is false; the week arithmetic behind the cap is out of date; and in practice a Himalayas posting closes by its own expiry date, which is 60 days after posting on 99 of 100 current postings, so the 15-day and 30-day clocks act first | The snapshot reading was one reading, and the Confirmation's weekly report is what showed it wrong. The closure fact follows from the fix of 2026-10-02: a walk's mark advances daily, so a Himalayas posting's absence is never observed across twelve covering runs. That is ADR-0050's rule working as written, since a run counts only when its read reached the posting's date; the defect before the fix was the code taking a pinned old posting as the walk's reach, which marked 47 open rows closed for a day *(corrected 2026-10-04: 10 were marked on 10-01 and 37 on 10-02, all cleared on 10-03, so the first 10 were closed for two days)* |
+| 2026-10-03 | Polled on both runs, by ADR-0048's amendment. The agreement check's twelve-hour wait now usually settles at the next run, the search having trailed at most 6.1 hours; and the agreement check's two private files moved from `outcomes/` to the private store's `agreement/` | The freshness measurement and the operator's yes are in ADR-0048. The two files are not stores, and the reasoning ADR-0055 applies to the clearing list holds for them: a file in `outcomes/` will one day be read as a store |

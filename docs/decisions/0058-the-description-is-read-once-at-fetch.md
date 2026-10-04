@@ -71,7 +71,7 @@ Rows stored before these rules carry none of the derived values, so they keep th
 
 ### Confirmation
 
-**No derived value may be anything but a number, a configured place name or a flag.** A test asserts the type and vocabulary of each, and the commit guard refuses description text on the public branch.
+**No derived value may be anything but a number, a configured place name or a flag.** A test asserts the type and vocabulary of each, and the commit guard refuses description text on the public branch. *(Annotated 2026-10-04, wrong when written: the guard did not exist; built 2026-10-03, commit `eb0134e`. See Changes.)*
 
 **The experience rule's edges**: a range by its low end; preferred counted like required; a fresh-graduate line setting no minimum; 0 to 1 required with 3 preferred passing; 4 or more dropping.
 
@@ -105,3 +105,7 @@ ADR-0016 deferred this and carries a pointer here. ADR-0051 keeps the text this 
 The operator's decisions: reading the description, 2026-10-02; the three-year limit and preferred counting, 2026-10-02; fresh graduates, citizenship and security clearance, 2026-10-03.
 
 ## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-10-03 | The commit guard this record's Confirmation names is built, in `storage.commit_files` | Written as though it existed; it did not. Found and built by the implementing seat the same evening on the operator's yes. ADR-0051's Changes carry the detail |

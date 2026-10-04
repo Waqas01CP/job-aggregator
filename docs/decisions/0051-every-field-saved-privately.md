@@ -87,7 +87,7 @@ Two stores must now both succeed for a run to be clean, so there is one more way
 
 **On-demand downloads must be refused for the whole save**, not merely avoided, so that a future change cannot reintroduce the failure quietly.
 
-**The public branch must be seen refusing description text**, which is ADR-0011's and ADR-0020's existing commit guard, re-run now that descriptions exist in the process.
+**The public branch must be seen refusing description text**, which is ADR-0011's and ADR-0020's existing commit guard, re-run now that descriptions exist in the process. *(Annotated 2026-10-04, wrong when written: no such guard existed, and the row's shape was what kept descriptions out. Built 2026-10-03 in `storage.commit_files`, commit `eb0134e`, so the clause is now true. See Changes.)*
 
 **A `pending: 0` run must write no file at all**, so that an idle day costs nothing.
 
@@ -117,3 +117,7 @@ ADR-0047 owns the private repository this branch lives in, and now holds ATS des
 The operator's decision, 2026-09-25, in two halves: what to save, in his words above, and where, on the seat's recommendation once he had named the difference between public and private himself. The stop-mark coupling is the implementing seat's design of 2026-09-27, taken while fixing the failure, and it is recorded here because it changes what a save means rather than only how one is written.
 
 ## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-10-03 | The commit guard the Confirmation names is built. `storage.commit_files`, through which every commit to the public branch passes, refuses the whole commit when a description field holds text anywhere, or when a record file holds markup or a string over 1,000 characters; the refusal names the file, field and record, never the text | The implementing seat found on 2026-10-03 that the clause described a guard that did not exist. Built the same evening on the operator's yes. The public branch passed it at `0b6bb51`, its longest string in a record file a 135-character location |
