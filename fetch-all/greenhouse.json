@@ -20514,5 +20514,31 @@
   "stated_levels": null,
   "places": null,
   "workplace": null
+ },
+ {
+  "identity": "greenhouse:4988678101",
+  "source": "greenhouse",
+  "board_id": "greenhouse:veeamsoftware",
+  "external_id": "4988678101",
+  "employer": "Veeam Software",
+  "employer_provenance": "payload",
+  "title": "Systems Engineer",
+  "title_normalised": "Systems Engineer",
+  "location": "Tokyo, Japan",
+  "published_at": "2026-10-05T02:43:09Z",
+  "published_field": "first_published",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-05T04:23:51.828740Z",
+  "ordering_date": "2026-10-05T02:43:09Z",
+  "ordering_date_source": "publication",
+  "url": "https://job-boards.eu.greenhouse.io/veeamsoftware/jobs/4988678101",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": null,
+  "places": null,
+  "workplace": "Hybrid",
+  "required_places": null,
+  "described_workplace": null
  }
 ]
