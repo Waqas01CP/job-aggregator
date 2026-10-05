@@ -1679,5 +1679,38 @@
   "workplace": "remote",
   "required_places": null,
   "described_workplace": null
+ },
+ {
+  "identity": "lever:674e8c63-aba6-48ac-9f8d-42d4398e91c0",
+  "source": "lever",
+  "board_id": "lever:smart-working-solutions",
+  "external_id": "674e8c63-aba6-48ac-9f8d-42d4398e91c0",
+  "employer": "Smart Working Solutions",
+  "employer_provenance": "slug",
+  "title": "Senior PHP Backend Engineer (Remote, Full-Time) [AR025]",
+  "title_normalised": "Senior PHP Backend Engineer (Remote, Full-Time) [AR025]",
+  "location": "India",
+  "published_at": "2026-10-05T12:50:10.890000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-10-05T21:06:02.216730Z",
+  "ordering_date": "2026-10-05T12:50:10.890000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/smart-working-solutions/674e8c63-aba6-48ac-9f8d-42d4398e91c0",
+  "url_provenance": "payload",
+  "stated_experience": [
+   8,
+   5,
+   3,
+   2
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "IN"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null
  }
 ]
