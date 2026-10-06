@@ -1712,5 +1712,66 @@
   "workplace": "remote",
   "required_places": null,
   "described_workplace": null
+ },
+ {
+  "identity": "lever:3e2a7d86-7898-4488-9581-19b736b2e480",
+  "source": "lever",
+  "board_id": "lever:smart-working-solutions",
+  "external_id": "3e2a7d86-7898-4488-9581-19b736b2e480",
+  "employer": "Smart Working Solutions",
+  "employer_provenance": "slug",
+  "title": "Senior ML Engineer (Remote, Contract) [HR216]",
+  "title_normalised": "Senior ML Engineer (Remote, Contract) [HR216]",
+  "location": "India",
+  "published_at": "2026-10-06T07:51:02.780000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-10-06T18:50:32.950323Z",
+  "ordering_date": "2026-10-06T07:51:02.780000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/smart-working-solutions/3e2a7d86-7898-4488-9581-19b736b2e480",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "IN"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null
+ },
+ {
+  "identity": "lever:078112bd-2d26-4313-b46f-a0f65822d6fd",
+  "source": "lever",
+  "board_id": "lever:smart-working-solutions",
+  "external_id": "078112bd-2d26-4313-b46f-a0f65822d6fd",
+  "employer": "Smart Working Solutions",
+  "employer_provenance": "slug",
+  "title": "Senior PHP Engineer (Remote, Full-Time) [AR025] (PK)",
+  "title_normalised": "Senior PHP Engineer (Remote, Full-Time) [AR025] (PK)",
+  "location": "Pakistan",
+  "published_at": "2026-10-06T07:20:17.077000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-10-06T18:50:32.950323Z",
+  "ordering_date": "2026-10-06T07:20:17.077000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/smart-working-solutions/078112bd-2d26-4313-b46f-a0f65822d6fd",
+  "url_provenance": "payload",
+  "stated_experience": [
+   8,
+   5,
+   3,
+   2
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "PK"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null
  }
 ]
