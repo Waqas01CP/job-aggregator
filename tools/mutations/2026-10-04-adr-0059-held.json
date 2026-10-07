@@ -2,8 +2,8 @@
   {
     "label": "a platform the fetch polls has no contract check",
     "path": "src/contract.py",
-    "find": "PLATFORMS = {\"greenhouse\": greenhouse, \"lever\": lever, \"himalayas\": himalayas}",
-    "replace": "PLATFORMS = {\"greenhouse\": greenhouse, \"lever\": lever}"
+    "find": "PLATFORMS = {\"greenhouse\": greenhouse, \"lever\": lever, \"himalayas\": himalayas, \"manatal\": manatal}",
+    "replace": "PLATFORMS = {\"greenhouse\": greenhouse, \"lever\": lever, \"himalayas\": himalayas}"
   },
   {
     "label": "an aggregator's rows are ordered by first sight, not their date",

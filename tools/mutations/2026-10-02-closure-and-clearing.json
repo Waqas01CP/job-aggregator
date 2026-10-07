@@ -14,8 +14,8 @@
   {
     "label": "a log with no walk record counts",
     "path": "src/closure.py",
-    "find": "    if not isinstance(walk, dict) or not published:\n        return False",
-    "replace": "    if not isinstance(walk, dict) or not published:\n        return True"
+    "find": "    if not isinstance(walk, dict):\n        return False",
+    "replace": "    if not isinstance(walk, dict):\n        return True"
   },
   {
     "label": "a whole-feed walk proves nothing",

@@ -31,7 +31,8 @@ LATER = datetime(2026, 9, 25, 6, 30, tzinfo=timezone.utc)
 GH = Board(platform="greenhouse", slug="careem")
 LV = Board(platform="lever", slug="smart-working-solutions")
 HIM = Board(platform="himalayas", slug="browse")
-BOARDS = [GH, LV, HIM]
+MN = Board(platform="manatal", slug="premiernx", employer_alias="Premier NX")
+BOARDS = [GH, LV, HIM, MN]
 
 
 class FakeResponse:
@@ -64,7 +65,8 @@ class FakeSession:
 def responses():
     return {"careem": cassette("greenhouse-careem.json"),
             "smart-working": cassette("lever-smart-working-solutions.json"),
-            "himalayas": cassette("himalayas-browse.json")}
+            "himalayas": cassette("himalayas-browse.json"),
+            "careers-page.com": cassette("manatal-premiernx-page1.json")}
 
 
 def client(routes, max_attempts=1, budget=contract.PER_PLATFORM_BUDGET):

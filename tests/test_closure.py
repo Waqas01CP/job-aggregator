@@ -122,6 +122,19 @@ class TestAbsence(unittest.TestCase):
         c = closure(logs, {"himalayas:1": "2026-09-21T03:40:00Z"})
         self.assertEqual(c.closed_on(row("himalayas:1", board=HIM)), ("2026-09-25", "absent"))
 
+    def test_a_posting_with_no_date_closes_on_walks_that_read_the_whole_feed(self):
+        """Manatal's postings carry no date and its walk reads every page.
+        Asked for the date first, a posting with none could never close by
+        absence; a walk that reached the end read it, dated or not. A walk
+        stopped at a mark still proves nothing about it."""
+        dateless = row("himalayas:1", board=HIM, published=None)
+        ended = [log(t, himalayas=("ok", 60, ("end", "2026-09-24T00:00:00Z"))) for t in MORNINGS[:4]]
+        self.assertEqual(closure(ended, {"himalayas:1": "2026-09-21T03:40:00Z"}).closed_on(dateless),
+                         ("2026-09-25", "absent"))
+        marked = [log(t, himalayas=("ok", 60, ("mark", "2026-09-10T00:00:00Z"))) for t in MORNINGS]
+        self.assertEqual(closure(marked, {"himalayas:1": "2026-09-21T03:40:00Z"}).closed_on(dateless),
+                         (None, None))
+
     def test_a_capped_walk_never_counts(self):
         """Stopped by the page cap, the walk proved nothing about what lies
         beyond it. Mutation: "a capped walk counts as reaching back"."""

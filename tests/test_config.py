@@ -21,6 +21,11 @@ from src.config import (Board, ConfigError, boards_missing_employer_alias,
 REGISTRY_GREENHOUSE = {"veeamsoftware", "careem", "speechify", "brkz", "globalli",
                        "gomotive", "joblogic", "banyancanopygroup", "coderoad"}
 REGISTRY_LEVER = {"smart-working-solutions", "spreetail"}
+# The operator's registry, Parts 3 and 11, read 2026-10-04: ADR-0059's first
+# platform by measured yield, built 2026-10-07.
+REGISTRY_MANATAL = {"abacus-consulting-3", "ahdus-technology-2", "spursol", "premiernx",
+                    "itc-worldwide-info", "hazen-technologies", "codedistrict", "wadic-2",
+                    "gigalabs-private-ltd"}
 
 
 def write_config(boards):
@@ -37,13 +42,14 @@ class TestRealConfig(unittest.TestCase):
     def setUp(self):
         self.boards = load_boards()
 
-    def test_eleven_ats_boards_plus_the_conditional_aggregator(self):
-        """ADR-0009 fixes the slice at eleven employer boards. Himalayas is
-        the conditional twelfth from ADR-0019 and is an aggregator, not an
-        employer board, so it is counted separately."""
+    def test_twenty_ats_boards_plus_the_conditional_aggregator(self):
+        """ADR-0009 fixed the slice at eleven employer boards, and ADR-0059's
+        Manatal adds nine, on 2026-10-07. Himalayas is the conditional
+        aggregator from ADR-0019, not an employer board, so it is counted
+        separately."""
         ats = [b for b in self.boards if b.source_class == "ats"]
         aggregators = [b for b in self.boards if b.source_class == "aggregator"]
-        self.assertEqual(len(ats), 11)
+        self.assertEqual(len(ats), 20)
         # The search endpoint filtered to the operator's country, since
         # 2026-09-26: the slug is the country.
         self.assertEqual([b.slug for b in aggregators], ["pakistan"])
@@ -54,6 +60,8 @@ class TestRealConfig(unittest.TestCase):
         lv = {b.slug for b in self.boards if b.platform == "lever"}
         self.assertEqual(gh, REGISTRY_GREENHOUSE)
         self.assertEqual(lv, REGISTRY_LEVER)
+        self.assertEqual({b.slug for b in self.boards if b.platform == "manatal"},
+                         REGISTRY_MANATAL)
 
     def test_only_speechify_is_normalised(self):
         """ADR-0027: a normalisation is applied only where it was measured."""
@@ -77,7 +85,7 @@ class TestRealConfig(unittest.TestCase):
     def test_source_is_the_platform(self):
         """ADR-0020 stores one file per source, so source names the file."""
         self.assertEqual({b.source for b in self.boards},
-                         {"greenhouse", "lever", "himalayas"})
+                         {"greenhouse", "lever", "himalayas", "manatal"})
 
     def test_source_class_separates_employer_boards_from_aggregators(self):
         """ADR-0020 routes raw storage by source class: employer rows to the
@@ -86,6 +94,7 @@ class TestRealConfig(unittest.TestCase):
         self.assertEqual(by_platform["greenhouse"], "ats")
         self.assertEqual(by_platform["lever"], "ats")
         self.assertEqual(by_platform["himalayas"], "aggregator")
+        self.assertEqual(by_platform["manatal"], "ats")
 
     def test_only_named_ats_sources_may_be_published(self):
         """ADR-0020, failing closed: a source nobody named stays local. Jobicy

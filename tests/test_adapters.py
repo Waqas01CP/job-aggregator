@@ -14,7 +14,7 @@ from datetime import datetime, timezone
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from src.adapters import greenhouse, lever
+from src.adapters import greenhouse, lever, manatal
 from src.adapters.base import AdapterError, Posting
 from src.config import Board
 
@@ -216,6 +216,109 @@ class TestLever(unittest.TestCase):
     def test_location_comes_from_categories(self):
         p = lever.parse(self.payload, LV_BOARD).postings[0]
         self.assertTrue(p.location)
+
+
+MN_BOARD = Board(platform="manatal", slug="premiernx", employer_alias="Premier NX")
+MN_NO_ALIAS = Board(platform="manatal", slug="premiernx")
+
+
+class TestManatal(unittest.TestCase):
+    """The career site's endpoint, which the operator accepted for all nine
+    registry boards on 2026-10-07. Cassettes: Premier NX's two pages of
+    2026-10-04, sanitised."""
+
+    def setUp(self):
+        self.page1 = cassette("manatal-premiernx-page1.json")
+        self.page2 = cassette("manatal-premiernx-page2.json")
+
+    def test_url_pages_from_one(self):
+        self.assertEqual(manatal.url_for(MN_BOARD),
+                         "https://www.careers-page.com/api/v1.0/c/premiernx/jobs/?page=1")
+        self.assertEqual(manatal.url_for(MN_BOARD, 2),
+                         "https://www.careers-page.com/api/v1.0/c/premiernx/jobs/?page=2")
+
+    def test_the_next_page_is_read_from_next_and_the_last_has_none(self):
+        self.assertEqual(manatal.next_cursor(self.page1), 2)
+        self.assertIsNone(manatal.next_cursor(self.page2))
+        self.assertIsNone(manatal.next_cursor({"next": "https://x.test/?page=two"}))
+
+    def test_a_walk_never_stops_on_a_mark(self):
+        """No dates, so nothing says where to stop: every page is read."""
+        self.assertFalse(manatal.stop_after(self.page1, "2099-01-01T00:00:00Z"))
+
+    def test_parses_every_posting_on_both_pages(self):
+        for page, n in ((self.page1, 20), (self.page2, 12)):
+            result = manatal.parse(page, MN_BOARD)
+            self.assertEqual(len(result.postings), n)
+            self.assertEqual(result.problems, [])
+
+    def test_no_posting_carries_a_date(self):
+        """Measured over 779 postings on 2026-10-04: none. A date guessed
+        here would be one Manatal never gave."""
+        for p in manatal.parse(self.page1, MN_BOARD).postings:
+            self.assertIsNone(p.published_at)
+            self.assertIsNone(p.published_field)
+
+    def test_the_link_opens_the_postings_own_page(self):
+        """By its `hash`, which opened the posting on 2026-10-07; its `id`
+        does not."""
+        entry = self.page1["results"][0]
+        p = manatal.parse(self.page1, MN_BOARD).postings[0]
+        self.assertEqual(p.url, "https://www.careers-page.com/premiernx/job/%s" % entry["hash"])
+        self.assertEqual(p.url_provenance, "constructed")
+        self.assertEqual(p.external_id, str(entry["id"]))
+
+    def test_employer_from_the_payload_else_the_alias_else_unresolved(self):
+        """ADR-0026: a posting naming its organisation keeps it; one naming
+        none takes the configured alias and says so; without an alias it is
+        recorded as unresolved, never guessed from the slug."""
+        named = {"results": [{"id": 1, "hash": "H1", "position_name": "AI Engineer",
+                              "organization_name": "Acme"}]}
+        bare = {"results": [{"id": 2, "hash": "H2", "position_name": "AI Engineer"}]}
+        p = manatal.parse(named, MN_BOARD).postings[0]
+        self.assertEqual((p.employer, p.employer_provenance), ("Acme", "payload"))
+        p = manatal.parse(bare, MN_BOARD).postings[0]
+        self.assertEqual((p.employer, p.employer_provenance), ("Premier NX", "slug"))
+        p = manatal.parse(bare, MN_NO_ALIAS).postings[0]
+        self.assertEqual((p.employer, p.employer_provenance), (None, None))
+
+    def test_the_place_is_the_shown_location_else_its_parts(self):
+        shown = {"results": [{"id": 1, "hash": "H", "position_name": "E",
+                              "location_display": "Lahore, Punjab, Pakistan", "country": "Pakistan"}]}
+        parts = {"results": [{"id": 1, "hash": "H", "position_name": "E", "city": "Karachi",
+                              "state": "", "country": "Pakistan"}]}
+        p = manatal.parse(shown, MN_BOARD).postings[0]
+        self.assertEqual((p.location, p.places), ("Lahore, Punjab, Pakistan", ("Pakistan",)))
+        p = manatal.parse(parts, MN_BOARD).postings[0]
+        self.assertEqual(p.location, "Karachi, Pakistan")
+
+    def test_a_posting_without_id_title_or_hash_is_a_problem_not_a_row(self):
+        payload = {"results": [{"hash": "H", "position_name": "E"},
+                               {"id": 2, "hash": "H"},
+                               {"id": 3, "position_name": "E"}]}
+        result = manatal.parse(payload, MN_BOARD)
+        self.assertEqual(result.postings, [])
+        self.assertEqual([p["reason"] for p in result.problems],
+                         ["no id", "no position_name", "no hash, so no link to the posting"])
+
+    def test_the_description_goes_to_the_reader_and_the_posting_whole_to_the_store(self):
+        entry = {"id": 1, "hash": "H", "position_name": "E", "description": "<p>x</p>"}
+        p = manatal.parse({"results": [entry]}, MN_BOARD).postings[0]
+        self.assertEqual(p.description, ("<p>x</p>",))
+        self.assertEqual(p.raw, entry)
+
+    def test_a_posting_repeated_on_another_page_of_the_walk_is_kept_once(self):
+        """ITC Worldwide's 24 pages of 2026-10-04 gave 477 reads of 338
+        distinct postings: the pages shift between requests."""
+        entry = {"id": 7, "hash": "H", "position_name": "AI Engineer"}
+        result = manatal.parse({"results": [entry, dict(entry), {"id": 8, "hash": "J",
+                                                                  "position_name": "E"}]}, MN_BOARD)
+        self.assertEqual([p.external_id for p in result.postings], ["7", "8"])
+        self.assertEqual(result.problems, [])
+
+    def test_wrong_envelope_raises(self):
+        with self.assertRaises(AdapterError):
+            manatal.parse({"items": []}, MN_BOARD)
 
 
 class TestPostingInvariants(unittest.TestCase):

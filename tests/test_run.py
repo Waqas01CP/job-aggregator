@@ -211,6 +211,39 @@ class TestPollSlots(RunHarness):
         self.assertTrue(all(b.polled_on("evening") for b in others))
 
 
+class TestManatalWalk(RunHarness):
+    """ADR-0059's first platform: a feed with no dates, read to its end."""
+
+    MN = Board(platform="manatal", slug="premiernx", employer_alias="Premier NX")
+
+    def routes(self):
+        from tests.test_adapters import cassette
+        return {"premiernx/jobs/?page=1": cassette("manatal-premiernx-page1.json"),
+                "premiernx/jobs/?page=2": cassette("manatal-premiernx-page2.json")}
+
+    def test_every_page_is_read_and_the_walk_reaches_the_end(self):
+        """The closure test counts a walk that reached the end as having read
+        every posting, dated or not."""
+        client = client_for(self.routes())
+        log = Run([self.MN], client, now=NOW, matcher=MATCHER).execute()
+        [entry] = log["boards"]
+        self.assertEqual((entry["status"], entry["fetched"], entry["pages"]), ("ok", 32, 2))
+        self.assertEqual(entry["walk"]["stopped_by"], "end")
+        self.assertIsNone(entry["oldest_published"])
+        self.assertEqual(len(client._session.calls), 2)
+
+    def test_a_posting_repeated_on_a_later_page_is_one_posting(self):
+        """ITC Worldwide's pages shift between requests: 477 reads of 338
+        distinct postings on 2026-10-04."""
+        routes = self.routes()
+        page2 = dict(routes["premiernx/jobs/?page=2"])
+        page2["results"] = list(page2["results"]) + [routes["premiernx/jobs/?page=1"]["results"][0]]
+        routes["premiernx/jobs/?page=2"] = page2
+        log = Run([self.MN], client_for(routes), now=NOW, matcher=MATCHER).execute()
+        self.assertEqual(log["boards"][0]["fetched"], 32)
+        self.assertEqual(log["totals"]["new"], 32)
+
+
 class TestNormalRun(RunHarness):
     def test_writes_both_layers_and_logs_every_board(self):
         client = client_for({"careem": gh_payload(["AI Engineer", "Chief Happiness Officer"]),

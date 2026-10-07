@@ -96,6 +96,10 @@ def postings_of(doc):
         return doc, None
     if isinstance(doc, dict) and isinstance(doc.get("jobs"), list):
         return doc["jobs"], "jobs"
+    # Manatal's career site pages twenty postings under `results`, beside
+    # `count`, `next` and `previous`, which the envelope keeps.
+    if isinstance(doc, dict) and isinstance(doc.get("results"), list):
+        return doc["results"], "results"
     raise SystemExit("unrecognised payload shape: %s" % type(doc).__name__)
 
 

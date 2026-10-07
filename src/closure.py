@@ -54,11 +54,18 @@ def _when(value):
 def covered(walk, published):
     """Whether a paginated walk, as its run log records it, read back far
     enough that a posting published at `published` would have been fetched
-    had it still been listed."""
-    if not isinstance(walk, dict) or not published:
+    had it still been listed.
+
+    **A walk that reached the feed's end read every posting, dated or not.**
+    Asked first since 2026-10-07: Manatal's postings carry no date and its
+    walk always reads to the end, and asked after the date, a posting with
+    none could never be closed by its absence."""
+    if not isinstance(walk, dict):
         return False
     if walk.get("stopped_by") == "end":
         return True
+    if not published:
+        return False
     if walk.get("stopped_by") != "mark" or not walk.get("mark"):
         return False
     return _when(published) > _when(walk["mark"])

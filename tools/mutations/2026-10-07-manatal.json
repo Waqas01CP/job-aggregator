@@ -1,0 +1,50 @@
+[
+  {
+    "label": "a Manatal walk stops at the mark",
+    "path": "src/adapters/manatal.py",
+    "find": "    \"\"\"Never: a walk with no dates has no mark to stop at.\"\"\"\n    return False",
+    "replace": "    \"\"\"Never: a walk with no dates has no mark to stop at.\"\"\"\n    return True"
+  },
+  {
+    "label": "the walk merges every adapter's pages under jobs",
+    "path": "src/run.py",
+    "find": "        key = adapter.POSTINGS_AT",
+    "replace": "        key = \"jobs\""
+  },
+  {
+    "label": "a posting repeated on a later page is kept twice",
+    "path": "src/adapters/manatal.py",
+    "find": "        if external_id in read:",
+    "replace": "        if external_id in ():"
+  },
+  {
+    "label": "a Manatal walk never reads its next page",
+    "path": "src/adapters/manatal.py",
+    "find": "    link = payload.get(\"next\") if isinstance(payload, dict) else None",
+    "replace": "    link = None"
+  },
+  {
+    "label": "a posting with no date is never closed by its absence",
+    "path": "src/closure.py",
+    "find": "    if walk.get(\"stopped_by\") == \"end\":\n        return True\n    if not published:\n        return False",
+    "replace": "    if not published:\n        return False\n    if walk.get(\"stopped_by\") == \"end\":\n        return True"
+  },
+  {
+    "label": "a Manatal row links to its id, which opens a 404",
+    "path": "src/adapters/manatal.py",
+    "find": "            url=JOB_PAGE % (board.slug, page),",
+    "replace": "            url=JOB_PAGE % (board.slug, external_id),"
+  },
+  {
+    "label": "Manatal's boards are configured and not polled",
+    "path": "src/run.py",
+    "find": "            \"himalayas\": himalayas, \"manatal\": manatal}",
+    "replace": "            \"himalayas\": himalayas}"
+  },
+  {
+    "label": "a Manatal posting's own organisation is ignored for the alias",
+    "path": "src/adapters/manatal.py",
+    "find": "        employer = str(entry.get(\"organization_name\") or \"\").strip() or None",
+    "replace": "        employer = None"
+  }
+]

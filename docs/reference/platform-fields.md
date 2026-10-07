@@ -242,6 +242,31 @@ pipeline receives:
 | Browse similar jobs | the site's navigation, not data |  |
 | The description | `description`, `excerpt` | `description` read for the description rules; `excerpt` not |
 
+## Manatal, the career site's endpoint
+
+`www.careers-page.com/api/v1.0/c/{slug}/jobs/?page={n}`, which Manatal does not document, accepted by the operator on 2026-10-07 for all nine registry boards: its documented endpoint served five of the nine and gave no working link to a posting. Measured 2026-10-07 over 393 postings on five boards, saved on 2026-10-04 and 10-07 `[VERIFIED]`:
+
+| Field | Type | Populated | Read | Note |
+|---|---|---|---|---|
+| `id` | number | 100% | yes | identity |
+| `hash` | string | 100% | yes | the posting's own page, `careers-page.com/{slug}/job/{hash}`; the documented endpoint's `id` opens a 404 |
+| `position_name` | string | 100% | yes | the title |
+| `description` | string | 100% | yes | HTML, for the description rules; the row keeps only what they derive |
+| `location_display` | string | 98.2% | yes | the place as shown, read before `city`, `state` and `country` |
+| `city`, `country` | string | 98.2% | yes | `country` is the posting's structured place |
+| `state` | string | 50.4% | yes | |
+| `organization_name` | string | 87.3% | yes | the employer; absent on some boards, which take the board's configured name |
+| `address` | string | 39.9% | no | an office's street address |
+| `salary_min`, `salary_max`, `currency_code` | string | 12.0% | no | |
+| `is_pinned_in_career_page`, `is_salary_visible` | boolean | 100% | no | |
+| `zipcode` | string | 0% | no | |
+
+**No date of any kind, and no workplace field**, on any of the 640 distinct postings read across the nine boards and both endpoints on 2026-10-04. The documented endpoint's `created_at__gte` filter works and brackets the day a posting was created; nothing reads it, since whether creation means publication is unmeasured.
+
+**Twenty postings a page**, whatever `page_size` asks, under `results` beside `count` and `next`. **The pages are not stable on every board:** ITC Worldwide's 24 pages on 2026-10-04 gave 477 reads of 338 distinct postings, where Abacus Consulting's nine on 2026-10-07 gave its 168 once each. The adapter keeps a repeated posting once, and a later walk reads one this walk missed.
+
+**The two endpoints list different numbers:** Abacus Consulting showed 217 on the documented endpoint on 2026-10-04 and 168 on this one on 2026-10-07.
+
 ## What each API accepts
 
 From each provider's own documentation, read 2026-10-02 `[outside this
@@ -497,6 +522,7 @@ what happens when it is absent, and each of these deserves that separately.
 
 | Date | Change | Reason |
 |---|---|---|
+| 2026-10-07 | Manatal's section added: the career site's endpoint, every field counted over 393 postings, no date and no workplace field, unstable pages | Its adapter is built, ADR-0059's first platform by measured yield, on the endpoint the operator accepted that day |
 | 2026-10-02, night | The description is read, on the operator's answers: the fields each adapter now reads are marked, the "Open" description item moved to "Decided" with its measured effect, and security clearance added as open. Himalayas `seniority`, read since the evening's level rule, was still marked unread in two tables and in the experience section: corrected | His thresholds arrived; the seniority rows were stale since `d5dda62`, the implementing seat's miss |
 | 2026-10-02 | Re-measured over the 1,695 postings saved whole since 2026-09-26, on what the pipeline fetches now: Greenhouse with descriptions, Himalayas' Pakistan search. Added: where each source states experience, the Himalayas job page mapped to its API fields, every endpoint and parameter each API documents, the unused fields re-ranked, and the procedure for a new source. The 2026-09-17 tables kept as history | The operator asked for every field each source gives, experience above all, after seeing senior Himalayas roles in his table, and for it to be repeatable as sources are added. Two of the 09-17 tables no longer described the requests made |
 | 2026-09-17 | File created. Twenty-three platform inventories from the 84 saved responses, with read and unread marked for the three adapted platforms | The architecture chat asked for it, on the rule that everything fetched should be used. Himalayas' `locationRestrictions` prompted it; measuring showed the adapter does read that field, lossily, and that the more valuable unread field is `seniority`, stated on every posting while the pipeline infers it from titles |

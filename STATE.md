@@ -6,6 +6,8 @@ status: current
 
 # STATE
 
+**Touched 2026-10-07T20:38Z by the implementing seat, for Manatal only:** ADR-0059's first platform by measured yield, built on the operator's answers of 2026-10-07: all nine registry boards on the career site's own endpoint, which Manatal does not document and he accepted, since the documented one served five of the nine and gave no working link to a posting. No date, so its postings are never dropped for age and sort last; read to the end of its pages, and a posting its shifting pages repeat kept once; its own contract check from its first run. Not yet run live. The line that follows stands.
+
 **Touched 2026-10-07T17:06Z by the implementing seat, for dateless postings only:** a posting with no publication date is sent with an empty `Order date`, so the `To review` view, sorted on it latest first, shows it after every dated one, the operator's rule of 2026-10-07; ADR-0007 ordered it by first sight until then. No live source is dateless until Manatal. The line that follows stands.
 
 **Touched 2026-10-07T16:45Z by the implementing seat, for the read-back projection only:** the projection reads `Jobs` back and sends only the rows it does not already show as they would be sent, the operator's choice of 2026-10-07 over ADR-0056's recorded design, knowing it reverses ADR-0004's ruling that the projection performs no reads. Its read is the sweep client's and is counted in the month. Suite and mutations in the next log. The line that follows stands.

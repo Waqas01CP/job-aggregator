@@ -55,7 +55,7 @@ from . import clearing, envfile, private_store, projection, storage
 from .airtable_sweep import JOBS, SweepClient, TABLE_SECRETS
 from .closure import Closure, covered as walk_covered
 from .sweep import Sweep, older_than
-from .adapters import greenhouse, himalayas, lever
+from .adapters import greenhouse, himalayas, lever, manatal
 from .airtable import (BASE_ENV, PIPELINE_FIELDS, RUN_LOG_KEY, TABLE_ENV, TEST_TABLE_ENV,
                        TOKEN_ENV, AirtableClient, month_to_date)
 from .backfill import backfill
@@ -72,7 +72,7 @@ EXIT_CANNOT_START = 1
 EXIT_STOPPED_RESUMABLE = 2
 
 ADAPTERS = {"greenhouse": greenhouse, "lever": lever,
-            "himalayas": himalayas}
+            "himalayas": himalayas, "manatal": manatal}
 
 # A paginated feed is read until it reaches postings already stored, or
 # postings too old for the age rule to admit. The cap is a runaway guard on top
@@ -715,14 +715,18 @@ class Run:
         newest publication date actually stored by this board, never the
         previous run's clock: this feed is known to trail by at least 97.7
         minutes, so a clock anchor would step over postings that arrive late
-        and never look again."""
+        and never look again. A feed with no dates, Manatal's, never stops on
+        the mark and is read to its end."""
         mark = max(self.high_water.get(board.board_id) or "",
                    walk_floor(board.source, self.now) or "")
-        merged, cursor, pages, stopped_by = {"jobs": []}, None, 0, "cap"
+        # The pages merged under the adapter's own key, Himalayas' `jobs`,
+        # Manatal's `results`, so its parse reads them as one response.
+        key = adapter.POSTINGS_AT
+        merged, cursor, pages, stopped_by = {key: []}, None, 0, "cap"
         while pages < MAX_PAGES:
             payload = self.client.get_json(adapter.url_for(board, cursor), board.source)
             pages += 1
-            merged["jobs"].extend(payload.get("jobs", []))
+            merged[key].extend(payload.get(key, []))
             if adapter.stop_after(payload, mark):
                 stopped_by = "mark"
                 break
