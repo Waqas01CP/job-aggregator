@@ -8,8 +8,10 @@ circuit breaker are the ones in `src/resilience.py`, imported, not copied.
 
 **It writes and never reads.** ADR-0004, clarified 2026-09-23: the projection
 performs no reads, and every read belongs to the sweep. This module has one
-verb, an upsert, and a test asserts it exposes no other. The sweep is a later
-build and gets its reads where that brief puts them, not here.
+verb, an upsert, and a test asserts it exposes no other. Since 2026-10-07 the
+projection reads `Jobs` back before it writes, the operator's decision, and
+that read is made by the sweep's client in `src/airtable_sweep.py`, where
+every read lives, so this module still only writes.
 
 **It sends exactly the pipeline-owned fields**: ADR-0035's ten, and `Family`,
 classified pipeline-owned on 2026-09-23 and built 2026-09-24. An upsert

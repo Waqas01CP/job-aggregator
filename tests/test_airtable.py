@@ -191,7 +191,9 @@ class TestRequestShape(unittest.TestCase):
 
 
 class TestNoReadPath(unittest.TestCase):
-    """Ruling 4, 2026-09-23: the projection performs no reads at all. Made
+    """Ruling 4, 2026-09-23: the projection performs no reads at all. Since
+    2026-10-07 the projection reads `Jobs` back, the operator's decision,
+    through the sweep's client; the writer itself still never reads. Made
     checkable: the client has one public verb, it sends only PATCH, and its
     source names no read method."""
 

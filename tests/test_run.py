@@ -725,6 +725,23 @@ class TestMain(unittest.TestCase):
                                               % sorted(os.listdir("data/logs-runs"))[-1]))
         self.assertIn("airtable", on_branch, "the committed log lacks the airtable block")
 
+    def test_a_run_sends_only_what_jobs_does_not_already_show(self):
+        """The operator's decision of 2026-10-07: the run reads `Jobs` back
+        and sends only what differs. The second run finds the first run's row
+        shown as it would send it, and sends nothing; the log says so."""
+        self.main()
+        [record] = self.airtable[0].sent
+        self.base.seed("tblJOBSFAKE000001", {k: v for k, v in record.items() if v is not None})
+        self.fresh_machine()
+        code, out, _ = self.main()
+        self.assertEqual(code, EXIT_OK)
+        self.assertEqual(self.airtable[1].sent, [])
+        log = self.last_run_log()
+        self.assertEqual((log["projection"]["rows_in_base"], log["projection"]["rows_unchanged"],
+                          log["projection"]["rows_sent"]), (1, 1, 0))
+        self.assertGreater(log["airtable"]["read_calls"], 0)
+        self.assertIn("Jobs held 1, unchanged 1, new 0, changed 0", out)
+
     def test_a_failed_projection_still_commits_and_exits_2(self):
         """The operator's decision of 2026-09-23: exit 1 would stop the push
         and lose the fetch for a display failure. ADR-0040 re-projects every
@@ -1031,13 +1048,19 @@ class TestMain(unittest.TestCase):
         """G7: the allowance is per workspace, so a production run counts the
         calls test runs spent, and a test run counts production's."""
         self.main("--test-mode")
-        per_run = FakeAirtable.CALLS + self.last_run_log(True)["sweep"]["calls_used"]
+        log = self.last_run_log(True)
+        # Each run's writer is told the month so far and its own run's read of
+        # `Jobs` (the read-back, 2026-10-07), which it spent before writing.
+        read = log["airtable"]["read_calls"]
+        self.assertGreater(read, 0)
+        per_run = FakeAirtable.CALLS + read + log["sweep"]["calls_used"]
+        self.assertEqual(log["airtable"]["calls_used"], FakeAirtable.CALLS + read)
         self.fresh_machine()
         self.main()
         self.fresh_machine()
         self.main("--test-mode")
         self.assertEqual([used for _, used in self.airtable_asked],
-                         [0, per_run, 2 * per_run])
+                         [read, per_run + read, 2 * per_run + read])
         self.assertEqual(self.last_run_log(True)["airtable"]["month_to_date_by_branch"],
                          {"data-test": per_run, "data": per_run})
 
@@ -1045,13 +1068,26 @@ class TestMain(unittest.TestCase):
         """ADR-0034: a budget counted per month. A runner restores no run
         logs, so the count must come back from the branch."""
         self.main()
-        swept = self.last_run_log()["sweep"]["calls_used"]
+        log = self.last_run_log()
+        swept, read = log["sweep"]["calls_used"], log["airtable"]["read_calls"]
         self.fresh_machine()
         self.main()
-        self.assertEqual(self.airtable_asked[0][1], 0)
-        # The projection's calls and, from ADR-0050, the sweep's.
+        # Nothing before the first run but its own read of `Jobs`.
+        self.assertEqual(self.airtable_asked[0][1], read)
+        # The projection's calls, its read among them, and, from ADR-0050,
+        # the sweep's.
         self.assertGreater(swept, 0)
-        self.assertEqual(self.airtable_asked[1][1], FakeAirtable.CALLS + swept)
+        self.assertEqual(self.airtable_asked[1][1], FakeAirtable.CALLS + read + swept + read)
+
+    def test_the_read_is_counted_once_and_never_as_before_the_run(self):
+        """The writer is told the read was spent, so its own count of the
+        month before the run includes it; the block corrects that, and adds
+        the read to the calls the next run's count sums."""
+        class Reader:
+            calls_used = 2
+        block = run_module.with_reads({"calls_used": 3, "month_to_date_before_run": 52}, Reader())
+        self.assertEqual(block, {"calls_used": 5, "read_calls": 2, "month_to_date_before_run": 50})
+        self.assertEqual(run_module.with_reads({"calls_used": 3}, None), {"calls_used": 3})
 
     # ------------------------------------------------------------ escalation
     def outputs(self):

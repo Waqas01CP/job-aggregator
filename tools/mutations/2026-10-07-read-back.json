@@ -1,0 +1,56 @@
+[
+  {
+    "label": "the run projects without reading Jobs back",
+    "path": "src/run.py",
+    "find": "                           displayed=lambda: shown)",
+    "replace": "                           displayed=None)"
+  },
+  {
+    "label": "a row the display shows otherwise is not sent",
+    "path": "src/projection.py",
+    "find": "            changed.append(record)",
+    "replace": "            same += 1"
+  },
+  {
+    "label": "a row the display lacks is not sent",
+    "path": "src/projection.py",
+    "find": "            new.append(record)",
+    "replace": "            same += 1"
+  },
+  {
+    "label": "an identity the display holds twice reads as unchanged",
+    "path": "src/projection.py",
+    "find": "        elif len(shown) == 1 and unchanged(record, shown[0]):",
+    "replace": "        elif unchanged(record, shown[0]):"
+  },
+  {
+    "label": "dates are compared as Airtable writes them, not as times",
+    "path": "src/projection.py",
+    "find": "    if name in DATE_FIELDS:",
+    "replace": "    if name in ():"
+  },
+  {
+    "label": "an empty field and an omitted one disagree",
+    "path": "src/projection.py",
+    "find": "    if value is None or value == \"\":",
+    "replace": "    if value is None:"
+  },
+  {
+    "label": "the operator's fields are compared too",
+    "path": "src/projection.py",
+    "find": "               for name in PIPELINE_FIELDS)",
+    "replace": "               for name in set(PIPELINE_FIELDS) | set(record) | set(shown))"
+  },
+  {
+    "label": "the read of Jobs is not counted in the month",
+    "path": "src/run.py",
+    "find": "        block[\"calls_used\"] = int(block.get(\"calls_used\") or 0) + reader.calls_used",
+    "replace": "        block[\"calls_used\"] = int(block.get(\"calls_used\") or 0)"
+  },
+  {
+    "label": "the writer is not told the read was spent",
+    "path": "src/run.py",
+    "find": "        client = make_airtable_client(test_mode, sum(by_branch.values()) + reader.calls_used)",
+    "replace": "        client = make_airtable_client(test_mode, sum(by_branch.values()))"
+  }
+]

@@ -3,7 +3,8 @@
 The projection's client, `src/airtable.py`, writes and never reads: ADR-0004,
 clarified 2026-09-23, puts every read with the sweep. So the sweep's reads and
 its three writes live here, in their own module, and `src/airtable.py` stays
-read-free, which a test holds. Retry, backoff and the breaker are the shared
+read-free, which a test holds. The projection's read of `Jobs`, its read-back
+since 2026-10-07, is this client's `list_records` too. Retry, backoff and the breaker are the shared
 ones in `src/resilience.py`; the budget, the pacing and the secret discipline
 are Airtable's own and repeat what the projection's client does.
 

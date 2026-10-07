@@ -128,6 +128,87 @@ class TestStages(Harness):
         self.assertEqual(digests(), before)
 
 
+def as_airtable_shows(record):
+    """A sent record as Airtable lists it back: empty fields omitted, text
+    trimmed, a date to the millisecond with Airtable's own `.000Z`."""
+    shown = {}
+    for name, value in record.items():
+        if value is None or value == "":
+            continue
+        shown[name] = value.strip() if isinstance(value, str) else value
+    return {"id": "rec%s" % record["Identity"][-6:], "fields": shown}
+
+
+class TestTheReadBack(Harness):
+    """The operator's decision of 2026-10-07: read `Jobs` back and send only
+    what it does not already show as it would be sent."""
+
+    def project_against(self, displayed):
+        client, stages = FakeClient(), {}
+        projection.project(self.paths, NOW, MATCHER, client, [], stages,
+                           displayed=lambda: displayed)
+        return client, stages
+
+    def planned(self):
+        client, _ = self.project()
+        return client.sent
+
+    def test_a_display_already_showing_every_row_is_sent_nothing(self):
+        self.write_filtered([make_row(1), make_row(2, employer="Globex")])
+        shown = [as_airtable_shows(r) for r in self.planned()]
+        client, stages = self.project_against(shown)
+        self.assertEqual(client.sent, [])
+        self.assertEqual((stages["rows_in_base"], stages["rows_unchanged"], stages["rows_new"],
+                          stages["rows_changed"], stages["rows_sent"]), (2, 2, 0, 0, 0))
+
+    def test_a_row_the_display_lacks_is_sent(self):
+        """New, or deleted from `Jobs` by hand: either way it is sent again."""
+        self.write_filtered([make_row(1), make_row(2, employer="Globex")])
+        planned = self.planned()
+        client, stages = self.project_against([as_airtable_shows(planned[0])])
+        self.assertEqual([r["Identity"] for r in client.sent], [planned[1]["Identity"]])
+        self.assertEqual(stages["rows_new"], 1)
+
+    def test_a_field_shown_otherwise_is_sent(self):
+        """A rule change that moves a field, or a hand edit of a pipeline
+        field: the row is sent, and only that row (ADR-0040)."""
+        self.write_filtered([make_row(1), make_row(2, employer="Globex")])
+        shown = [as_airtable_shows(r) for r in self.planned()]
+        shown[0]["fields"]["Location"] = "Somewhere else"
+        client, stages = self.project_against(shown)
+        self.assertEqual(len(client.sent), 1)
+        self.assertEqual(stages["rows_changed"], 1)
+        self.assertEqual(client.sent[0]["Location"], "Lahore")
+
+    def test_each_field_compared_is_one_the_pipeline_owns(self):
+        """A date moved by a millisecond is a change; the operator's fields,
+        which Airtable lists too when asked, are never compared."""
+        self.write_filtered([make_row(1)])
+        [record] = self.planned()
+        shown = as_airtable_shows(record)
+        shown["fields"]["Status"] = "accepted"
+        self.assertEqual(self.project_against([shown])[0].sent, [])
+        moved = as_airtable_shows(record)
+        moved["fields"]["First seen"] = "2026-09-21T10:00:00.124Z"
+        self.assertEqual(len(self.project_against([moved])[0].sent), 1)
+
+    def test_an_identity_shown_twice_is_sent(self):
+        self.write_filtered([make_row(1)])
+        [record] = self.planned()
+        client, stages = self.project_against([as_airtable_shows(record)] * 2)
+        self.assertEqual(len(client.sent), 1)
+        self.assertEqual(stages["rows_changed"], 1)
+
+    def test_empty_and_omitted_agree_and_whitespace_is_not_a_change(self):
+        record = {name: None for name in projection.PIPELINE_FIELDS}
+        record.update({"Identity": "greenhouse:1", "Title": "AI Engineer ",
+                       "Published": "2026-09-20T10:00:00.000Z", "Matched term": ""})
+        shown = {"Identity": "greenhouse:1", "Title": "AI Engineer",
+                 "Published": "2026-09-20T10:00:00Z"}
+        self.assertTrue(projection.unchanged(record, shown))
+        self.assertFalse(projection.unchanged(dict(record, Employer="Acme"), shown))
+
+
 class TestTheRowSent(Harness):
     def test_a_group_is_one_row_carrying_every_location_and_the_representatives_identity(self):
         """ADR-0037's Confirmation: every member's location in the displayed

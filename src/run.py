@@ -52,12 +52,12 @@ import traceback
 from datetime import datetime, timedelta, timezone
 
 from . import clearing, envfile, private_store, projection, storage
-from .airtable_sweep import SweepClient, TABLE_SECRETS
+from .airtable_sweep import JOBS, SweepClient, TABLE_SECRETS
 from .closure import Closure, covered as walk_covered
 from .sweep import Sweep, older_than
 from .adapters import greenhouse, himalayas, lever
-from .airtable import (BASE_ENV, RUN_LOG_KEY, TABLE_ENV, TEST_TABLE_ENV, TOKEN_ENV,
-                       AirtableClient, month_to_date)
+from .airtable import (BASE_ENV, PIPELINE_FIELDS, RUN_LOG_KEY, TABLE_ENV, TEST_TABLE_ENV,
+                       TOKEN_ENV, AirtableClient, month_to_date)
 from .backfill import backfill
 from .config import ConfigError, is_publishable, load_boards, load_sweep_config
 from .dedupe import counts as dedupe_counts
@@ -334,7 +334,7 @@ def project_display(run, no_commit, test_mode, restore_failure=None, retired=Non
     checked offline."""
     now_iso = iso(run.now)
     stages = {}
-    client = None
+    client = reader = None
     try:
         if no_commit:
             stages["mode"] = "dry run: a no-commit run reaches no base and no private store"
@@ -347,21 +347,42 @@ def project_display(run, no_commit, test_mode, restore_failure=None, retired=Non
                             "would_send": len(records)}, None
 
         by_branch = month_so_far(now_iso, test_mode)
-        client = make_airtable_client(test_mode, sum(by_branch.values()))
+        # The display read back first, by the sweep's client, the one that
+        # reads (the operator's decision of 2026-10-07); then the writer,
+        # whose monthly guard counts the read's calls as spent.
+        reader = make_sweep_client(test_mode, sum(by_branch.values()))
+        shown = reader.list_records(JOBS, PIPELINE_FIELDS)
+        client = make_airtable_client(test_mode, sum(by_branch.values()) + reader.calls_used)
         projection.project(run.paths, now_iso, run.matcher, client,
                            projection.private_store_texts(run.paths), stages,
-                           public_only=bool(restore_failure), retired=retired)
-        return stages, dict(client.counters(), failure=None,
-                            month_to_date_by_branch=by_branch), None
+                           public_only=bool(restore_failure), retired=retired,
+                           displayed=lambda: shown)
+        return stages, with_reads(dict(client.counters(), failure=None,
+                                       month_to_date_by_branch=by_branch), reader), None
     except Exception as e:
         failure = "%s: %s" % (type(e).__name__, e)
-        if client is not None:
-            failure = client.redact(failure)
+        for c in (client, reader):
+            if c is not None:
+                failure = c.redact(failure)
         failure = redact_secrets(failure)
         block = dict(client.counters()) if client is not None else {"calls_used": 0,
                                                                     "rows_sent": 0}
         block["failure"] = failure
-        return stages, block, failure
+        return stages, with_reads(block, reader), failure
+
+
+def with_reads(block, reader):
+    """The projection's Airtable block with its read of `Jobs` counted in:
+    `calls_used` is what the month's count sums, so a read it left out would
+    be spent and never counted."""
+    if reader is not None:
+        block["read_calls"] = reader.calls_used
+        block["calls_used"] = int(block.get("calls_used") or 0) + reader.calls_used
+        if "month_to_date_before_run" in block:
+            # The writer was told the read was already spent; before this
+            # run, it was not.
+            block["month_to_date_before_run"] -= reader.calls_used
+    return block
 
 
 def make_sweep_client(test_mode, used_this_month):
@@ -933,10 +954,16 @@ def summarise(run_log):
         # Each stage on the line, because the display, the chain and the store
         # differ in count by design and only the stages show where.
         lines.append("  projection: read %s, admitted %s, groups %s, skipped by a store %s, "
-                     "to send %s%s"
+                     "to send %s%s%s"
                      % (p.get("rows_read", "-"), p.get("rows_admitted", "-"),
                         p.get("groups", "-"), p.get("groups_skipped_by_store", "-"),
                         p.get("rows_to_send", "-"),
+                        # The read-back: what `Jobs` already showed, and what it
+                        # lacked or showed otherwise, so a field compared wrongly,
+                        # which would re-send every row every run, shows at once.
+                        "; Jobs held %s, unchanged %s, new %s, changed %s"
+                        % (p["rows_in_base"], p.get("rows_unchanged"), p.get("rows_new"),
+                           p.get("rows_changed")) if "rows_in_base" in p else "",
                         "  [%s]" % p["mode"] if p.get("mode") else ""))
     c = run_log.get("clearing")
     if c is not None:

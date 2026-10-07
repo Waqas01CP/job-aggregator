@@ -68,8 +68,8 @@
   {
     "label": "the month so far is not read",
     "path": "src/run.py",
-    "find": "client = make_airtable_client(test_mode, sum(by_branch.values()))",
-    "replace": "client = make_airtable_client(test_mode, 0)"
+    "find": "client = make_airtable_client(test_mode, sum(by_branch.values()) + reader.calls_used)",
+    "replace": "client = make_airtable_client(test_mode, 0 + reader.calls_used)"
   },
   {
     "label": "matched term from the raw title",

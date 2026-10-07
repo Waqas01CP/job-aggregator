@@ -109,6 +109,7 @@ By his estimate, that took most of a working week. He usually found a posting th
 8. **Appends the filtered layer**, the rows that passed. When a rule widens, a backfill appends the rows it now admits, inside every run.
 9. **Saves every posting whole, privately** (the operator's D11). This includes the description text and every field the board returned. It goes to the private repository's `data-full` branch, one file per run. The file is read back by a fresh fetch and compared by content hash, and only then is each posting marked saved. A failed save is retried on the next run.
 10. **Projects to Airtable**, the only screen the operator opens:
+    - `Jobs` read back first, one call per hundred rows, and only the rows it does not already show as they would be sent are written: a run that changes nothing writes nothing (since 2026-10-07; until then every display row was sent on every run, one call per ten rows);
     - an upsert matched on the posting's identity, ten rows per call;
     - only the pipeline's own fields are written, never the operator's `Status`;
     - anything he has already classified is skipped, so it never comes back.
@@ -376,7 +377,7 @@ Each dated item below has its source in the session log of that date. The design
 - **Duplicates across sources are not merged.** An employer's own posting and an aggregator's copy of it can both appear, because the aggregator stamps its own date.
 - **Lever's date is not proven to mean publication**, so Lever postings are never dropped for age.
 - **GitHub starts scheduled runs 3.3 to 7.0 hours late**, over the 29 scheduled runs to 2026-10-01. Freshness is measured from publication, so it includes that delay.
-- **Unbuilt:** the priority star (a mark on postings sharing a named attribute with an accepted one, ADR-0044), which waits for a version after 1.0.0, and the contract check's Airtable row, which 1.0.0 requires. The cheaper projection that sends only changed rows is designed and deliberately waits on its triggers (ADR-0056).
+- **Unbuilt:** the priority star (a mark on postings sharing a named attribute with an accepted one, ADR-0044), which waits for a version after 1.0.0, and the contract check's Airtable row, which 1.0.0 requires. The cheaper projection, sending only what `Jobs` does not already show, was built on 2026-10-07, when a week's measured intake put the display past what the month's calls could carry (ADR-0056).
 - **The clearing tool and the thirty-day clock have not run live yet**; both are proved offline.
 - **"Finished" is defined** since 2026-10-04 as version 1.0.0 (ADR-0059), and since 2026-10-05 it has a file of its own, `docs/versions/v1.0.0.md`, with the test for done he accepted that day. Until then it was open by decision (ADR-0023).
 - **The private store's token expires on 2027-01-01**; the operator rotates it before then.

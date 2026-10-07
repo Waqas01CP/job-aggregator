@@ -1,9 +1,11 @@
 """The projection: the filtered layer, as the operator reads it in `Jobs`.
 
 ADR-0013: Airtable is a projection of the filtered layer and never the source
-of truth. Every run re-projects the whole layer, so the display converges on
-what the current rules admit, and a failed projection is resumable by
-construction: the next run sends everything again.
+of truth. Every run plans the whole layer, so the display converges on what
+the current rules admit, and a failed projection is resumable by
+construction: the next run plans everything again. Since 2026-10-07 it reads
+`Jobs` back and sends only the rows the display does not already show as
+they would be sent (`what_differs`, the operator's decision).
 
 Five stages, each counted, because the display, the store and the chain's
 verdicts differ in row count by design and a difference nobody can trace
@@ -26,7 +28,8 @@ looks like a bug:
    rule admits it again, as ADR-0040 requires. Until 2026-09-30 the store was
    not read at all, and a retired closed row came straight back.
 5. **Send** the pipeline-owned fields, ADR-0035's ten and ADR-0038's `Family`,
-   through the Airtable client.
+   through the Airtable client: the groups `Jobs` lacks, and the ones whose
+   fields it shows otherwise.
 """
 
 from datetime import datetime, timezone
@@ -228,12 +231,78 @@ def plan(rows, now_iso, matcher, stored, stages=None, retired=None):
     return records
 
 
+DATE_FIELDS = ("Published", "First seen", "Order date")
+
+
+def shown_value(name, value):
+    """A pipeline field's value as two sides can agree on it: empty as None,
+    whatever Airtable omits or returns blank; a date to the millisecond; text
+    without the whitespace Airtable may trim."""
+    if value is None or value == "":
+        return None
+    if name in DATE_FIELDS:
+        try:
+            return airtable_datetime(str(value))
+        except ValueError:
+            return str(value)
+    return value.replace("\r\n", "\n").strip() if isinstance(value, str) else value
+
+
+def unchanged(record, shown):
+    """Whether `Jobs` already shows every pipeline field of `record` as sent."""
+    return all(shown_value(name, record.get(name)) == shown_value(name, shown.get(name))
+               for name in PIPELINE_FIELDS)
+
+
+def what_differs(records, displayed, stages):
+    """The planned records `Jobs` does not already show as they would be sent.
+
+    **The operator's decision of 2026-10-07: read the display back and send
+    only what differs.** ADR-0056 recorded the whole-layer projection's cost,
+    one call per ten rows twice a day for ever, and a week measured about 7.5
+    new display groups a day, about 230 rows at thirty days, past what a
+    month's thousand calls can carry. Reading `Jobs` costs one call per
+    hundred rows. It reverses ADR-0004's ruling of 2026-09-23 that the
+    projection performs no reads, which he chose knowing it; the principle
+    that ruling kept, Airtable never the source of truth, stands, since every
+    value sent still comes from the repository and the read decides only
+    which rows need sending. What the display lost or had edited by hand is
+    sent again, so it heals itself, and a rule change that moves a field
+    re-sends that row, as ADR-0040 requires, with no fingerprint of the rules
+    to keep.
+
+    An identity the display holds twice is sent, as before, and the upsert
+    says what it makes of it."""
+    by_identity = {}
+    for r in displayed:
+        identity = (r.get("fields") or {}).get("Identity")
+        if identity:
+            by_identity.setdefault(identity, []).append(r["fields"])
+    stages["rows_in_base"] = len(displayed)
+    new, changed, same = [], [], 0
+    for record in records:
+        shown = by_identity.get(record["Identity"])
+        if not shown:
+            new.append(record)
+        elif len(shown) == 1 and unchanged(record, shown[0]):
+            same += 1
+        else:
+            changed.append(record)
+    stages["rows_unchanged"] = same
+    stages["rows_new"] = len(new)
+    stages["rows_changed"] = len(changed)
+    return new + changed
+
+
 def project(paths, now_iso, matcher, client, private_texts, stages, public_only=False,
-            retired=None):
+            retired=None, displayed=None):
     """All five stages. `private_texts` are the private repository's copies
     of the same stores, from private_store_texts. `stages` is filled as each
     stage completes, so a failure part way still leaves a count of how far it
     got.
+
+    `displayed()` reads `Jobs` back, for `what_differs`; without it every
+    planned record is sent, the whole layer.
 
     **`public_only`: the private store could not be read.** The operator's
     decision of 2026-09-24, D9: the public rows always update. The aggregator
@@ -247,6 +316,8 @@ def project(paths, now_iso, matcher, client, private_texts, stages, public_only=
     stored = identities_in(public_store_texts(paths) + list(private_texts))
     stages["stored_identities"] = len(stored)
     records = plan(rows, now_iso, matcher, stored, stages, retired=retired)
+    if displayed is not None:
+        records = what_differs(records, displayed(), stages)
     client.upsert(records)
     stages["rows_sent"] = client.rows_sent
     return stages
