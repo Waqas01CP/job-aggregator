@@ -1,0 +1,24 @@
+{
+ "run_at": "2026-10-07T13:46:06.108532Z",
+ "platforms": {
+  "greenhouse": {
+   "board": "greenhouse:veeamsoftware",
+   "postings": 238,
+   "changes": [],
+   "status": "unchanged"
+  },
+  "lever": {
+   "board": "lever:smart-working-solutions",
+   "postings": 26,
+   "changes": [],
+   "status": "unchanged"
+  },
+  "himalayas": {
+   "board": "himalayas:pakistan",
+   "postings": 20,
+   "changes": [],
+   "status": "unchanged"
+  }
+ },
+ "test_mode": false
+}
