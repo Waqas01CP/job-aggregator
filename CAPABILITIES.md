@@ -199,7 +199,7 @@ By his estimate, that took most of a working week. He usually found a posting th
 | Preferences are configuration | The title pool, seniority words, role families, eligible places, age limit and vendor list are files. A test fails if any module hard-codes one (ADR-0031) |
 | Idempotent | A run that finds nothing new commits only its log; a retried upsert creates no duplicate; the sweep's copy step is safe to repeat |
 | Safe to clear | A bulk removal runs dry first, is refused without a recent dry run of the same request, removes only what that dry run listed, writes before anything is deleted, and never deletes from the table of roles applied to |
-| Self-diagnosing | The daily contract check, per-board run logs including zeros, the month's call budget, and escalation after the push |
+| Self-diagnosing | The daily contract check, per-board run logs including zeros, the month's call budget, escalation after the push, and since 2026-10-07 a `Health` table in Airtable with a row for every contract finding and every run failure, each sent once |
 | Change safety | Every guarantee has a test, and every test that guards one is proved by a mutation that breaks the code and must fail it. The suite fails when a code change leaves a recorded mutation unable to run. Architectural rules are guarded by fitness functions in the ordinary suite (ADR-0049) |
 | Cost | Nothing recurring: GitHub Actions is free on a public repository, and Airtable is on its free plan |
 
@@ -378,7 +378,7 @@ Each dated item below has its source in the session log of that date. The design
 - **Duplicates across sources are not merged.** An employer's own posting and an aggregator's copy of it can both appear, because the aggregator stamps its own date.
 - **Lever's date is not proven to mean publication**, so Lever postings are never dropped for age.
 - **GitHub starts scheduled runs 3.3 to 7.0 hours late**, over the 29 scheduled runs to 2026-10-01. Freshness is measured from publication, so it includes that delay.
-- **Unbuilt:** the priority star (a mark on postings sharing a named attribute with an accepted one, ADR-0044), which waits for a version after 1.0.0, and the contract check's Airtable row, which 1.0.0 requires. The cheaper projection, sending only what `Jobs` does not already show, was built on 2026-10-07, when a week's measured intake put the display past what the month's calls could carry (ADR-0056).
+- **Unbuilt:** the priority star (a mark on postings sharing a named attribute with an accepted one, ADR-0044), which waits for a version after 1.0.0. The contract check's Airtable row, which 1.0.0 requires, was built on 2026-10-07 as a `Health` table for contract findings and run failures alike, and reaches Airtable once the operator sets its two secrets. The cheaper projection, sending only what `Jobs` does not already show, was built on 2026-10-07, when a week's measured intake put the display past what the month's calls could carry (ADR-0056).
 - **The clearing tool and the thirty-day clock have not run live yet**; both are proved offline.
 - **"Finished" is defined** since 2026-10-04 as version 1.0.0 (ADR-0059), and since 2026-10-05 it has a file of its own, `docs/versions/v1.0.0.md`, with the test for done he accepted that day. Until then it was open by decision (ADR-0023).
 - **The private store's token expires on 2027-01-01**; the operator rotates it before then.

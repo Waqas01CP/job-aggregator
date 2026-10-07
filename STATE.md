@@ -6,6 +6,8 @@ status: current
 
 # STATE
 
+**Touched 2026-10-07T21:37Z by the implementing seat, for the health table only:** `Health` and `Health test` created through the connector on the operator's yes, and the fetch run writes a row for each contract finding that is not "unchanged" and each run failure, each sent once, from the logs on the data branch. Waits on two secrets the operator sets; until then the rows wait in the run logs and nothing fails. The line that follows stands.
+
 **Touched 2026-10-07T20:55Z by the implementing seat, for the month's Airtable count only:** the clearing tool's calls were spent and never counted, by the next run's month nor by the budget line, 2 and 4 on the operator's test-mode clearings of 2026-10-02 and 10-03 [VERIFIED from `data-test`'s logs]. Both now sum every block that spends calls. The line that follows stands.
 
 **Touched 2026-10-07T20:45Z by the implementing seat, for the description's on-site phrases only:** measured over Manatal's 640 postings, the reader read 8 as on site and missed lines placing the role and then its mode, labels it did not know, and a comma after "full-time". Widened; over every saved description, 34 postings newly read as on site (Manatal 8 to 39 of 640, Greenhouse 34 to 37 of 838, none of them displayed), none read as on site lost, each newly matched line saying how its role is worked [VERIFIED]. The line that follows stands.

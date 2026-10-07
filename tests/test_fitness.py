@@ -153,6 +153,12 @@ class TestFitnessFunctions(unittest.TestCase):
             for field in fields:
                 self.assertEqual(copies.get(field), "operator", "%s on %s" % (field, table))
 
+        # The health table's writer, 2026-10-07: every field it sends is one
+        # the pipeline owns there, and it owns nothing it does not send.
+        from src.health import HEALTH_FIELDS
+        kept = owners("## `Health` and `Health test`", ("Field", "Type", "Owner", "Holds"))
+        self.assertEqual(set(HEALTH_FIELDS), {f for f, o in kept.items() if o == "pipeline"})
+
 
     def test_every_source_has_its_own_contract_check(self):
         """Fitness function for ADR-0059, "No source is built without its

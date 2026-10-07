@@ -175,6 +175,10 @@ jobs:
           AIRTABLE_NOT_A_FIT_TEST_TABLE_ID: ${{ secrets.AIRTABLE_NOT_A_FIT_TEST_TABLE_ID }}
           AIRTABLE_POOR_FILTERING_TEST_TABLE_ID: ${{ secrets.AIRTABLE_POOR_FILTERING_TEST_TABLE_ID }}
           AIRTABLE_ACCEPTED_TEST_TABLE_ID: ${{ secrets.AIRTABLE_ACCEPTED_TEST_TABLE_ID }}
+          # The health table, per mode (src/health.py). Unset, its rows wait
+          # in the run logs and the run is not failed for it.
+          AIRTABLE_HEALTH_TABLE_ID: ${{ secrets.AIRTABLE_HEALTH_TABLE_ID }}
+          AIRTABLE_HEALTH_TEST_TABLE_ID: ${{ secrets.AIRTABLE_HEALTH_TEST_TABLE_ID }}
         run: |
           set +e
           python -m src.run

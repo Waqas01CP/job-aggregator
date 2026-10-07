@@ -56,8 +56,11 @@ from .airtable_sweep import JOBS, SweepClient, TABLE_SECRETS
 from .closure import Closure, covered as walk_covered
 from .sweep import Sweep, older_than
 from .adapters import greenhouse, himalayas, lever, manatal
-from .airtable import (BASE_ENV, CALL_LOG_KEYS, PIPELINE_FIELDS, RUN_LOG_KEY, TABLE_ENV,
+from . import health
+from .airtable import (BASE_ENV, CALL_LOG_KEYS, HEALTH_LOG_KEY, HEALTH_TABLE_ENV,
+                       HEALTH_TEST_TABLE_ENV, PIPELINE_FIELDS, RUN_LOG_KEY, TABLE_ENV,
                        TEST_TABLE_ENV, TOKEN_ENV, AirtableClient, month_to_date)
+from .contract import LOG_DIR as CONTRACT_LOG_DIR
 from .backfill import backfill
 from .config import ConfigError, is_publishable, load_boards, load_sweep_config
 from .dedupe import counts as dedupe_counts
@@ -100,7 +103,8 @@ def walk_floor(source, now):
 # Every value that must never reach a run log or the console: the run log is
 # committed to the public data branch. Scrubbed from any projection failure
 # before it is recorded, as a last line behind the clients' own discipline.
-SECRET_ENVS = (TOKEN_ENV, BASE_ENV, TABLE_ENV, TEST_TABLE_ENV,
+SECRET_ENVS = (TOKEN_ENV, BASE_ENV, TABLE_ENV, TEST_TABLE_ENV, HEALTH_TABLE_ENV,
+               HEALTH_TEST_TABLE_ENV,
                storage.PRIVATE_STORE_TOKEN_ENV, storage.PRIVATE_STORE_REPO_ENV) + tuple(
     name for mode in (False, True) for key, name in sorted(TABLE_SECRETS[mode].items())
     if key != "jobs")
@@ -369,6 +373,52 @@ def project_display(run, no_commit, test_mode, restore_failure=None, retired=Non
                                                                     "rows_sent": 0}
         block["failure"] = failure
         return stages, with_reads(block, reader), failure
+
+
+# How far back the health step reads the branch's logs: more than its week
+# at two scheduled runs a day and the operator's dispatches.
+HEALTH_RUN_LOGS = 40
+HEALTH_CONTRACT_LOGS = 10
+
+
+def make_health_client(test_mode, used_this_month):
+    """The one place the run builds the health table's writer, or None while
+    its secret is unset. Tests replace it."""
+    return AirtableClient.health_from_env(test_mode, health.HEALTH_FIELDS, health.KEY_FIELD,
+                                          used_this_month=used_this_month)
+
+
+def write_health(run_log, no_commit, test_mode, now, used_before):
+    """The health rows of the last week no run has sent, this run's own
+    failures among them (src/health.py). Never raises: a failure is recorded
+    in the block, becomes a row itself on the next run that reaches the
+    table, and costs the run nothing else. The keys are recorded as sent
+    only once the upsert succeeded; a resend after a partial one matches the
+    same rows."""
+    if no_commit:
+        return {"mode": "a no-commit run reaches no base", "calls_used": 0}
+    block = {"calls_used": 0, "sent": [], "failure": None}
+    client = None
+    try:
+        run_logs = storage.read_recent_run_logs(HEALTH_RUN_LOGS, test_mode) + [run_log]
+        checks = storage.read_recent_logs(CONTRACT_LOG_DIR, HEALTH_CONTRACT_LOGS, test_mode)
+        rows = health.pending(run_logs, checks, now)
+        block["pending"] = len(rows)
+        client = make_health_client(test_mode, used_before)
+        if client is None:
+            block["skipped"] = "no health table is configured for this mode"
+            return block
+        if rows:
+            client.upsert(rows)
+            block["sent"] = [r[health.KEY_FIELD] for r in rows]
+        block.update(calls_used=client.calls_used, rows_sent=client.rows_sent)
+    except Exception as e:
+        failure = "%s: %s" % (type(e).__name__, e)
+        if client is not None:
+            failure = client.redact(failure)
+            block["calls_used"] = client.calls_used
+        block["failure"] = redact_secrets(failure)
+    return block
 
 
 def with_reads(block, reader):
@@ -969,6 +1019,12 @@ def summarise(run_log):
                         % (p["rows_in_base"], p.get("rows_unchanged"), p.get("rows_new"),
                            p.get("rows_changed")) if "rows_in_base" in p else "",
                         "  [%s]" % p["mode"] if p.get("mode") else ""))
+    h = run_log.get(HEALTH_LOG_KEY)
+    if h is not None and "pending" in h:
+        lines.append("  health: %d row(s) pending, %s%s"
+                     % (h["pending"], "%d sent" % len(h.get("sent") or [])
+                        if not h.get("skipped") else h["skipped"],
+                        "  FAILED: %s" % h["failure"] if h.get("failure") else ""))
     c = run_log.get("clearing")
     if c is not None:
         # What would surprise him, said on the line he reads: the copies that
@@ -1243,6 +1299,13 @@ def main(argv=None):
         private_failure = private_block["failure"]
     if store is not None:
         store.close()
+    # Last of the writes to Airtable, so every failure of this run is known.
+    if count_failure is None:
+        run_log[HEALTH_LOG_KEY] = write_health(
+            run_log, args.no_commit, test_mode, run.now,
+            used_before=sum(by_branch.values())
+            + sum(int((run_log.get(k) or {}).get("calls_used") or 0)
+                  for k in CALL_LOG_KEYS if k != HEALTH_LOG_KEY))
     if not args.no_commit and count_failure is not None:
         run_log["budget"] = {"month_to_date": None, "warning": None, "failure": count_failure}
     elif not args.no_commit:

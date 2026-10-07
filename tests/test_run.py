@@ -106,6 +106,7 @@ class FakeAirtable:
     def __init__(self):
         self.sent = []
         self.rows_sent = 0
+        self.calls_used = self.CALLS
 
     def upsert(self, records):
         self.sent.extend(records)
@@ -520,7 +521,7 @@ class TestMain(unittest.TestCase):
         self.real = (storage.REPO_ROOT, storage.commit_files, storage.restore_from_branch,
                      run_module.load_boards, run_module.HttpClient,
                      run_module.make_airtable_client, run_module.make_private_store,
-                     run_module.make_sweep_client)
+                     run_module.make_sweep_client, run_module.make_health_client)
         storage.REPO_ROOT = self.dir
         subprocess.run(["git", "init", "-q"], cwd=self.dir)
         self.payload = gh_payload(["AI Engineer"])
@@ -565,12 +566,21 @@ class TestMain(unittest.TestCase):
             self.swept.append((test_mode, used_this_month))
             return client
         run_module.make_sweep_client = fake_sweep_client
+        # The health table: none unless a test gives one, so no test can reach
+        # a live table through a secret in the machine's environment.
+        self.health = None
+        self.health_asked = []
+
+        def fake_health_client(test_mode, used_this_month):
+            self.health_asked.append((test_mode, used_this_month))
+            return self.health
+        run_module.make_health_client = fake_health_client
 
     def tearDown(self):
         (storage.REPO_ROOT, storage.commit_files, storage.restore_from_branch,
          run_module.load_boards, run_module.HttpClient,
          run_module.make_airtable_client, run_module.make_private_store,
-         run_module.make_sweep_client) = self.real
+         run_module.make_sweep_client, run_module.make_health_client) = self.real
         os.environ.pop("TEST_MODE", None)
         if self.env_test_mode is not None:
             os.environ["TEST_MODE"] = self.env_test_mode
@@ -774,6 +784,48 @@ class TestMain(unittest.TestCase):
                           log["projection"]["rows_sent"]), (1, 1, 0))
         self.assertGreater(log["airtable"]["read_calls"], 0)
         self.assertIn("Jobs held 1, unchanged 1, new 0, changed 0", out)
+
+    def test_a_failure_reaches_the_health_table_once(self):
+        """ADR-0059: every failure reaches Airtable. A board that fails is a
+        health row on its run, keyed so the next run does not send it again."""
+        self.health = FakeAirtable()
+        self.payload = RuntimeError("the board is down")
+        self.main()
+        rows = self.health.sent
+        self.assertIn("run %s greenhouse:careem" % self.last_run_log()["run_at"],
+                      [r["Key"] for r in rows])
+        [row] = [r for r in rows if r["Subject"] == "greenhouse:careem"]
+        self.assertEqual((row["Source"], row["Status"]), ("fetch run", "failed"))
+        self.assertEqual(self.last_run_log()["health"]["sent"], [r["Key"] for r in rows])
+        sent_before = len(rows)
+        self.fresh_machine()
+        self.health = FakeAirtable()
+        self.payload = gh_payload(["AI Engineer"])
+        self.main()
+        self.assertEqual(self.health.sent, [], "a row already sent was sent again")
+        self.assertGreater(sent_before, 0)
+
+    def test_without_a_health_table_the_rows_wait_and_nothing_fails(self):
+        self.payload = RuntimeError("the board is down")
+        code, out, _ = self.main()
+        block = self.last_run_log()["health"]
+        self.assertEqual(block["sent"], [])
+        self.assertGreater(block["pending"], 0)
+        self.assertIn("no health table", block["skipped"])
+        self.assertIsNone(block["failure"])
+        self.assertIn("health: %d row(s) pending" % block["pending"], out)
+
+    def test_a_health_write_that_fails_costs_the_run_nothing(self):
+        class Broken(FakeAirtable):
+            def upsert(self, records):
+                raise RuntimeError("Airtable is down")
+        self.health = Broken()
+        self.payload = RuntimeError("the board is down")
+        code, _, _ = self.main()
+        block = self.last_run_log()["health"]
+        self.assertIn("Airtable is down", block["failure"])
+        self.assertEqual(block["sent"], [])
+        self.assertEqual(code, EXIT_OK)
 
     def test_a_failed_projection_still_commits_and_exits_2(self):
         """The operator's decision of 2026-09-23: exit 1 would stop the push

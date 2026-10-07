@@ -1,6 +1,6 @@
 ---
 type: how-to
-description: The operator's steps for the Airtable token, the repository secrets, and the base changes ADR-0046 and ADR-0047 require. Every step is done, twelve secrets in all; the file stays as the procedure for replacing a token.
+description: The operator's steps for the Airtable token, the repository secrets, and the base changes ADR-0046 and ADR-0047 require. Twelve secrets are set; two more, for the health tables created 2026-10-07, are the operator's to add. The file stays as the procedure for replacing a token.
 status: current
 ---
 
@@ -85,6 +85,15 @@ tables the operator created on 2026-09-24, D7. Added by him on 2026-09-25:
 and `AIRTABLE_ACCEPTED_TEST_TABLE_ID`, each the ID of the matching `test`
 table. Ten Airtable secrets in total; `.github/workflows/fetch.yml` names
 every one.)*
+
+*(Annotated 2026-10-07: two more, for the health tables the seat created
+through the connector that day, on the operator's yes: `AIRTABLE_HEALTH_TABLE_ID`,
+the ID of `Health`, and `AIRTABLE_HEALTH_TEST_TABLE_ID`, the ID of `Health test`.
+Added the same way, under **Settings → Secrets and variables → Actions → New
+repository secret**, one each. The seat gives the two IDs in its report and
+never writes them into the repository. The token needs nothing new: it is
+scoped to the base, not to tables. Until they are set, the health rows wait
+in the run logs and no run fails for them. Twelve Airtable secrets then.)*
 
 **Secret names are exact and case-sensitive.** A typo produces an empty value
 at run time, not an error, which is the failure that looks like a bug in the
@@ -200,6 +209,7 @@ now.)*
 
 | Date | Change | Reason |
 |---|---|---|
+| 2026-10-07 | Step 2 annotated with the health tables' two secrets, and the description made current | The seat created `Health` and `Health test` through the connector on the operator's yes; their IDs reach him in the seat's report, never this repository |
 | 2026-10-02 | The paragraph on `AGGREGATOR_STORE_REPO` corrected: it said the private repository's name was kept out of this repository, two lines below the line naming it | The fourth audit's F14. The operator's choice, 2026-10-02: correct the sentence, since the name is harmless and already in the history |
 | 2026-09-27 | Steps 4 and 5 and the list of what happens next annotated as done; the three test-table secrets added beside step 2; the description made current | The file still said steps 4 and 5 were not done, three days after both were, and counted seven secrets where twelve are set. Found while updating `README.md`, which points here. Annotated rather than rewritten, as the row below did, so each original instruction survives beside what is true |
 | 2026-09-23 | Step 4 annotated as half done: `Classified at` exists, only the three `Status` choices remain | The step said "Not done" as a whole and still instructed creating `Classified at`, which was built on 2026-09-20. `STATE.md` and `airtable-schema.md` already said so, so the operator was being sent to do work that existed. Annotated rather than rewritten, so the original instruction survives beside what is true |

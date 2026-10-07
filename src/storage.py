@@ -378,10 +378,16 @@ def restore_from_branch(test_mode=False):
 def read_recent_run_logs(count, test_mode=False):
     """The last `count` run logs on the branch, oldest first, whatever month
     they fall in. For counting failures in a row across a month boundary."""
+    return read_recent_logs(RUNLOG_DIR, count, test_mode)
+
+
+def read_recent_logs(directory, count, test_mode=False):
+    """The last `count` logs in `directory` on the branch, oldest first: the
+    run logs, or the contract check's, which the health rows read too."""
     branch = data_branch(test_mode)
     if count <= 0 or not branch_exists(branch):
         return []
-    listed = sorted(p for p in _git(["ls-tree", "--name-only", branch, RUNLOG_DIR + "/"]).splitlines()
+    listed = sorted(p for p in _git(["ls-tree", "--name-only", branch, directory + "/"]).splitlines()
                     if p.endswith(".json"))
     logs = []
     for path in listed[-count:]:

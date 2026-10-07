@@ -200,7 +200,9 @@ class TestNoReadPath(unittest.TestCase):
     def test_the_only_public_verb_is_upsert(self):
         public = {name for name, member in inspect.getmembers(AirtableClient)
                   if callable(member) and not name.startswith("_")}
-        self.assertEqual(public, {"upsert", "counters", "redact", "from_env"})
+        # Two constructors, `Jobs`' and the health table's (2026-10-07), and
+        # one verb.
+        self.assertEqual(public, {"upsert", "counters", "redact", "from_env", "health_from_env"})
 
     def test_only_patch_reaches_the_wire(self):
         c = client([FakeResponse(429), FakeResponse(503), echo])
@@ -214,6 +216,50 @@ class TestNoReadPath(unittest.TestCase):
     def test_the_read_check_can_fail(self):
         self.assertTrue(READ_METHODS.findall('self._session.request("GET", url)'))
         self.assertTrue(READ_METHODS.findall("self._session.get(url)"))
+
+
+class TestTheHealthWriter(unittest.TestCase):
+    """The health table's writer: its own fields and key, held as strictly as
+    `Jobs`', and nothing at all while its secret is unset."""
+
+    FIELDS = ("Key", "When", "Source", "Subject", "Status", "Detail")
+    ENV = {"AIRTABLE_TOKEN": "patX.y", "AIRTABLE_BASE_ID": "app00000000000001",
+           "AIRTABLE_TABLE_ID": "tbl00000000000001", "AIRTABLE_TEST_TABLE_ID": "tbl00000000000002",
+           "AIRTABLE_HEALTH_TABLE_ID": "tbl00000000000003",
+           "AIRTABLE_HEALTH_TEST_TABLE_ID": "tbl00000000000004"}
+
+    def writer(self, env=None, test_mode=False, responses=None):
+        c = AirtableClient.health_from_env(test_mode, self.FIELDS, "Key",
+                                           environ=dict(self.ENV, **(env or {})),
+                                           session=FakeSession(responses or [echo]),
+                                           sleep=lambda s: None, min_interval=0)
+        return c
+
+    def test_unset_is_no_writer_and_no_failure(self):
+        self.assertIsNone(self.writer({"AIRTABLE_HEALTH_TABLE_ID": ""}))
+        self.assertIsNone(self.writer({"AIRTABLE_HEALTH_TEST_TABLE_ID": " "}, test_mode=True))
+
+    def test_each_mode_writes_its_own_table(self):
+        self.assertEqual(self.writer()._table_id, "tbl00000000000003")
+        self.assertEqual(self.writer(test_mode=True)._table_id, "tbl00000000000004")
+
+    def test_a_table_that_is_another_tables_is_refused(self):
+        for clash in ("tbl00000000000001", "tbl00000000000004"):
+            with self.subTest(clash=clash), self.assertRaises(AirtableConfigError):
+                self.writer({"AIRTABLE_HEALTH_TABLE_ID": clash})
+
+    def test_it_sends_only_its_fields_and_matches_on_key(self):
+        c = self.writer()
+        row = dict.fromkeys(self.FIELDS, "x")
+        row["Key"] = "run 2026-10-07T04:38:28Z projection"
+        c.upsert([row])
+        body = c._session.calls[0]["json"]
+        self.assertEqual(body["performUpsert"], {"fieldsToMergeOn": ["Key"]})
+        self.assertEqual(set(body["records"][0]["fields"]), set(self.FIELDS))
+        with self.assertRaises(ValueError):
+            c.upsert([dict(row, Title="a Jobs field")])
+        with self.assertRaises(ValueError):
+            c.upsert([dict(row, Key="")])
 
 
 class TestUpsertGuards(unittest.TestCase):
@@ -355,8 +401,9 @@ class TestMonthToDate(unittest.TestCase):
         2026-10-07 the tool's were spent and never counted: 2 and 4 on the
         operator's test-mode clearings of 2026-10-02 and 10-03."""
         logs = [{"run_at": "2026-10-03T13:52:41Z", "airtable": {"calls_used": 5},
-                 "sweep": {"calls_used": 11}, "clearing": {"calls_used": 4}}]
-        self.assertEqual(month_to_date(logs, "2026-10-07T12:00:00Z"), 20)
+                 "sweep": {"calls_used": 11}, "clearing": {"calls_used": 4}},
+                {"run_at": "2026-10-07T18:00:00Z", "health": {"calls_used": 2}}]
+        self.assertEqual(month_to_date(logs, "2026-10-07T20:00:00Z"), 22)
 
     def test_a_log_from_before_this_client_counts_zero(self):
         logs = [{"run_at": "2026-09-22T17:33:36Z", "totals": {}}]

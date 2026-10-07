@@ -1,0 +1,56 @@
+[
+  {
+    "label": "a health event already sent is sent again",
+    "path": "src/health.py",
+    "find": "            if r[KEY_FIELD] not in sent and r[KEY_FIELD] not in seen:",
+    "replace": "            if r[KEY_FIELD] not in seen:"
+  },
+  {
+    "label": "a health event older than its week is sent",
+    "path": "src/health.py",
+    "find": "        if not isinstance(log, dict) or not recent(log.get(\"run_at\"), since):",
+    "replace": "        if not isinstance(log, dict):"
+  },
+  {
+    "label": "an unchanged contract check is a health row",
+    "path": "src/health.py",
+    "find": "CONTRACT_ROWS = (\"changed\", \"re-baselined\", \"unreachable\", \"check failed\", \"baseline\")",
+    "replace": "CONTRACT_ROWS = (\"changed\", \"re-baselined\", \"unreachable\", \"check failed\", \"baseline\", \"unchanged\")"
+  },
+  {
+    "label": "a failed board is no health row",
+    "path": "src/health.py",
+    "find": "BOARD_ROWS = (\"failed\", \"error\", \"unparseable\", \"not reached\")",
+    "replace": "BOARD_ROWS = ()"
+  },
+  {
+    "label": "a failed projection is no health row",
+    "path": "src/health.py",
+    "find": "RUN_PARTS = ((\"projection\", lambda log: (log.get(\"airtable\") or {}).get(\"failure\")),",
+    "replace": "RUN_PARTS = ("
+  },
+  {
+    "label": "health keys are recorded as sent before the upsert succeeds",
+    "path": "src/run.py",
+    "find": "            client.upsert(rows)\n            block[\"sent\"] = [r[health.KEY_FIELD] for r in rows]",
+    "replace": "            block[\"sent\"] = [r[health.KEY_FIELD] for r in rows]\n            client.upsert(rows)"
+  },
+  {
+    "label": "a run with no health table is a failure",
+    "path": "src/run.py",
+    "find": "            block[\"skipped\"] = \"no health table is configured for this mode\"\n            return block",
+    "replace": "            raise RuntimeError(\"no health table\")"
+  },
+  {
+    "label": "the health table's calls are not counted in the month",
+    "path": "src/airtable.py",
+    "find": "CALL_LOG_KEYS = (RUN_LOG_KEY, SWEEP_LOG_KEY, CLEARING_LOG_KEY, HEALTH_LOG_KEY)",
+    "replace": "CALL_LOG_KEYS = (RUN_LOG_KEY, SWEEP_LOG_KEY, CLEARING_LOG_KEY)"
+  },
+  {
+    "label": "a health table that is another table's is accepted",
+    "path": "src/airtable.py",
+    "find": "        if value(name) in others:",
+    "replace": "        if False:"
+  }
+]

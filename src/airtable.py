@@ -88,8 +88,16 @@ SWEEP_LOG_KEY = "sweep"
 # Summed since 2026-10-07: until then its calls were spent and never counted,
 # 2 and 4 on his test-mode clearings of 2026-10-02 and 10-03.
 CLEARING_LOG_KEY = "clearing"
+# Where a run log carries the health rows' writer's counters (src/health.py).
+HEALTH_LOG_KEY = "health"
 # Every block a run log holds that spent Airtable calls.
-CALL_LOG_KEYS = (RUN_LOG_KEY, SWEEP_LOG_KEY, CLEARING_LOG_KEY)
+CALL_LOG_KEYS = (RUN_LOG_KEY, SWEEP_LOG_KEY, CLEARING_LOG_KEY, HEALTH_LOG_KEY)
+
+# The health table's secrets, per mode: one table each, created by the seat
+# through the connector on 2026-10-07, the operator's yes. Unset, the health
+# rows wait in the run logs and nothing fails.
+HEALTH_TABLE_ENV = "AIRTABLE_HEALTH_TABLE_ID"
+HEALTH_TEST_TABLE_ENV = "AIRTABLE_HEALTH_TEST_TABLE_ID"
 
 
 class AirtableConfigError(Exception):
@@ -157,7 +165,10 @@ class AirtableClient(ResilientClient):
                  backoff_base=DEFAULT_BACKOFF_BASE, timeout=DEFAULT_TIMEOUT,
                  breaker_threshold=DEFAULT_BREAKER_THRESHOLD,
                  min_interval=MIN_INTERVAL, session=None, sleep=time.sleep,
-                 now=time.monotonic):
+                 now=time.monotonic, fields=PIPELINE_FIELDS, key=IDENTITY_FIELD):
+        """`fields` are the only fields a record may carry and `key` the one
+        an upsert matches on: `Jobs`' by default, the health table's for its
+        writer. Each table's set is its own, held as strictly."""
         if not token:
             raise AirtableConfigError("no Airtable token")
         if not (base_id or "").startswith("app"):
@@ -175,6 +186,8 @@ class AirtableClient(ResilientClient):
         self._token = token
         self._base_id = base_id
         self._table_id = table_id
+        self._fields = tuple(fields)
+        self._key = key
         self.timeout = timeout
         self._session = session if session is not None else requests.Session()
         self.monthly_ceiling = monthly_ceiling
@@ -204,6 +217,32 @@ class AirtableClient(ResilientClient):
                 "table" % (TEST_TABLE_ENV, TABLE_ENV))
         return cls(value(TOKEN_ENV), value(BASE_ENV),
                    value(table_env(test_mode)), **kw)
+
+    @classmethod
+    def health_from_env(cls, test_mode, fields, key, environ=None, **kw):
+        """The health table's writer, or None while this mode's health secret
+        is unset: the rows wait in the run logs, and the run is not failed
+        for a table the operator has not wired yet. Set, it is refused like
+        any other secret when it is the other mode's table or one of the
+        display's."""
+        environ = os.environ if environ is None else environ
+
+        def value(name):
+            return (environ.get(name) or "").strip()
+
+        name = HEALTH_TEST_TABLE_ENV if test_mode else HEALTH_TABLE_ENV
+        if not value(name):
+            return None
+        missing = [n for n in (TOKEN_ENV, BASE_ENV) if not value(n)]
+        if missing:
+            raise AirtableConfigError("empty or unset: %s" % ", ".join(missing))
+        others = {value(n) for n in (TABLE_ENV, TEST_TABLE_ENV, HEALTH_TABLE_ENV,
+                                     HEALTH_TEST_TABLE_ENV) if n != name} - {""}
+        if value(name) in others:
+            raise AirtableConfigError("%s equals another table's ID, so health rows would be "
+                                      "written where they do not belong" % name)
+        return cls(value(TOKEN_ENV), value(BASE_ENV), value(name), fields=fields, key=key,
+                   **kw)
 
     # ---------------------------------------------------------------- state
     @property
@@ -267,13 +306,14 @@ class AirtableClient(ResilientClient):
 
     # ----------------------------------------------------------------- verb
     def upsert(self, records):
-        """Create or update, matched server side on Identity. ADR-0035.
+        """Create or update, matched server side on the key, Identity for
+        `Jobs`. ADR-0035.
 
-        Every record must carry exactly PIPELINE_FIELDS, a non-empty Identity,
-        and an Identity no other record in the call shares. Anything else is
+        Every record must carry exactly this table's fields, a non-empty key,
+        and a key no other record in the call shares. Anything else is
         refused before a request is made. Returns the IDs Airtable reports
         created and updated."""
-        expected = set(PIPELINE_FIELDS)
+        expected = set(self._fields)
         identities = []
         for index, fields in enumerate(records):
             extra = sorted(set(fields) - expected)
@@ -282,25 +322,25 @@ class AirtableClient(ResilientClient):
                 raise ValueError(
                     "record %d is not the pipeline-owned fields: extra %s, missing %s"
                     % (index, extra or "none", missing or "none"))
-            if not fields[IDENTITY_FIELD]:
-                raise ValueError("record %d has no Identity, so the upsert "
-                                 "could not match it" % index)
-            identities.append(fields[IDENTITY_FIELD])
+            if not fields[self._key]:
+                raise ValueError("record %d has no %s, so the upsert "
+                                 "could not match it" % (index, self._key))
+            identities.append(fields[self._key])
         if len(set(identities)) != len(identities):
-            raise ValueError("two records share an Identity; one would "
-                             "silently overwrite the other")
+            raise ValueError("two records share a %s; one would "
+                             "silently overwrite the other" % self._key)
 
         result = {"created": [], "updated": []}
         batches = list(_batches(list(records), BATCH_SIZE))
         for number, batch in enumerate(batches, 1):
             target = "airtable upsert, batch %d of %d" % (number, len(batches))
-            body = {"performUpsert": {"fieldsToMergeOn": [IDENTITY_FIELD]},
-                    "records": [{"fields": {name: fields[name] for name in PIPELINE_FIELDS}}
+            body = {"performUpsert": {"fieldsToMergeOn": [self._key]},
+                    "records": [{"fields": {name: fields[name] for name in self._fields}}
                                 for fields in batch]}
             payload = self._patch(body, target)
-            got = {(r.get("fields") or {}).get(IDENTITY_FIELD)
+            got = {(r.get("fields") or {}).get(self._key)
                    for r in payload.get("records") or []}
-            sent = [fields[IDENTITY_FIELD] for fields in batch]
+            sent = [fields[self._key] for fields in batch]
             unaccounted = [identity for identity in sent if identity not in got]
             if unaccounted:
                 raise ResponseMismatch(

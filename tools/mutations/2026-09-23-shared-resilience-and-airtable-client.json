@@ -86,7 +86,7 @@
   {
     "label": "a record with no identity is sent",
     "path": "src/airtable.py",
-    "find": "            if not fields[IDENTITY_FIELD]:",
+    "find": "            if not fields[self._key]:",
     "replace": "            if False:"
   },
   {

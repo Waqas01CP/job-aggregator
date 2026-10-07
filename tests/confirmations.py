@@ -203,8 +203,11 @@ CONFIRMATIONS = {
             "test_one_platforms_failed_check_commits_the_others_and_exits_2",
             "test_workflow.TestContractWorkflow.test_a_failed_platform_is_pushed_and_then_marked_failed"]},
         "A contract finding must be seen as a row in Airtable": {
-            "unbuilt": "the findings table and the check's writer to it are not built: the table "
-                       "and two secrets are the operator's to create, Brief 10's report"},
+            "tests": ["test_health.TestWhatIsARow.test_each_changed_field_is_a_row_and_ours_says_so",
+                      "test_health.TestWhatIsARow.test_a_failed_unreachable_or_new_platform_is_one_row",
+                      "test_run.TestMain.test_a_failure_reaches_the_health_table_once"],
+            "live": "seen as a row in Health test once the operator sets its secret, which the "
+                    "seat asked of him on 2026-10-07; the tables exist"},
         "No source is built without its contract check": {"tests": [
             "test_fitness.TestFitnessFunctions.test_every_source_has_its_own_contract_check",
             "test_contract.TestConsumedFields.test_every_platform_the_run_polls_is_checked"]},

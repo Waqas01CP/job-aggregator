@@ -1,6 +1,6 @@
 ---
 type: reference
-description: The Airtable display's eight tables and their fields as actually built, who owns each field, the choices they carry, and the five things the Airtable MCP cannot do.
+description: The Airtable display's ten tables and their fields as actually built, who owns each field, the choices they carry, and the five things the Airtable MCP cannot do.
 status: current
 ---
 
@@ -32,7 +32,7 @@ must be added here with its owner before the suite passes.
   pipeline. Losing one loses a judgement that cannot be reconstructed.
 - **Airtable**: set by Airtable itself, a clock.
 
-## The eight tables
+## The ten tables
 
 | Table | Holds | Deletion |
 |---|---|---|
@@ -42,6 +42,7 @@ must be added here with its owner before the suite passes.
 | `rejected-poor-filtering` | Should not have been surfaced. The defect log | Fifteen days after `Classified`, once the store holds the outcome |
 | `accepted` | Shortlisted or applied to | **By no clock. A tool the operator runs deletes from Airtable alone, never from the store** |
 | `rejected-not-a-fit test`, `rejected-poor-filtering test`, `accepted test` | The sweep's test-mode copies, created 2026-09-24 on the operator's decision D7 | As their production twins |
+| `Health`, `Health test` | The pipeline's health: contract findings and run failures, one row each, written by the fetch run (`src/health.py`). Created 2026-10-07 through the connector, on the operator's yes | By no clock. The operator deletes rows by hand; a deleted row is not sent again |
 
 `Jobs test` and the three test tables exist because ADR-0033 requires a test
 run to be incapable of touching production state. Each has its own secret,
@@ -83,6 +84,24 @@ Like the three `Classified` fields, it displays in the viewer's local zone on
 a 12 hour clock and the connector offers no way to change that. The stored
 value is a real timestamp returned in ISO, so the sweep's arithmetic is
 unaffected.
+
+## `Health` and `Health test`, six fields
+
+Written only when something is wrong or new: a contract finding that is not
+"unchanged", and a fetch-run failure. The fetch run writes both, the
+contract check's from its logs, so the contract workflow holds no Airtable
+secret. Each table's ID comes from its own secret, `AIRTABLE_HEALTH_TABLE_ID`
+and `AIRTABLE_HEALTH_TEST_TABLE_ID`; while one is unset its rows wait in the
+run logs and nothing fails.
+
+| Field | Type | Owner | Holds |
+|---|---|---|---|
+| Key | single line text | pipeline | The event's key, unique: what the upsert matches on |
+| When | date with time | pipeline | When the check or run that found it ran, UTC |
+| Source | single line text | pipeline | `contract check` or `fetch run` |
+| Subject | single line text | pipeline | The platform, board or part of the run it concerns |
+| Status | single line text | pipeline | What happened: changed, re-baselined, unreachable, check failed, baseline, failed, error, unparseable, not reached, stopped |
+| Detail | long text | pipeline | The field and its shapes, or the failure as the run log records it; never a posting's text |
 
 ## The three classification tables
 
@@ -196,3 +215,4 @@ as the example for an IANA identifier; Airtable's API rejects `"UTC"` with a
 | 2026-09-18 | Rebuilt in a different base, now five tables, and the main table drops two fields | The MCP was authorised on another account, so the 2026-09-17 base is unreachable and stranded; the new base is the one the pipeline will use. The three classification tables are ADR-0043's stores given a surface, and ADR-0045 makes classification a move rather than a status edit, which is why `Pipeline reason` and `Choice reason` moved out of the main table to the table each belongs to. A fourth MCP limit was found: a `createdTime` field's display format cannot be set |
 | 2026-09-25 | Rebuilt for ADR-0050: eight tables, fourteen fields on `Jobs`, `Family` and `Closed` added, an Owner column for every field, the `Status` choices as renamed, and the stale "not yet built" passages removed | ADR-0050 superseded ADR-0046 and adds `Closed`; Brief 7 asked for `Closed` to be recorded here. The Owner column makes ADR-0035's ownership a property a test reads (ADR-0049), so a field added later must declare its owner. `Closed` was created on both tables through the connector and read back |
 | 2026-10-07 | `Order date` is empty for a posting with no publication date | The operator's rule that no job is skipped for lacking a date and none is shown as newer than it may be; Airtable sorts blanks last in a latest-first sort, by its support documentation. Manatal is the first source with no date |
+| 2026-10-07 | `Health` and `Health test` added, six pipeline-owned fields | ADR-0059 requires every contract finding and every failure to reach Airtable; the operator chose one table for both, "general health", if the cost is low |

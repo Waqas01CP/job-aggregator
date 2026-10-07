@@ -57,7 +57,7 @@ supersedes and superseded-by links, deliberately not duplicated here.
 
 | File | Holds | Status |
 | --- | --- | --- |
-| `docs/how-to/airtable-token-and-secrets.md` | The operator's steps for the Airtable token, the repository secrets, and the base changes ADR-0046 and ADR-0047 require. Every step is done, twelve secrets in all; the file stays as the procedure for replacing a token. | current |
+| `docs/how-to/airtable-token-and-secrets.md` | The operator's steps for the Airtable token, the repository secrets, and the base changes ADR-0046 and ADR-0047 require. Twelve secrets are set; two more, for the health tables created 2026-10-07, are the operator's to add. The file stays as the procedure for replacing a token. | current |
 | `docs/how-to/build-the-writer.md` | The held implementation, assembled in one place: every constraint the Airtable writer, projection and sweep must satisfy, which record each comes from, what is already built, and the order to build in. Audited 2026-09-23 and corrected; two constraints are undecided and named at the top. | current |
 | `docs/how-to/the-seats.md` | The four seats that work on this project, what each may and may not do, how work moves between them, and the procedure for re-checking that this file is still true. Nothing in the repository can prove it, which is why it carries its own checks. | current |
 
@@ -66,7 +66,7 @@ supersedes and superseded-by links, deliberately not duplicated here.
 | File | Holds | Status |
 | --- | --- | --- |
 | `docs/decisions/README.md` | Every architecture decision made on this project, one file per decision, with the reasoning that produced it and the conditions that would show it was wrong. | current |
-| `docs/reference/airtable-schema.md` | The Airtable display's eight tables and their fields as actually built, who owns each field, the choices they carry, and the five things the Airtable MCP cannot do. | current |
+| `docs/reference/airtable-schema.md` | The Airtable display's ten tables and their fields as actually built, who owns each field, the choices they carry, and the five things the Airtable MCP cannot do. | current |
 | `docs/reference/annotation-vendors.md` | The annotation and data-labelling vendors whose postings are dropped, why the list exists, what it is sourced from, and how thin that evidence is. | current |
 | `docs/reference/completed.md` | Every completed task, with the evidence that proved it and the log or record that carries the proof. Split out of STATE.md so a session reads what is unsettled first. | current |
 | `docs/reference/platform-fields.md` | Every field each source returns and every query parameter its API accepts, measured over the full postings saved since 2026-09-26, with whether the pipeline reads each and where a posting states experience. The inventory that makes "use everything that is fetched" checkable, and the procedure for each new source. | current |
