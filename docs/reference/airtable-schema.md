@@ -60,7 +60,7 @@ only renamed.
 | Link | URL | pipeline | Canonical URL, given or constructed, per ADR-0026 |
 | Published | date with time | pipeline | The board's stated publication date. Empty where the platform exposes none |
 | First seen | date with time | pipeline | When the pipeline first recorded the posting |
-| Order date | date with time | pipeline | Publication date where one exists, else first seen. ADR-0007. Sort on this |
+| Order date | date with time | pipeline | Publication date where one exists; empty where none, so a view sorted on it latest first shows a posting without a date after every dated one (the operator's rule, 2026-10-07; first seen, ADR-0007's fallback, until then). Sort on this |
 | Board | single line text | pipeline | Source and board, for example `greenhouse:careem` |
 | Matched term | single line text | pipeline | The pool term that admitted the row, per ADR-0021 |
 | Identity | single line text | pipeline | The pipeline's identity. What ADR-0035's upsert matches on |
@@ -195,3 +195,4 @@ as the example for an IANA identifier; Airtable's API rejects `"UTC"` with a
 | 2026-09-17 | File created. Two tables, `Jobs` and `Jobs test`, thirteen fields each | The schema was built through the MCP and verified by reading it back |
 | 2026-09-18 | Rebuilt in a different base, now five tables, and the main table drops two fields | The MCP was authorised on another account, so the 2026-09-17 base is unreachable and stranded; the new base is the one the pipeline will use. The three classification tables are ADR-0043's stores given a surface, and ADR-0045 makes classification a move rather than a status edit, which is why `Pipeline reason` and `Choice reason` moved out of the main table to the table each belongs to. A fourth MCP limit was found: a `createdTime` field's display format cannot be set |
 | 2026-09-25 | Rebuilt for ADR-0050: eight tables, fourteen fields on `Jobs`, `Family` and `Closed` added, an Owner column for every field, the `Status` choices as renamed, and the stale "not yet built" passages removed | ADR-0050 superseded ADR-0046 and adds `Closed`; Brief 7 asked for `Closed` to be recorded here. The Owner column makes ADR-0035's ownership a property a test reads (ADR-0049), so a field added later must declare its owner. `Closed` was created on both tables through the connector and read back |
+| 2026-10-07 | `Order date` is empty for a posting with no publication date | The operator's rule that no job is skipped for lacking a date and none is shown as newer than it may be; Airtable sorts blanks last in a latest-first sort, by its support documentation. Manatal is the first source with no date |

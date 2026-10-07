@@ -196,7 +196,13 @@ def fields_for(g, matcher):
         "Link": rep.url,
         "Published": airtable_datetime(rep.published_at),
         "First seen": airtable_datetime(rep.first_seen),
-        "Order date": airtable_datetime(rep.ordering_date),
+        # Empty for a posting with no publication date, so the view, sorted
+        # on this field latest first, puts it after every dated one: blanks
+        # sort last that way round, by Airtable's own documentation. The
+        # operator's rule of 2026-10-07: no job is skipped for lacking a
+        # date, and none is shown as newer than it may be. ADR-0007 ordered
+        # it by first sight until then.
+        "Order date": airtable_datetime(rep.ordering_date) if rep.published_at else None,
         "Board": rep.board_id,
         "Matched term": term,
         "Identity": rep.identity,

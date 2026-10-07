@@ -112,6 +112,7 @@ By his estimate, that took most of a working week. He usually found a posting th
     - `Jobs` read back first, one call per hundred rows, and only the rows it does not already show as they would be sent are written: a run that changes nothing writes nothing (since 2026-10-07; until then every display row was sent on every run, one call per ten rows);
     - an upsert matched on the posting's identity, ten rows per call;
     - only the pipeline's own fields are written, never the operator's `Status`;
+    - a posting with no publication date is shown after every dated one, never skipped and never as newer than it may be (since 2026-10-07);
     - anything he has already classified is skipped, so it never comes back.
 11. **Sweeps the display**, under ADR-0050:
     - **Every run:** copies each newly marked row into its classification table.

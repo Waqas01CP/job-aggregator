@@ -8,7 +8,7 @@
   {
     "label": "an aggregator's rows are ordered by first sight, not their date",
     "path": "src/projection.py",
-    "find": "        \"Order date\": airtable_datetime(rep.ordering_date),",
-    "replace": "        \"Order date\": airtable_datetime(rep.ordering_date if is_publishable(rep.source) else rep.first_seen),"
+    "find": "        \"Order date\": airtable_datetime(rep.ordering_date) if rep.published_at else None,",
+    "replace": "        \"Order date\": airtable_datetime(rep.ordering_date if is_publishable(rep.source) else rep.first_seen) if rep.published_at else None,"
   }
 ]

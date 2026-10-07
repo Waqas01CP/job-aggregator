@@ -237,6 +237,21 @@ class TestTheRowSent(Harness):
         self.assertEqual(sorted(dates), ["greenhouse", "himalayas", "lever"])
         self.assertEqual(set(dates.values()), {projection.airtable_datetime(published)})
 
+    def test_a_posting_with_no_date_sorts_after_every_dated_one(self):
+        """The operator's rule of 2026-10-07: a dateless posting is kept and
+        shown last. Its `Order date` is sent empty, which a view sorted on it
+        latest first puts at the end; its first sight is still shown."""
+        dateless = make_row(2, employer="Globex", published=None)
+        dateless.ordering_date_source = "first_seen"
+        dateless.ordering_date = dateless.first_seen
+        self.write_filtered([make_row(1), dateless])
+        client, _ = self.project()
+        by_id = {r["Identity"]: r for r in client.sent}
+        self.assertIsNone(by_id["greenhouse:2"]["Order date"])
+        self.assertIsNone(by_id["greenhouse:2"]["Published"])
+        self.assertEqual(by_id["greenhouse:2"]["First seen"], "2026-09-21T10:00:00.123Z")
+        self.assertEqual(by_id["greenhouse:1"]["Order date"], "2026-09-20T10:00:00.000Z")
+
     def test_the_fields_are_exactly_the_pipeline_owned_ones(self):
         """Against the set written out by hand, never against
         PIPELINE_FIELDS: the audit of 2026-09-24 added Status to both the

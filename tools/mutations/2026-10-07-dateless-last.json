@@ -1,0 +1,8 @@
+[
+  {
+    "label": "a posting with no date is ordered by its first sight",
+    "path": "src/projection.py",
+    "find": "        \"Order date\": airtable_datetime(rep.ordering_date) if rep.published_at else None,",
+    "replace": "        \"Order date\": airtable_datetime(rep.ordering_date),"
+  }
+]
