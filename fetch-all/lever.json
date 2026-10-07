@@ -1801,5 +1801,65 @@
   "workplace": "remote",
   "required_places": null,
   "described_workplace": null
+ },
+ {
+  "identity": "lever:935fa25e-fd79-42c5-8e55-805e455c5082",
+  "source": "lever",
+  "board_id": "lever:smart-working-solutions",
+  "external_id": "935fa25e-fd79-42c5-8e55-805e455c5082",
+  "employer": "Smart Working Solutions",
+  "employer_provenance": "slug",
+  "title": "Sr. Machine Learning Engineer (Remote, Contract) [HR216] (PK)",
+  "title_normalised": "Sr. Machine Learning Engineer (Remote, Contract) [HR216] (PK)",
+  "location": "Pakistan",
+  "published_at": "2026-10-07T07:08:17.543000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-10-07T19:20:09.230319Z",
+  "ordering_date": "2026-10-07T07:08:17.543000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/smart-working-solutions/935fa25e-fd79-42c5-8e55-805e455c5082",
+  "url_provenance": "payload",
+  "stated_experience": [
+   6,
+   5,
+   2
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "PK"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null
+ },
+ {
+  "identity": "lever:7ba6797e-ca18-4973-8058-2c6ae2f60592",
+  "source": "lever",
+  "board_id": "lever:spreetail",
+  "external_id": "7ba6797e-ca18-4973-8058-2c6ae2f60592",
+  "employer": "Spreetail",
+  "employer_provenance": "slug",
+  "title": "Seasonal Warehouse Team Member, $22/hr",
+  "title_normalised": "Seasonal Warehouse Team Member, $22/hr",
+  "location": "Savannah, GA",
+  "published_at": "2026-10-06T20:31:30.566000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-10-07T19:20:09.230319Z",
+  "ordering_date": "2026-10-06T20:31:30.566000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/spreetail/7ba6797e-ca18-4973-8058-2c6ae2f60592",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "US"
+  ],
+  "workplace": "onsite",
+  "required_places": null,
+  "described_workplace": null
  }
 ]
