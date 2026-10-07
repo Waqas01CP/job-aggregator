@@ -1378,6 +1378,13 @@ class TestBudgetLine(unittest.TestCase):
         self.assertEqual(b["month_to_date"], 604)
         self.assertIn("604 of 1000", b["warning"])
 
+    def test_the_clearing_tools_calls_count_toward_the_line(self):
+        log = {"airtable": {"calls_used": 5, "monthly_ceiling": 1000},
+               "sweep": {"calls_used": 4}, "clearing": {"calls_used": 6}}
+        b = run_module.budget_line(log, {"data": 590, "data-test": 0}, self.CONFIG,
+                                   datetime(2026, 10, 12, 3, 40, tzinfo=timezone.utc))
+        self.assertEqual(b["month_to_date"], 605)
+
     def test_at_the_line_or_after_the_fifteenth_is_quiet(self):
         self.assertIsNone(self.line(591, 12)["warning"])
         self.assertIsNone(self.line(800, 15)["warning"])

@@ -84,6 +84,12 @@ RUN_LOG_KEY = "airtable"
 # Where a run log carries the sweep's client's counters (ADR-0050). The month's
 # count sums both, since the allowance is one per workspace.
 SWEEP_LOG_KEY = "sweep"
+# Where a run log carries the operator's clearing tool's counters (ADR-0055).
+# Summed since 2026-10-07: until then its calls were spent and never counted,
+# 2 and 4 on his test-mode clearings of 2026-10-02 and 10-03.
+CLEARING_LOG_KEY = "clearing"
+# Every block a run log holds that spent Airtable calls.
+CALL_LOG_KEYS = (RUN_LOG_KEY, SWEEP_LOG_KEY, CLEARING_LOG_KEY)
 
 
 class AirtableConfigError(Exception):
@@ -133,7 +139,7 @@ def month_to_date(run_logs, now_iso):
     for log in run_logs:
         if str(log.get("run_at", ""))[:7] != month:
             continue
-        for key in (RUN_LOG_KEY, SWEEP_LOG_KEY):
+        for key in CALL_LOG_KEYS:
             section = log.get(key) or {}
             total += int(section.get("calls_used") or 0)
     return total

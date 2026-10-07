@@ -134,8 +134,8 @@
   {
     "label": "the month count ignores the sweep",
     "path": "src/airtable.py",
-    "find": "        for key in (RUN_LOG_KEY, SWEEP_LOG_KEY):",
-    "replace": "        for key in (RUN_LOG_KEY,):"
+    "find": "CALL_LOG_KEYS = (RUN_LOG_KEY, SWEEP_LOG_KEY, CLEARING_LOG_KEY)",
+    "replace": "CALL_LOG_KEYS = (RUN_LOG_KEY, CLEARING_LOG_KEY)"
   },
   {
     "label": "public outcomes are not committed",

@@ -6,6 +6,8 @@ status: current
 
 # STATE
 
+**Touched 2026-10-07T20:55Z by the implementing seat, for the month's Airtable count only:** the clearing tool's calls were spent and never counted, by the next run's month nor by the budget line, 2 and 4 on the operator's test-mode clearings of 2026-10-02 and 10-03 [VERIFIED from `data-test`'s logs]. Both now sum every block that spends calls. The line that follows stands.
+
 **Touched 2026-10-07T20:45Z by the implementing seat, for the description's on-site phrases only:** measured over Manatal's 640 postings, the reader read 8 as on site and missed lines placing the role and then its mode, labels it did not know, and a comma after "full-time". Widened; over every saved description, 34 postings newly read as on site (Manatal 8 to 39 of 640, Greenhouse 34 to 37 of 838, none of them displayed), none read as on site lost, each newly matched line saying how its role is worked [VERIFIED]. The line that follows stands.
 
 **Touched 2026-10-07T20:38Z by the implementing seat, for Manatal only:** ADR-0059's first platform by measured yield, built on the operator's answers of 2026-10-07: all nine registry boards on the career site's own endpoint, which Manatal does not document and he accepted, since the documented one served five of the nine and gave no working link to a posting. No date, so its postings are never dropped for age and sort last; read to the end of its pages, and a posting its shifting pages repeat kept once; its own contract check from its first run. Not yet run live. The line that follows stands.

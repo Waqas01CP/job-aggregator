@@ -350,6 +350,14 @@ class TestMonthToDate(unittest.TestCase):
                 {"run_at": "2026-09-23T03:36:36Z", "airtable": {"calls_used": 3}}]
         self.assertEqual(month_to_date(logs, "2026-09-23T12:00:00Z"), 7)
 
+    def test_every_block_that_spent_calls_is_counted(self):
+        """The projection's, the sweep's and the clearing tool's. Until
+        2026-10-07 the tool's were spent and never counted: 2 and 4 on the
+        operator's test-mode clearings of 2026-10-02 and 10-03."""
+        logs = [{"run_at": "2026-10-03T13:52:41Z", "airtable": {"calls_used": 5},
+                 "sweep": {"calls_used": 11}, "clearing": {"calls_used": 4}}]
+        self.assertEqual(month_to_date(logs, "2026-10-07T12:00:00Z"), 20)
+
     def test_a_log_from_before_this_client_counts_zero(self):
         logs = [{"run_at": "2026-09-22T17:33:36Z", "totals": {}}]
         self.assertEqual(month_to_date(logs, "2026-09-23T12:00:00Z"), 0)

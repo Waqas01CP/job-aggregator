@@ -56,8 +56,8 @@ from .airtable_sweep import JOBS, SweepClient, TABLE_SECRETS
 from .closure import Closure, covered as walk_covered
 from .sweep import Sweep, older_than
 from .adapters import greenhouse, himalayas, lever, manatal
-from .airtable import (BASE_ENV, PIPELINE_FIELDS, RUN_LOG_KEY, TABLE_ENV, TEST_TABLE_ENV,
-                       TOKEN_ENV, AirtableClient, month_to_date)
+from .airtable import (BASE_ENV, CALL_LOG_KEYS, PIPELINE_FIELDS, RUN_LOG_KEY, TABLE_ENV,
+                       TEST_TABLE_ENV, TOKEN_ENV, AirtableClient, month_to_date)
 from .backfill import backfill
 from .config import ConfigError, is_publishable, load_boards, load_sweep_config
 from .dedupe import counts as dedupe_counts
@@ -571,7 +571,7 @@ def budget_line(run_log, by_branch, config, now):
     warns of nothing, and its grace period is available once ever (ADR-0004).
     """
     spent = sum(by_branch.values())
-    for key in (RUN_LOG_KEY, "sweep"):
+    for key in CALL_LOG_KEYS:
         spent += int((run_log.get(key) or {}).get("calls_used") or 0)
     allowance = int((run_log.get(RUN_LOG_KEY) or {}).get("monthly_ceiling") or 1000)
     block = {"month_to_date": spent, "allowance": allowance,

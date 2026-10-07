@@ -1,0 +1,8 @@
+[
+  {
+    "label": "the clearing tool's calls are not counted in the month",
+    "path": "src/airtable.py",
+    "find": "CALL_LOG_KEYS = (RUN_LOG_KEY, SWEEP_LOG_KEY, CLEARING_LOG_KEY)",
+    "replace": "CALL_LOG_KEYS = (RUN_LOG_KEY, SWEEP_LOG_KEY)"
+  }
+]
