@@ -220,12 +220,23 @@ _ON_SITE = (
                r"|work(?:ing)?\s+(?:model|arrangement|setup|policy|schedule))\b", re.I),
     re.compile(r"\b(?:\d|one|two|three|four|five)\s+days?\s+(?:a|per|each|every)\s+week\s+"
                r"(?:in|at|from)\s+(?:the|our)\s+(?:[\w-]+\s+){0,2}office\b", re.I),
-    re.compile(r"\b(?:location|work(?:place)?(?:\s+(?:type|mode|model|arrangement|setup))?"
-               r"|job\s+type|employment\s+type)\s*:\s*" + _WORKED + r"\b", re.I),
+    re.compile(r"\b(?:location|work(?:place|ing)?(?:\s+(?:type|mode|model|module|arrangement"
+               r"|setup|conditions?))?|job\s+(?:type|conditions?)|employment\s+type)\s*:\s*"
+               + _WORKED + r"\b", re.I),
     # Full-time on-site work on a night shift, measured on a Lahore posting.
-    # An on-site interview round is not the role.
-    re.compile(r"\b(?:full[- ]time|fully|100%|strictly|entirely)\s+" + _WORKED
+    # An on-site interview round is not the role. A comma between, as in
+    # "full-time, on-site presence" and "Full-time,Onsite", since 2026-10-07.
+    re.compile(r"\b(?:full[- ]time|fully|100%|strictly|entirely)(?:,\s*|\s+)" + _WORKED
                + r"\b(?!\s+(?:interview|round|visit|meeting|event)s?\b)", re.I),
+    # The place, then how it is worked, as Manatal's Pakistani postings write
+    # it: "Location: <city> (Onsite)", "Location: <city> - OnSite", and a
+    # named place with the mode in brackets after it. Measured 2026-10-07 on
+    # the 640 Manatal postings of 2026-10-04, where the patterns above read 8
+    # and missed lines of these shapes; "hybrid cloud", a product named
+    # Hybrid and on-site training stay unread.
+    re.compile(r"\blocation\s*:[^:]{0,80}?(?:\(\s*|[-–/|]\s*)" + _WORKED + r"\b", re.I),
+    re.compile(r"\b(?-i:[A-Z])[a-z]+(?:[ ,&]+(?-i:[A-Z])[a-z]+){0,4}\s*\(\s*on[- ]?site\s*\)",
+               re.I),
 )
 # A remote option anywhere in the description outweighs an on-site phrase,
 # as on a measured fully remote role with an office for those who want one.

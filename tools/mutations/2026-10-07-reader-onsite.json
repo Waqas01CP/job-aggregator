@@ -1,0 +1,32 @@
+[
+  {
+    "label": "a location line's mode after the place is not read",
+    "path": "src/description.py",
+    "find": "    re.compile(r\"\\blocation\\s*:[^:]{0,80}?(?:\\(\\s*|[-–/|]\\s*)\" + _WORKED + r\"\\b\", re.I),",
+    "replace": "    re.compile(r\"(?!x)x\"),"
+  },
+  {
+    "label": "a named place's mode in brackets is not read",
+    "path": "src/description.py",
+    "find": "    re.compile(r\"\\b(?-i:[A-Z])[a-z]+(?:[ ,&]+(?-i:[A-Z])[a-z]+){0,4}\\s*\\(\\s*on[- ]?site\\s*\\)\",",
+    "replace": "    re.compile(r\"(?!x)x\","
+  },
+  {
+    "label": "a bracketed product reads as a place",
+    "path": "src/description.py",
+    "find": "    re.compile(r\"\\b(?-i:[A-Z])[a-z]+(?:[ ,&]+(?-i:[A-Z])[a-z]+){0,4}\\s*\\(\\s*on[- ]?site\\s*\\)\",",
+    "replace": "    re.compile(r\"\\b(?-i:[A-Z])[a-z]+(?:[ ,&]+(?-i:[A-Z])[a-z]+){0,4}\\s*\\(\\s*\" + _WORKED + r\"\\s*\\)\","
+  },
+  {
+    "label": "a label it does not know hides the mode",
+    "path": "src/description.py",
+    "find": "    re.compile(r\"\\b(?:location|work(?:place|ing)?(?:\\s+(?:type|mode|model|module|arrangement\"\n               r\"|setup|conditions?))?|job\\s+(?:type|conditions?)|employment\\s+type)\\s*:\\s*\"",
+    "replace": "    re.compile(r\"\\b(?:location|work(?:place|ing)?(?:\\s+(?:type|mode|model|arrangement\"\n               r\"|setup))?|job\\s+type|employment\\s+type)\\s*:\\s*\""
+  },
+  {
+    "label": "a comma between full-time and the mode is not read",
+    "path": "src/description.py",
+    "find": "    re.compile(r\"\\b(?:full[- ]time|fully|100%|strictly|entirely)(?:,\\s*|\\s+)\" + _WORKED",
+    "replace": "    re.compile(r\"\\b(?:full[- ]time|fully|100%|strictly|entirely)\\s+\" + _WORKED"
+  }
+]

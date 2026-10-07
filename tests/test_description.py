@@ -189,6 +189,40 @@ class TestOnSite(unittest.TestCase):
             with self.subTest(text=text):
                 self.assertTrue(on_site(text))
 
+    def test_the_place_then_the_mode_as_pakistani_postings_write_it(self):
+        """Shaped like the lines Manatal's postings use, measured 2026-10-07
+        over 640 of them: the patterns above read 8 and these shapes another
+        31, with nothing newly read that does not say how the role is
+        worked. Mutation: "a location line's mode after the place is not
+        read"."""
+        for text in ("Location: Lahore (Onsite)",
+                     "Location: Karachi, Lahore, Islamabad (On-site)",
+                     "Location: Lahore - OnSite",
+                     "Location: Lahore / Onsite",
+                     "Location: Gulberg, Lahore, Pakistan (Onsite)",
+                     "Join the team in Karachi (onsite) as its first analyst.",
+                     "Riyadh (Onsite)"):
+            with self.subTest(text=text):
+                self.assertTrue(on_site(text))
+
+    def test_labels_and_a_comma_the_first_patterns_missed(self):
+        """Mutation: "a label it does not know hides the mode"."""
+        for text in ("Work Module: Onsite",
+                     "Job Conditions: Onsite, full time, evening shift",
+                     "Employment Type: Full-time,Onsite (10AM - 7PM)",
+                     "The role is based in the city and requires full-time, on-site presence."):
+            with self.subTest(text=text):
+                self.assertTrue(on_site(text))
+
+    def test_a_named_product_or_a_cloud_in_brackets_is_not_a_place(self):
+        """Hybrid in brackets after a product is no workplace; only on-site in
+        brackets after a named place is read."""
+        for text in ("Experience with the Platform (Hybrid) edition",
+                     "Hands-on with Cloud Run, Cloud Build (hybrid)",
+                     "Willingness to travel for on-site training engagements."):
+            with self.subTest(text=text):
+                self.assertFalse(on_site(text))
+
     def test_a_remote_option_anywhere_outweighs_it(self):
         """Shaped like a measured fully remote role with an office for those
         who want one. Mutation: "a remote option is ignored"."""
