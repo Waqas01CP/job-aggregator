@@ -10,7 +10,7 @@ status: current
 - **any chat** that needs to know the project, a chat drafting his CV among them, should learn everything from this file without exploring the repository;
 - **a person** reads `README.md` to set the system up and run it, and this file for the nuance: the measured numbers, how it was built and by whom, its decisions and where it is going.
 
-**Current as of 2026-10-02 UTC**, against `main` with the closure test's fix of that day. Every number carries its date and its source. A number that could not be measured is not here. **The end state, the sources' order, the timeline's last rows and the operator's role are current as of 2026-10-05**, updated by the architecture chat from the decision records, the commit history and, where marked, the operator's own account to the chat.
+**Current as of 2026-10-08 UTC**, against `main` with the operator's answers of 2026-10-07 built and pushed, not yet run live. Every number carries its date and its source. A number that could not be measured is not here. **The end state, the sources' order, the timeline's last rows and the operator's role are current as of 2026-10-05**, updated by the architecture chat from the decision records, the commit history and, where marked, the operator's own account to the chat.
 
 **Kept current.** Updated at the close of any session that changes a capability or a measured number. Sections that restate a decision name the record that holds it, so a reader who wants the reasoning can find it.
 
@@ -19,7 +19,7 @@ status: current
 ## In one paragraph
 
 A personal job-discovery pipeline that runs itself.
-- **Twice a day**, on GitHub Actions, it reads the public job feeds of eleven employers' applicant-tracking-system (ATS) boards, and one aggregator narrowed to postings open to Pakistan.
+- **Twice a day**, on GitHub Actions, it reads the public job feeds of twenty employers' boards on three applicant-tracking-system (ATS) platforms, Greenhouse, Lever and Manatal, and one aggregator narrowed to postings open to Pakistan.
 - **It keeps every posting it fetches, permanently.**
 - **It admits only postings the operator can use:** his target roles, his level and years of experience, places he is eligible to work, and at most a week old when first seen. Each posting is admitted or dropped by a named, deterministic rule.
 - **It shows what survives in an Airtable table.** The operator marks each row accepted, not a fit, or poorly filtered. The pipeline copies each mark to its own table, stores it for good, and clears the display after fifteen days. A row he never marks leaves after thirty, and he can clear any table himself, dry run first.
