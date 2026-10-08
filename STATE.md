@@ -6,6 +6,8 @@ status: current
 
 # STATE
 
+**Last verified 2026-10-08T11:40Z by the implementing seat, for the work of 2026-10-08, against `main` at `3dfefc6`.** Checked for it: Workable's fields over 78 saved postings and its spec read raw; every committed cassette for a description field; the Working Method folder for anything project-specific; 883 tests on Python 3.11 and 3.12, the cassette commit alone in a scratch clone; 11 of 11 mutations caught. `2026-10-08-working-method-the-cassette-envelope-and-workable.md`. The line that follows stands.
+
 **Touched 2026-10-08T11:00Z by the implementing seat, for Workable only:** ADR-0059's second platform by its rule, every platform but Manatal at 0 on 2026-10-04 and the tie broken by registry boards, six against two: its six boards on its documented endpoint, four of them the slugs the operator added to his registry marked unproven. Its own contract check from its first run. Not yet run live. The line that follows stands.
 
 **Touched 2026-10-08T10:44Z by the implementing seat, for the cassette tool only:** it sanitised a response's postings and left its envelope as it came, and Workable's envelope carries the account's own description; the hook passes any file holding STRIPPED. It now sanitises the whole response, and a test reads every committed cassette for a description field holding anything else: none did. The line that follows stands.
