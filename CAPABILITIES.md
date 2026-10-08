@@ -232,11 +232,11 @@ Each is measured, with its date and source. `data` is the public data branch.
 | Display intake | About one new display row a day under the current rules, so by arithmetic, not measurement, the display settles near thirty rows, and the cheaper delta projection is not yet needed | 2026-09-29 and 09-30 | Run logs, against ADR-0056's trigger of 100 |
 | Recurring cost | None | 2026-09-27 | Free plans only |
 | Feasibility research | 16 ATS platforms probed; 1,646 postings across the first 11 boards | 2026-09-11 to 09-16 | Spike logs |
-| Code | 26 source files, 7,235 lines; 34 test files, 11,662 lines; 9 tool files, 1,915 lines | 2026-10-04 | `git ls-files`, `wc` |
-| Tests | 826, passing on Python 3.11 and 3.12 | 2026-10-04 | `unittest` |
-| Mutations | 481 recorded across 38 files. Since 2026-10-01 the suite fails when a code change leaves any of them unable to run, which two commits had done to 10, unnoticed. A survivor is closed by a new test, or, where the mutation changes nothing, replaced and recorded as such | 2026-10-04 | `tools/mutations/`, run by `tools/mutate.py`; results in the session logs |
+| Code | 28 source files, 7,772 lines; 35 test files, 12,225 lines; 9 tool files, 1,919 lines | 2026-10-07 | `git ls-files`, `wc` |
+| Tests | 871, passing on Python 3.11 and 3.12 | 2026-10-07 | `unittest` |
+| Mutations | 514 recorded across 44 files. Since 2026-10-01 the suite fails when a code change leaves any of them unable to run, which two commits had done to 10, unnoticed. A survivor is closed by a new test, or, where the mutation changes nothing, replaced and recorded as such | 2026-10-07 | `tools/mutations/`, run by `tools/mutate.py`; results in the session logs |
 | Decision records | 58 (five superseded), plus the rules for amending them. 159 dated Changes rows across 52 records | 2026-10-04 | `docs/decisions/` |
-| History | 145 commits on `main`, the first on 2026-09-01 UTC; 26 session logs; one audit report in `logs/audit/` | 2026-10-04 | `git log`, `logs/` |
+| History | 152 commits on `main`, the first on 2026-09-01 UTC; 27 session logs; one audit report in `logs/audit/` | 2026-10-07 | `git log`, `logs/` |
 
 ---
 
@@ -285,6 +285,7 @@ Each is measured, with its date and source. `data` is the public data branch.
 | 2026-10-03 | The description read for years asked, a right to work required and on-site work. Closure raised to twelve runs after reposts were measured; the contract check ordered by time rather than date; every Confirmation clause of the nine newest records held by a test or marked live; Himalayas polled on both runs, its wait from publication measured; a guard refusing description text on the public branch; the clearing tool's dry run saying what is leaving anyway |
 | 2026-10-04 | The end state decided: version 1.0.0 is the system working for the operator himself, its sources chosen by their value to him (ADR-0059), on a research pass whose every load-bearing claim was checked at its primary source (research 0005). Each source's contract check isolated, so one source's failure reaches no other; the four employer platforms' yield measured on the registry's boards; Himalayas' date found to be its own listing date |
 | 2026-10-05 | The previous day's records audited cold and corrected; version 1.0.0 given a file of its own, with the test for done the operator accepted (`docs/versions/v1.0.0.md`) |
+| 2026-10-07 | The operator's answers built: the display read back so only what differs is sent; a posting with no date shown last; Manatal's nine boards polled, the first platform added by measured yield; on-site work read as Pakistani postings write it; a `Health` table for every contract finding and run failure; the clearing tool's calls counted |
 
 ---
 
@@ -396,7 +397,7 @@ Short, role-neutral statements a reader can take as they are. Every figure is fr
 - Git branches serve as the database, with privacy enforced in code: employers' description text and aggregator data never reach the public repository. Every posting is saved in full to a private repository, verified by read-back.
 - A classification workflow: the operator's marks are copied to their own tables and stored permanently. Rows are deleted from the display only after the store is read back from the remote. The display is bounded by a thirty-day clock and a dry-run-first clearing tool.
 - A day's worth of an aggregator's feed went from about a third read, 93% of it irrelevant, to all of the relevant postings, by moving to a filtered endpoint an earlier measurement had wrongly rejected.
-- 826 tests, and 481 mutations that deliberately break the code to prove the tests notice.
+- 871 tests, and 514 mutations that deliberately break the code to prove the tests notice.
 - Assessed candidate data sources by evidence of their value to the user, genuine postings and a fair route to the employer, rather than by their reach, with every load-bearing claim checked at its primary source, and set the integration order from that.
 - Designed by the operator and built with AI agents in separate roles: architecture, implementation, and cold, read-only audit. The work was carried out under a written verification discipline and produced 55 decision records and 24 session logs.
 
