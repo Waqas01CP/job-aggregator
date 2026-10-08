@@ -32,7 +32,8 @@ GH = Board(platform="greenhouse", slug="careem")
 LV = Board(platform="lever", slug="smart-working-solutions")
 HIM = Board(platform="himalayas", slug="browse")
 MN = Board(platform="manatal", slug="premiernx", employer_alias="Premier NX")
-BOARDS = [GH, LV, HIM, MN]
+WK = Board(platform="workable", slug="igate-technologies", employer_alias="iGATE Technology")
+BOARDS = [GH, LV, HIM, MN, WK]
 
 
 class FakeResponse:
@@ -66,7 +67,8 @@ def responses():
     return {"careem": cassette("greenhouse-careem.json"),
             "smart-working": cassette("lever-smart-working-solutions.json"),
             "himalayas": cassette("himalayas-browse.json"),
-            "careers-page.com": cassette("manatal-premiernx-page1.json")}
+            "careers-page.com": cassette("manatal-premiernx-page1.json"),
+            "workable.com/api/accounts": cassette("workable-igate-technologies.json")}
 
 
 def client(routes, max_attempts=1, budget=contract.PER_PLATFORM_BUDGET):

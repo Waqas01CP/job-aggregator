@@ -14,7 +14,7 @@ from datetime import datetime, timezone
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from src.adapters import greenhouse, lever, manatal
+from src.adapters import greenhouse, lever, manatal, workable
 from src.adapters.base import AdapterError, Posting
 from src.config import Board
 
@@ -319,6 +319,79 @@ class TestManatal(unittest.TestCase):
     def test_wrong_envelope_raises(self):
         with self.assertRaises(AdapterError):
             manatal.parse({"items": []}, MN_BOARD)
+
+
+WK_BOARD = Board(platform="workable", slug="igate-technologies", employer_alias="iGATE Technology")
+
+
+class TestWorkable(unittest.TestCase):
+    """Workable's documented endpoint. Cassette: iGATE Technology's board of
+    2026-10-04, sanitised, envelope included."""
+
+    def setUp(self):
+        self.payload = cassette("workable-igate-technologies.json")
+
+    def test_url_is_the_documented_endpoint_with_descriptions(self):
+        self.assertEqual(workable.url_for(WK_BOARD),
+                         "https://www.workable.com/api/accounts/igate-technologies?details=true")
+
+    def test_parses_every_posting(self):
+        result = workable.parse(self.payload, WK_BOARD)
+        self.assertEqual(len(result.postings), 15)
+        self.assertEqual(result.problems, [])
+
+    def test_the_date_is_the_day_published_at_its_start_in_utc(self):
+        entry = dict(self.payload["jobs"][0], published_on="2026-10-03")
+        p = workable.parse({"jobs": [entry]}, WK_BOARD).postings[0]
+        self.assertEqual(p.published_at, datetime(2026, 10, 3, tzinfo=timezone.utc))
+        self.assertEqual(p.published_field, "published_on")
+
+    def test_a_posting_without_a_readable_date_is_a_problem(self):
+        for bad in (None, "", "03-10-2026", "2026-10-03T00:00:00Z"):
+            with self.subTest(bad=bad):
+                entry = dict(self.payload["jobs"][0], published_on=bad)
+                result = workable.parse({"jobs": [entry]}, WK_BOARD)
+                self.assertEqual(result.postings, [])
+                self.assertIn("published_on", result.problems[0]["reason"])
+
+    def test_the_link_is_the_jobs_own_page_not_its_form(self):
+        p = workable.parse(self.payload, WK_BOARD).postings[0]
+        self.assertEqual(p.url, self.payload["jobs"][0]["url"])
+        self.assertFalse(p.url.endswith("/apply"))
+
+    def test_employer_from_the_account_else_the_alias(self):
+        p = workable.parse(self.payload, WK_BOARD).postings[0]
+        self.assertEqual((p.employer, p.employer_provenance), ("iGATE Technology", "envelope"))
+        nameless = dict(self.payload, name="")
+        p = workable.parse(nameless, WK_BOARD).postings[0]
+        self.assertEqual((p.employer, p.employer_provenance), ("iGATE Technology", "slug"))
+        p = workable.parse(nameless, Board(platform="workable", slug="x")).postings[0]
+        self.assertEqual((p.employer, p.employer_provenance), (None, None))
+
+    def test_the_place_and_its_country_codes(self):
+        entry = dict(self.payload["jobs"][0], city="Lahore", state="Punjab", country="Pakistan",
+                     locations=[{"countryCode": "PK"}, {"countryCode": "AE"}])
+        p = workable.parse({"jobs": [entry]}, WK_BOARD).postings[0]
+        self.assertEqual((p.location, p.places), ("Lahore, Punjab, Pakistan", ("PK", "AE")))
+
+    def test_remote_comes_from_telecommuting_until_a_workplace_is_stated(self):
+        entry = dict(self.payload["jobs"][0], telecommuting=True)
+        entry.pop("workplace_type", None)
+        self.assertEqual(workable.parse({"jobs": [entry]}, WK_BOARD).postings[0].workplace, "remote")
+        entry["telecommuting"] = False
+        self.assertIsNone(workable.parse({"jobs": [entry]}, WK_BOARD).postings[0].workplace)
+        entry["workplace_type"] = "on_site"
+        self.assertEqual(workable.parse({"jobs": [entry]}, WK_BOARD).postings[0].workplace, "on_site")
+
+    def test_the_description_goes_to_the_reader_and_the_posting_whole_to_the_store(self):
+        entry = dict(self.payload["jobs"][0], description="<p>x</p>")
+        p = workable.parse({"jobs": [entry]}, WK_BOARD).postings[0]
+        self.assertEqual(p.description, ("<p>x</p>",))
+        self.assertEqual(p.raw, entry)
+
+    def test_wrong_envelope_raises(self):
+        with self.assertRaises(AdapterError):
+            workable.parse({"results": []}, WK_BOARD)
 
 
 class TestPostingInvariants(unittest.TestCase):

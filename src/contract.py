@@ -78,12 +78,13 @@ import traceback
 from datetime import datetime, timezone
 
 from . import envfile, storage
-from .adapters import greenhouse, himalayas, lever, manatal
+from .adapters import greenhouse, himalayas, lever, manatal, workable
 from .config import REPO_ROOT, ConfigError, load_boards
 from .http_client import HttpClient, HttpError
 from .normalise import dumps, iso, loads
 
-PLATFORMS = {"greenhouse": greenhouse, "lever": lever, "himalayas": himalayas, "manatal": manatal}
+PLATFORMS = {"greenhouse": greenhouse, "lever": lever, "himalayas": himalayas, "manatal": manatal,
+             "workable": workable}
 
 FINGERPRINT_FILE = "contract/fingerprint.json"
 REBASELINES_PATH = os.path.join(REPO_ROOT, "config", "contract_rebaselines.json")

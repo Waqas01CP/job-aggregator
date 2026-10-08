@@ -1,0 +1,50 @@
+[
+  {
+    "label": "a Workable date is read as a time, not a day",
+    "path": "src/adapters/workable.py",
+    "find": "    if not isinstance(value, str) or len(value.strip()) != 10:",
+    "replace": "    if not isinstance(value, str) or len(value.strip()) != 20:"
+  },
+  {
+    "label": "a Workable posting links to its application form",
+    "path": "src/adapters/workable.py",
+    "find": "            url=url,",
+    "replace": "            url=entry.get(\"application_url\"),"
+  },
+  {
+    "label": "a remote Workable posting reads as no workplace",
+    "path": "src/adapters/workable.py",
+    "find": "    return \"remote\" if entry.get(\"telecommuting\") is True else None",
+    "replace": "    return None"
+  },
+  {
+    "label": "a stated Workable workplace is ignored",
+    "path": "src/adapters/workable.py",
+    "find": "    if stated:\n        return stated",
+    "replace": "    if False:\n        return stated"
+  },
+  {
+    "label": "the Workable account's own name is ignored for the alias",
+    "path": "src/adapters/workable.py",
+    "find": "    account = str(payload.get(\"name\") or \"\").strip() or None",
+    "replace": "    account = None"
+  },
+  {
+    "label": "Workable's country codes are not read",
+    "path": "src/adapters/workable.py",
+    "find": "            places=codes or None,",
+    "replace": "            places=None,"
+  },
+  {
+    "label": "Workable is asked without its descriptions",
+    "path": "src/adapters/workable.py",
+    "find": "BASE = \"https://www.workable.com/api/accounts/%s?details=true\"",
+    "replace": "BASE = \"https://www.workable.com/api/accounts/%s\""
+  },
+  {
+    "label": "Workable's boards are configured and not polled",
+    "path": "src/run.py",
+    "find": "            \"himalayas\": himalayas, \"manatal\": manatal, \"workable\": workable}",
+    "replace": "            \"himalayas\": himalayas, \"manatal\": manatal}"
+  }
+]

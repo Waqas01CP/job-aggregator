@@ -267,6 +267,29 @@ pipeline receives:
 
 **The two endpoints list different numbers:** Abacus Consulting showed 217 on the documented endpoint on 2026-10-04 and 168 on this one on 2026-10-07.
 
+## Workable
+
+`www.workable.com/api/accounts/{subdomain}?details=true`, Workable's documented public endpoint, which answers with a redirect to `apply.workable.com/api/v1/widget/accounts/{subdomain}`, undocumented; the client follows it within one request. Measured 2026-10-08 over 78 postings on six boards, saved on 2026-10-04 `[VERIFIED]`:
+
+| Field | Type | Populated | Read | Note |
+|---|---|---|---|---|
+| `shortcode` | string | 100% | yes | identity |
+| `title` | string | 100% | yes | |
+| `url` | string | 100% | yes | the job's own page. The spec describes `url` as the form and `application_url` as the page; the responses show the reverse |
+| `application_url`, `shortlink` | string | 100% | no | the form, and a short link to the page |
+| `published_on` | string | 100% | yes | a date without a time, "The publication date of the job" by the spec; read as that day's start in UTC |
+| `created_at` | string | 100% | no | a date, "The timestamp the job created" by the spec |
+| `city`, `state` | string | 76.9%, 75.6% | yes | |
+| `country` | string | 100% | yes | |
+| `locations` (`countryCode`, `country`, `city`, `region`, `hidden`) | list | 100% | **`countryCode`** | ISO-2, the posting's structured places |
+| `telecommuting` | boolean | 100% | yes | true on 22 of 78; a remote role |
+| `workplace_type` | string | 0% | yes, where present | documented by the spec, returned on none |
+| `description` | string | 100% | yes | HTML, for the description rules |
+| `experience` | string | 50.0% | no | a stated level, "Entry level", "Mid-Senior level", "Associate", "Director"; whether the level rule reads it is the operator's |
+| `industry`, `employment_type`, `education`, `department`, `function`, `code` | string | 74.4%, 70.5%, 62.8%, 34.6%, 21.8%, 0% | no | |
+
+The account's `name` sits beside `jobs` and is the employer; its `description`, the account's own prose, is not read.
+
 ## What each API accepts
 
 From each provider's own documentation, read 2026-10-02 `[outside this
@@ -522,6 +545,7 @@ what happens when it is absent, and each of these deserves that separately.
 
 | Date | Change | Reason |
 |---|---|---|
+| 2026-10-08 | Workable's section added: its documented endpoint and the redirect it answers with, every field counted over 78 postings, the spec's two link fields found reversed | Its adapter is built, ADR-0059's second platform by its rule |
 | 2026-10-07 | Manatal's section added: the career site's endpoint, every field counted over 393 postings, no date and no workplace field, unstable pages | Its adapter is built, ADR-0059's first platform by measured yield, on the endpoint the operator accepted that day |
 | 2026-10-02, night | The description is read, on the operator's answers: the fields each adapter now reads are marked, the "Open" description item moved to "Decided" with its measured effect, and security clearance added as open. Himalayas `seniority`, read since the evening's level rule, was still marked unread in two tables and in the experience section: corrected | His thresholds arrived; the seniority rows were stale since `d5dda62`, the implementing seat's miss |
 | 2026-10-02 | Re-measured over the 1,695 postings saved whole since 2026-09-26, on what the pipeline fetches now: Greenhouse with descriptions, Himalayas' Pakistan search. Added: where each source states experience, the Himalayas job page mapped to its API fields, every endpoint and parameter each API documents, the unused fields re-ranked, and the procedure for a new source. The 2026-09-17 tables kept as history | The operator asked for every field each source gives, experience above all, after seeing senior Himalayas roles in his table, and for it to be repeatable as sources are added. Two of the 09-17 tables no longer described the requests made |

@@ -38,8 +38,8 @@
   {
     "label": "Manatal's boards are configured and not polled",
     "path": "src/run.py",
-    "find": "            \"himalayas\": himalayas, \"manatal\": manatal}",
-    "replace": "            \"himalayas\": himalayas}"
+    "find": "            \"himalayas\": himalayas, \"manatal\": manatal, \"workable\": workable}",
+    "replace": "            \"himalayas\": himalayas, \"workable\": workable}"
   },
   {
     "label": "a Manatal posting's own organisation is ignored for the alias",

@@ -140,6 +140,48 @@
       "employer_alias": "Gigalabs (Pvt) Ltd",
       "normalisations": [],
       "note": "Registry Part 11. Manatal, read through its career site's own endpoint, which the operator accepted for all nine registry boards on 2026-10-07; the alias is the employer as the registry writes it, used where a posting names none. ADR-0026."
+    },
+    {
+      "platform": "workable",
+      "slug": "igate-technologies",
+      "employer_alias": "iGATE Technology",
+      "normalisations": [],
+      "note": "Registry Part 11. Workable, through its documented endpoint (ADR-0059's first wave, second by its rule). The alias is the employer as the registry writes it, used where the account names none. ADR-0026."
+    },
+    {
+      "platform": "workable",
+      "slug": "creative-chaos",
+      "employer_alias": "Creative Chaos",
+      "normalisations": [],
+      "note": "Registry Part 11. Workable, through its documented endpoint (ADR-0059's first wave, second by its rule). The alias is the employer as the registry writes it, used where the account names none. ADR-0026."
+    },
+    {
+      "platform": "workable",
+      "slug": "thingtrax",
+      "employer_alias": "Thingtrax",
+      "normalisations": [],
+      "note": "Registry Part 3, slug found 2026-10-04 by the account's name matching the registry's employer and added to the registry on the operator's yes, marked unproven: none of its postings passed the rules that day. Workable, through its documented endpoint. ADR-0026."
+    },
+    {
+      "platform": "workable",
+      "slug": "staunch",
+      "employer_alias": "Staunch",
+      "normalisations": [],
+      "note": "Registry Part 3, slug found 2026-10-04 by the account's name matching the registry's employer and added to the registry on the operator's yes, marked unproven: none of its postings passed the rules that day. Workable, through its documented endpoint. ADR-0026."
+    },
+    {
+      "platform": "workable",
+      "slug": "petra-brands",
+      "employer_alias": "Petra Brands",
+      "normalisations": [],
+      "note": "Registry Part 3, slug found 2026-10-04 by the account's name matching the registry's employer and added to the registry on the operator's yes, marked unproven: none of its postings passed the rules that day. Workable, through its documented endpoint. ADR-0026."
+    },
+    {
+      "platform": "workable",
+      "slug": "inbox-business-technologies",
+      "employer_alias": "Inbox Business Technologies",
+      "normalisations": [],
+      "note": "Registry Part 3, slug found 2026-10-04 by the account's name matching the registry's employer and added to the registry on the operator's yes, marked unproven: none of its postings passed the rules that day. Workable, through its documented endpoint. ADR-0026."
     }
   ]
 }

@@ -20,8 +20,9 @@ REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DEFAULT_PATH = os.path.join(REPO_ROOT, "config", "boards.json")
 
 # Platforms this build adapts. ADR-0009 fixed the slice at the first two;
-# Manatal is ADR-0059's first, by measured yield, on 2026-10-07.
-PLATFORMS = frozenset({"greenhouse", "lever", "himalayas", "manatal"})
+# Manatal is ADR-0059's first, by measured yield, on 2026-10-07; Workable
+# second, on 2026-10-08.
+PLATFORMS = frozenset({"greenhouse", "lever", "himalayas", "manatal", "workable"})
 
 # Every normalisation that may be named by a board entry. A name outside this
 # set is a typo, and a typo that silently did nothing would be invisible: the
