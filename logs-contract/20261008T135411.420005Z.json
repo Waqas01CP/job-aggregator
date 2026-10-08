@@ -1,0 +1,34 @@
+{
+ "run_at": "2026-10-08T13:54:11.420005Z",
+ "platforms": {
+  "greenhouse": {
+   "board": "greenhouse:veeamsoftware",
+   "postings": 240,
+   "changes": [],
+   "status": "unchanged"
+  },
+  "lever": {
+   "board": "lever:smart-working-solutions",
+   "postings": 27,
+   "changes": [],
+   "status": "unchanged"
+  },
+  "himalayas": {
+   "board": "himalayas:pakistan",
+   "postings": 20,
+   "changes": [],
+   "status": "unchanged"
+  },
+  "manatal": {
+   "board": "manatal:abacus-consulting-3",
+   "postings": 10,
+   "status": "baseline"
+  },
+  "workable": {
+   "board": "workable:igate-technologies",
+   "postings": 16,
+   "status": "baseline"
+  }
+ },
+ "test_mode": false
+}

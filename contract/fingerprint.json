@@ -306,5 +306,190 @@
    }
   },
   "since": "2026-10-03"
+ },
+ "manatal": {
+  "response": {
+   "results": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "array"
+    ]
+   },
+   "next": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   }
+  },
+  "posting": {
+   "id": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "number"
+    ]
+   },
+   "hash": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "position_name": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "organization_name": {
+    "present": "none",
+    "null": "never",
+    "types": []
+   },
+   "location_display": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "city": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "state": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "country": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "description": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   }
+  },
+  "since": "2026-10-08T13:54:11.420005Z"
+ },
+ "workable": {
+  "response": {
+   "jobs": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "array"
+    ]
+   },
+   "name": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   }
+  },
+  "posting": {
+   "shortcode": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "title": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "url": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "published_on": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "city": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "state": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "country": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "locations": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "array"
+    ]
+   },
+   "locations.countryCode": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "telecommuting": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "boolean"
+    ]
+   },
+   "workplace_type": {
+    "present": "none",
+    "null": "never",
+    "types": []
+   },
+   "description": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   }
+  },
+  "since": "2026-10-08T13:54:11.420005Z"
  }
 }
