@@ -1,0 +1,8 @@
+[
+  {
+    "label": "the cassette tool leaves the envelope as it came",
+    "path": "tools/make_cassette.py",
+    "find": "        out_doc = sanitise(doc)",
+    "replace": "        out_doc = doc"
+  }
+]

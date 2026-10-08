@@ -6,6 +6,8 @@ status: current
 
 # STATE
 
+**Touched 2026-10-08T10:44Z by the implementing seat, for the cassette tool only:** it sanitised a response's postings and left its envelope as it came, and Workable's envelope carries the account's own description; the hook passes any file holding STRIPPED. It now sanitises the whole response, and a test reads every committed cassette for a description field holding anything else: none did. The line that follows stands.
+
 **Last verified 2026-10-08T09:25Z by the implementing seat, for the operator's answers of 2026-10-07, against `main` at `9a23387`, `data` and `data-test` from a scratch clone, and the Airtable base's tables listed through the connector.** Checked for it: every run from 10-05 to the contract check of 10-07 through the public Actions API and the logs; Manatal's endpoints, links and pages read live; the reader's on-site verdicts over 3,070 saved descriptions before and after; the clearing tool's uncounted calls on `data-test`; the chat's `CAPABILITIES.md` lines against today's. 871 tests on Python 3.11 and 3.12, each commit alone in a scratch clone; mutations in the log. `2026-10-07-the-operators-answers-read-back-manatal-and-health.md`. The line that follows stands.
 
 **Touched 2026-10-07T21:37Z by the implementing seat, for the health table only:** `Health` and `Health test` created through the connector on the operator's yes, and the fetch run writes a row for each contract finding that is not "unchanged" and each run failure, each sent once, from the logs on the data branch. Waits on two secrets the operator sets; until then the rows wait in the run logs and nothing fails. The line that follows stands.

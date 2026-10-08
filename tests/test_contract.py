@@ -218,6 +218,54 @@ class TestShape(unittest.TestCase):
                          [PLACEHOLDER, PLACEHOLDER, "Pakistan"])
         self.assertEqual(out[0]["note"], PLACEHOLDER)
 
+    def test_no_committed_cassette_holds_a_description_anywhere(self):
+        """ADR-0011 over every cassette on disk, envelope included: Workable's
+        envelope carries the account's own description, which the tool left
+        unsanitised until 2026-10-08, and the hook passes a file that holds
+        STRIPPED anywhere."""
+        from tools.make_cassette import DESCRIPTION_FIELDS, PLACEHOLDER
+        root = os.path.join(os.path.dirname(os.path.abspath(__file__)), "cassettes")
+        found = []
+
+        def walk(node, where):
+            if isinstance(node, dict):
+                for key, value in node.items():
+                    if key in DESCRIPTION_FIELDS and isinstance(value, str) and value != PLACEHOLDER:
+                        found.append("%s: %s" % (where, key))
+                    walk(value, where)
+            elif isinstance(node, list):
+                for item in node:
+                    walk(item, where)
+        for name in sorted(os.listdir(root)):
+            if name.endswith(".json"):
+                with open(os.path.join(root, name), encoding="utf-8") as f:
+                    walk(json.load(f), name)
+        self.assertEqual(found, [])
+
+    def test_the_cassette_tool_sanitises_the_envelope_too(self):
+        """Mutation: "the cassette tool leaves the envelope as it came"."""
+        from tools import make_cassette
+        folder = tempfile.mkdtemp()
+        try:
+            source, out = os.path.join(folder, "in.json"), os.path.join(folder, "out.json")
+            with open(source, "w", encoding="utf-8") as f:
+                json.dump({"name": "Acme", "description": "We are a team of builders.",
+                           "jobs": [{"title": "AI Engineer", "description": "Words."}]}, f)
+            argv = sys.argv
+            sys.argv = ["make_cassette.py", "--source", source, "--out", out]
+            try:
+                with contextlib.redirect_stdout(io.StringIO()):
+                    make_cassette.main()
+            finally:
+                sys.argv = argv
+            with open(out, encoding="utf-8") as f:
+                written = json.load(f)
+            self.assertEqual(written["description"], make_cassette.PLACEHOLDER)
+            self.assertEqual(written["jobs"][0]["description"], make_cassette.PLACEHOLDER)
+            self.assertEqual(written["name"], "Acme")
+        finally:
+            shutil.rmtree(folder, ignore_errors=True)
+
     def test_the_fingerprint_holds_no_value_from_any_posting(self):
         """Structure only: Himalayas' fingerprint sits on the public branch."""
         payload = cassette("himalayas-browse.json")

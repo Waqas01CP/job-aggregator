@@ -126,7 +126,11 @@ def main():
         doc[key] = postings
         if "meta" in doc:
             doc["meta"] = {"total": len(postings)}
-        out_doc = doc
+        # The envelope too: Workable's carries the account's own description,
+        # employer prose that ADR-0011 keeps out of this repository. Until
+        # 2026-10-08 only the postings were sanitised, and the hook's check
+        # passes a file holding STRIPPED anywhere.
+        out_doc = sanitise(doc)
     else:
         out_doc = postings
 
