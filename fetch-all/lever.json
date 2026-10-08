@@ -1861,5 +1861,65 @@
   "workplace": "onsite",
   "required_places": null,
   "described_workplace": null
+ },
+ {
+  "identity": "lever:9f10f23e-e6e5-4104-bf02-dc7e16f2f9bb",
+  "source": "lever",
+  "board_id": "lever:smart-working-solutions",
+  "external_id": "9f10f23e-e6e5-4104-bf02-dc7e16f2f9bb",
+  "employer": "Smart Working Solutions",
+  "employer_provenance": "slug",
+  "title": "QA Automation Engineer (Remote, Full-Time) [HR217]",
+  "title_normalised": "QA Automation Engineer (Remote, Full-Time) [HR217]",
+  "location": "Delhi",
+  "published_at": "2026-10-08T13:38:44.255000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-10-08T19:11:36.758758Z",
+  "ordering_date": "2026-10-08T13:38:44.255000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/smart-working-solutions/9f10f23e-e6e5-4104-bf02-dc7e16f2f9bb",
+  "url_provenance": "payload",
+  "stated_experience": [
+   4,
+   2,
+   3
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "IN"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null
+ },
+ {
+  "identity": "lever:07f5f243-6110-496c-9e06-4db7a755dd73",
+  "source": "lever",
+  "board_id": "lever:spreetail",
+  "external_id": "07f5f243-6110-496c-9e06-4db7a755dd73",
+  "employer": "Spreetail",
+  "employer_provenance": "slug",
+  "title": "Merchandising Assistant",
+  "title_normalised": "Merchandising Assistant",
+  "location": "Manila",
+  "published_at": "2026-10-08T14:58:13.467000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-10-08T19:11:36.758758Z",
+  "ordering_date": "2026-10-08T14:58:13.467000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/spreetail/07f5f243-6110-496c-9e06-4db7a755dd73",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "PH"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null
  }
 ]
