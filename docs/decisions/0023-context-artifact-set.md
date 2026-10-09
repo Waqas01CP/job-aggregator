@@ -65,7 +65,7 @@ Log format is ADR-0024.
 
 **Deferred, not rejected:** an in-flight register separate from `STATE.md`, wanted once work is genuinely in flight and held defects exist.
 
-**Confirmed open, not deferred:** an end-state document. The operator's prior project was checked for prior art and has none. `SPRINT_PLAN.md` is a task breakdown with per-person assignments, gates and a deadline, which is a plan rather than a statement of what the finished system is. No artifact in either project says what this is ultimately for. That gap is real and stays open until it is decided deliberately. *(Decided 2026-10-04 by ADR-0059: version 1 is the system working for the operator himself. See Changes.)*
+**Confirmed open, not deferred:** an end-state document. The operator's prior project was checked for prior art and has none. `SPRINT_PLAN.md` is a task breakdown with per-person assignments, gates and a deadline, which is a plan rather than a statement of what the finished system is. No artifact in either project says what this is ultimately for. That gap is real and stays open until it is decided deliberately. *(Decided 2026-10-04 (2026-10-03 UTC) by ADR-0059: version 1 is the system working for the operator himself. See Changes.)*
 
 **Rejected:** hand-written per-folder overview files, which duplicate the generated map and drift. A separate history document, since history is the records plus the log index. `llms.txt`, a web-publishing convention with around 10% adoption that crawlers largely do not request. *(Unmeasured: the adoption figure has no source in this repository.)* Repository-packaging tools, since the agent has filesystem access and `MAP.md` already routes. Reorganising documentation into Diataxis folders, since the frontmatter `type` field already carries that distinction.
 
@@ -81,7 +81,7 @@ The `[VERIFIED]` and `[BELIEVED]` split means the state file is honest about its
 
 Auto Memory continues running outside all of this. Nothing here controls it, and any fact it holds is unreviewable.
 
-Trajectory remains uncovered. The prior project has no artifact for it either, so there is nothing to port. That is a known gap, not an oversight. *(Annotated 2026-10-04: covered by ADR-0059.)* *(Corrected 2026-10-05: partly covered. ADR-0059 states the end state of version 1 and that later versions follow it; a trajectory beyond that is still uncovered.)*
+Trajectory remains uncovered. The prior project has no artifact for it either, so there is nothing to port. That is a known gap, not an oversight. *(Annotated 2026-10-04: covered by ADR-0059.)* *(Corrected 2026-10-05 (2026-10-04 UTC): partly covered. ADR-0059 states the end state of version 1 and that later versions follow it; a trajectory beyond that is still uncovered.)*
 
 ### Confirmation
 
@@ -116,4 +116,4 @@ Reading order is authoritative per ADR-0022. Log format is ADR-0024.
 | 2026-09-24 | The onboarding order annotated as stale | `CLAUDE.md` now requires `MAP.md` and the seats file. Annotated by the implementing seat under ADR-RULES, which allows a stale or wrong fact to be annotated unasked; the Decision Outcome is untouched. Found by the corpus audit of 2026-09-23 |
 | 2026-09-25 | An unsourced adoption figure marked unmeasured | The corpus audit found "around 10% adoption" outside Assumptions with no basis. Annotated by the implementing seat under ADR-RULES, on Brief 7's corpus work; the Decision Outcome is untouched. |
 | 2026-10-04 | The end state this record kept open is decided, by ADR-0059: version 1 is the system working for the operator himself, fed by sources chosen for their value to him | The gap was confirmed open on 2026-09-11 and left until it could be decided deliberately. The operator decided it once the building had reached the point where the remaining pieces had to be sorted into finishing and later. This record's decisions about the artifact set are unchanged |
-| 2026-10-05 | The annotation of 2026-10-04 saying ADR-0059 covers the trajectory corrected to partly | This record keeps trajectory and end state as separate gaps. ADR-0059 decides the end state of version 1 and that later versions follow; nothing yet carries a trajectory beyond that. The chat's overstatement, found by an independent audit |
+| 2026-10-05 (2026-10-04 UTC) | The annotation of 2026-10-04 saying ADR-0059 covers the trajectory corrected to partly | This record keeps trajectory and end state as separate gaps. ADR-0059 decides the end state of version 1 and that later versions follow; nothing yet carries a trajectory beyond that. The chat's overstatement, found by an independent audit |

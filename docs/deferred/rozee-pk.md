@@ -1,6 +1,6 @@
 ---
 type: deferred
-description: Adding Rozee.pk as a source. Out of automated use since 2026-10-04, because its privacy policy prohibits networked use of its material; revisiting needs that to change first.
+description: Adding Rozee.pk as a source. Out of automated use since 2026-10-04 (2026-10-03 UTC), because its privacy policy prohibits networked use of its material; revisiting needs that to change first.
 status: current
 ---
 
@@ -44,18 +44,18 @@ is the strongest of the three. More ATS sources are coming: ADR-0029 names
 Ashby, Workable, SmartRecruiters, Breezy and Manatal as the next five, and
 Manatal alone holds eight or nine registry boards and is one of the two
 dominant Pakistani platforms. **Manatal may cover the same employers Rozee
-lists**, through an API, at one request per board, with no new parsing path. *(Annotated 2026-10-05: ADR-0059 replaced that order. The next platforms are Ashby, Workable, SmartRecruiters and Manatal, ordered by measured yield, and Breezy waits for a documented endpoint.)*
+lists**, through an API, at one request per board, with no new parsing path. *(Annotated 2026-10-05 (2026-10-04 UTC): ADR-0059 replaced that order. The next platforms are Ashby, Workable, SmartRecruiters and Manatal, ordered by measured yield, and Breezy waits for a documented endpoint.)*
 
 Building Rozee first would be paying the highest cost for coverage that the
 cheapest adapter might deliver anyway.
 
 ## The trigger
 
-Revisit when **all three** hold: *(Annotated 2026-10-04: a condition now comes before these three, Rozee's permission in writing.)* *(Corrected 2026-10-05: nobody decided that condition. What ADR-0059 records is that Rozee's privacy policy forbids automated use, so these three no longer suffice and revisiting needs that to change first.)*
+Revisit when **all three** hold: *(Annotated 2026-10-04: a condition now comes before these three, Rozee's permission in writing.)* *(Corrected 2026-10-05 (2026-10-04 UTC): nobody decided that condition. What ADR-0059 records is that Rozee's privacy policy forbids automated use, so these three no longer suffice and revisiting needs that to change first.)*
 
 1. The display works and the operator has used it for long enough to know
    what is missing from it.
-2. ADR-0029's five adapters are built, Manatal among them. *(Since 2026-10-04: ADR-0059's four platforms.)*
+2. ADR-0029's five adapters are built, Manatal among them. *(Since 2026-10-04 (2026-10-03 UTC): ADR-0059's four platforms.)*
 3. The Karachi gap is still visible in the display after those five.
 
 The third is the real test. If Manatal and the others fill the lane, this file
@@ -77,4 +77,4 @@ been true for the whole project and has never been a number.
 |---|---|---|
 | 2026-09-18 | File created | The operator deferred it explicitly and named the condition that may remove the need for it entirely: more sources first, after which Rozee may not be required. Recording only "deferred" would have lost that reasoning and left the next session to rediscover that the access questions are already answered |
 | 2026-10-04 | Out of automated use, by ADR-0059 | Research 0005 read the privacy policy pass 0003 had not fully reviewed: it prohibits use of Rozee's material in a networked computer environment. Rozee also won an interim order in 2016 against a site that copied its postings. The access findings above stand; the permission finding is what changed |
-| 2026-10-05 | ADR-0029's five annotated as replaced by ADR-0059's four, and a condition added on 2026-10-04 corrected | That annotation named Rozee's written permission as a condition, which nobody decided; what ADR-0059 records is that Rozee's privacy policy forbids automated use. Found by an independent audit |
+| 2026-10-05 (2026-10-04 UTC) | ADR-0029's five annotated as replaced by ADR-0059's four, and a condition added on 2026-10-04 corrected | That annotation named Rozee's written permission as a condition, which nobody decided; what ADR-0059 records is that Rozee's privacy policy forbids automated use. Found by an independent audit |

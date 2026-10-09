@@ -40,13 +40,13 @@ The operator states that periods of one to ten days without reading the table ar
 
 Chosen option: "ingest everything and order by date at presentation".
 
-We will ingest everything a board returns without reference to publication date. We will record a first-seen timestamp on every record at ingestion. We will present recency by ordering the display on publication date descending, falling back to first-seen where publication date is absent, and we will record which of the two supplied the ordering date.
+We will ingest everything a board returns without reference to publication date. We will record a first-seen timestamp on every record at ingestion. We will present recency by ordering the display on publication date descending, falling back to first-seen where publication date is absent, and we will record which of the two supplied the ordering date. *(Changed 2026-10-09: a posting with no publication date is shown after every dated posting rather than by first sight, the operator's rule of 2026-10-07 UTC. See Changes.)*
 
 ### Consequences
 
 A missed run costs latency, not data. The next run observes everything still on the board.
 
-Boards with no publication date remain usable, ordered by first-seen instead.
+Boards with no publication date remain usable, ordered by first-seen instead. *(Since 2026-10-07 UTC: shown after every dated posting.)*
 
 Measure A is computable on the subset carrying a real publication date, and the coverage of that subset is itself measurable.
 
@@ -70,3 +70,4 @@ The ingest-filter failure mode described here is live in the operator's LinkedIn
 |---|---|---|
 | 2026-09-24 | The unverified date-coverage claim annotated as stale | Checked across 16 platforms on 2026-09-16. Annotated by the implementing seat under ADR-RULES, which allows a stale or wrong fact to be annotated unasked; the Decision Outcome is untouched. Found by the corpus audit of 2026-09-23 |
 | 2026-09-26 | The consequence "Ordering handles this; no filtering is required" is false, and named as such. ADR-0052 filters the display on age. **No rule of this record is reversed:** ingest everything, record first seen, order on publication date descending with a first-seen fallback, and record which supplied the ordering date, are all four in force and all four verified live on 2026-09-28 over 346 stored rows | The operator opened the table and found postings he would not apply to, so the consequence was falsified by use. It is a consequence and not a rule, which is why this record keeps its status and its Decision Outcome: the decision was never to leave old postings in the display, it was to avoid filtering at ingest, and that is exactly what ADR-0052 also avoids. The corpus now holds three positions on recency, and ADR-0052's More Information sets out why they do not conflict |
+| 2026-10-09 | A posting with no publication date is shown after every dated posting, not ordered by first sight: it is sent with an empty `Order date`, which a latest-first sort places last. The first-seen fallback for ordering is reversed for the display; first sight is still recorded on every row, and such a posting is kept and never dropped for age | The operator's rule, 2026-10-07 UTC, on integrating Manatal, whose postings carry no date: "if a job board does not offer dates then we can make a simple new rule that those that do not have dates are at the end because no job should be skipped". That blanks sort last is from Airtable's own support documentation, read by the implementing seat. Built with Manatal's adapter, commits `0cfcdd1` and `62d11de` |

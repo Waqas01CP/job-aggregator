@@ -1,7 +1,7 @@
 ---
-status: accepted
+status: superseded by ADR-0060
 topic: display
-description: The projection sends every display group on every run, which costs about one call per ten rows per run, and the delta design that replaces it. Decided and unbuilt, with the triggers that call for it and the measurement that authorises the build.
+description: Superseded by ADR-0060, the read-back the operator chose over the delta design recorded here. The projection sends every display group on every run, which costs about one call per ten rows per run, and the delta design that replaces it. Decided and unbuilt, with the triggers that call for it and the measurement that authorises the build.
 date: 2026-09-28
 decision-makers: Waqas Sharif
 # consulted:
@@ -116,3 +116,4 @@ The operator's decisions, 2026-09-28: the design recorded now rather than built 
 | Date | Change | Reason |
 |---|---|---|
 | 2026-10-04 | The week's measurement marked live only | ADR-0049, as amended 2026-10-03, asks every Confirmation clause to be a test or to say it can be seen only on live runs; this one is counts over production mornings |
+| 2026-10-09 | Superseded by ADR-0060 | The week's measurement authorised the build: about 7.5 new rows a day, a steady display of about 220 to 230 rows. On 2026-10-07 UTC the operator chose to read `Jobs` back instead of this record's delta design, which replaces both the whole-layer projection in force and the design recorded for it. Carried forward in ADR-0060: removal is the sweep's job, every source raises the display permanently, paying is excluded |

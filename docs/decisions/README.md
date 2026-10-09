@@ -17,10 +17,10 @@ Records are written at the moment a decision concludes. A record's factual error
 | 0001 | Two-layer store, raw and filtered | Accepted, extended by 0027 |
 | 0002 | Raw layer on a git data branch, not a hosted database | Accepted |
 | 0003 | Append deltas, not snapshots | Accepted |
-| 0004 | Airtable as the filtered display layer | Accepted, clauses reversed by 0014, 0034, 0035 |
+| 0004 | Airtable as the filtered display layer | Accepted, clauses reversed by 0014, 0034, 0035 and 0060 |
 | 0005 | Fetch complete board output, filter locally | Accepted, narrowed for aggregators by 0053 |
 | 0006 | Twice-daily fetch cadence | Accepted, extended by 0048 |
-| 0007 | Recency is a view, not an ingest filter | Accepted, one consequence falsified by 0052 |
+| 0007 | Recency is a view, not an ingest filter | Accepted, one consequence falsified by 0052; a posting with no date shown last |
 | 0008 | Title matching by allowlist, blocklist, and unmatched flag | Superseded by 0021 |
 | 0009 | Vertical slice first, adapters incremental | Accepted |
 | 0010 | No relevance scoring, ranking, or model-based screening | Accepted |
@@ -31,7 +31,7 @@ Records are written at the moment a decision concludes. A record's factual error
 | 0015 | Two measures, and the archive protocol | Accepted |
 | 0016 | Title-only matching against a versioned title pool | Accepted, one clause reversed by 0021, one built by 0051, its deferred rule built by 0058 |
 | 0017 | Sanitised cassettes as adapter test fixtures | Accepted |
-| 0018 | Scheduled contract check against live boards | Accepted, clause reversed by 0036 |
+| 0018 | Scheduled contract check against live boards | Accepted, clause reversed by 0036; each platform checked on its own |
 | 0019 | Add aggregator feeds as a second source class | Accepted, clauses reversed by 0026 and 0039; its removal condition tested against 0053; its order for the remaining aggregators replaced by 0059 |
 | 0020 | Route raw storage by source class | Accepted, one clause reversed by 0047 |
 | 0021 | Allowlist-only title matching, with normalisation | Accepted, clause reversed by 0032 |
@@ -42,14 +42,14 @@ Records are written at the moment a decision concludes. A record's factual error
 | 0026 | Employer provenance where a payload does not carry it | Accepted |
 | 0027 | Deduplication key normalisation, configured per source | Accepted |
 | 0028 | Per-run fetch budget, and detail fetched once per posting | Accepted |
-| 0029 | Adapter order after the slice, and Dover dropped | Accepted, adapter order replaced by 0059 |
+| 0029 | Adapter order after the slice, and Dover dropped | Accepted, adapter order replaced by 0059; Manatal and Workable built |
 | 0030 | A rule change backfills the filtered layer | Accepted |
 | 0031 | Personal preferences are configuration, not code | Accepted |
 | 0032 | The seniority rule | Accepted, extended to a source's stated level |
 | 0033 | The data branch is the store, local files are working copies | Accepted |
 | 0034 | Airtable gets its own client | Accepted |
 | 0035 | The projection upserts on Identity | Accepted |
-| 0036 | The contract check reports through the run log | Accepted, extended by 0053 and 0059 |
+| 0036 | The contract check reports through the run log | Superseded by 0061 |
 | 0037 | The filtered layer stores rows, the projection groups them | Accepted |
 | 0038 | Role families are views, not a ranking | Accepted |
 | 0039 | The aggregator condition is the three components | Accepted |
@@ -63,16 +63,18 @@ Records are written at the moment a decision concludes. A record's factual error
 | 0047 | Aggregator data lives in private destinations | Accepted, reverses one clause of 0020, extended by 0051 |
 | 0048 | A source is polled no faster than its feed refreshes | Accepted, extends 0006, one assumption failed then restored by 0053; Himalayas back on both runs |
 | 0049 | Architectural rules are guarded by fitness functions, not by prose | Accepted, extended to every Confirmation clause |
-| 0050 | The classification flow, consolidated | Accepted, supersedes 0046 |
+| 0050 | The classification flow, consolidated | Accepted, supersedes 0046; a posting with no date can close |
 | 0051 | Every field a board returns is saved, privately | Accepted |
-| 0052 | Age is judged once, at first sight | Accepted |
+| 0052 | Age is judged once, at first sight | Accepted; Himalayas' date found to be its own listing date |
 | 0053 | Himalayas is polled through its search endpoint | Accepted, narrows one clause of 0005; one assumption failed; cap 80; polled on both runs |
 | 0054 | A scheduled run happens, or it is not silently gone | Accepted |
 | 0055 | The display is cleared by a clock, and by hand | Accepted, built |
-| 0056 | The projection sends the whole layer, and the delta design that will replace it | Accepted, the delta design decided and unbuilt |
+| 0056 | The projection sends the whole layer, and the delta design that will replace it | Superseded by 0060 |
 | 0057 | A posting is shown only if he can take it, and none he can take is lost | Accepted, supersedes 0041 |
 | 0058 | The description is read once, at fetch, and only what is derived is kept | Accepted |
-| 0059 | Version 1 is the system working for him, on the sources worth having | Accepted |
+| 0059 | Version 1 is the system working for him, on the sources worth having | Accepted; Manatal and Workable built in its order |
+| 0060 | The projection sends only what differs from `Jobs` | Accepted, supersedes 0056 |
+| 0061 | The contract check reports per source, in its log and in Airtable | Accepted, supersedes 0036 |
 | RULES | How records are resolved, amended and retired | Accepted |
 
 ## Pending
@@ -81,9 +83,9 @@ Decisions identified but not concluded.
 
 - Reuse boundary against the LinkedIn pipeline in fyp-career-guidance: which components are adopted, which are deliberately not.
 - Description matching, deferred by ADR-0016 until field coverage per platform is known. *(2026-10-03: built for three facts by ADR-0058; any further use of the description is a new decision.)*
-- Deduplication across source classes, and the employer alias map ADR-0019 makes necessary. *(2026-10-04: outside version 1 by ADR-0059.)*
-- Whether Rozee.pk is added as a source. robots.txt permits the job paths and the terms carry no automated-access clause; a sitemap index publishes job URLs daily with the title in the slug. *(2026-10-04: decided against automated use by ADR-0059. Rozee's privacy policy prohibits use of its material in a networked computer environment, which pass 0003 had not fully reviewed; research 0005.)*
-- An end-state document stating what the finished system is. Confirmed genuinely open by ADR-0023: no prior art exists in either project. *(Decided 2026-10-04 by ADR-0059.)*
+- Deduplication across source classes, and the employer alias map ADR-0019 makes necessary. *(2026-10-04 (2026-10-03 UTC): outside version 1 by ADR-0059.)*
+- Whether Rozee.pk is added as a source. robots.txt permits the job paths and the terms carry no automated-access clause; a sitemap index publishes job URLs daily with the title in the slug. *(2026-10-04 (2026-10-03 UTC): decided against automated use by ADR-0059. Rozee's privacy policy prohibits use of its material in a networked computer environment, which pass 0003 had not fully reviewed; research 0005.)*
+- An end-state document stating what the finished system is. Confirmed genuinely open by ADR-0023: no prior art exists in either project. *(Decided 2026-10-04 (2026-10-03 UTC) by ADR-0059.)*
 - An in-flight register separate from `STATE.md`, wanted once work is in flight.
 - Which skills the project needs, and whether the session log becomes a skill with dynamic context injection.
 - Whether an AGENTS.md symlink is added for Antigravity. Claude Code reads CLAUDE.md only, with no fallback, so CLAUDE.md is the real file either way.

@@ -1,7 +1,7 @@
 ---
 status: accepted
 topic: display
-description: Airtable's free plan is the display layer, written by batched calls and never read back. What the operator actually opens.
+description: Airtable's free plan is the display layer, written by batched calls; the projection reads it back since 2026-10-07 only to decide what to send (ADR-0060). What the operator actually opens.
 date: 2026-09-09
 decision-makers: Waqas Sharif
 # consulted:
@@ -39,7 +39,7 @@ The call allowance is roughly 33 a day. The create-records endpoint accepts ten 
 
 Chosen option: "Airtable free plan".
 
-We will write the filtered layer to an Airtable base using batched creates of ten records per call. We will perform no reads. *(Clarified 2026-09-23: this clause was reversed by ADR-0014 for the sweep, which must read. The projection still performs no reads, and what survives for every component is that Airtable is never authoritative. See Changes.)* We will determine novelty entirely from repository-side state.
+We will write the filtered layer to an Airtable base using batched creates of ten records per call. We will perform no reads. *(Clarified 2026-09-23: this clause was reversed by ADR-0014 for the sweep, which must read. The projection still performs no reads, and what survives for every component is that Airtable is never authoritative. See Changes.)* *(Annotated 2026-10-09: since 2026-10-07 the projection reads `Jobs` back too, to send only what differs. Airtable is still never authoritative. ADR-0060.)* We will determine novelty entirely from repository-side state.
 
 ### Consequences
 
@@ -75,3 +75,4 @@ The reversed clause and why: the no-read rule made ADR-0015's Measure A unmeasur
 | 2026-09-23 | The no-read clause is stated exactly: the **projection** performs no reads, the **sweep** reads, and the rule that survives for both is that Airtable is never the source of truth | Four documents disagreed about whether "we will perform no reads" still stood. This record's Assumptions and More Information say ADR-0014 reversed it; its own 2026-09-17 row and ADR-0035 say an upsert leaves it intact; ADR-0046 budgeted a projection read. Both narrower statements are about upserts, not about the blanket rule. Resolved by giving every read to the sweep, which already reads `Jobs` daily and which now owns ADR-0046's step 4, so the projection needs no read at all and the budget loses one line. Novelty still comes from the seen store and no read changes what the pipeline stores. The operator's decision, 2026-09-23 |
 | 2026-09-24 | The API usage figure annotated as stale | ADR-0046's budget and the first production run's measured calls. Annotated by the implementing seat under ADR-RULES, which allows a stale or wrong fact to be annotated unasked; the Decision Outcome is untouched. Found by the corpus audit of 2026-09-23 |
 | 2026-09-25 | The allowance is stated exactly, with where to read it and what exceeding it costs. Workspace settings, Usage tab, "Public API calls" for the current month, per base: Airtable's documentation says detailed usage analytics are available on Free plans, which this is. Exceeding the 1,000 calls starts a **30-day grace period, available once ever**, after which calls are blocked until the month resets. There is no warning before the limit. **Every client on the workspace spends it**, including the Airtable connector the architecture chat reads the schema with, so the pipeline's own count in its run logs is a floor and not the total | Read from Airtable's help centre, "Managing API call limits in Airtable", 2026-09-25. This record sized the allowance and set a monthly check without saying where the counter is, what happens at the limit or that a second client exists. The grace period changes what exceeding means: it is survivable once and then not, so the guard has to be a trajectory rather than a breach. The projection's measured cost and the growth that moves it are in ADR-0046's Changes row of 2026-09-25 |
+| 2026-10-09 | The projection reads `Jobs` back, reversing the ruling of 2026-09-23 that it performs no reads. The read decides only which rows to send; every value sent comes from the repository, so Airtable is still never the source of truth | ADR-0060, the operator's decision of 2026-10-07 UTC over ADR-0056's recorded delta design, which needed no read and cost fewer calls but kept a record of what was sent in two stores |

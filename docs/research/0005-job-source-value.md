@@ -6,7 +6,7 @@ status: current
 
 # Research 0005: Job source value
 
-Run 2026-10-04. Findings reflect that date. Terms, prices and endpoints change; the implementing seat re-checks each source's claims when it integrates that source, and a claim it finds wrong, whether wrong when written or changed since, is recorded in the Corrections table at the end, marked as which, as pass 0003's were.
+Run 2026-10-04 by the operator's clock: begun on 2026-10-03 UTC, after he set its criteria at 21:02Z, and finished, with its verification, before the chat's commits on 2026-10-04 UTC. Findings reflect those dates. Terms, prices and endpoints change; the implementing seat re-checks each source's claims when it integrates that source, and a claim it finds wrong, whether wrong when written or changed since, is recorded in the Corrections table at the end, marked as which, as pass 0003's were.
 
 **Question asked.** Of the job sources a personal aggregator could read, which are worth having for this operator, and in what order should they be integrated?
 
@@ -14,7 +14,7 @@ Pass 0003 asked whether a source can be polled: an endpoint, a lane he can be hi
 
 ## What "value" means here
 
-The operator's criteria, 2026-10-04, in substance:
+The operator's criteria, 2026-10-04 (2026-10-03 UTC), in substance:
 
 - **Genuineness.** Postings that are real openings: no ghost posts left up with no intent to hire, no postings that exist to collect CVs or applicant data, no scams.
 - **Fairness and consideration to applicants.** Whether the application reaches the employer, what the applicant is charged or made to give up, and whether the applicant's CV is sold on.
@@ -36,7 +36,7 @@ A weak claim is not discarded. It decides nothing on its own, and it becomes som
 
 ## Method
 
-1. A research run over the web, 2026-10-04, against the criteria and the evidence rules above.
+1. A research run over the web, 2026-10-04 (begun 2026-10-03 UTC), against the criteria and the evidence rules above.
 2. Three independent verification passes the same day, each reading the primary source behind every load-bearing claim of that run: the ATS platforms' own developer documentation; the boards' own terms, API pages and robots files, with a real browser where a page needed one; and the studies and official publications behind the ghost-job and scam figures. Where a payload was large, counts were taken in a browser rather than from a summarising fetch, which had truncated RemoteOK's array to 18 jobs.
 
 The verification changed sixteen of the run's claims. They are listed under "What verification changed", because a record that reports only what survived is not a record of the research.
@@ -62,9 +62,9 @@ The verification changed sixteen of the run's claims. They are listed under "Wha
 | Greenhouse (live) | `boards-api.greenhouse.io/v1/boards/{board}/jobs` | `first_published`, the first publication | Strong | The single-job endpoint also carries `ai_disclaimer` and `ai_opt_out_request_url` where the employer uses Greenhouse's AI matching; the list endpoint does not, so reading them costs a request per posting |
 | Lever (live) | `api.lever.co/v0/postings/{company}` | `createdAt`, epoch milliseconds, absent from Lever's own field table | Strong for access, its meaning undefined | Lever's README says published postings may be read by third parties. Consistent with ADR-0052, which never drops Lever for age because 6 of 22 postings appeared more than a week after their `createdAt` |
 | Ashby | `api.ashbyhq.com/posting-api/job-board/{name}`, docs updated 2026-05-26 | `publishedAt`, which Ashby defines as when the job was **last** published | Strong | A republished job reads as new. Also `isRemote`, `workplaceType`, a structured address, `secondaryLocations`, and compensation on request |
-| Workable | `www.workable.com/api/accounts/{subdomain}`, no auth in its spec | `published_on` and `created_at`, neither defined | Strong | Also `telecommuting`, `workplace_type`, `experience`, `country`. The `apply.workable.com/api/v1` form is not documented by Workable |
+| Workable | `www.workable.com/api/accounts/{subdomain}`, no auth in its spec | `published_on`, the job's publication date, and `created_at`, its creation timestamp, both typed as dates; neither says whether a republished job keeps its first date *(corrected 2026-10-09)* | Strong | Also `telecommuting`, `workplace_type`, `experience`, `country`. The `apply.workable.com/api/v1` form is not documented by Workable |
 | SmartRecruiters | `api.smartrecruiters.com/v1/companies/{id}/postings`, no auth for public postings | `releasedDate`, undefined, with a server-side `releasedAfter` filter | Strong | Also `locationType` remote, hybrid or onsite, and country. Its guide's prose speaks only of keys; its specification allows none |
-| Manatal | `api.careers-page.com/open/v1/career-pages/{slug}/job-posts`, no auth | `created_at`, filterable | Strong for the endpoint | ADR-0029's spike found no date on two boards in 2026; this documented endpoint filters on one, so that finding needs re-measuring. The V1 and V2 shutdown of February 2025 applies to Manatal's authenticated Open API, not to its career pages |
+| Manatal | `api.careers-page.com/open/v1/career-pages/{slug}/job-posts`, no auth | None: the job post schema has no date field, and none of 640 postings read carried one; a `created_at` filter brackets a posting's creation day *(corrected 2026-10-09)* | Strong for the endpoint | ADR-0029's spike was right: no date. The documented endpoint does not serve four of the registry's nine boards and gives no working link to a posting; the career site's undocumented endpoint serves all nine. The V1 and V2 shutdown of February 2025 applies to Manatal's authenticated Open API, not to its career pages |
 | Breezy HR | No public endpoint documented by Breezy | n/a | Not verifiable | Breezy's API documentation lists only keyed endpoints. ADR-0029's spike measured `published_date` on an endpoint no Breezy page documents |
 
 No platform states a rate limit for these public reads, except Lever's two application submissions a second, which do not apply. None was checked against the vendor's general terms of service.
@@ -75,13 +75,13 @@ Hugging Face, named as a candidate board, is not one: its `/jobs` page is a comp
 
 ### Aggregators and boards
 
-| Source | Access, as read on 2026-10-04 | Value evidence | Verdict |
+| Source | Access, as read on 2026-10-04 (2026-10-03 or 10-04 UTC) | Value evidence | Verdict |
 |---|---|---|---|
 | **Himalayas** (live) | Free, keyless browse and search endpoints; search filters by `country`, `worldwide`, `seniority`, employment type; `pubDate`, `expiryDate`, `locationRestrictions` with an empty array meaning worldwide, `timezoneRestrictions`; 20 jobs a request; 429 on abuse; data "cached and refreshed every 24 hours"; a visible link back and naming Himalayas required; building apps permitted; submitting its jobs to Jooble, Neuvoo, Google Jobs or LinkedIn Jobs forbidden. Strong | Genuineness not established; its apply link goes through a Himalayas page | Keep. The 24-hour claim does not describe the search endpoint, measured 2026-10-03 (ADR-0048) |
 | **HN "Who is Hiring"** | Algolia API keyless, `created_at` per item; Hacker News' own Firebase API has `/v0/jobstories`, carrying Y Combinator companies' job posts, and states no rate limit. Strong | Posts written by people at the hiring company, usually linking to the employer's ATS. Anecdotal. The monthly Freelancer thread stopped after October 2025, read from the `whoishiring` account's posts | Second wave. Free text, so parsing is the cost, and a monthly thread is fresh for its first week or two |
 | **Jobicy** | 1 to 200 jobs a request, no key, polling no more often than hourly, `geo` filter, only the last seven days returned, a **3-hour** publication delay; Jobicy named as source and its URL kept; the employer's own apply URL only with a paid key. Strong | Not established | Second wave. The apply link passes through Jobicy unless the posting names the employer's own page |
 | **We Work Remotely** | Public RSS, "anyone can use the feed" with links attributed back; eleven category feeds. Strong | Not established. One third-party report of 25 items in the programming feed, newest about two weeks old. Weak | Second wave, after its volume is counted |
-| **RemoteOK** | Keyless JSON; the first element is a legal notice requiring a followed link back and naming Remote OK, on pain of suspension; no non-commercial restriction on its API or legal page (updated 2026-07-20). Strong. **Measured** 2026-10-04 in a browser: 99 jobs, dated 2026-07-30 to 2026-10-02, with no paging | One sampled posting was an unrelated cabin-crew role. Anecdotal | Second wave. Ninety-nine postings over two months is a slow feed |
+| **RemoteOK** | Keyless JSON; the first element is a legal notice requiring a followed link back and naming Remote OK, on pain of suspension; no non-commercial restriction on its API or legal page (updated 2026-07-20). Strong. **Measured** 2026-10-04 (2026-10-03 or 10-04 UTC) in a browser: 99 jobs, dated 2026-07-30 to 2026-10-02, with no paging | One sampled posting was an unrelated cabin-crew role. Anecdotal | Second wave. Ninety-nine postings over two months is a slow feed |
 | **foorilla** (formerly ai-jobs.net, then aijobs.net) | The rename chain is confirmed: by July 2025 aijobs.net announced it would shut after 1 August and pointed to foorilla, run by foorilla LLC in Zürich. Every aijobs.net and ai-jobs.net path, the old JSON API included, now redirects to foorilla.com. foorilla's API needs a PRO+ subscription at $64 a month; its terms forbid bots and scrapers without permission. Strong | Whether the old board took only paid postings: not verifiable | Out on cost. Pass 0003's best topical fit no longer exists in the form 0003 read |
 | **Remotive** | Jobs "delayed by 24 hours"; more than two requests a minute blocked; four calls a day recommended; its jobs may not be passed to Jooble, Neuvoo, Google Jobs or LinkedIn Jobs or shown to collect sign-ups; endpoint moved to `remotive.com/api/remote-jobs`. Strong | Feed size 16 and 17 jobs in September 2026, from third parties. Weak | Out: every posting reaches him at least a day late, past Measure A's 24-hour median target (ADR-0015), whatever its size. Whether its `publication_date` is the date before the delay is not established |
 | **hiring.cafe** | Now `hiringcafe.com`. No official API; robots permits `/jobs` paths; terms forbid republishing or redistributing its content. Strong | Not established | Out: no endpoint. It aggregates employer ATS boards, which the ATS adapters read directly |
@@ -156,7 +156,7 @@ Genuineness per source, which no public study supplies, can be estimated from wh
 
 **Pass 0003, ai-jobs.net.** Its JSON API and RSS no longer exist; every path redirects to foorilla.com, whose API is paid. The board had announced its shutdown by July 2025, before 0003 recommended it on 2026-09-10. Whether its endpoint still answered on that date is not settled: 0003 does not say it requested it, and a third-party scraper dates the redirect to about 3 September 2026 (weak). Stale at the least, possibly wrong when written.
 
-**Pass 0003, Jobicy's delay.** Three hours, not six, on 2026-10-04. Possibly changed since, possibly misread then.
+**Pass 0003, Jobicy's delay.** Three hours, not six, on 2026-10-04 (2026-10-03 or 10-04 UTC). Possibly changed since, possibly misread then.
 
 **Pass 0003, Rozee's terms.** 0003 found no automated-access clause in the terms and said the privacy policy was not fully reviewed. The privacy policy prohibits use of Rozee's material in a networked computer environment. This settles the question 0003 left open, against automated use.
 
@@ -200,4 +200,5 @@ Genuineness per source, which no public study supplies, can be estimated from wh
 
 | Date | Correction | Source |
 |---|---|---|
-| 2026-10-05 | Four statements narrowed and one scope stated: Remotive's delay stated against its own postings, since Measure A is one median over all postings (ADR-0015); Manatal's date marked as filtered on, not shown on each posting; Himalayas' eligibility claim narrowed, since Jobicy gives a region; Rozee's CV sale narrowed to what its price page shows; and the opening paragraph now says this table records claims found wrong, as 0003's does | An independent audit of this pass, 2026-10-05. Each claimed more than its source shows |
+| 2026-10-05 (2026-10-04 UTC) | Four statements narrowed and one scope stated: Remotive's delay stated against its own postings, since Measure A is one median over all postings (ADR-0015); Manatal's date marked as filtered on, not shown on each posting; Himalayas' eligibility claim narrowed, since Jobicy gives a region; Rozee's CV sale narrowed to what its price page shows; and the opening paragraph now says this table records claims found wrong, as 0003's does | An independent audit of this pass, 2026-10-05 (2026-10-04 UTC). Each claimed more than its source shows |
+| 2026-10-09 | Workable's `published_on` and `created_at` are defined, as the publication date and the creation timestamp; this pass said neither was. Manatal's postings carry no date; this pass gave `created_at` as each posting's date, a field that belongs to the employer's account. Both wrong when written, and corrected in the platforms table | The implementing seat's check of this pass on 2026-10-04 (Brief 10, item 2): Workable's reference updated 2025-06-10, Manatal's updated 2026-05-07; and its recount of 2026-10-07, 640 distinct Manatal postings read |

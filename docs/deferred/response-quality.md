@@ -6,7 +6,7 @@ status: current
 
 # What happened after he applied, and which sources answer
 
-**Deferred 2026-10-04**, on the operator's decision. Not rejected. Not
+**Deferred 2026-10-04 (2026-10-03 UTC)**, on the operator's decision. Not rejected. Not
 scheduled.
 
 ## What it is
@@ -26,7 +26,7 @@ his own distinction and nothing automated reads them.
 ## Why it is deferred
 
 **He has not used the tables enough yet for the measure to mean anything.** In
-his words, 2026-10-04: "i have yet to use the tables properly". A response rate
+his words, 2026-10-04 (2026-10-03 UTC): "i have yet to use the tables properly". A response rate
 over a handful of applications is noise, and building the recording before the
 habit of classifying exists would add fields nobody fills.
 

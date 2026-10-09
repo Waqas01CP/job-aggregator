@@ -2,7 +2,7 @@
 
 Dated snapshots of what was found and when. Numbered by the order the pass was run, so a later reader knows what was known at each point.
 
-A research record is never edited to reflect a later finding. A new pass gets a new number and supersedes the earlier one, with links both directions, exactly as decision records do. *(Annotated 2026-10-05: a claim later found wrong, whether it was wrong when written or the world has changed since, is recorded in that pass's own Corrections table, marked as which, as pass 0003's were on 2026-09-15, and the pass's text may be corrected with it. A new question, or enough change to make a pass unreliable as a whole, gets a new pass. Pass 0005 records the implementing seat's contradictions this way.)*
+A research record is never edited to reflect a later finding. A new pass gets a new number and supersedes the earlier one, with links both directions, exactly as decision records do. *(Annotated 2026-10-05 (2026-10-04 UTC): a claim later found wrong, whether it was wrong when written or the world has changed since, is recorded in that pass's own Corrections table, marked as which, as pass 0003's were on 2026-09-15, and the pass's text may be corrected with it. A new question, or enough change to make a pass unreliable as a whole, gets a new pass. Pass 0005 records the implementing seat's contradictions this way.)*
 
 **Findings go stale. The record does not.** A pass reporting an endpoint as free in September 2026 stays a true record of September 2026 even after that endpoint moves behind a paywall. Check the pass date before relying on any figure in one.
 
@@ -14,7 +14,7 @@ A research record is never edited to reflect a later finding. A new pass gets a 
 | 0002 | Agentic implementation flow | 2026-09-10 | `0002-agentic-implementation.md`, plus the operator's cross-project standard on instruction files, skills, subagents, verification gates and briefs, plus ADR-0017 and ADR-0018. | complete, **thinly sourced, read its caveat first** |
 | 0003 | Job source survey | 2026-09-10 | `0003-job-source-survey.md`, plus ADR-0019 and ADR-0020. | complete, **corrected by 0005 on ai-jobs.net, Jobicy and Rozee.pk** |
 | 0004 | Project context documentation | 2026-09-11 | `0004-project-context-documentation.md`, plus ADR-0022, ADR-0023 and ADR-0024. Corrects pass 0002 on instruction-file length. | complete |
-| 0005 | Job source value | 2026-10-04 | `0005-job-source-value.md`, plus ADR-0059. Judges sources by their value to the operator, with every load-bearing claim checked against its primary source. Corrects pass 0003 on three sources. | complete |
+| 0005 | Job source value | 2026-10-04 (begun 2026-10-03 UTC) | `0005-job-source-value.md`, plus ADR-0059. Judges sources by their value to the operator, with every load-bearing claim checked against its primary source. Corrects pass 0003 on three sources. | complete |
 
 Passes 0001 and 0002 also produced cross-project standards, which live outside this repository because their findings apply to every project rather than this one. The records here carry the evidence and the source ratings; the standards carry the conclusions.
 

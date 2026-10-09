@@ -180,7 +180,7 @@ Grouped by topic, in the order the pipeline runs. A record appears under exactly
 
 | File | Holds | Status |
 | --- | --- | --- |
-| `docs/decisions/0004-airtable-as-display-layer.md` | **ADR-0004: Airtable as the filtered display layer.** Airtable's free plan is the display layer, written by batched calls and never read back. What the operator actually opens. | accepted |
+| `docs/decisions/0004-airtable-as-display-layer.md` | **ADR-0004: Airtable as the filtered display layer.** Airtable's free plan is the display layer, written by batched calls; the projection reads it back since 2026-10-07 only to decide what to send (ADR-0060). What the operator actually opens. | accepted |
 | `docs/decisions/0014-weekly-status-sweep.md` | **ADR-0014: Weekly status sweep, with a four-status outcome taxonomy.** A weekly sweep reads outcomes, persists them, then deletes the rows, and the four-status taxonomy the operator marks rows with. | superseded by ADR-0045 |
 | `docs/decisions/0030-backfill-on-rule-change.md` | **ADR-0030: A rule change backfills the filtered layer.** When the filter rules widen, a backfill appends the rows they now admit. The half of the append-only problem that adds rows. | accepted |
 | `docs/decisions/0034-airtable-its-own-client.md` | **ADR-0034: Airtable gets its own client, as a scoped exception.** Airtable gets its own client, a scoped exception to the one-HTTP-module rule, with retry and backoff kept shared. | accepted |
@@ -192,7 +192,8 @@ Grouped by topic, in the order the pipeline runs. A record appears under exactly
 | `docs/decisions/0046-classification-by-status-and-fifteen-day-retention.md` | **ADR-0046: Classification by status, and the fifteen-day retention.** Superseded by ADR-0050, which consolidates this flow and its eight amendments. The operator classifies by setting one status in Jobs; the sweep copies the row out, then writes, verifies and deletes it at fifteen days. Supersedes ADR-0045. | superseded by ADR-0050 |
 | `docs/decisions/0050-the-classification-flow-consolidated.md` | **ADR-0050: The classification flow, consolidated.** The whole classification flow in one record: one status in Jobs, the copy on every fetch, fifteen days on two clocks, closed postings marked and retired, and what keeps a classified row out of the display. Supersedes ADR-0046. | accepted |
 | `docs/decisions/0055-the-display-is-cleared-by-a-clock-and-by-hand.md` | **ADR-0055: The display is cleared by a clock, and by hand.** An unreviewed row leaves the display on a clock, and the operator can clear any table by an age threshold on demand. Both write to a store the projection reads by reason, because a row deleted in the browser comes back. | accepted |
-| `docs/decisions/0056-the-projection-sends-the-whole-layer.md` | **ADR-0056: The projection sends the whole layer, and the delta design that will replace it.** The projection sends every display group on every run, which costs about one call per ten rows per run, and the delta design that replaces it. Decided and unbuilt, with the triggers that call for it and the measurement that authorises the build. | accepted |
+| `docs/decisions/0056-the-projection-sends-the-whole-layer.md` | **ADR-0056: The projection sends the whole layer, and the delta design that will replace it.** Superseded by ADR-0060, the read-back the operator chose over the delta design recorded here. The projection sends every display group on every run, which costs about one call per ten rows per run, and the delta design that replaces it. Decided and unbuilt, with the triggers that call for it and the measurement that authorises the build. | superseded by ADR-0060 |
+| `docs/decisions/0060-the-projection-sends-only-what-differs-from-jobs.md` | **ADR-0060: The projection sends only what differs from `Jobs`.** The projection reads `Jobs` back and sends only the rows that differ from what the repository says they should be. The operator's choice over ADR-0056's recorded delta design, which this supersedes. Airtable is still never the source of truth. | accepted |
 
 ### Measurement and evidence
 
@@ -200,7 +201,8 @@ Grouped by topic, in the order the pipeline runs. A record appears under exactly
 | --- | --- | --- |
 | `docs/decisions/0015-two-measures-and-archive-protocol.md` | **ADR-0015: Two measures, and the archive protocol.** Two measures, freshness at discovery and outcome, with only the pipeline-controlled one binding. When the assessment window opens. | accepted |
 | `docs/decisions/0018-scheduled-contract-check.md` | **ADR-0018: Scheduled contract check against live boards.** A scheduled fingerprint of the fields each adapter reads, so a broken adapter is distinguishable from a quiet market. | accepted |
-| `docs/decisions/0036-contract-check-reports-through-the-run-log.md` | **ADR-0036: The contract check reports through the run log, not a failed run.** The contract check reports through the run log rather than by failing, so a contract change and a crashed check stay distinguishable. | accepted |
+| `docs/decisions/0036-contract-check-reports-through-the-run-log.md` | **ADR-0036: The contract check reports through the run log, not a failed run.** Superseded by ADR-0061, which consolidates it at its eighth amendment. The contract check reports through the run log rather than by failing, so a contract change and a crashed check stay distinguishable. | superseded by ADR-0061 |
+| `docs/decisions/0061-the-contract-check-reports-per-source-in-its-log-and-in-airtable.md` | **ADR-0061: The contract check reports per source, in its log and in Airtable.** The contract check reports through its run log, platform by platform, so one source's failure cannot cost another's findings; and every finding and every run failure reaches Airtable as a row in the Health table. Consolidates ADR-0036 at its eighth amendment. | accepted |
 
 ### How this repository is worked
 
@@ -221,7 +223,7 @@ Grouped by topic, in the order the pipeline runs. A record appears under exactly
 | --- | --- | --- |
 | `docs/deferred/employer-alias-map.md` | Deduplicating one role that arrives from two source classes, which needs an employer alias map. Deferred while one instance exists; revisit at the second or third, or when an accepted row turns out to have a twin. | current |
 | `docs/deferred/response-quality.md` | Recording what happened after he applied (a reply, an interview, a rejection, an offer), so that sources can one day be judged by how employers respond. Deferred until the operator has used the classification tables for long enough and decides to start. | current |
-| `docs/deferred/rozee-pk.md` | Adding Rozee.pk as a source. Out of automated use since 2026-10-04, because its privacy policy prohibits networked use of its material; revisiting needs that to change first. | current |
+| `docs/deferred/rozee-pk.md` | Adding Rozee.pk as a source. Out of automated use since 2026-10-04 (2026-10-03 UTC), because its privacy policy prohibits networked use of its material; revisiting needs that to change first. | current |
 | `docs/deferred/similarity-matching.md` | Ranking postings by similarity to accepted roles. Deferred because ADR-0010 forbids it and the deterministic star was built instead; revisit when the accepted store holds fifty rows or when the operator stops reading every row. | current |
 
-Files listed: 119
+Files listed: 121
