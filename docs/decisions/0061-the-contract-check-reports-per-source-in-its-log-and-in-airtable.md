@@ -66,7 +66,7 @@ A failing platform costs only its own findings for that run, and the run says so
 
 The Health table also carries the fetch run's failures, which no Airtable row carried before. It was named for health rather than for the contract on the operator's choice, so other failures can join it later.
 
-**Nothing reaches the table until the operator sets two secrets**, the two table IDs. Until then the events wait in the run logs and nothing fails, so the version file's "every failure reaches Airtable" stays unmet until he does.
+**Nothing reaches the table until the operator sets two secrets**, the two table IDs. Until then the events wait in the run logs and nothing fails, so the version file's "every failure reaches Airtable" stays unmet until he does. *(Wrong when written, 2026-10-09: the operator had set both secrets on 2026-10-08, and the evening fetch of that day wrote 17 rows to `Health` at 19:13Z, read through the connector on 2026-10-09. The architecture chat had not read the seat's handoff, which said so.)*
 
 A failed check's detail names where it failed and never why in words. Reading why takes the private log or a local run.
 
@@ -82,7 +82,7 @@ A failed check's detail names where it failed and never why in words. Reading wh
 
 **An event must become one `Health` row, and only once**; an `unchanged` check must make none.
 
-**Live only:** the first production `Health` row, after the operator sets the secrets.
+**Live only:** the first production `Health` row, after the operator sets the secrets. *(Seen 2026-10-08T19:13Z: 17 rows, 15 re-baselines of 2026-10-03 and the first baselines of Manatal and Workable, read through the connector on 2026-10-09. No failure row yet: none was among the events that first write carried.)*
 
 ## Pros and Cons of the Options
 
