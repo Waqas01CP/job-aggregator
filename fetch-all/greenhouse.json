@@ -37174,5 +37174,63 @@
   "workplace": null,
   "required_places": null,
   "described_workplace": null
+ },
+ {
+  "identity": "greenhouse:4913906101",
+  "source": "greenhouse",
+  "board_id": "greenhouse:veeamsoftware",
+  "external_id": "4913906101",
+  "employer": "Veeam Software",
+  "employer_provenance": "payload",
+  "title": "C# Developer",
+  "title_normalised": "C# Developer",
+  "location": "Remote, United States",
+  "published_at": "2026-10-09T19:02:46Z",
+  "published_field": "first_published",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-10T04:37:39.825637Z",
+  "ordering_date": "2026-10-09T19:02:46Z",
+  "ordering_date_source": "publication",
+  "url": "https://job-boards.eu.greenhouse.io/veeamsoftware/jobs/4913906101",
+  "url_provenance": "payload",
+  "stated_experience": [
+   3
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": null,
+  "workplace": "Office Based",
+  "required_places": null,
+  "described_workplace": null
+ },
+ {
+  "identity": "greenhouse:5262047007",
+  "source": "greenhouse",
+  "board_id": "greenhouse:banyancanopygroup",
+  "external_id": "5262047007",
+  "employer": "Banyan Canopy Group",
+  "employer_provenance": "payload",
+  "title": "Junior Financial Analyst",
+  "title_normalised": "Junior Financial Analyst",
+  "location": "Karachi, Sindh, Pakistan",
+  "published_at": "2026-10-09T20:08:56Z",
+  "published_field": "first_published",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-10T04:37:39.825637Z",
+  "ordering_date": "2026-10-09T20:08:56Z",
+  "ordering_date_source": "publication",
+  "url": "https://job-boards.greenhouse.io/banyancanopygroup/jobs/5262047007",
+  "url_provenance": "payload",
+  "stated_experience": [
+   3
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "Karachi, Sindh, Pakistan"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": "on site"
  }
 ]
