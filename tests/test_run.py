@@ -29,7 +29,7 @@ from src.filters import TitleMatcher
 from src.http_client import HttpClient
 from src.private_store import PrivateStore
 from src.airtable_sweep import CLASSIFICATION_TABLES, JOBS, SweepClient
-from tests.fake_airtable import FakeBase
+from tests.fake_airtable import FakeBase, Response
 from src.run import EXIT_OK, EXIT_STOPPED_RESUMABLE, Run, summarise
 
 def read_text(path):
@@ -784,6 +784,29 @@ class TestMain(unittest.TestCase):
                           log["projection"]["rows_sent"]), (1, 1, 0))
         self.assertGreater(log["airtable"]["read_calls"], 0)
         self.assertIn("Jobs held 1, unchanged 1, new 0, changed 0", out)
+
+    def test_a_failed_read_of_jobs_fails_the_projection(self):
+        """ADR-0060: a failed read fails the projection exactly as a failed
+        write does. Only the projection's read is refused here, so the sweep
+        after it still reads; nothing is sent, the fetch is committed, and
+        the run counts one failure in a row."""
+        refused = []
+
+        def refuse_the_first_read(call):
+            if call["method"] == "GET" and call["table"] == "tblJOBSFAKE000001" and not refused:
+                refused.append(call)
+                return Response(401, {"error": "AUTHENTICATION_REQUIRED"})
+            return None
+        self.base.fail = refuse_the_first_read
+        code, _, err = self.main()
+        self.assertEqual(code, EXIT_STOPPED_RESUMABLE)
+        self.assertEqual(len(refused), 1)
+        self.assertEqual(self.airtable, [], "the writer was reached after a failed read")
+        log = self.last_run_log()
+        self.assertIn("PermanentError", log["airtable"]["failure"])
+        self.assertEqual(log["attention"]["failed_in_a_row"], 1)
+        self.assertIn("the projection to Airtable failed", err)
+        self.assertEqual(self.identities("data"), ["greenhouse:1000"], "the fetch was lost")
 
     def test_a_failure_reaches_the_health_table_once(self):
         """ADR-0059: every failure reaches Airtable. A board that fails is a

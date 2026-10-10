@@ -189,6 +189,15 @@ class TestRequestShape(unittest.TestCase):
         self.assertEqual(c.calls_used, 3)
         self.assertEqual(c.rows_sent, 23)
 
+    def test_an_empty_upsert_makes_no_call(self):
+        """ADR-0060: a run in which nothing changed hands the writer nothing,
+        and nothing must cost nothing. A call carrying no records would spend
+        one of the month's thousand on every run that changed nothing."""
+        c = client()
+        self.assertEqual(c.upsert([]), {"created": [], "updated": []})
+        self.assertEqual(c._session.calls, [])
+        self.assertEqual(c.calls_used, 0)
+
 
 class TestNoReadPath(unittest.TestCase):
     """Ruling 4, 2026-09-23: the projection performs no reads at all. Since

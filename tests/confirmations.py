@@ -212,4 +212,56 @@ CONFIRMATIONS = {
             "test_fitness.TestFitnessFunctions.test_every_source_has_its_own_contract_check",
             "test_contract.TestConsumedFields.test_every_platform_the_run_polls_is_checked"]},
     },
+    # The read-back, built as `a3e387a` on 2026-10-07; the record landed on
+    # 2026-10-09 with no entry here, and every workflow's test step failed
+    # until there was one. Four tests added with these entries: the empty
+    # upsert, the rule change, the dropped row and the failed read.
+    "0060": {
+        "A run in which nothing changed sends no upsert call.": {"tests": [
+            "test_projection.TestTheReadBack.test_a_display_already_showing_every_row_is_sent_nothing",
+            "test_run.TestMain.test_a_run_sends_only_what_jobs_does_not_already_show",
+            "test_airtable.TestRequestShape.test_an_empty_upsert_makes_no_call"]},
+        "A row whose pipeline-owned field changed is sent, and one whose fields did not is "
+        "not.": {"tests": [
+            "test_projection.TestTheReadBack.test_a_field_shown_otherwise_is_sent",
+            "test_projection.TestTheReadBack.test_each_field_compared_is_one_the_pipeline_owns",
+            "test_projection.TestTheReadBack.test_empty_and_omitted_agree_and_whitespace_is_not_a_change"]},
+        "A rule change reaches the display": {"tests": [
+            "test_projection.TestTheReadBack.test_a_rule_change_resends_the_rows_it_moves_and_only_those",
+            "test_projection.TestTheReadBack.test_a_field_shown_otherwise_is_sent"]},
+        "A failed read fails the projection.": {"tests": [
+            "test_run.TestMain.test_a_failed_read_of_jobs_fails_the_projection"]},
+        "A row the current rules no longer admit still leaves the display through the "
+        "sweep": {"tests": [
+            "test_projection.TestTheReadBack.test_a_row_the_rules_now_drop_is_left_to_the_sweep",
+            "test_airtable.TestNoReadPath.test_the_only_public_verb_is_upsert",
+            "test_sweep.TestStep6Removed."
+            "test_a_row_a_rule_now_drops_is_stored_with_the_rule_then_removed"]},
+    },
+    # The isolation, `2c38f6f` on 2026-10-04, and the Health table, `9a23387`
+    # on 2026-10-07. Every lead was already held; the record landed on
+    # 2026-10-09 with no entry here.
+    "0061": {
+        "A finding must not fail the run, and a crash must not produce a finding.": {"tests": [
+            "test_contract.TestMain.test_a_renamed_field_exits_0_both_times_and_is_named_with_both_shapes",
+            "test_contract.TestMain.test_a_crash_exits_1_and_commits_no_log"]},
+        "One platform's failure must not touch another's check.": {"tests": [
+            "test_contract.TestEachSourceOnItsOwn.test_one_check_raising_leaves_the_others_found_and_fetched",
+            "test_contract.TestEachSourceOnItsOwn.test_a_failed_check_names_where_it_raised_and_never_its_message",
+            "test_contract.TestEachSourceOnItsOwn.test_a_failing_board_cannot_spend_another_platforms_budget",
+            "test_contract.TestEachSourceOnItsOwn.test_a_failing_board_cannot_open_another_platforms_breaker",
+            "test_contract.TestMain."
+            "test_one_platforms_failed_check_commits_the_others_and_exits_2",
+            "test_workflow.TestContractWorkflow.test_a_failed_platform_is_pushed_and_then_marked_failed"]},
+        "A failed check's detail must never carry the exception's message.": {"tests": [
+            "test_contract.TestEachSourceOnItsOwn.test_a_failed_check_names_where_it_raised_and_never_its_message"]},
+        "An event must become one `Health` row, and only once": {"tests": [
+            "test_health.TestWhatIsARow.test_a_healthy_check_and_a_healthy_run_are_no_rows",
+            "test_health.TestWhatIsARow.test_each_changed_field_is_a_row_and_ours_says_so",
+            "test_health.TestWhatIsARow.test_a_failed_unreachable_or_new_platform_is_one_row",
+            "test_health.TestWhatIsARow.test_every_failing_part_of_a_run_is_a_row",
+            "test_health.TestSentOnce.test_an_event_recorded_as_sent_is_not_sent_again",
+            "test_health.TestSentOnce.test_contract_findings_are_pending_too_and_each_key_once",
+            "test_run.TestMain.test_a_failure_reaches_the_health_table_once"]},
+    },
 }

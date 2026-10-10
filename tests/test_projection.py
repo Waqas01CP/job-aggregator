@@ -199,6 +199,42 @@ class TestTheReadBack(Harness):
         self.assertEqual(len(client.sent), 1)
         self.assertEqual(stages["rows_changed"], 1)
 
+    def test_a_rule_change_resends_the_rows_it_moves_and_only_those(self):
+        """ADR-0060: no fingerprint of the rules, and a rule change still
+        reaches the display, because the rows it moves differ from what
+        `Jobs` shows. The rule changed here is the family map ADR-0038 keeps
+        in configuration, renaming the family of one term of the two shown."""
+        self.write_filtered([make_row(1, title="AI Engineer"),
+                             make_row(2, title="Software Engineer", employer="Globex")])
+        shown = [as_airtable_shows(r) for r in self.planned()]
+        changed = TitleMatcher()
+        self.assertIn("ai engineer", changed.term_families)
+        changed.term_families = dict(changed.term_families)
+        changed.term_families["ai engineer"] = "A family the rules renamed"
+        client, stages = FakeClient(), {}
+        projection.project(self.paths, NOW, changed, client, [], stages,
+                           displayed=lambda: shown)
+        self.assertEqual([(r["Identity"], r["Family"]) for r in client.sent],
+                         [("greenhouse:1", "A family the rules renamed")])
+        self.assertEqual((stages["rows_unchanged"], stages["rows_changed"]), (1, 1))
+
+    def test_a_row_the_rules_now_drop_is_left_to_the_sweep(self):
+        """ADR-0060: removal is the sweep's (ADR-0050), never the
+        projection's. `Jobs` shows a row an earlier rule admitted; the
+        current chain drops it, and the projection sends nothing for it. The
+        writer has no verb to remove it with (TestNoReadPath in
+        test_airtable.py), and the sweep's half is TestStep6Removed in
+        test_sweep.py."""
+        self.write_filtered([make_row(1),
+                             make_row(2, title="Senior AI Engineer", employer="Globex")])
+        [kept] = self.planned()
+        dropped = dict(kept, Identity="greenhouse:2", Title="Senior AI Engineer",
+                       Employer="Globex")
+        client, stages = self.project_against([as_airtable_shows(kept),
+                                               as_airtable_shows(dropped)])
+        self.assertEqual(client.sent, [])
+        self.assertEqual((stages["rows_in_base"], stages["rows_unchanged"]), (2, 1))
+
     def test_empty_and_omitted_agree_and_whitespace_is_not_a_change(self):
         record = {name: None for name in projection.PIPELINE_FIELDS}
         record.update({"Identity": "greenhouse:1", "Title": "AI Engineer ",
