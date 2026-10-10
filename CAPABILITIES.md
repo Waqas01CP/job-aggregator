@@ -362,6 +362,7 @@ Each dated item below has its source in the session log of that date. The design
   - **A table for the system's health:** "i think general health is good but only if the cost is not a lot". Every contract finding and every failed fetch run becomes a row, at a few calls a month. He set its two secrets on 2026-10-08, and the evening fetch that day wrote its first 17 rows (ADR-0061).
   - **Manatal's career-site endpoint for all nine of its boards**, chosen once the documented endpoint was found to give no working link to a posting, and **Workable's four new slugs**, added marked unproven: "add them as long as they are good and are useful" (ADR-0059's and ADR-0029's Changes).
 - **His answers of 2026-10-09:** a posting with no date counts as passing when platforms are compared, "if the post is genuine then i would like to see it"; the levels Workable and SmartRecruiters state are to be read, Mid-Senior level kept for now (ADR-0032, not yet built); Himalayas' own listing date accepted for 1.0.0 (ADR-0052); SmartRecruiters before Ashby (ADR-0059).
+- **His answers of 2026-10-10:** every level from the start of a career up to mid is kept on every source, whatever it is called, internship included, "so that no job skips my sight that i am eligible for" (ADR-0032, not yet built); Himalayas kept, its trial over, "it has proven itself to be worth keeping".
 
 ### And he did what only he could
 
