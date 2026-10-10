@@ -16,19 +16,23 @@ Brought to final form 2026-09-18, at the close of the first architecture chat, a
 
 **Revised 2026-09-20**, in the second architecture chat, against the repository and the live Airtable base rather than against the handoff prompt. That prompt was stale in three places and is listed under the errors below.
 
+**Brought current 2026-10-09 UTC**, after recording nothing from 2026-09-25 to 2026-10-09: every old item was checked against `STATE.md`, `logs/README.md`, the records, Briefs 7 to 10 and their reports, the implementing seat's handoff of 2026-10-08 and the `Health` table read through the connector, then moved or kept; items 121 on are the fortnight's. The lapse is the first of the new entries in the errors below, and the rule it broke is under "Rules for this file".
+
 ---
 
 ## What this project is, in one paragraph
 
-A scheduled pipeline that polls employer ATS job boards and one aggregator, deduplicates, filters against a versioned title pool, and writes what survives to Airtable for the operator to review. Its purpose is hours returned, not roles found: job discovery was consuming the majority of a working week, and the reachable pool is roughly one qualifying role per six months, which the pipeline cannot change and is not built to. Its only binding success measure is Measure A, in ADR-0015: the median gap between a posting's publication date and its first appearance in the display, at or under 24 hours.
+A scheduled pipeline that polls employer ATS job boards and one aggregator, deduplicates, filters against a versioned title pool and the operator's eligibility, and writes what survives to Airtable for the operator to review. Its purpose is hours returned, not roles found: job discovery was consuming the majority of a working week, and the reachable pool is roughly one qualifying role per six months, which the pipeline cannot change and is not built to. Its only binding success measure is Measure A, in ADR-0015: the median gap between a posting's publication date and its first appearance in the display, at or under 24 hours. *(2026-10-09: what it is working toward is version 1.0.0, the system working for the operator himself, ADR-0059 and `docs/versions/v1.0.0.md`. It reads twenty-six employer boards on four platforms and Himalayas.)*
 
-## Three seats, and what each does
+## The seats, and what each does
 
-**The operator** decides scope, cost, and anything about roles, titles or what he is reachable for. He relays between the other two and is not a relay for questions either could answer directly.
+**The operator** decides scope, cost, and anything about roles, titles or what he is reachable for. He relays between the other seats and is not a relay for questions either could answer directly.
 
 **The architecture chat**, this one, concludes decisions, writes records, writes briefs, and checks what comes back. It does not implement.
 
-**The implementing seat**, Claude Code, executes briefs, writes code and tests, writes session logs, and audits. It decides method, structure and tooling. It stops and hands back when an answer would change what the project is.
+**The implementing seat**, Claude Code, executes briefs, writes code and tests, writes session logs, and audits. It decides method, structure and tooling. It stops and hands back when an answer would change what the project is. It pushes its own commits once the full suite passes (D10).
+
+**The audit seat** audits finished work cold and read-only, and reports to the operator, who routes its findings. `docs/how-to/the-seats.md` is the fuller account of all four, with its own recheck table.
 
 A brief ranks below any accepted record. When they conflict, the record wins and the seat reports it. That is ADR-RULES.
 
@@ -45,8 +49,12 @@ A brief ranks below any accepted record. When they conflict, the record wins and
 | How records are amended and retired | `docs/decisions/ADR-RULES.md` |
 | What each documented file holds | `MAP.md`, generated |
 | What prior sessions did | `logs/README.md`, then chain backwards |
+| What the audits found | `logs/audit/` |
 | What was found and when | `docs/research/` |
 | What was deliberately not done, and its trigger | `docs/deferred/` |
+| Where the project is going, and what is left | `docs/versions/v1.0.0.md` |
+| Everything the system is and does, for an outside reader | `CAPABILITIES.md` |
+| The latest brief or report to each seat | `briefs/`, one file per receiving seat, gitignored |
 
 ---
 
@@ -54,7 +62,7 @@ A brief ranks below any accepted record. When they conflict, the record wins and
 
 **DONE** with a pointer. **GATED** with the gate named in checkable words. **OPEN** with nothing blocking it.
 
-Items keep their number forever and move rows rather than being renumbered.
+Items keep their number forever and move rows rather than being renumbered. **Numbers 15 to 18, 25, 29, 44, 103, 109 and 112 appear in no table of this file**, checked 2026-10-09. Whatever they named was not written down here, and the repository does not say.
 
 ---
 
@@ -62,35 +70,31 @@ Items keep their number forever and move rows rather than being renumbered.
 
 | # | Item | Notes |
 |---|---|---|
-| 81 | Himalayas and Banyan Canopy | Both deferred by the operator 2026-09-23 until the writer runs and he has seen rows in `Jobs`. Review no earlier than **2026-10-07**. Himalayas additionally needs item 89's repository name, because ADR-0047 fails a run that cannot write the private store. Evidence so far: Himalayas keeps 11 to 31 rows a run and loses every one; Banyan Canopy has returned the same six finance postings on all thirteen runs, admitted none, and the one AI-adjacent posting of 2026-09-11 is gone |
-| 104 | Cross-source duplicates | "GTM AI Engineer -Deal Desk" sits in `Jobs` twice, verified through the connector 2026-09-25: `greenhouse:8693228002` from Motive's board and `himalayas:.../thinkmotive/...`. ADR-0001's key includes the publication date and Himalayas stamps its own, so an aggregator copy can never collapse with the original. A decision, not a defect |
-| 107 | Measure A falls due about 2026-10-08 | ADR-0015 dates go-live from the first row in Airtable, 2026-09-24T03:27Z. **Early measurement by the chat, 2026-09-25**, over `filtered.json` at `data` head `def4f935`: of the seven rows published after the pipeline's first run, the lag from publication to first seen has a median of 0.9 hours and a 90th percentile of 5.0 hours, against Measure A's 24 and 72. Every row carries a publication date. Small sample, and it omits the up-to-twelve-hour wait for the next projection, so the margin is still wide. The chat writes the assessment |
-| 108 | The employer alias map, deferred and now triggerable | Item 22's trigger was a second source class in production, which Himalayas now is. It is what a cross-source duplicate needs: "GTM AI Engineer -Deal Desk" is in `Jobs` twice because ADR-0001's key holds the publication date and Himalayas stamps its own, and the employers read `Motive` and `thinkmotive`, which no fold reconciles. **The operator's decision**: accept the duplicate for now, or build the alias map and a cross-class rule. A deferred entry is owed either way |
-| 118 | The sweep brief, and the corpus work with it | The brief is the last piece of the flow: ADR-0050's six sweep steps, the closed-posting mechanism, the three test-table secrets, the call-trajectory line, and ADR-0049's first three fitness functions. On the operator's instruction, 2026-09-25, it also carries the corpus work: the audit is in the seat's hands, so the seat restates the remaining conflicts with their record and clause, fixes what ADR-RULES lets it, and hands back the rest named |
-| 119 | ADR-0050's closure test needs the operator's number | A posting counts as closed after four consecutive runs that polled its board and did not see it. **Chosen by the chat**, not measured, and recorded as such in ADR-0050's Assumptions. It is configuration under ADR-0031, so a different number changes a file rather than the code, but the sweep should not be built on a figure he has not seen |
+| 81 | Banyan Canopy | Deferred by the operator 2026-09-23 with Himalayas, until he had seen rows in `Jobs`; review no earlier than 2026-10-07. Evidence by 2026-09-25: the same six finance postings on all thirteen runs, none admitted. ADR-0059 keeps Himalayas in version 1, the operator's decision of 2026-10-03 UTC, but on 2026-10-08 he told the seat his trial verdicts come later, and the seat's log lists both as waiting on him. Whether ADR-0059 is his Himalayas verdict is put to him, 2026-10-09; Banyan Canopy's verdict is his |
+| 107 | Measure A's assessment | **Overdue, the chat's.** ADR-0015: "We will assess against Measure A two weeks after go-live"; go-live was 2026-09-24T03:27Z, so it fell due about 2026-10-08. Measured so far: publication to first seen, Greenhouse median 4.6 h and 90th percentile 9.7 h over 32 postings, Himalayas 10.2 h and 22.2 h over 448 under the morning-only poll (the seat, 2026-10-03, Brief 9); Himalayas is polled on both runs since 2026-10-04. The chat cannot read the data branch from here, so Brief 11 asks the seat for the two weeks' figures and the chat writes the assessment from them. Separate from the window the version file's test leaves to the operator, item 121 |
+| 133 | Brief 11 to the implementing seat | To carry: item 132's registry entries; item 107's two weeks of Measure A; item 137's level rule, once he has answered for the unnamed levels; SmartRecruiters next, then Ashby (item 134); a dateless posting counts as passing (item 135); `docs/how-to/the-seats.md`'s recheck row that reads this file's "Three seats" section, renamed "The seats" on 2026-10-09 when the audit seat was added; and the records of 2026-10-09 to read. The chat writes it when the operator asks |
+| 121 | The operator's open choices for version 1.0.0 | In `docs/versions/v1.0.0.md`: the window over which Measure A must hold; the period he uses the tables; whether a dropped posting's own reason must be stored, or its rule in the run log and the raw layer are enough; and Breezy, waiting on a documented endpoint or his acceptance of an undocumented one. Each his |
+| 139 | Whether "add or update, never remove" binds the implementing seat in `CAPABILITIES.md` | The operator's rule for the file reached the chat as add or update, never remove; the template and the file's own upkeep section tell the seat to remove a number that can no longer be measured. Explained to him 2026-10-09 with each reading's consequence. His decision |
+| 140 | The Decision Record Standard's line rule | It still says "A record stays under 200 lines" (checked 2026-10-09); ADR-RULES and Working Method 1.2 carry his rule of 2026-09-28. His reading of 2026-10-09, that 200 stays the aim and a record running a little over it never forces a new one, checked against ADR-RULES and answered. Whether to amend the standard, his file, is his |
+| 141 | `CLAUDE.md`'s exit-code paragraph | It names the fetch run's exit 2 and not the contract check's, which ADR-0061 adds. `CLAUDE.md` is the operator's file, so the change is an update block for him (Working Method 8.8), the chat's to draft |
 
 ## Gated
 
 | # | Item | Gated on |
 |---|---|---|
-| 64 | The Airtable writer and the **daily** sweep | The writer is unblocked and deliberately not started. The sweep additionally needs item 88 |
-| 65 | ADR-0043's three outcome stores | The writer. Recorded, not built |
-| 66 | ADR-0044's star has no caller | The writer. The projection does not exist |
-| 67 | ADR-0040's projection filter, including ADR-0046's stored-outcome skip | The writer |
-| 68 | ADR-0038's family views | The writer. The label exists; the views do not |
-| 69 | ADR-0041's structured location half | A reachability field on the row and in the Airtable schema, neither of which exists |
-| 56 | Set the real fetch ceiling from measurement | A month of run logs. Every run so far has spent 36 requests against a provisional ceiling of 500 |
-| 70 | Every unread field in `platform-fields.md` | Each needs a decision about what it means and what its absence means. Himalayas returns `seniority` on 100% of postings while ADR-0032 infers it from title words |
-| 20 | Rozee.pk as a source | Deferred, `docs/deferred/rozee-pk.md`. The trigger is three conditions, the real one being whether the Karachi gap is still visible after ADR-0029's five adapters. Access questions already answered there so nobody re-investigates them |
-| 21 | Description matching | Deferred by ADR-0016. Field coverage is now measured |
-| 22 | Deduplication across source classes, employer alias map | A second source class in production |
-| 23 | End-state document | Operator's decision. No prior art in either project |
+| 56 | Set the real fetch ceiling from measurement | A month of run logs, from about 2026-10-17. Since 2026-10-07 and 10-08 Manatal and Workable add requests. By `STATE.md`'s contract-check row, no run had come within 90% of the ceiling of 500 |
+| 66 | ADR-0044's star has no caller | A version after 1.0.0 (ADR-0059): it compares against accepted rows, which come only from his using the tables |
+| 68 | ADR-0038's family views | The operator asking for one. The `Family` label is sent on every row since 2026-09-24; no view is built |
+| 70 | Every unread field in `platform-fields.md` | Each needs a decision. Every field of the three live sources was re-measured over the saved postings on 2026-10-02, and Himalayas' `seniority` is read since then (ADR-0032). Still on the index's Pending list |
+| 22 | Deduplication across source classes, employer alias map | A version after 1.0.0 (ADR-0059); `docs/deferred/employer-alias-map.md` holds its triggers |
 | 24 | In-flight register separate from `STATE.md` | Work being in flight |
 | 26 | Reuse boundary against the LinkedIn pipeline | One session, component by component |
 | 27 | Which skills the project gets | Nothing technical |
 | 28 | AGENTS.md symlink for Antigravity | Only matters if Antigravity is used here |
-| 46 | Lever in or out of the slice | **Answering itself.** 11 of 11 Greenhouse and 2 of 2 Lever postings were dated after the run that missed them |
-| 75 | Adapter order execution | ADR-0029 fixes it: Ashby, Workable, SmartRecruiters, Breezy, Manatal. Waiting on the slice proving itself |
+| 132 | Pushing the operator's two commits of 2026-10-09 | Entries in `tests/confirmations.py` for ADR-0060's five Confirmation leads and ADR-0061's four. ADR-0049's scan reads every record from ADR-0050 on, so the suite fails until they exist. Committed, not pushed, the operator's report of 2026-10-09 |
+| 137 | The levels Workable and SmartRecruiters state | Decided 2026-10-09: read like Himalayas', Entry level and Mid-Senior level kept, the second for now (ADR-0032's Changes). Waits on his answer for the values he did not name, Internship among them (6 of SmartRecruiters' 20 postings), then Brief 11 and the seat's build |
+| 142 | ADR-0055's live checks | The thirty-day clock's first removal, about 2026-10-17, and `accepted test` past fifteen days. The seat reads them; the chat records what they show |
+| 143 | `AGGREGATOR_STORE_TOKEN` | Its expiry on 2027-01-01, the operator's to rotate before then (`STATE.md`, Blocked) |
 
 ## Done
 
@@ -182,6 +186,33 @@ Items keep their number forever and move rows rather than being renumbered.
 | 89 | The private aggregator store | Done. Repository, fine-grained token and both secrets exist, and the store is proved on a runner: test-mode run 36016481510 pushed three files to the private `data-test` branch, and production run 36036717095 created the private `data` branch. **Verified 2026-09-25 from the public branch**: 963 seen entries, all Greenhouse and Lever, and no `fetch-all/himalayas.json`. The token expires 2027-01-01 |
 | 97 | Brief 5, superseded by Brief 6 | Brief 6 sent, built, pushed and live. `Jobs` filled at 2026-09-24T03:27Z. **Verified through the connector 2026-09-25**: 44 rows, 29 ATS rows carrying `Family` and 15 Himalayas rows without it, which is the report's own correction confirmed |
 | 95 | A `Stage` changed after day 15 | Closed 2026-09-23: accepted as it stands. The store keeps the value the copy held on day 15 and nothing reads the difference. Revisit when the accepted-prune tool is built. Both values live in the `accepted` table; two views by hand separate them |
+| 104 | Cross-source duplicates | Moved 2026-10-09. Accepted for now on the operator's decision of 2026-09-25 and deferred with three triggers, `docs/deferred/employer-alias-map.md`; outside version 1 by ADR-0059. Item 22 is the deferral |
+| 108 | The employer alias map, triggerable | Moved 2026-10-09. The deferred entry was written 2026-09-25, the duplicate accepted for now |
+| 118 | The sweep brief, and the corpus work | Moved 2026-10-09. Brief 7, built 2026-09-25 and live; the first scheduled sweep 2026-09-26, its row in `completed.md`. The corpus audit's conflict 2 handed back and closed by ADR-0051 |
+| 119 | ADR-0050's closure test needs the operator's number | Moved 2026-10-09. Twelve polled runs, his decision of 2026-10-03 on the seat's repost measurement: twelve Greenhouse postings left their boards and returned after 23 to 130 hours (ADR-0050) |
+| 64 | The Airtable writer and the daily sweep | Moved 2026-10-09. The projection live from 2026-09-24T03:27Z; the sweep from 2026-09-25 and on schedule from 2026-09-26 (`completed.md`) |
+| 65 | ADR-0043's outcome stores | Moved 2026-10-09. Built with the sweep; five stores since 2026-09-28, three of them outcome corpora |
+| 67 | ADR-0040's projection filter, with the stored-outcome skip | Moved 2026-10-09. Built in Brief 6, 2026-09-23; the skip reads the removal store by reason since Brief 8, 2026-09-30 |
+| 69 | ADR-0041's structured location half | Moved 2026-10-09. D13 on 2026-09-26, the structured place and stated workplace on 2026-10-02; ADR-0057 superseded ADR-0041 on 2026-10-03 |
+| 20 | Rozee.pk as a source | Moved 2026-10-09. Out of automated use by ADR-0059: its privacy policy forbids use of its material in a networked computer environment (research 0005). His to use by hand |
+| 21 | Description matching | Moved 2026-10-09. Built for three facts, years asked, a right to work and on-site work, by ADR-0058 on 2026-10-02 and 10-03; any further use is a new decision |
+| 23 | End-state document | Moved 2026-10-09. ADR-0059 and `docs/versions/v1.0.0.md`, item 127 |
+| 46 | Lever in or out of the slice | Moved 2026-10-09. In the slice since 2026-09-17. `createdAt`'s meaning stays undefined, and ADR-0052 never drops Lever for age on it |
+| 75 | Adapter order execution | Moved 2026-10-09. ADR-0029's order replaced by ADR-0059's, measured yield first: Manatal built 2026-10-07, Workable 2026-10-08, then SmartRecruiters and Ashby |
+| 122 | The records of 2026-09-28 | ADR-0051 every field saved privately, ADR-0052 age judged once at first sight, ADR-0053 Himalayas through its search, ADR-0054 a scheduled run happens, ADR-0055 the clock and the clearing tool, ADR-0056 the whole layer with a delta design; ADR-RULES' three rules, the line rule among them, the operator's decision of 2026-09-28 |
+| 123 | Brief 8 | Built 2026-09-30: the reason-based skip, ADR-0055's clock and tool, ADR-0053's agreement check, ADR-0036's re-baseline, ADR-0041's 74 and 17 met exactly. Report with the fourth audit |
+| 124 | Audit reports kept | The operator's decision of 2026-09-30; the fourth audit's report committed unchanged in `logs/audit/` on 2026-10-01 |
+| 125 | The records of Brief 8's report | 2026-10-03: ADR-0057 supersedes ADR-0041, eligibility in one record; ADR-0058, the description read once at fetch; amendments to thirteen more |
+| 126 | Brief 9 | Built 2026-10-03: closure at twelve, re-baselines timed, every Confirmation clause of ADR-0050 to ADR-0058 held by a test or marked live only, time zones as residence measured |
+| 127 | Version 1 | ADR-0059, research 0005 and `docs/deferred/response-quality.md`, 2026-10-03 and 10-04 UTC; `docs/versions/v1.0.0.md` and the test for done, accepted by the operator on 2026-10-04 UTC. Audited cold the same day, three rounds |
+| 128 | `CAPABILITIES.md`, the chat's lane | `dfe9caf`, 2026-10-04; rechecked 2026-10-09 against the seat's five changes, all deliberate, and brought current in the chat's lane |
+| 129 | Brief 10 and its two addenda | Sent 2026-10-04; the report and Addenda 1 (2026-10-07) and 2 (2026-10-08) read end to end on 2026-10-09, 298 lines |
+| 130 | The records of Brief 10 | 2026-10-09: ADR-0060 supersedes ADR-0056 (the projection reads `Jobs` back), ADR-0061 supersedes ADR-0036 (the contract check per source, and `Health`), amendments to thirteen more, research 0005 corrected, the version file's statuses, UTC dates. Audited cold twice. Committed by the operator, not pushed: item 132 |
+| 131 | The Working Method, the chat's parts | Version 1.2, 2026-10-09, outside the repository: the audit seat and the seats file, evidence grading, the line rule, the threshold rule, the version file, whole context in a brief, the ledger rule below |
+| 134 | SmartRecruiters or Ashby next | 2026-10-09: SmartRecruiters, then Ashby. The operator: the order between two sources both to be built does not matter to him (ADR-0059) |
+| 135 | Does a posting with no date count as passing | 2026-10-09: yes, "if the post is genuine then i would like to see it" (ADR-0059) |
+| 136 | A guard against Himalayas' listing date | 2026-10-09: none in version 1, "yes, it is acceptable" (ADR-0052) |
+| 138 | The `Health` table's two secrets | Set by the operator on 2026-10-08. The evening fetch wrote 17 rows at 19:13Z, read through the connector on 2026-10-09: 15 re-baselines of 2026-10-03 and the first baselines of Manatal and Workable |
 
 ---
 
@@ -221,6 +252,28 @@ A record that reports only what survived is not a record.
 
 **ADR-0046's budget line for the projection**, 1 upsert call a run where 25 groups at ten a call is 3. Written 2026-09-19, found 2026-09-22 while writing Brief 5. Item 96.
 
+**Recording nothing in this ledger from 2026-09-25 to 2026-10-09.** Two weeks of items lived only in briefs, each overwritten by the next, and in the chat's own context. The cost: on 2026-10-09 the chat told the operator to set two secrets he had set the day before, and old items stayed open here long after they were done, the writer among them. Found by the chat on 2026-10-09; the rule it produced is under "Rules for this file".
+
+**Telling the operator on 2026-10-09 to set the `Health` table's secrets**, and writing that they were unset into ADR-0061, ADR-0059's Confirmation, the version file and `CAPABILITIES.md`. He had set them on 2026-10-08, the implementing seat's handoff said so, and 17 rows were already in the table. The chat had not read the handoff. Corrected the same day.
+
+**Dating records by the operator's clock in Karachi**, a day ahead of UTC for part of every day: rows of 2026-10-04 UTC written as 2026-10-05, and decisions of 2026-10-03 UTC written as 2026-10-04. `CLAUDE.md` says dates are UTC. Found by the implementing seat on 2026-10-04 for the first kind and by the chat for the second; restated with markers on 2026-10-09.
+
+**Reading D13 as an extension of ADR-0041**, 2026-09-28. It replaced ADR-0041's central rule, that location keywords never reject, which is a supersession. ADR-0057 superseded it on 2026-10-03.
+
+**Five of 2026-09-28, three with one cause: adding something without rechecking what depended on it.** The index's Changes count read 123 because an ADR-RULES row was added after counting. ADR-0043's line 111 contradicted the principle written above it in the same edit. ADR-0050's "nothing else removes a row" went false when ADR-0055 was written an hour later. ADR-0050's "about fourteen hours" was corrected from start times taken from a report, not the runs. And ADR-0041 put the seat's summary in quotation marks as the operator's words; his logged words were "time zone is not an issue".
+
+**ADR-0050's assumption that a closed row would not return**, 2026-09-25. The filtered layer keeps every row it admitted, so the projection re-sent a closed row at once. Found while writing Brief 8; the skip now reads the removal store by reason.
+
+**ADR-0056's intake of five to ten display groups a day**, 2026-09-28, written as the reason the measurement was urgent. Part of it divided a live search total by a guessed month. Brief 8's week measured about one a day; Brief 10's week measured about 7.5. The figure had no measured basis either way.
+
+**The research round of 2026-10-03 and 10-04 UTC.** The pass was announced as 0004, a number already taken. Remotive was first called out on a weak third-party size count. A batch script failed half way and was rerun from the originals. The cold audit then found statements claiming more than their sources showed, eight in ADR-0059 and four in research 0005 among them, and stale or wrong lines in ADR-0023, ADR-0048, ADR-0050, ADR-0051, `rozee-pk.md`, the alias map's third trigger and the brief itself, all corrected the same day.
+
+**The round of 2026-10-09, before its cold audit.** A paragraph inserted inside the version file's Sources table broke it; "779 postings" was left in the chat's own lane of `CAPABILITIES.md` after the seat had corrected it to 640; SmartRecruiters before Ashby was written as the measured rule's outcome when the rule ties them; ADR-0050 took a seventh Changes row without the re-read its own guard asks for; and the Working Method's first draft misstated how the Confirmation registry treats a "Live only:" clause. All found by two independent audits and corrected before writing.
+
+**The record index's Changes count**, 92 rows across 40 records as of 2026-09-25, when the corpus held 106 across 41. Found 2026-09-28 by counting every table, which is how the count was derived from then on; done item 116 above, kept as written, claimed the index current on that count.
+
+**The first round of corrections after the audit of 2026-10-04 UTC** rewrote four committed rows and one annotation without a date, which ADR-RULES forbids. Caught and reworked before anything was written: committed text stays, and each correction is a dated note beside it.
+
 ---
 
 ## One incident worth carrying, not this chat's
@@ -231,10 +284,14 @@ A seat reverted two deliberate changes made by the architecture chat rather than
 
 ## Rules for this file
 
-Update it in the same message that changes an item's status, never in a catch-up pass. That rule was broken once, between items 58 and 71, and the repair is why this section exists.
+Update it in the same message that changes an item's status, never in a catch-up pass. That rule was broken once, between items 58 and 71, and the repair is why this section exists. It was broken again from 2026-09-25 to 2026-10-09, for two weeks, which is why the next rule exists.
+
+**What a brief or report raised is an item here until it is closed.** The file in `briefs/` is overwritten by the next one; this file is not. An item moves to DONE when the report that closes it has been verified, not when it has been read.
 
 When an item moves, it moves rows. It does not get a new number.
 
 A GATED item names its gate in words a later reader can check. "Blocked" is not a gate.
 
 If an item has sat OPEN across three sessions without movement, say so out loud rather than letting it drift into permanent background.
+
+Dates are UTC.
