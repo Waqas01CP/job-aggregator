@@ -1,0 +1,26 @@
+[
+  {
+    "label": "an empty upsert still makes a call",
+    "path": "src/airtable.py",
+    "find": "    for start in range(0, len(items), size):",
+    "replace": "    for start in range(0, max(len(items), 1), size):"
+  },
+  {
+    "label": "the family a rule names is not compared",
+    "path": "src/projection.py",
+    "find": "               for name in PIPELINE_FIELDS)",
+    "replace": "               for name in PIPELINE_FIELDS if name != \"Family\")"
+  },
+  {
+    "label": "the projection re-sends what Jobs shows and the rules no longer admit",
+    "path": "src/projection.py",
+    "find": "    return new + changed\n",
+    "replace": "    planned = {r[\"Identity\"] for r in records}\n    return new + changed + [dict(f[0]) for i, f in by_identity.items() if i not in planned]\n"
+  },
+  {
+    "label": "a failed read is taken for an empty display",
+    "path": "src/run.py",
+    "find": "        shown = reader.list_records(JOBS, PIPELINE_FIELDS)\n",
+    "replace": "        try:\n            shown = reader.list_records(JOBS, PIPELINE_FIELDS)\n        except Exception:\n            shown = []\n"
+  }
+]
