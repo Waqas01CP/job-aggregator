@@ -18605,5 +18605,33 @@
   "workplace": null,
   "required_places": null,
   "described_workplace": null
+ },
+ {
+  "identity": "manatal:2690760",
+  "source": "manatal",
+  "board_id": "manatal:itc-worldwide-info",
+  "external_id": "2690760",
+  "employer": "CONSULTANT",
+  "employer_provenance": "payload",
+  "title": "Advisory | Accounting | Audit | Tax | Payroll",
+  "title_normalised": "Advisory | Accounting | Audit | Tax | Payroll",
+  "location": "Bergerac, France",
+  "published_at": null,
+  "published_field": null,
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-11T17:56:20.186254Z",
+  "ordering_date": "2026-10-11T17:56:20.186254Z",
+  "ordering_date_source": "first_seen",
+  "url": "https://www.careers-page.com/itc-worldwide-info/job/LR533Y56",
+  "url_provenance": "constructed",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "France"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null
  }
 ]

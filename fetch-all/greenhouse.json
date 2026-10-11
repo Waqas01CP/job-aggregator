@@ -37232,5 +37232,61 @@
   "workplace": null,
   "required_places": null,
   "described_workplace": "on site"
+ },
+ {
+  "identity": "greenhouse:8882839002",
+  "source": "greenhouse",
+  "board_id": "greenhouse:gomotive",
+  "external_id": "8882839002",
+  "employer": "Motive",
+  "employer_provenance": "payload",
+  "title": "Area Vice President - Strategic",
+  "title_normalised": "Area Vice President - Strategic",
+  "location": "United States - Austin, Texas; United States - San Francisco, California",
+  "published_at": "2026-10-11T17:09:09Z",
+  "published_field": "first_published",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-11T17:56:20.186254Z",
+  "ordering_date": "2026-10-11T17:09:09Z",
+  "ordering_date_source": "publication",
+  "url": "https://job-boards.greenhouse.io/gomotive/jobs/8882839002",
+  "url_provenance": "payload",
+  "stated_experience": [
+   12
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": null,
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null
+ },
+ {
+  "identity": "greenhouse:8882841002",
+  "source": "greenhouse",
+  "board_id": "greenhouse:gomotive",
+  "external_id": "8882841002",
+  "employer": "Motive",
+  "employer_provenance": "payload",
+  "title": "AVP, Customer Success - Enterprise and Strategic Accounts",
+  "title_normalised": "AVP, Customer Success - Enterprise and Strategic Accounts",
+  "location": "United States - Austin, Texas; United States - Nashville, Tennessee; United States - San Francisco, California",
+  "published_at": "2026-10-11T17:45:02Z",
+  "published_field": "first_published",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-11T17:56:20.186254Z",
+  "ordering_date": "2026-10-11T17:45:02Z",
+  "ordering_date_source": "publication",
+  "url": "https://job-boards.greenhouse.io/gomotive/jobs/8882841002",
+  "url_provenance": "payload",
+  "stated_experience": [
+   12
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": null,
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null
  }
 ]
