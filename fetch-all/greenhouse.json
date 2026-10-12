@@ -37288,5 +37288,35 @@
   "workplace": null,
   "required_places": null,
   "described_workplace": null
+ },
+ {
+  "identity": "greenhouse:5262041007",
+  "source": "greenhouse",
+  "board_id": "greenhouse:banyancanopygroup",
+  "external_id": "5262041007",
+  "employer": "Banyan Canopy Group",
+  "employer_provenance": "payload",
+  "title": "Junior Financial Analyst",
+  "title_normalised": "Junior Financial Analyst",
+  "location": "Karachi, Sindh, Pakistan",
+  "published_at": "2026-10-11T18:12:06Z",
+  "published_field": "first_published",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-12T04:38:33.273222Z",
+  "ordering_date": "2026-10-11T18:12:06Z",
+  "ordering_date_source": "publication",
+  "url": "https://job-boards.greenhouse.io/banyancanopygroup/jobs/5262041007",
+  "url_provenance": "payload",
+  "stated_experience": [
+   3
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "Karachi, Sindh, Pakistan"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": "on site"
  }
 ]
