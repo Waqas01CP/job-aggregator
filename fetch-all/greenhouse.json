@@ -37318,5 +37318,63 @@
   "workplace": null,
   "required_places": null,
   "described_workplace": "on site"
+ },
+ {
+  "identity": "greenhouse:4908764101",
+  "source": "greenhouse",
+  "board_id": "greenhouse:veeamsoftware",
+  "external_id": "4908764101",
+  "employer": "Veeam Software",
+  "employer_provenance": "payload",
+  "title": "Director, Partner Solutions Engineering — Data & AI Security",
+  "title_normalised": "Director, Partner Solutions Engineering — Data & AI Security",
+  "location": "Remote, United States",
+  "published_at": "2026-10-12T14:49:19Z",
+  "published_field": "first_published",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-12T21:38:25.000960Z",
+  "ordering_date": "2026-10-12T14:49:19Z",
+  "ordering_date_source": "publication",
+  "url": "https://job-boards.eu.greenhouse.io/veeamsoftware/jobs/4908764101",
+  "url_provenance": "payload",
+  "stated_experience": [
+   10
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": null,
+  "workplace": "Remote",
+  "required_places": null,
+  "described_workplace": null
+ },
+ {
+  "identity": "greenhouse:5262051007",
+  "source": "greenhouse",
+  "board_id": "greenhouse:banyancanopygroup",
+  "external_id": "5262051007",
+  "employer": "Banyan Canopy Group",
+  "employer_provenance": "payload",
+  "title": "Financial Analyst",
+  "title_normalised": "Financial Analyst",
+  "location": "Karachi, Sindh, Pakistan",
+  "published_at": "2026-10-12T11:58:21Z",
+  "published_field": "first_published",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-12T21:38:25.000960Z",
+  "ordering_date": "2026-10-12T11:58:21Z",
+  "ordering_date_source": "publication",
+  "url": "https://job-boards.greenhouse.io/banyancanopygroup/jobs/5262051007",
+  "url_provenance": "payload",
+  "stated_experience": [
+   5
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "Karachi, Sindh, Pakistan"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": "on site"
  }
 ]

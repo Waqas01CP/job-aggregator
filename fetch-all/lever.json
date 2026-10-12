@@ -1949,5 +1949,98 @@
   "workplace": "remote",
   "required_places": null,
   "described_workplace": null
+ },
+ {
+  "identity": "lever:5ef858da-c3ca-4158-8d93-309bb4e964dc",
+  "source": "lever",
+  "board_id": "lever:smart-working-solutions",
+  "external_id": "5ef858da-c3ca-4158-8d93-309bb4e964dc",
+  "employer": "Smart Working Solutions",
+  "employer_provenance": "slug",
+  "title": "Mobile Developer - .NET MAUI & C# (Remote, Full-Time) [AS338]",
+  "title_normalised": "Mobile Developer - .NET MAUI & C# (Remote, Full-Time) [AS338]",
+  "location": "India",
+  "published_at": "2026-10-06T14:47:22.286000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-10-12T21:38:25.000960Z",
+  "ordering_date": "2026-10-06T14:47:22.286000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/smart-working-solutions/5ef858da-c3ca-4158-8d93-309bb4e964dc",
+  "url_provenance": "payload",
+  "stated_experience": [
+   2,
+   1
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "IN"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null
+ },
+ {
+  "identity": "lever:33800ad7-d88e-4171-906a-54a0b3c3f5a7",
+  "source": "lever",
+  "board_id": "lever:smart-working-solutions",
+  "external_id": "33800ad7-d88e-4171-906a-54a0b3c3f5a7",
+  "employer": "Smart Working Solutions",
+  "employer_provenance": "slug",
+  "title": "Senior Python Engineer - Data ( Remote, Full-Time) [AS340]",
+  "title_normalised": "Senior Python Engineer - Data ( Remote, Full-Time) [AS340]",
+  "location": "India",
+  "published_at": "2026-10-12T10:22:46.247000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-10-12T21:38:25.000960Z",
+  "ordering_date": "2026-10-12T10:22:46.247000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/smart-working-solutions/33800ad7-d88e-4171-906a-54a0b3c3f5a7",
+  "url_provenance": "payload",
+  "stated_experience": [
+   6,
+   5,
+   3,
+   2,
+   1
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "IN"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null
+ },
+ {
+  "identity": "lever:b2513a3b-5a29-4e13-b307-94397ff3017d",
+  "source": "lever",
+  "board_id": "lever:spreetail",
+  "external_id": "b2513a3b-5a29-4e13-b307-94397ff3017d",
+  "employer": "Spreetail",
+  "employer_provenance": "slug",
+  "title": "Warehouse Team Member, $22/hr",
+  "title_normalised": "Warehouse Team Member, $22/hr",
+  "location": "Aberdeen, MD",
+  "published_at": "2026-10-12T20:03:47.197000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-10-12T21:38:25.000960Z",
+  "ordering_date": "2026-10-12T20:03:47.197000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/spreetail/b2513a3b-5a29-4e13-b307-94397ff3017d",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "US"
+  ],
+  "workplace": "onsite",
+  "required_places": null,
+  "described_workplace": null
  }
 ]

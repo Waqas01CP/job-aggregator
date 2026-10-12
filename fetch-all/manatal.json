@@ -18913,5 +18913,37 @@
   "workplace": null,
   "required_places": null,
   "described_workplace": null
+ },
+ {
+  "identity": "manatal:4487401",
+  "source": "manatal",
+  "board_id": "manatal:premiernx",
+  "external_id": "4487401",
+  "employer": "Premier NX",
+  "employer_provenance": "slug",
+  "title": "Contact Center Supervisor - Consumer Products Account",
+  "title_normalised": "Contact Center Supervisor - Consumer Products Account",
+  "location": "New Brunswick, Canada",
+  "published_at": null,
+  "published_field": null,
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-12T21:38:25.000960Z",
+  "ordering_date": "2026-10-12T21:38:25.000960Z",
+  "ordering_date_source": "first_seen",
+  "url": "https://www.careers-page.com/premiernx/job/V67W4V76",
+  "url_provenance": "constructed",
+  "stated_experience": [
+   3
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "Canada"
+  ],
+  "workplace": null,
+  "required_places": [
+   "canada"
+  ],
+  "described_workplace": null
  }
 ]
