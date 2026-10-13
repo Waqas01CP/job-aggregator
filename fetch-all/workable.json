@@ -1615,5 +1615,125 @@
   "workplace": null,
   "required_places": null,
   "described_workplace": null
+ },
+ {
+  "identity": "workable:D83DB1ECF4",
+  "source": "workable",
+  "board_id": "workable:igate-technologies",
+  "external_id": "D83DB1ECF4",
+  "employer": "iGATE Technology",
+  "employer_provenance": "envelope",
+  "title": "Account Manager",
+  "title_normalised": "Account Manager",
+  "location": "Islamabad, Islamabad Capital Territory, Pakistan",
+  "published_at": "2026-10-13T00:00:00Z",
+  "published_field": "published_on",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-13T19:47:40.774887Z",
+  "ordering_date": "2026-10-13T00:00:00Z",
+  "ordering_date_source": "publication",
+  "url": "https://apply.workable.com/j/D83DB1ECF4",
+  "url_provenance": "payload",
+  "stated_experience": [
+   2
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "PK"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null
+ },
+ {
+  "identity": "workable:A4DA1BB887",
+  "source": "workable",
+  "board_id": "workable:igate-technologies",
+  "external_id": "A4DA1BB887",
+  "employer": "iGATE Technology",
+  "employer_provenance": "envelope",
+  "title": "Account Manager (Outbound Sales Representative)",
+  "title_normalised": "Account Manager (Outbound Sales Representative)",
+  "location": "I-9, Islamabad, Pakistan",
+  "published_at": "2026-10-13T00:00:00Z",
+  "published_field": "published_on",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-13T19:47:40.774887Z",
+  "ordering_date": "2026-10-13T00:00:00Z",
+  "ordering_date_source": "publication",
+  "url": "https://apply.workable.com/j/A4DA1BB887",
+  "url_provenance": "payload",
+  "stated_experience": [
+   3
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "PK"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null
+ },
+ {
+  "identity": "workable:ACFD5D53F6",
+  "source": "workable",
+  "board_id": "workable:igate-technologies",
+  "external_id": "ACFD5D53F6",
+  "employer": "iGATE Technology",
+  "employer_provenance": "envelope",
+  "title": "Junior Meta Ads Executive",
+  "title_normalised": "Junior Meta Ads Executive",
+  "location": "islamabad, Islamabad, Pakistan",
+  "published_at": "2026-10-13T00:00:00Z",
+  "published_field": "published_on",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-13T19:47:40.774887Z",
+  "ordering_date": "2026-10-13T00:00:00Z",
+  "ordering_date_source": "publication",
+  "url": "https://apply.workable.com/j/ACFD5D53F6",
+  "url_provenance": "payload",
+  "stated_experience": [
+   1
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "PK"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null
+ },
+ {
+  "identity": "workable:93EEDBCDEB",
+  "source": "workable",
+  "board_id": "workable:igate-technologies",
+  "external_id": "93EEDBCDEB",
+  "employer": "iGATE Technology",
+  "employer_provenance": "envelope",
+  "title": "Senior TikTok Marketing Executive",
+  "title_normalised": "Senior TikTok Marketing Executive",
+  "location": "Islamabad, Islamabad Capital Territory, Pakistan",
+  "published_at": "2026-10-13T00:00:00Z",
+  "published_field": "published_on",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-13T19:47:40.774887Z",
+  "ordering_date": "2026-10-13T00:00:00Z",
+  "ordering_date_source": "publication",
+  "url": "https://apply.workable.com/j/93EEDBCDEB",
+  "url_provenance": "payload",
+  "stated_experience": [
+   3
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "PK"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null
  }
 ]

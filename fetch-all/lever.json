@@ -2042,5 +2042,33 @@
   "workplace": "onsite",
   "required_places": null,
   "described_workplace": null
+ },
+ {
+  "identity": "lever:d474f159-d48b-465d-b94d-2c0017b2d090",
+  "source": "lever",
+  "board_id": "lever:spreetail",
+  "external_id": "d474f159-d48b-465d-b94d-2c0017b2d090",
+  "employer": "Spreetail",
+  "employer_provenance": "slug",
+  "title": "Warehouse Team Member, $21/hr",
+  "title_normalised": "Warehouse Team Member, $21/hr",
+  "location": "Dallas, TX",
+  "published_at": "2026-10-13T19:21:24.038000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-10-13T19:47:40.774887Z",
+  "ordering_date": "2026-10-13T19:21:24.038000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/spreetail/d474f159-d48b-465d-b94d-2c0017b2d090",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "US"
+  ],
+  "workplace": "onsite",
+  "required_places": null,
+  "described_workplace": null
  }
 ]
