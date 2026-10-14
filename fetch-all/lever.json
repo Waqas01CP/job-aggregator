@@ -2070,5 +2070,35 @@
   "workplace": "onsite",
   "required_places": null,
   "described_workplace": null
+ },
+ {
+  "identity": "lever:97618f8c-5ce2-403b-8995-53734fcf0afa",
+  "source": "lever",
+  "board_id": "lever:spreetail",
+  "external_id": "97618f8c-5ce2-403b-8995-53734fcf0afa",
+  "employer": "Spreetail",
+  "employer_provenance": "slug",
+  "title": "Facilities Technician, up to $34/hr",
+  "title_normalised": "Facilities Technician, up to $34/hr",
+  "location": "Las Vegas, NV",
+  "published_at": "2026-10-14T14:41:34.951000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-10-14T17:50:44.663569Z",
+  "ordering_date": "2026-10-14T14:41:34.951000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/spreetail/97618f8c-5ce2-403b-8995-53734fcf0afa",
+  "url_provenance": "payload",
+  "stated_experience": [
+   3
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "US"
+  ],
+  "workplace": "onsite",
+  "required_places": null,
+  "described_workplace": null
  }
 ]

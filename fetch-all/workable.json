@@ -1735,5 +1735,35 @@
   "workplace": null,
   "required_places": null,
   "described_workplace": null
+ },
+ {
+  "identity": "workable:DAC3FAB530",
+  "source": "workable",
+  "board_id": "workable:inbox-business-technologies",
+  "external_id": "DAC3FAB530",
+  "employer": "Inbox Business Technologies",
+  "employer_provenance": "envelope",
+  "title": "Senior Business Continuity Management Consultant (Arabic Speaking)",
+  "title_normalised": "Senior Business Continuity Management Consultant (Arabic Speaking)",
+  "location": "Riyadh, Riyadh Province, Saudi Arabia",
+  "published_at": "2026-10-13T00:00:00Z",
+  "published_field": "published_on",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-14T17:50:44.663569Z",
+  "ordering_date": "2026-10-13T00:00:00Z",
+  "ordering_date_source": "publication",
+  "url": "https://apply.workable.com/j/DAC3FAB530",
+  "url_provenance": "payload",
+  "stated_experience": [
+   6
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "SA"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null
  }
 ]
