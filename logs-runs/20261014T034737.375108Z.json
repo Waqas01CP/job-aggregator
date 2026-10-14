@@ -1,0 +1,642 @@
+{
+ "run_at": "2026-10-14T03:47:37.375108Z",
+ "test_mode": false,
+ "boards": [
+  {
+   "board": "greenhouse:banyancanopygroup",
+   "fetched": 8,
+   "parse_problems": 0,
+   "new": 1,
+   "kept": 0,
+   "drops": {
+    "title": 8
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-05-14T09:16:38Z"
+  },
+  {
+   "board": "greenhouse:brkz",
+   "fetched": 23,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 21,
+    "seniority": 2
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2025-04-20T12:44:09Z"
+  },
+  {
+   "board": "greenhouse:careem",
+   "fetched": 16,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 13,
+    "seniority": 2,
+    "age": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2023-11-02T16:13:14Z"
+  },
+  {
+   "board": "greenhouse:coderoad",
+   "fetched": 25,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "experience": 2,
+    "location": 1,
+    "title": 14,
+    "seniority": 8
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-01-26T00:58:51Z"
+  },
+  {
+   "board": "greenhouse:globalli",
+   "fetched": 11,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 10,
+    "seniority": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-05-15T16:36:36Z"
+  },
+  {
+   "board": "greenhouse:gomotive",
+   "fetched": 149,
+   "parse_problems": 0,
+   "new": 3,
+   "kept": 0,
+   "drops": {
+    "title": 143,
+    "experience": 2,
+    "seniority": 4
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2021-08-12T21:46:45Z"
+  },
+  {
+   "board": "greenhouse:joblogic",
+   "fetched": 23,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 2,
+   "drops": {
+    "age": 3,
+    "location": 1,
+    "title": 16,
+    "seniority": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-06-26T10:54:09Z"
+  },
+  {
+   "board": "greenhouse:speechify",
+   "fetched": 492,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 492
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2021-03-12T21:28:31Z"
+  },
+  {
+   "board": "greenhouse:veeamsoftware",
+   "fetched": 225,
+   "parse_problems": 0,
+   "new": 3,
+   "kept": 0,
+   "drops": {
+    "title": 202,
+    "location": 11,
+    "experience": 1,
+    "seniority": 11
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2025-01-15T17:33:52Z"
+  },
+  {
+   "board": "himalayas:pakistan",
+   "fetched": 60,
+   "parse_problems": 0,
+   "new": 38,
+   "kept": 5,
+   "drops": {
+    "title": 49,
+    "level": 3,
+    "seniority": 3
+   },
+   "status": "ok",
+   "detail": null,
+   "pages": 3,
+   "walk": {
+    "stopped_by": "mark",
+    "mark": "2026-10-13T18:50:17Z"
+   },
+   "capped": false,
+   "agreement": {
+    "browse_read": 20,
+    "returned_by_search": 1,
+    "rule_excludes": 19,
+    "newly_waiting": 0,
+    "returned_since": 0,
+    "disagreements": 0,
+    "still_waiting": 0,
+    "gave_up": 0
+   },
+   "oldest_published": "2026-09-16T06:15:55Z"
+  },
+  {
+   "board": "lever:smart-working-solutions",
+   "fetched": 25,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 13,
+    "experience": 1,
+    "seniority": 9,
+    "authorisation": 1,
+    "location": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-07-03T10:32:20.479000Z"
+  },
+  {
+   "board": "lever:spreetail",
+   "fetched": 37,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 35,
+    "seniority": 2
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2025-09-23T21:08:41.072000Z"
+  },
+  {
+   "board": "manatal:abacus-consulting-3",
+   "fetched": 168,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 6,
+   "drops": {
+    "title": 156,
+    "experience": 2,
+    "seniority": 4
+   },
+   "status": "ok",
+   "detail": null,
+   "pages": 17,
+   "walk": {
+    "stopped_by": "end",
+    "mark": "2026-10-07T03:47:36.375108Z"
+   },
+   "capped": false,
+   "oldest_published": null
+  },
+  {
+   "board": "manatal:ahdus-technology-2",
+   "fetched": 27,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 1,
+   "drops": {
+    "location": 2,
+    "title": 17,
+    "seniority": 7
+   },
+   "status": "ok",
+   "detail": null,
+   "pages": 3,
+   "walk": {
+    "stopped_by": "end",
+    "mark": "2026-10-07T03:47:36.375108Z"
+   },
+   "capped": false,
+   "oldest_published": null
+  },
+  {
+   "board": "manatal:codedistrict",
+   "fetched": 0,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {},
+   "status": "failed",
+   "detail": "https://www.careers-page.com/api/v1.0/c/codedistrict/jobs/?page=1 returned 403, which is not retryable"
+  },
+  {
+   "board": "manatal:gigalabs-private-ltd",
+   "fetched": 0,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {},
+   "status": "failed",
+   "detail": "https://www.careers-page.com/api/v1.0/c/gigalabs-private-ltd/jobs/?page=1 returned 403, which is not retryable"
+  },
+  {
+   "board": "manatal:hazen-technologies",
+   "fetched": 0,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {},
+   "status": "failed",
+   "detail": "https://www.careers-page.com/api/v1.0/c/hazen-technologies/jobs/?page=1 returned 403, which is not retryable"
+  },
+  {
+   "board": "manatal:itc-worldwide-info",
+   "fetched": 0,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {},
+   "status": "failed",
+   "detail": "https://www.careers-page.com/api/v1.0/c/itc-worldwide-info/jobs/?page=44 returned 403, which is not retryable"
+  },
+  {
+   "board": "manatal:premiernx",
+   "fetched": 34,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 33,
+    "location": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "pages": 4,
+   "walk": {
+    "stopped_by": "end",
+    "mark": "2026-10-07T03:47:36.375108Z"
+   },
+   "capped": false,
+   "oldest_published": null
+  },
+  {
+   "board": "manatal:spursol",
+   "fetched": 7,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 5,
+    "seniority": 2
+   },
+   "status": "ok",
+   "detail": null,
+   "pages": 1,
+   "walk": {
+    "stopped_by": "end",
+    "mark": "2026-10-07T03:47:36.375108Z"
+   },
+   "capped": false,
+   "oldest_published": null
+  },
+  {
+   "board": "manatal:wadic-2",
+   "fetched": 0,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {},
+   "status": "failed",
+   "detail": "https://www.careers-page.com/api/v1.0/c/wadic-2/jobs/?page=1 returned 403, which is not retryable"
+  },
+  {
+   "board": "workable:creative-chaos",
+   "fetched": 0,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {},
+   "status": "not reached",
+   "detail": "circuit open after 5 consecutive failures"
+  },
+  {
+   "board": "workable:igate-technologies",
+   "fetched": 0,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {},
+   "status": "not reached",
+   "detail": "circuit open after 5 consecutive failures"
+  },
+  {
+   "board": "workable:inbox-business-technologies",
+   "fetched": 0,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {},
+   "status": "not reached",
+   "detail": "circuit open after 5 consecutive failures"
+  },
+  {
+   "board": "workable:petra-brands",
+   "fetched": 0,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {},
+   "status": "not reached",
+   "detail": "circuit open after 5 consecutive failures"
+  },
+  {
+   "board": "workable:staunch",
+   "fetched": 0,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {},
+   "status": "not reached",
+   "detail": "circuit open after 5 consecutive failures"
+  },
+  {
+   "board": "workable:thingtrax",
+   "fetched": 0,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {},
+   "status": "not reached",
+   "detail": "circuit open after 5 consecutive failures"
+  }
+ ],
+ "totals": {
+  "fetched": 1330,
+  "new": 45,
+  "kept": 14,
+  "written_raw": {
+   "greenhouse": 7,
+   "himalayas": 38
+  },
+  "written_filtered": 2,
+  "backfilled": 0,
+  "backfilled_public": 0,
+  "backfilled_local": 0,
+  "written_filtered_local": 2,
+  "drops": {
+   "expiry": 0,
+   "annotation_vendor": 0,
+   "title": 1227,
+   "seniority": 56,
+   "level": 3,
+   "experience": 8,
+   "authorisation": 1,
+   "location": 17,
+   "age": 4
+  },
+  "dedupe": {
+   "postings": 1330,
+   "groups": 1026,
+   "collapsed": 304,
+   "largest_group": 144
+  }
+ },
+ "requests": {
+  "requests_used": 88,
+  "budget": 500,
+  "budget_remaining": 412,
+  "by_source": {
+   "greenhouse": 9,
+   "lever": 2,
+   "himalayas": 4,
+   "manatal": 73
+  },
+  "retries": 0,
+  "failures": 5,
+  "refused": 1,
+  "circuit_open": true
+ },
+ "stopped": "circuit open after 5 consecutive failures",
+ "source_class": {
+  "greenhouse": "ats",
+  "lever": "ats",
+  "himalayas": "aggregator",
+  "manatal": "ats",
+  "workable": "ats"
+ },
+ "private_store": {
+  "branch": "data",
+  "restored": 7,
+  "pushed": true,
+  "failure": null,
+  "full": {
+   "pending": 45,
+   "saved": 45,
+   "file": "full/20261014T034737.375108Z.json",
+   "verified": true,
+   "failure": null,
+   "bytes": 319560
+  },
+  "files": 7,
+  "outcomes_pushed": true
+ },
+ "projection": {
+  "stored_identities": 15,
+  "rows_read": 541,
+  "rows_admitted": 154,
+  "groups": 150,
+  "groups_skipped_by_store": 1,
+  "groups_retired_closed": 0,
+  "rows_to_send": 149,
+  "rows_in_base": 147,
+  "rows_unchanged": 147,
+  "rows_new": 2,
+  "rows_changed": 0,
+  "rows_sent": 2
+ },
+ "airtable": {
+  "calls_used": 3,
+  "rows_sent": 2,
+  "monthly_ceiling": 1000,
+  "month_to_date_before_run": 384,
+  "month_remaining": 613,
+  "retries": 0,
+  "failures": 0,
+  "refused": 0,
+  "circuit_open": false,
+  "failure": null,
+  "month_to_date_by_branch": {
+   "data": 341,
+   "data-test": 43
+  },
+  "read_calls": 2
+ },
+ "sweep": {
+  "copied": {
+   "rejected-not-a-fit": 12,
+   "rejected-poor-filtering": 21,
+   "accepted": 2
+  },
+  "stale_copies_deleted": {},
+  "deleted_from_jobs": 0,
+  "copies_deleted": {},
+  "closed_marked": 0,
+  "closed_cleared": 0,
+  "waiting_for_the_store": 46,
+  "held_private_unavailable": 0,
+  "not_in_the_stored_layers": 0,
+  "kept_after_a_clear": 15,
+  "aged_out": 0,
+  "removals": [
+   {
+    "identity": "greenhouse:4977137101",
+    "table": "accepted",
+    "reason": "the operator marked Delete",
+    "action": "stored"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "accepted",
+    "reason": "the operator marked Delete",
+    "action": "stored"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "accepted",
+    "reason": "the operator marked Delete",
+    "action": "stored"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "accepted",
+    "reason": "the operator marked Delete",
+    "action": "stored"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "accepted",
+    "reason": "the operator marked Delete",
+    "action": "stored"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "accepted",
+    "reason": "the operator marked Delete",
+    "action": "stored"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "accepted",
+    "reason": "the operator marked Delete",
+    "action": "stored"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "accepted",
+    "reason": "the operator marked Delete",
+    "action": "stored"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "accepted",
+    "reason": "the operator marked Delete",
+    "action": "stored"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "accepted",
+    "reason": "the operator marked Delete",
+    "action": "stored"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "accepted",
+    "reason": "the operator marked Delete",
+    "action": "stored"
+   },
+   {
+    "identity": "manatal:3577135",
+    "table": "accepted",
+    "reason": "the operator marked Delete",
+    "action": "stored"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "accepted",
+    "reason": "the operator marked Delete",
+    "action": "stored"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "accepted",
+    "reason": "the operator marked Delete",
+    "action": "stored"
+   }
+  ],
+  "problems": [],
+  "daily": true,
+  "jobs_rows": 149,
+  "tables_read": true,
+  "stored_written": {
+   "private removed_copies.json": 36,
+   "public removed_copies.json": 10,
+   "public accepted.json": 2,
+   "private accepted.json": 12
+  },
+  "calls_used": 11,
+  "retries": 0,
+  "failures": 0,
+  "refused": 0,
+  "circuit_open": false,
+  "failure": null
+ },
+ "health": {
+  "calls_used": 2,
+  "sent": [
+   "run 2026-10-14T03:47:37.375108Z fetch",
+   "run 2026-10-14T03:47:37.375108Z manatal:codedistrict",
+   "run 2026-10-14T03:47:37.375108Z manatal:gigalabs-private-ltd",
+   "run 2026-10-14T03:47:37.375108Z manatal:hazen-technologies",
+   "run 2026-10-14T03:47:37.375108Z manatal:itc-worldwide-info",
+   "run 2026-10-14T03:47:37.375108Z manatal:wadic-2",
+   "run 2026-10-14T03:47:37.375108Z workable:creative-chaos",
+   "run 2026-10-14T03:47:37.375108Z workable:igate-technologies",
+   "run 2026-10-14T03:47:37.375108Z workable:inbox-business-technologies",
+   "run 2026-10-14T03:47:37.375108Z workable:petra-brands",
+   "run 2026-10-14T03:47:37.375108Z workable:staunch",
+   "run 2026-10-14T03:47:37.375108Z workable:thingtrax"
+  ],
+  "failure": null,
+  "pending": 12,
+  "rows_sent": 12
+ },
+ "budget": {
+  "month_to_date": 400,
+  "allowance": 1000,
+  "share": 0.4,
+  "warning": null
+ },
+ "attention": {
+  "failed_in_a_row": 0,
+  "escalate": false
+ }
+}
