@@ -231,11 +231,22 @@ class TestManatal(unittest.TestCase):
         self.page1 = cassette("manatal-premiernx-page1.json")
         self.page2 = cassette("manatal-premiernx-page2.json")
 
-    def test_url_pages_from_one(self):
+    def test_url_pages_from_one_twenty_a_page(self):
+        """Ten a page unless asked, twenty at most, read on 2026-10-15: ITC's
+        walk was 48 requests where 24 do. Mutation: "the page size is not
+        asked"."""
         self.assertEqual(manatal.url_for(MN_BOARD),
-                         "https://www.careers-page.com/api/v1.0/c/premiernx/jobs/?page=1")
+                         "https://www.careers-page.com/api/v1.0/c/premiernx/jobs/"
+                         "?page=1&page_size=20")
         self.assertEqual(manatal.url_for(MN_BOARD, 2),
-                         "https://www.careers-page.com/api/v1.0/c/premiernx/jobs/?page=2")
+                         "https://www.careers-page.com/api/v1.0/c/premiernx/jobs/"
+                         "?page=2&page_size=20")
+
+    def test_the_next_page_is_found_in_a_next_link_carrying_the_page_size(self):
+        """The `next` link repeats what was asked; only its page is read."""
+        page = {"results": [], "next": "https://www.careers-page.com/api/v1.0/c/x/jobs/"
+                                       "?page=3&page_size=20"}
+        self.assertEqual(manatal.next_cursor(page), 3)
 
     def test_the_next_page_is_read_from_next_and_the_last_has_none(self):
         self.assertEqual(manatal.next_cursor(self.page1), 2)

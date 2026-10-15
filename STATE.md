@@ -6,6 +6,8 @@ status: current
 
 # STATE
 
+**Touched 2026-10-15T12:19Z by the implementing seat, for Manatal's page size only:** the adapter asks twenty postings a page. Read on 2026-10-15, its endpoint gives ten a page unless asked and twenty at most [VERIFIED, three requests], so the runs since 2026-10-08 walked ITC Worldwide in about 48 requests where 24 do, and Manatal cost 77 of each run's 98 [VERIFIED from the run logs]; the adapter's docstring and `platform-fields.md` said twenty whatever was asked, wrong when written and annotated. One walk at twenty read 334 distinct ITC postings, as many as the run's 329 at ten. The line that follows stands.
+
 **Touched 2026-10-15T12:16Z by the implementing seat, for the fetch run's circuit breaker only:** one breaker per platform, where the run had one for every board. On 2026-10-14T03:47Z five Manatal boards refused with 403 in a row, the run's breaker opened, and all six Workable boards after them went unread [VERIFIED from that run's log]. Now a platform's open breaker refuses only its own remaining boards, every other platform is polled, and the run still logs it as stopped and exits 2. The Airtable clients keep their one breaker each: one service. The line that follows stands.
 
 **Touched 2026-10-15T12:13Z by the implementing seat, for the description's fresh-graduate opening only:** a description that opens the role to new graduates anywhere asks no minimum at all; the opening covered only its own line, so the operator's example of 2026-10-10, a range of four to six years on one line and fresh graduates considered on another, dropped. "Freshers" and graduates welcomed open it too. Over 4,748 saved descriptions no posting had the separated shape and no verdict changes [VERIFIED]. The line that follows stands.

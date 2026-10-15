@@ -1,0 +1,8 @@
+[
+  {
+    "label": "the page size is not asked",
+    "path": "src/adapters/manatal.py",
+    "find": "BASE = \"https://www.careers-page.com/api/v1.0/c/%s/jobs/?page=%d&page_size=20\"",
+    "replace": "BASE = \"https://www.careers-page.com/api/v1.0/c/%s/jobs/?page=%d\""
+  }
+]

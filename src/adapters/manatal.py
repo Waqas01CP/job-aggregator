@@ -1,8 +1,9 @@
 """Manatal career pages. One adapter serving every Manatal board in the
 registry, never one per employer.
 
-Endpoint: www.careers-page.com/api/v1.0/c/{slug}/jobs/?page={n}, the career
-site's own JSON, twenty postings a page with a `next` link. **Manatal does not
+Endpoint: www.careers-page.com/api/v1.0/c/{slug}/jobs/?page={n}&page_size=20,
+the career site's own JSON, twenty postings a page with a `next` link.
+**Manatal does not
 document it.** It documents api.careers-page.com/open/v1/career-pages/{slug}/
 job-posts, which on 2026-10-04 served five of the nine registry boards (the
 other four answered CAREER_PAGE_NOT_FOUND) and gives no working link to a
@@ -22,8 +23,16 @@ publication is the question ADR-0052 left open for Lever.
 **No workplace field.** On-site work reaches D13 only through what the
 description says (ADR-0057, ADR-0058).
 
-**Its pages are not stable on every board.** Twenty postings a page,
-whatever `page_size` asks. On 2026-10-07 Abacus Consulting's nine pages gave
+**Twenty a page only when asked.** *(Wrong when written on 2026-10-07,
+corrected 2026-10-15: this said twenty a page whatever `page_size` asks.)*
+Read on 2026-10-15, a page without `page_size` held ten and one asking a
+hundred held twenty, so the runs from 2026-10-08 walked ITC Worldwide in
+about 48 requests where 24 would do, and Manatal cost 77 of a run's 98.
+Asking twenty halves that. On 2026-10-14T03:47Z five Manatal requests in a
+row answered 403, the first on ITC's page 44; whether the volume drew them
+is untested.
+
+**Its pages are not stable on every board.** On 2026-10-07 Abacus Consulting's nine pages gave
 its 168 postings once each, but on 2026-10-04 ITC Worldwide's 24 pages gave
 477 reads of only 338 distinct postings against the 477 its `count` reports:
 the order shifts between requests, so a walk repeats some postings and misses
@@ -44,7 +53,7 @@ from urllib.parse import parse_qs, urlparse
 from .base import AdapterError, ParseResult, Posting
 
 PLATFORM = "manatal"
-BASE = "https://www.careers-page.com/api/v1.0/c/%s/jobs/?page=%d"
+BASE = "https://www.careers-page.com/api/v1.0/c/%s/jobs/?page=%d&page_size=20"
 JOB_PAGE = "https://www.careers-page.com/%s/job/%s"
 
 # ADR-0018: what parse() reads, and nothing else. The contract check
