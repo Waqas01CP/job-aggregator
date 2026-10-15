@@ -38,14 +38,14 @@
   {
     "label": "an unrepeatable request is retried after a server error",
     "path": "src/resilience.py",
-    "find": "if (repeatable or status in NOT_ACTED_ON) and self._may_retry(attempt):",
-    "replace": "if self._may_retry(attempt):"
+    "find": "if (repeatable or status in NOT_ACTED_ON) and self._may_retry(attempt, label):",
+    "replace": "if self._may_retry(attempt, label):"
   },
   {
     "label": "an unrepeatable request is retried after a dropped connection",
     "path": "src/resilience.py",
-    "find": "if repeatable and self._may_retry(attempt):",
-    "replace": "if self._may_retry(attempt):"
+    "find": "if repeatable and self._may_retry(attempt, label):",
+    "replace": "if self._may_retry(attempt, label):"
   },
   {
     "label": "monthly ceiling admits one call too many",

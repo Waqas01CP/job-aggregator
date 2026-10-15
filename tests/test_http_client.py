@@ -212,6 +212,24 @@ class TestCircuitBreaker(unittest.TestCase):
                 c.get("https://example.test/%s" % name, "greenhouse")
         self.assertTrue(c.circuit_is_open)
 
+    def test_one_platforms_failures_never_open_anothers_breaker(self):
+        """One breaker per platform since 2026-10-15: on 2026-10-14T03:47Z
+        five Manatal boards refused in a row and the run's one breaker
+        refused every Workable board after them. Mutation: "one breaker for
+        the run"."""
+        c = client([FakeResponse(500)] * 3 + [FakeResponse(200)], breaker_threshold=3,
+                   max_attempts=1)
+        for name in "abc":
+            with self.assertRaises(TransientError):
+                c.get("https://example.test/%s" % name, "manatal")
+        with self.assertRaises(CircuitOpen) as caught:
+            c.get("https://example.test/d", "manatal")
+        self.assertEqual(str(caught.exception),
+                         "circuit open for manatal after 3 consecutive failures")
+        self.assertEqual(c.get("https://example.test/e", "workable").status_code, 200)
+        self.assertEqual(c.counters()["circuits_open"], ["manatal"])
+        self.assertEqual(len(c._session.calls), 4, "the refused request was sent")
+
 
 class TestRequestShape(unittest.TestCase):
     def test_sends_a_descriptive_user_agent_and_no_credentials(self):

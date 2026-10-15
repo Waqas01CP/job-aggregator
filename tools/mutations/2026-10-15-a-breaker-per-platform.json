@@ -1,0 +1,20 @@
+[
+  {
+    "label": "one breaker for the run",
+    "path": "src/http_client.py",
+    "find": "                         breaker_per_label=True)",
+    "replace": "                         breaker_per_label=False)"
+  },
+  {
+    "label": "an open breaker ends the run",
+    "path": "src/run.py",
+    "find": "                    if str(stop) not in stops:\n                        stops.append(str(stop))\n                    continue\n",
+    "replace": "                    stops.append(str(stop))\n                    break\n"
+  },
+  {
+    "label": "a platform's breaker is asked for another's label",
+    "path": "src/resilience.py",
+    "find": "        breaker = self._breaker_for(label)\n        if breaker.is_open:",
+    "replace": "        breaker = self._breaker_for(None)\n        if breaker.is_open:"
+  }
+]

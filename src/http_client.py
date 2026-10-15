@@ -18,8 +18,11 @@ is appropriate, so the number carries no claim that it is right. The run log
 records requests per source and in total, and that log is what sets the real
 number later.
 
-**A circuit breaker on consecutive failures**, reset by any success, so a board
-that is genuinely down stops costing the run its remaining budget.
+**A circuit breaker on consecutive failures, one per platform**, reset by any
+success, so a platform that is genuinely down stops costing the run its
+remaining budget. One per platform since 2026-10-15: with one for the run,
+five Manatal boards refused in a row on 2026-10-14T03:47Z left all six
+Workable boards after them unread.
 
 **Error classification on status codes, never on substrings of a message.**
 A body containing the word "error" is not an error, and a 404 page that says
@@ -77,7 +80,8 @@ class HttpClient(ResilientClient):
                  sleep=time.sleep, now=time.monotonic):
         super().__init__(max_attempts=max_attempts, backoff_base=backoff_base,
                          breaker_threshold=breaker_threshold,
-                         min_interval=min_interval, sleep=sleep, now=now)
+                         min_interval=min_interval, sleep=sleep, now=now,
+                         breaker_per_label=True)
         self.budget = budget
         self.timeout = timeout
         self._session = session if session is not None else requests.Session()
@@ -104,6 +108,7 @@ class HttpClient(ResilientClient):
             "failures": self.failures,
             "refused": self.refused,
             "circuit_open": self.circuit_is_open,
+            "circuits_open": self.circuits_open,
         }
 
     # ------------------------------------------------------------ internals
@@ -124,7 +129,7 @@ class HttpClient(ResilientClient):
         except ValueError as e:
             # A 200 carrying something that is not JSON is a contract change,
             # not a transport problem. Retrying would just fetch it again.
-            self._record_failure()
+            self._record_failure(source)
             raise PermanentError(url, "200 but body is not JSON: %s" % e)
 
     def get(self, url, source, params=None):

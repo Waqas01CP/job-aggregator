@@ -831,7 +831,7 @@ class Run:
             if board_id and published and entry.get("full_saved_at"):
                 self.high_water[board_id] = max(self.high_water.get(board_id, ""), published)
 
-        all_rows, reached = [], set()
+        all_rows, reached, stops = [], set(), []
         try:
             for board in self.boards:
                 if not board.polled_on(self.slot):
@@ -851,11 +851,24 @@ class Run:
                                   "fetched here could be kept (ADR-0047); the run log's "
                                   "private_store block says why"})
                     continue
-                rows = self.poll(board, first_seen)
+                try:
+                    rows = self.poll(board, first_seen)
+                except CircuitOpen as stop:
+                    # A platform's open breaker ends its own boards and no
+                    # other's: the client keeps one per platform, so this
+                    # platform's next board is refused unasked and the next
+                    # platform is polled. On 2026-10-14T03:47Z five Manatal
+                    # boards refused in a row, and the run's one breaker left
+                    # all six Workable boards unread.
+                    if str(stop) not in stops:
+                        stops.append(str(stop))
+                    continue
                 reached.add(board.board_id)
                 all_rows.extend(rows)
-        except (BudgetExhausted, CircuitOpen) as stop:
-            self.stopped = str(stop)
+        except BudgetExhausted as stop:
+            stops.append(str(stop))
+        # Stopped, and exit 2, whenever a board went unread for either cause.
+        self.stopped = "; ".join(stops) or None
 
         # Every board gets a line, including the ones never reached.
         for board in self.boards:

@@ -57,11 +57,15 @@ class TransientError(HttpError):
 
 class CircuitOpen(HttpError):
     """Consecutive failures crossed the threshold. Further requests are
-    refused without spending budget, until a success resets it."""
+    refused without spending budget, until a success resets it. `label` names
+    the platform whose breaker opened, on a client that keeps one each."""
 
-    def __init__(self, failures):
-        super().__init__("circuit open after %d consecutive failures" % failures)
+    def __init__(self, failures, label=None):
+        super().__init__("circuit open after %d consecutive failures" % failures
+                         if label is None else
+                         "circuit open for %s after %d consecutive failures" % (label, failures))
         self.failures = failures
+        self.label = label
 
 
 def retry_after_seconds(response):
@@ -95,7 +99,8 @@ class CircuitBreaker:
     """Opens on consecutive failures and is reset by any success.
 
     Consecutive across the client's whole life, not per target: five boards
-    each failing once is an outage."""
+    each failing once is an outage. A client may keep one per label, so that
+    five boards of one platform failing is that platform's outage only."""
 
     def __init__(self, threshold):
         self.threshold = threshold
@@ -141,11 +146,17 @@ class ResilientClient:
     three requests and its log must say so."""
 
     def __init__(self, max_attempts, backoff_base, breaker_threshold,
-                 min_interval, sleep, now, wait_floors=None):
+                 min_interval, sleep, now, wait_floors=None, breaker_per_label=False):
         self.max_attempts = max_attempts
         self.backoff_base = backoff_base
         self.min_interval = min_interval
         self.breaker = CircuitBreaker(breaker_threshold)
+        # One breaker per label when asked: the fetch client's labels are
+        # platforms, each a different service, and one platform's outage must
+        # not stop the others (the run of 2026-10-14T03:47Z). The Airtable
+        # clients talk to one service and keep the one breaker.
+        self.breaker_per_label = breaker_per_label
+        self._breakers = {}
         self.pacer = Pacer(min_interval, sleep, now)
         self._sleep = sleep
         self.wait_floors = dict(wait_floors or {})
@@ -157,26 +168,42 @@ class ResilientClient:
     def breaker_threshold(self):
         return self.breaker.threshold
 
+    def _breaker_for(self, label):
+        if not self.breaker_per_label:
+            return self.breaker
+        if label not in self._breakers:
+            self._breakers[label] = CircuitBreaker(self.breaker.threshold)
+        return self._breakers[label]
+
     @property
     def consecutive_failures(self):
-        return self.breaker.consecutive
+        if not self.breaker_per_label:
+            return self.breaker.consecutive
+        return max([b.consecutive for b in self._breakers.values()], default=0)
 
     @property
     def circuit_is_open(self):
-        return self.breaker.is_open
+        if not self.breaker_per_label:
+            return self.breaker.is_open
+        return any(b.is_open for b in self._breakers.values())
+
+    @property
+    def circuits_open(self):
+        """The labels whose breaker is open, for the run log."""
+        return sorted(label for label, b in self._breakers.items() if b.is_open)
 
     def _spend(self, label):
         raise NotImplementedError
 
-    def _record_success(self):
-        self.breaker.record_success()
+    def _record_success(self, label=None):
+        self._breaker_for(label).record_success()
 
-    def _record_failure(self):
+    def _record_failure(self, label=None):
         self.failures += 1
-        self.breaker.record_failure()
+        self._breaker_for(label).record_failure()
 
-    def _may_retry(self, attempt):
-        return attempt < self.max_attempts and not self.breaker.is_open
+    def _may_retry(self, attempt, label=None):
+        return attempt < self.max_attempts and not self._breaker_for(label).is_open
 
     def _backoff(self, attempt, response=None, status=None):
         self._sleep(backoff_delay(attempt, self.backoff_base,
@@ -191,9 +218,10 @@ class ResilientClient:
         `label` is the budget bucket. `repeatable=False` marks a request
         that must not be sent twice after an unknown outcome: it is retried
         only on a status in NOT_ACTED_ON."""
-        if self.breaker.is_open:
+        breaker = self._breaker_for(label)
+        if breaker.is_open:
             self.refused += 1
-            raise CircuitOpen(self.breaker.consecutive)
+            raise CircuitOpen(breaker.consecutive, label if self.breaker_per_label else None)
 
         last_detail = None
         for attempt in range(1, self.max_attempts + 1):
@@ -207,23 +235,23 @@ class ResilientClient:
             except Exception as e:
                 # Transport-level: DNS, connection reset, read timeout.
                 last_detail = "%s: %s" % (type(e).__name__, e)
-                self._record_failure()
-                if repeatable and self._may_retry(attempt):
+                self._record_failure(label)
+                if repeatable and self._may_retry(attempt, label):
                     self._backoff(attempt)
                     continue
                 raise TransientError(target, last_detail, attempt)
 
             if 200 <= status < 300:
-                self._record_success()
+                self._record_success(label)
                 return response
 
             if status not in RETRYABLE_STATUS:
-                self._record_failure()
+                self._record_failure(label)
                 raise PermanentError(target, status)
 
             last_detail = "HTTP %s" % status
-            self._record_failure()
-            if (repeatable or status in NOT_ACTED_ON) and self._may_retry(attempt):
+            self._record_failure(label)
+            if (repeatable or status in NOT_ACTED_ON) and self._may_retry(attempt, label):
                 self._backoff(attempt, response, status)
                 continue
             raise TransientError(target, last_detail, attempt)

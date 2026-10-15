@@ -344,6 +344,31 @@ class TestFailureHandling(RunHarness):
         lines = {b["board"]: b for b in log["boards"]}
         self.assertEqual(lines["greenhouse:globalli"]["status"], "not reached")
 
+    def test_one_platforms_open_breaker_leaves_the_next_platform_read(self):
+        """The run of 2026-10-14T03:47Z: five boards of one platform refused
+        in a row, and the run's one breaker left every board of the platform
+        after them unread. Here two Greenhouse boards fail with the threshold
+        at two: Greenhouse's third board is refused unasked, the Lever board
+        after it is read, and the run still says it stopped. Mutation: "an
+        open breaker ends the run"."""
+        gh3 = Board(platform="greenhouse", slug="brkz")
+        client = client_for({"careem": OSError("refused"), "globalli": OSError("refused"),
+                             "brkz": gh_payload(["AI Engineer"], start=80),
+                             "spreetail": [{"id": "lv1", "text": "Machine Learning Engineer",
+                                            "hostedUrl": "https://jobs.lever.co/spreetail/lv1",
+                                            "createdAt": 1789018446882,
+                                            "categories": {"location": "Karachi"}}]},
+                            max_attempts=1, breaker_threshold=2)
+        run = Run([GH, GH2, gh3, LV], client, now=NOW, matcher=MATCHER)
+        log = run.execute()
+        lines = {b["board"]: b for b in log["boards"]}
+        self.assertEqual(lines["greenhouse:brkz"]["status"], "not reached")
+        self.assertNotIn("brkz", " ".join(client._session.calls))
+        self.assertEqual((lines["lever:spreetail"]["status"], lines["lever:spreetail"]["fetched"]),
+                         ("ok", 1))
+        self.assertEqual(log["stopped"], "circuit open for greenhouse after 2 consecutive failures")
+        self.assertEqual(run.exit_code(), EXIT_STOPPED_RESUMABLE)
+
     def test_work_reached_before_the_stop_is_still_written(self):
         """Stopping must not discard what the run already has."""
         client = client_for({"careem": gh_payload(["AI Engineer"]),
