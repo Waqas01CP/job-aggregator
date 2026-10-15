@@ -39,7 +39,7 @@ wins and this file is stale.** Report it and correct it.
 | The pre-commit hook runs six gates | `grep -n "Six checks" .githooks/pre-commit` | Any seat |
 | The hook is enabled in this clone | `git config core.hooksPath` returns `.githooks` | Any seat |
 | `MAP.md` is generated, never hand-edited | `python tools/generate_map.py --check` | Any seat |
-| `CHAT_STATE.md` carries a shorter seat list | Read its "Three seats" section | Any seat |
+| `CHAT_STATE.md` carries a shorter seat list | Read its "The seats" section | Any seat |
 
 **Update `verified:` in the frontmatter only after re-checking every row**,
 and add a Changes row saying so. A partial check updates nothing. A date
@@ -47,7 +47,7 @@ bumped on a file half-checked is worse than a stale date, because a stale date
 at least tells the truth about itself.
 
 **`CHAT_STATE.md` is the architecture chat's file.** Its seat section is not
-wrong; this file is the fuller one and adds the fourth seat. If the two ever
+wrong; this file is the fuller one. If the two ever
 disagree, that is a defect to raise with the operator, not to settle by
 editing the other file. Same rule as two unsuperseded records that conflict.
 
@@ -212,6 +212,7 @@ this file. This one holds only who does what.
 
 | Date | Change | Reason |
 |---|---|---|
+| 2026-10-15 | The recheck row reads `CHAT_STATE.md`'s "The seats" section, and that section is no longer said to lack the fourth seat. `verified:` unchanged: only these two lines were checked | The chat renamed its "Three seats" section on 2026-10-09 when it added the audit seat, so the row pointed at a heading that no longer exists. Brief 11, item 7. A partial check updates no date, by this file's own rule |
 | 2026-09-30 | The audit seat writes its own report to `logs/audit/` and its index row there, and the implementing seat commits them | The operator's decision: until now each report was discarded once relayed, leaving only the implementing seat's summary. His reasons: a trail, chained like the session logs; credibility, since an audit is not exempt from being checked; and later audits reading earlier ones. The file's `verified:` date is unchanged: only these lines were re-checked |
 | 2026-09-25 | The push rule replaced with the operator's D10 | The file said the implementing seat pushes only when a brief says push. The seat had pushed its own commits since the operator's "you can push it if you would like" of 2026-09-23, and read that as standing; a compaction summary then called it so, and the seat pushed against Brief 7's "The operator pushes". Asked, he answered: "D10: yes, you are allowed to push." The conditions, the full suite first and never a forced push, are those the seat proposed with the question. The file's `verified:` date is unchanged: only these two lines were re-checked. The operator's own "and pushes" line was missed and made to agree on 2026-09-26, found by the audit of 2026-09-25 |
 | 2026-09-23 | The session-boundary rule replaced with the operator's, and the audit seat's fresh-chat rule relaxed to its reason | The file said to start a new chat at a task boundary and said the audit seat takes a fresh chat every time. Both were the seat's inference, not the operator's practice, and the audit one was already producing a wrong answer within a day. He decides closure by watching `/context` and saying "close this chat"; a seat does not decide it. The audit seat goes cold when the importance of the audit justifies it, not on a schedule. The one-seat-at-a-time rule was added after two implementing seats ran in parallel for a round |

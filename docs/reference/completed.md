@@ -227,3 +227,11 @@ Moved verbatim. The operator un-deferred it on 2026-10-02, "high time that we us
 | Item | Blocked on | Who | Since |
 |---|---|---|---|
 | The stated-experience rule | Deferred by the operator until filtering reads descriptions | Operator | 2026-09-17 |
+
+## A row of `STATE.md`'s Blocked table, resolved 2026-10-10
+
+Moved verbatim on 2026-10-15. The operator's verdict, 2026-10-10 UTC: Himalayas is kept, its trial over, "it has proven itself to be worth keeping and that was the decision made by me" (Brief 11, item 2). Measured since: 134 of the 149 rows in `Jobs` on 2026-10-14 came from it, and 21 of his 24 applications.
+
+| Item | Blocked on | Who | Since |
+|---|---|---|---|
+| Himalayas' trial verdict | 2026-09-26. *(Deferred by the operator 2026-09-23 until the writer runs and he has seen rows in `Jobs`; no earlier than 2026-10-07, per `CHAT_STATE.md` item 81)* | Operator | 2026-09-17 |

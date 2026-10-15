@@ -427,8 +427,10 @@ Short, role-neutral statements a reader can take as they are. Every figure is fr
 
 ## Keeping this file current
 
+**Add or update, never remove, both seats.** The operator's rule, accepted by both seats on 2026-10-10 and 2026-10-15: a line no longer true is updated in place with its date, so a reader sees how a figure changed and nothing here becomes false. *(Until 2026-10-15 this section said to remove a number that could no longer be measured.)*
+
 **At the close of any session that changes a capability or a measured number:**
 - update the section it belongs to and the date at the top;
-- re-measure a number rather than carrying it forward, and give it its new date and source;
-- remove a number that can no longer be measured;
+- re-measure a number rather than carrying it forward, and replace it in place with its new date and source; keep the old value beside it only where the change is itself the point, a before and after or a correction, never as a running trail of counts that grow every session;
+- mark a number that can no longer be measured, or a claim overtaken, in place with the date and why;
 - record a limit that is removed where it was listed, with the date.
