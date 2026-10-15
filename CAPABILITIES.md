@@ -354,7 +354,7 @@ Each dated item below has its source in the session log of that date. The design
   - The public display always updates, even when the private store fails, and such a failure must reach him (D9).
   - Three failed display updates in a row mark the run failed (D1).
   - Runs queue rather than drop: "I do not want anything to be dropped".
-- **Records.** The record standard is followed rather than bent: ADR-0046 was replaced only at its eighth amendment, by ADR-0050. 2026-09-28: a record's two-hundred-line limit is soft, and a threshold not yet reached is not reported at all: "when the conditions are met only then the consequence will trigger and there is no near so just do it" (ADR-RULES).
+- **Records.** The record standard is followed rather than bent: ADR-0046 was replaced only at its eighth amendment, by ADR-0050. 2026-09-28: a record's two-hundred-line limit is soft, and a threshold not yet reached is not reported at all: "when the conditions are met only then the consequence will trigger and there is no near so just do it" (ADR-RULES). *(2026-10-10: the hard flag on length is at 300 lines, and his cross-project Decision Record Standard now says the same.)*
 - **Permission to push.** The implementing seat may push its own commits after the full suite passes (D10).
 - **The operator's answers of 2026-10-07**, each built that day or the next:
   - **A posting with no date is shown last, never skipped:** "if a job board does not offer dates then we can make a simple new rule that those that do not have dates are at the end because no job should be skipped" (ADR-0007's Changes).

@@ -111,7 +111,7 @@ ADR-0008 was then genuinely superseded by ADR-0021 on 2026-09-11, this time by t
 
 A record's Changes table stays under eight rows, and reaching eight is itself a supersession trigger: a decision amended eight times is no longer the decision that was made. **A row recording that the record was superseded does not count toward the eight**, which is why ADR-0046 carries nine; and a record may set itself a lower threshold, as ADR-0050 sets six.
 
-**Two hundred lines is a target rather than a cap**, soft to about 250 while no other trigger has fired, and a hard flag at roughly 350 to 400. All of this is in ADR-RULES, along with the rule that a threshold not yet reached is not reported.
+**Two hundred lines is a target rather than a cap**, soft to about 250 while no other trigger has fired, and a hard flag at roughly 350 to 400. *(2026-10-10, the operator's decision: nothing is owed below 300 while no other trigger has fired, and the hard flag is at 300; ADR-RULES.)* All of this is in ADR-RULES, along with the rule that a threshold not yet reached is not reported.
 
 ## Review
 
