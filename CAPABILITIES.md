@@ -10,7 +10,7 @@ status: current
 - **any chat** that needs to know the project, a chat drafting his CV among them, should learn everything from this file without exploring the repository;
 - **a person** reads `README.md` to set the system up and run it, and this file for the nuance: the measured numbers, how it was built and by whom, its decisions and where it is going.
 
-**Current as of 2026-10-08 UTC**, against `main` with the operator's answers of 2026-10-07 built and pushed, not yet run live. Every number carries its date and its source. A number that could not be measured is not here. **The end state, the sources' order, the timeline's last rows and the operator's role are current as of 2026-10-09 UTC**, updated by the architecture chat from the decision records, the commit history and, where marked, the operator's own account to the chat.
+**Current as of 2026-10-15 UTC**, against `main` with the work of Brief 11 built and pushed, and every source run live. Every number carries its date and its source; one that can no longer be measured stays, marked. *(Until 2026-10-15 this said a number that could not be measured is not here.)* **The end state, the sources' order, the timeline's last rows and the operator's role are current as of 2026-10-09 UTC**, updated by the architecture chat from the decision records, the commit history and, where marked, the operator's own account to the chat.
 
 **Kept current.** Updated at the close of any session that changes a capability or a measured number. Sections that restate a decision name the record that holds it, so a reader who wants the reasoning can find it.
 
@@ -23,7 +23,7 @@ A personal job-discovery pipeline that runs itself.
 - **It keeps every posting it fetches, permanently.**
 - **It admits only postings the operator can use:** his target roles, his level and years of experience, places he is eligible to work, and at most a week old when first seen. Each posting is admitted or dropped by a named, deterministic rule.
 - **It shows what survives in an Airtable table.** The operator marks each row accepted, not a fit, or poorly filtered. The pipeline copies each mark to its own table, stores it for good, and clears the display after fifteen days. A row he never marks leaves after thirty, and he can clear any table himself, dry run first.
-- **It costs nothing to run.** It first sees a new posting a median of 5.4 hours after its employer publishes it.
+- **It costs nothing to run.** Over its first two weeks in use, a posting it admitted reached the display a median of 7.3 hours after its employer published it, 22.0 hours at the 90th percentile, against targets of 24 and 72 (2026-10-15).
 
 ---
 
@@ -211,15 +211,15 @@ Each is measured, with its date and source. `data` is the public data branch.
 
 | What | Value | Measured | Source |
 |---|---|---|---|
-| Production runs | 30, from 2026-09-17 to 2026-10-01, a span of 13.6 days | 2026-10-01 | Run logs on `data`, `tools/run_log_report.py` |
-| Fetch reliability | 0 retries, 0 failed requests, 0 runs near the request ceiling, across all 30 runs | 2026-10-01 | Same |
-| Requests per run | Median 36 against a ceiling of 500, at most 41; 11 on an evening run | 2026-10-01 | Same |
-| Postings read per run | 803 to 1,420 across all 30 runs. 824 from the eleven boards alone, 1,283 with Himalayas, on 2026-09-26 and 09-27 | 2026-10-01 | Run logs |
-| Postings fetched in total | 34,557 across 30 runs, repeats included | 2026-10-01 | Run logs |
-| Distinct employer-board postings stored | 1,018 | 2026-10-01 | `seen.json` on `data` |
-| **Freshness (Measure A)** | New postings first seen a **median 5.4 hours** after publication, **90th percentile 10.5 hours**, maximum 14.4, over 114 postings. The targets are 24 and 72 hours. This is first sight, not arrival in the display: 8 of the 114 were ever admitted | 2026-09-30 | `seen.json` and run logs on `data`. Counts only postings published after the run before the one that saw them |
-| Selectivity | Of 1,283 postings read, 36 kept: 922 dropped on title, 258 on location, 56 on seniority, 11 on age | 2026-09-27, morning run | Run log |
-| Deduplication | 824 postings grouped into 527 display rows; the largest group, one role posted 134 times, once per city, became one row | 2026-09-26 | Run log |
+| Production runs | 58, from 2026-09-17 to 2026-10-15, a span of 27.5 days; every scheduled run since has happened | 2026-10-15 | Run logs on `data`; the public Actions API |
+| Fetch reliability | 0 retries and no run near the request ceiling across all 58 runs. 5 failed requests, all in one run, 2026-10-14T03:47Z: Manatal answered 403 five times in a row, and the run's one circuit breaker left six Workable boards unread; since 2026-10-15 each platform has its own breaker | 2026-10-15 | Same |
+| Requests per run | Median 98 against a ceiling of 500, at most 102, since all five platforms ran, 2026-10-08 evening; 77 of them Manatal's, asked twenty postings a page since 2026-10-15, which halves its walk. Before Manatal, over the first 30 runs: median 36 (2026-10-01) | 2026-10-15 | Same |
+| Postings read per run | 1,330 to 1,841 since 2026-10-08 evening, with Manatal and Workable. 803 to 1,420 over the first 30 runs, to 2026-10-01 | 2026-10-15 | Run logs |
+| Postings fetched in total | 71,668 across 58 runs, repeats included | 2026-10-15 | Run logs |
+| Distinct employer-board postings stored | 2,402 | 2026-10-15 | `seen.json` on `data` |
+| **Freshness (Measure A)** | ADR-0015's two weeks after go-live, 2026-09-24T03:27Z to 10-08T03:27Z: 140 admitted postings reached the display a **median 7.3 hours** after publication, **90th percentile 22.0 hours**, maximum 53.2. The targets are 24 and 72 hours. Himalayas 137 of the 140, on its morning poll until 2026-10-04; Greenhouse 1, Lever 2. Over every posting seen in the window, admitted or not, 1,725: median 9.8 hours, 90th percentile 21.4. First appearance is taken as first sight: no run in the window failed to write the display. Postings published before their board's first run are excluded, 26 admitted ones; none was dateless. Earlier, to 2026-09-30, first sight only: median 5.4, 90th percentile 10.5, over 114 postings | 2026-10-15 | The filtered and seen layers on `data` and in the private repository, and the run logs |
+| Selectivity | Of 1,720 postings read, 16 kept: 1,612 dropped on title, 59 on seniority, 16 on location, 12 on experience, 4 on age, 1 on a right to work. Of everything first seen in the week from 2026-10-08 evening, 1,416 postings, 36 were admitted, 92% dropped on title | 2026-10-15, morning run, and the week before it | Run log; the raw layers through the current rules |
+| Deduplication | 1,720 postings grouped into 1,128; the largest group, one role posted 180 times, once per city, became one row | 2026-10-15 | Run log |
 | Himalayas before the change | 500 postings a morning, the page cap, from about 1,600 published a day (inferred from 499 new postings spanning 7.3 hours). 93 of 100 postings sampled from the feed were closed to Pakistan | 2026-09-26 | Run logs, and a live sample of 100 postings |
 | Himalayas after the change | Only postings open to Pakistan requested. The first morning read back a week, 460 postings in 23 pages, stored 361 new and kept 31 | 2026-09-27 | Run log |
 | Himalayas' stated level | Himalayas labels every posting with a level. Of the 67 postings the filter chain kept from the 809 saved since 2026-09-26, it labels 35 Senior or above; the title rule, which reads only titles, dropped 45 others it labels Senior or above. Since 2026-10-02 the label is read, and the chain keeps 34 of the 809, not 67 | 2026-10-02 | The private full postings, through the real adapter and chain; `docs/reference/platform-fields.md` |
@@ -228,15 +228,15 @@ Each is measured, with its date and source. `data` is the public data branch.
 | Himalayas completeness | Of the 420 postings a week-long read of the search held, published before the morning walk, the pipeline had stored all 420 | 2026-09-30 | A 26-page snapshot against the private seen store |
 | Location rule, its owed check | Exactly 74 of the saved 91 Himalayas postings dropped and 17 admitted, as the record predicted nine days before the rule was built | 2026-09-30 | ADR-0041's Confirmation, on `raw_responses/` |
 | Full postings saved privately | 824 postings in one 9.8 MB file, read back and matched by content hash | 2026-09-26 | Run log |
-| Airtable usage | 172 of the month's 1,000 calls, 17%; `Jobs` holds 89 rows; a projection costs 8 calls | 2026-09-30 | Run log |
-| Display intake | About one new display row a day under the current rules, so by arithmetic, not measurement, the display settles near thirty rows, and the cheaper delta projection is not yet needed | 2026-09-29 and 09-30 | Run logs, against ADR-0056's trigger of 100 |
+| Airtable usage | 421 of October's 1,000 calls by 2026-10-15's morning, 362 production and 43 test, plus that run's own; `Jobs` holds 153 rows; since the read-back of 2026-10-07 a projection costs 3 calls, two to read `Jobs` and one to send what differs | 2026-10-15 | Run log |
+| Display intake | About one new display row a day under the current rules, so by arithmetic, not measurement, the display settles near thirty rows, and the cheaper delta projection is not yet needed. *(Overtaken 2026-10-04: the week to then measured about 7.5 new rows a day, and `Jobs` held 149 rows on 2026-10-14; the read-back projection was built on 2026-10-07 instead, ADR-0060)* | 2026-09-29 and 09-30 | Run logs, against ADR-0056's trigger of 100 |
 | Recurring cost | None | 2026-09-27 | Free plans only |
 | Feasibility research | 16 ATS platforms probed; 1,646 postings across the first 11 boards | 2026-09-11 to 09-16 | Spike logs |
-| Code | 29 source files, 7,907 lines; 35 test files, 12,355 lines; 9 tool files, 1,923 lines | 2026-10-08 | `git ls-files`, `wc` |
-| Tests | 883, passing on Python 3.11 and 3.12 | 2026-10-08 | `unittest` |
-| Mutations | 523 recorded across 46 files. Since 2026-10-01 the suite fails when a code change leaves any of them unable to run, which two commits had done to 10, unnoticed. A survivor is closed by a new test, or, where the mutation changes nothing, replaced and recorded as such | 2026-10-08 | `tools/mutations/`, run by `tools/mutate.py`; results in the session logs |
-| Decision records | 58 (five superseded), plus the rules for amending them. 159 dated Changes rows across 52 records | 2026-10-04 | `docs/decisions/` |
-| History | 156 commits on `main`, the first on 2026-09-01 UTC; 28 session logs; one audit report in `logs/audit/` | 2026-10-08 | `git log`, `logs/` |
+| Code | 29 source files, 7,978 lines; 35 test files, 12,555 lines; 9 tool files, 1,923 lines | 2026-10-15 | `git ls-files`, `wc` |
+| Tests | 893, passing on Python 3.11 and 3.12 | 2026-10-15 | `unittest` |
+| Mutations | 533 recorded across 50 files. Since 2026-10-01 the suite fails when a code change leaves any of them unable to run, which two commits had done to 10, unnoticed. A survivor is closed by a new test, or, where the mutation changes nothing, replaced and recorded as such | 2026-10-15 | `tools/mutations/`, run by `tools/mutate.py`; results in the session logs |
+| Decision records | 60 (seven superseded), plus the rules for amending them. 177 dated Changes rows across 52 records | 2026-10-15 | `docs/decisions/` |
+| History | 170 commits on `main`, the first on 2026-09-01 UTC; 29 session logs; one audit report in `logs/audit/` | 2026-10-15 | `git log`, `logs/` |
 
 ---
 
@@ -287,6 +287,7 @@ Each is measured, with its date and source. `data` is the public data branch.
 | 2026-10-05 (2026-10-04 UTC) | The round's records audited cold and corrected; version 1.0.0 given a file of its own, with the test for done the operator accepted (`docs/versions/v1.0.0.md`) |
 | 2026-10-07 | The operator's answers built: the display read back so only what differs is sent; a posting with no date shown last; Manatal's nine boards polled, the first platform added by measured yield; on-site work read as Pakistani postings write it; a `Health` table for every contract finding and run failure; the clearing tool's calls counted |
 | 2026-10-08 | Workable's six boards added, the first wave's second platform; the cassette tool made to sanitise a response's envelope |
+| 2026-10-15 | Brief 11: Measure A met over its first two weeks; each platform given its own circuit breaker after Manatal's refusals stopped Workable's boards for a run; Manatal read twenty postings a page; a description opening the role to graduates anywhere asks no minimum |
 
 ---
 
@@ -405,7 +406,7 @@ Short, role-neutral statements a reader can take as they are. Every figure is fr
 - Git branches serve as the database, with privacy enforced in code: employers' description text and aggregator data never reach the public repository. Every posting is saved in full to a private repository, verified by read-back.
 - A classification workflow: the operator's marks are copied to their own tables and stored permanently. Rows are deleted from the display only after the store is read back from the remote. The display is bounded by a thirty-day clock and a dry-run-first clearing tool.
 - A day's worth of an aggregator's feed went from about a third read, 93% of it irrelevant, to all of the relevant postings, by moving to a filtered endpoint an earlier measurement had wrongly rejected.
-- 883 tests, and 523 mutations that deliberately break the code to prove the tests notice.
+- 893 tests, and 533 mutations that deliberately break the code to prove the tests notice.
 - Assessed candidate data sources by evidence of their value to the user, genuine postings and a fair route to the employer, rather than by their reach, with every load-bearing claim checked at its primary source, and set the integration order from that.
 - Designed by the operator and built with AI agents in separate roles: architecture, implementation, and cold, read-only audit. The work was carried out under a written verification discipline and produced 55 decision records and 24 session logs.
 
