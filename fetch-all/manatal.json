@@ -20098,5 +20098,65 @@
   "workplace": null,
   "required_places": null,
   "described_workplace": null
+ },
+ {
+  "identity": "manatal:2424239",
+  "source": "manatal",
+  "board_id": "manatal:itc-worldwide-info",
+  "external_id": "2424239",
+  "employer": "SALES",
+  "employer_provenance": "payload",
+  "title": "Account Executive, II, MSP",
+  "title_normalised": "Account Executive, II, MSP",
+  "location": "Fort Wayne, Indiana, United States",
+  "published_at": null,
+  "published_field": null,
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-15T17:40:31.236630Z",
+  "ordering_date": "2026-10-15T17:40:31.236630Z",
+  "ordering_date_source": "first_seen",
+  "url": "https://www.careers-page.com/itc-worldwide-info/job/QXWVXXRR",
+  "url_provenance": "constructed",
+  "stated_experience": [
+   5
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "United States"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null
+ },
+ {
+  "identity": "manatal:2424654",
+  "source": "manatal",
+  "board_id": "manatal:itc-worldwide-info",
+  "external_id": "2424654",
+  "employer": "SALES",
+  "employer_provenance": "payload",
+  "title": "Account Executive, II, MSP",
+  "title_normalised": "Account Executive, II, MSP",
+  "location": "Pullman, Washington, United States",
+  "published_at": null,
+  "published_field": null,
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-15T17:40:31.236630Z",
+  "ordering_date": "2026-10-15T17:40:31.236630Z",
+  "ordering_date_source": "first_seen",
+  "url": "https://www.careers-page.com/itc-worldwide-info/job/L4W93R57",
+  "url_provenance": "constructed",
+  "stated_experience": [
+   5
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "United States"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null
  }
 ]
