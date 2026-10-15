@@ -23,11 +23,15 @@ publication is the question ADR-0052 left open for Lever.
 **No workplace field.** On-site work reaches D13 only through what the
 description says (ADR-0057, ADR-0058).
 
-**Twenty a page only when asked.** *(Wrong when written on 2026-10-07,
-corrected 2026-10-15: this said twenty a page whatever `page_size` asks.)*
-Read on 2026-10-15, a page without `page_size` held ten and one asking a
-hundred held twenty, so the runs from 2026-10-08 walked ITC Worldwide in
-about 48 requests where 24 would do, and Manatal cost 77 of a run's 98.
+**Twenty a page only when asked.** *(Stale since 2026-10-08, corrected
+2026-10-15: this said twenty a page whatever `page_size` asks, true when
+measured, ITC's 477 postings in 24 pages on 2026-10-04 and Abacus's 168 in
+nine on 2026-10-07.)* Read on 2026-10-15, a page without `page_size` held
+ten and one asking a hundred held twenty. The first run with all nine
+boards, 2026-10-08T19:11Z, spent 77 requests on Manatal, ten a page to the
+request where twenty would have made about 42, so the default fell between
+the two dates. Every run since walked ITC Worldwide in about 48 requests
+where 24 would do, and Manatal cost 77 of a run's 98.
 Asking twenty halves that. On 2026-10-14T03:47Z five Manatal requests in a
 row answered 403, the first on ITC's page 44; whether the volume drew them
 is untested.
