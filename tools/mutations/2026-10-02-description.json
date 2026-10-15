@@ -14,8 +14,8 @@
   {
     "label": "a line opened to fresh graduates is read as a minimum",
     "path": "src/description.py",
-    "find": "        if _OPENED.search(line):\n            continue",
-    "replace": "        if False:\n            continue"
+    "find": "    if any(_OPENED.search(line) for line in lines):\n        return ()",
+    "replace": "    if False:\n        return ()"
   },
   {
     "label": "a figure that is not a minimum is read",

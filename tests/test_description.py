@@ -92,6 +92,32 @@ class TestYears(unittest.TestCase):
         self.assertEqual(years("Experience5 – 7 years preferred; strong new graduates "
                                "considered"), ())
 
+    def test_a_graduate_line_anywhere_opens_the_whole_description(self):
+        """The operator's example of 2026-10-10: a range of years on one line
+        and graduates considered on another. Mutation: "the opening covers
+        only its own line"."""
+        self.assertEqual(years("<ul><li>4 to 6 years of experience with Python</li>"
+                               "<li>Outstanding fresh graduates will also be considered</li></ul>"),
+                         ())
+        self.assertEqual(years("<p>Minimum of 5 years building data pipelines</p>",
+                               "<p>No prior experience is required for the junior track</p>"), ())
+
+    def test_freshers_and_welcomed_graduates_open_the_role(self):
+        """Measured on 2026-10-15: "freshers" and graduates welcomed, 13
+        saved descriptions, 3 of them missed until then. Mutation: "freshers
+        and welcomed graduates do not open the role"."""
+        for line in ("Freshers with a strong portfolio may apply",
+                     "Graduates are welcome to apply for this role",
+                     "Talented graduates will be encouraged to apply"):
+            with self.subTest(line=line):
+                self.assertEqual(years("<p>5+ years of experience</p><p>%s</p>" % line), ())
+
+    def test_a_description_with_no_opening_keeps_its_years(self):
+        """The case built to defeat a check that opens everything: the same
+        years with no graduate line are read."""
+        self.assertEqual(years("<ul><li>4 to 6 years of experience with Python</li>"
+                               "<li>Graduate degree in a related field</li></ul>"), (4,))
+
     def test_a_figure_that_is_not_experience_is_not_read(self):
         for text in ("Help us triple our revenue over the next 5 years.",
                      "Our studio has been profitable for over 10 years and keeps growing.",

@@ -6,6 +6,8 @@ status: current
 
 # STATE
 
+**Touched 2026-10-15T12:13Z by the implementing seat, for the description's fresh-graduate opening only:** a description that opens the role to new graduates anywhere asks no minimum at all; the opening covered only its own line, so the operator's example of 2026-10-10, a range of four to six years on one line and fresh graduates considered on another, dropped. "Freshers" and graduates welcomed open it too. Over 4,748 saved descriptions no posting had the separated shape and no verdict changes [VERIFIED]. The line that follows stands.
+
 **Last verified 2026-10-08T11:40Z by the implementing seat, for the work of 2026-10-08, against `main` at `3dfefc6`.** Checked for it: Workable's fields over 78 saved postings and its spec read raw; every committed cassette for a description field; the Working Method folder for anything project-specific; 883 tests on Python 3.11 and 3.12, the cassette commit alone in a scratch clone; 11 of 11 mutations caught. `2026-10-08-working-method-the-cassette-envelope-and-workable.md`. The line that follows stands.
 
 **Touched 2026-10-08T11:00Z by the implementing seat, for Workable only:** ADR-0059's second platform by its rule, every platform but Manatal at 0 on 2026-10-04 and the tie broken by registry boards, six against two: its six boards on its documented endpoint, four of them the slugs the operator added to his registry marked unproven. Its own contract check from its first run. Not yet run live. The line that follows stands.

@@ -99,11 +99,17 @@ _COMPANY_VOICE = re.compile(
 _CANDIDATE_VOICE = re.compile(
     r"\b(?:you|your|candidates?|applicants?|ideal|looking for|seeking|hiring|requir\w*|must"
     r"|minimum|at least|need\w*|suit\w*|should)\b", re.I)
-# A line that opens the role to less experience than its figure, a
-# preferred range of years beside "fresh graduates considered", is a role he
-# can apply for (D13: "i do not want to miss any to which i am eligible to").
-_OPENED = re.compile(r"\b(?:fresh|recent|new)\s+grad(?:uate)?s?\b|\bno\s+(?:prior\s+)?experience"
-                     r"\s+(?:is\s+)?(?:required|necessary|needed)\b", re.I)
+# A description that opens the role to less experience than its figures, a
+# preferred range of years and, anywhere, "fresh graduates considered", is a
+# role he can apply for (D13: "i do not want to miss any to which i am
+# eligible to"; his example of 2026-10-10, four to six years with
+# exceptional fresh graduates considered). "Freshers" and graduates welcomed
+# were measured on 2026-10-15 in 3 and 10 of 4,748 saved descriptions, and
+# the phrase before then missed 3 of those 13.
+_OPENED = re.compile(r"\b(?:fresh|recent|new)\s+grad(?:uate)?s?\b|\bfreshers?\b"
+                     r"|\bgraduates?\b[^.;]{0,30}\b(?:welcome\w*|encourag\w*|consider\w*)"
+                     r"|\bno\s+(?:prior\s+)?experience\s+(?:is\s+)?(?:required|necessary|needed)\b",
+                     re.I)
 _SENTENCE_END = re.compile(r"[.!?](?=\s|$)")
 
 
@@ -124,11 +130,17 @@ def years_asked(lines):
     requirements (a growth target over the next few years, the company's
     age), and most of the rest sat beside a figure that is read. A posting
     this misses stays in the table, which costs him a look; one it wrongly
-    drops he never sees."""
+    drops he never sees.
+
+    **A description that opens the role to new graduates anywhere asks no
+    minimum at all.** Until 2026-10-15 the opening covered only its own line,
+    so the years on another line of his example dropped it. Over 4,748 saved
+    descriptions no posting had that shape, so no verdict changed; a senior
+    role that only mentions graduates now stays, the cheaper mistake."""
+    if any(_OPENED.search(line) for line in lines):
+        return ()
     found = []
     for line in lines:
-        if _OPENED.search(line):
-            continue
         for m in _FIGURE.finditer(line):
             before, after = line[:m.start()], line[m.end():]
             if _NOT_A_MINIMUM_BEFORE.search(before):

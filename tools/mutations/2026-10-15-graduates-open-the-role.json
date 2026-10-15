@@ -1,0 +1,14 @@
+[
+  {
+    "label": "the opening covers only its own line",
+    "path": "src/description.py",
+    "find": "    if any(_OPENED.search(line) for line in lines):\n        return ()\n    found = []\n    for line in lines:\n",
+    "replace": "    found = []\n    for line in lines:\n        if _OPENED.search(line):\n            continue\n"
+  },
+  {
+    "label": "freshers and welcomed graduates do not open the role",
+    "path": "src/description.py",
+    "find": "_OPENED = re.compile(r\"\\b(?:fresh|recent|new)\\s+grad(?:uate)?s?\\b|\\bfreshers?\\b\"\n                     r\"|\\bgraduates?\\b[^.;]{0,30}\\b(?:welcome\\w*|encourag\\w*|consider\\w*)\"\n",
+    "replace": "_OPENED = re.compile(r\"\\b(?:fresh|recent|new)\\s+grad(?:uate)?s?\\b\"\n"
+  }
+]
