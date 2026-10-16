@@ -82,7 +82,7 @@ A failed check's detail names where it failed and never why in words. Reading wh
 
 **An event must become one `Health` row, and only once**; an `unchanged` check must make none.
 
-**Live only:** the first production `Health` row, after the operator sets the secrets. *(Seen 2026-10-08T19:13Z: 17 rows, 15 re-baselines of 2026-10-03 and the first baselines of Manatal and Workable, read through the connector on 2026-10-09. No failure row yet: none was among the events that first write carried.)*
+**Live only:** the first production `Health` row, after the operator sets the secrets. *(Seen 2026-10-08T19:13Z: 17 rows, 15 re-baselines of 2026-10-03 and the first baselines of Manatal and Workable, read through the connector on 2026-10-09. No failure row yet: none was among the events that first write carried.)* *(2026-10-16: the first failure rows were written at 2026-10-14T03:49Z, 12 of them, after ITC's page 44 and four Manatal boards' first pages answered 403 in a row; read by the implementing seat through the connector, its report on Brief 11.)*
 
 ## Pros and Cons of the Options
 

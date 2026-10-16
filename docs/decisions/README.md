@@ -41,7 +41,7 @@ Records are written at the moment a decision concludes. A record's factual error
 | 0025 | Auto Memory is not authoritative | Accepted |
 | 0026 | Employer provenance where a payload does not carry it | Accepted |
 | 0027 | Deduplication key normalisation, configured per source | Accepted |
-| 0028 | Per-run fetch budget, and detail fetched once per posting | Accepted |
+| 0028 | Per-run fetch budget, and detail fetched once per posting | Accepted; one circuit breaker per platform |
 | 0029 | Adapter order after the slice, and Dover dropped | Accepted, adapter order replaced by 0059; Manatal and Workable built |
 | 0030 | A rule change backfills the filtered layer | Accepted |
 | 0031 | Personal preferences are configuration, not code | Accepted |
@@ -53,20 +53,20 @@ Records are written at the moment a decision concludes. A record's factual error
 | 0037 | The filtered layer stores rows, the projection groups them | Accepted |
 | 0038 | Role families are views, not a ranking | Accepted |
 | 0039 | The aggregator condition is the three components | Accepted |
-| 0040 | The current rules filter the projection, never the store | Accepted, extended by 0046, one clause narrowed by 0046, its convergence limited to rules a stored row can feed |
+| 0040 | The current rules filter the projection, never the store | Accepted, extended by 0046, one clause narrowed by 0046, its convergence limited to rules a stored row can feed; since 2026-10-16 stored facts re-read from saved postings when a rule changes |
 | 0041 | Location admits unless a source excludes | Superseded by 0057 |
 | 0042 | *reserved for ADR-RULES, deliberately unused* | n/a |
-| 0043 | Three outcome stores, now five | Accepted, extended by 0050, 0051 and 0055 |
+| 0043 | Three outcome stores, now six | Accepted, extended by 0050, 0051, 0055 and 0062 |
 | 0044 | The priority star, on named attributes only | Accepted, deferred to version 2 by 0059 |
 | 0045 | The classification flow | Superseded by 0046 |
 | 0046 | Classification by status, and the fifteen-day retention | Superseded by 0050 |
 | 0047 | Aggregator data lives in private destinations | Accepted, reverses one clause of 0020, extended by 0051 |
 | 0048 | A source is polled no faster than its feed refreshes | Accepted, extends 0006, one assumption failed then restored by 0053; Himalayas back on both runs |
 | 0049 | Architectural rules are guarded by fitness functions, not by prose | Accepted, extended to every Confirmation clause |
-| 0050 | The classification flow, consolidated | Accepted, supersedes 0046; a posting with no date can close |
+| 0050 | The classification flow, consolidated | Superseded by 0062 |
 | 0051 | Every field a board returns is saved, privately | Accepted |
 | 0052 | Age is judged once, at first sight | Accepted; Himalayas' date found to be its own listing date |
-| 0053 | Himalayas is polled through its search endpoint | Accepted, narrows one clause of 0005; one assumption failed; cap 80; polled on both runs |
+| 0053 | Himalayas is polled through its search endpoint | Accepted, narrows one clause of 0005; one assumption failed; cap 80; polled on both runs; the morning walk reads to the age limit |
 | 0054 | A scheduled run happens, or it is not silently gone | Accepted |
 | 0055 | The display is cleared by a clock, and by hand | Accepted, built |
 | 0056 | The projection sends the whole layer, and the delta design that will replace it | Superseded by 0060 |
@@ -75,6 +75,7 @@ Records are written at the moment a decision concludes. A record's factual error
 | 0059 | Version 1 is the system working for him, on the sources worth having | Accepted; Manatal and Workable built in its order |
 | 0060 | The projection sends only what differs from `Jobs` | Accepted, supersedes 0056 |
 | 0061 | The contract check reports per source, in its log and in Airtable | Accepted, supersedes 0036 |
+| 0062 | The classification flow, with gone, applied and a reason in `Jobs` | Accepted, supersedes 0050 |
 | RULES | How records are resolved, amended and retired | Accepted |
 
 ## Pending

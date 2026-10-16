@@ -79,7 +79,7 @@ The four places ADR-0056 named for the day of the build read as follows with the
 
 **A row the current rules no longer admit still leaves the display through the sweep**, not through the projection.
 
-**Live only:** the month's call count under the read-back, against the arithmetic above, from the run logs.
+**Live only:** the month's call count under the read-back, against the arithmetic above, from the run logs. *(Read 2026-10-16 by the implementing seat over production days 2026-10-09 to 10-15: the read-back 4 calls a day and the projection's writes 0 to 2, so about 120 to 180 a month against the 250 estimated (the chat's arithmetic); a production day costs 19.1 calls in all, the sweep now the largest share. Its report on Brief 12.)*
 
 ## Pros and Cons of the Options
 
