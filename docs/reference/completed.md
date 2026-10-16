@@ -235,3 +235,11 @@ Moved verbatim on 2026-10-15. The operator's verdict, 2026-10-10 UTC: Himalayas 
 | Item | Blocked on | Who | Since |
 |---|---|---|---|
 | Himalayas' trial verdict | 2026-09-26. *(Deferred by the operator 2026-09-23 until the writer runs and he has seen rows in `Jobs`; no earlier than 2026-10-07, per `CHAT_STATE.md` item 81)* | Operator | 2026-09-17 |
+
+## A row of `STATE.md`'s Blocked table, resolved 2026-10-16
+
+Moved verbatim on 2026-10-16. The operator's decision, 2026-10-16: "yes, keep banyan.", on the implementing seat's verdict of 2026-10-15 (Brief 12, item 7). The board stays polled, its trial over.
+
+| Item | Blocked on | Who | Since |
+|---|---|---|---|
+| Banyan Canopy's review | *(2026-10-15: **the implementing seat's verdict is to keep the board**, and so it goes back to the operator, as Brief 11's Addendum 1 provides. Its count [VERIFIED from the run logs on `data`]: 56 runs from 2026-09-17 to 2026-10-15, 11 postings, none admitted, every one dropped by the title rule; its one AI-and-data role of 2026-09-11 would not pass the title pool either, and neither would a NetSuite or ERP developer. It costs one request a run and no Airtable call, and a software, data or AI title there would reach him. Reasons in the Brief 11 report)* 2026-09-24. *(Deferred with Himalayas, same date, same source)* | Operator | 2026-09-17 |
