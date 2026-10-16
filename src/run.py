@@ -777,8 +777,15 @@ class Run:
         minutes, so a clock anchor would step over postings that arrive late
         and never look again. A feed with no dates, Manatal's, never stops on
         the mark and is read to its end."""
-        mark = max(self.high_water.get(board.board_id) or "",
-                   walk_floor(board.source, self.now) or "")
+        floor = walk_floor(board.source, self.now) or ""
+        if self.slot in board.deep_slots:
+            # ADR-0053's Changes, 2026-10-16: on this slot the walk reads to
+            # the age limit, past what is stored, so a posting that reached
+            # the feed after the walks that covered its date is read. The
+            # other slot keeps the mark.
+            mark = floor
+        else:
+            mark = max(self.high_water.get(board.board_id) or "", floor)
         # The pages merged under the adapter's own key, Himalayas' `jobs`,
         # Manatal's `results`, so its parse reads them as one response.
         key = adapter.POSTINGS_AT

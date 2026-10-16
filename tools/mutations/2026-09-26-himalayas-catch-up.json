@@ -14,8 +14,8 @@
   {
     "label": "a first walk has no age floor",
     "path": "src/run.py",
-    "find": "                   walk_floor(board.source, self.now) or \"\")",
-    "replace": "                   \"\")"
+    "find": "        floor = walk_floor(board.source, self.now) or \"\"",
+    "replace": "        floor = \"\""
   },
   {
     "label": "the floor sits exactly at the limit",

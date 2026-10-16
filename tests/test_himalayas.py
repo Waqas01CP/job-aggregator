@@ -506,6 +506,41 @@ class TestRunIntegration(unittest.TestCase):
         Run([SEARCH], stopped, now=NOW, matcher=MATCHER).execute()
         self.assertEqual(stopped.served["n"], 1)
 
+    def test_the_morning_walk_reads_to_the_age_limit_and_the_evening_stops_at_its_mark(self):
+        """ADR-0053's Changes of 2026-10-16: postings reach the search late,
+        dated before the mark, and 35 on 2026-10-16 no walk had read. So the
+        morning walk reads to the age limit and the evening walk keeps the
+        mark; a run in no slot keeps it too. Mutation: "the morning walk
+        stops at the mark"."""
+        deep = Board(platform="himalayas", slug="pakistan", deep_slots=("morning",))
+        pages = self._two_pages(1789141800)
+        Run([deep], self._client(pages), now=NOW, matcher=MATCHER).execute()
+        self._saved_in_full()
+        for slot, served in (("evening", 1), ("morning", 3), (None, 1)):
+            with self.subTest(slot=slot):
+                client = self._client(pages)
+                log = Run([deep], client, now=NOW, matcher=MATCHER, slot=slot).execute()
+                self.assertEqual(client.served["n"], served)
+                walk = next(b["walk"] for b in log["boards"] if b["board"] == deep.board_id)
+                from src.run import walk_floor
+                self.assertEqual(walk["mark"] == walk_floor("himalayas", NOW), slot == "morning")
+
+    def test_the_shipped_search_board_walks_deep_on_the_morning_only(self):
+        """The configuration carries the decision, and a value no slot names
+        is refused. Mutation: "the search board walks deep on no slot"."""
+        from src.config import ConfigError, load_boards
+        [board] = [b for b in load_boards() if b.board_id == "himalayas:pakistan"]
+        self.assertEqual(board.deep_slots, ("morning",))
+        path = os.path.join(self.dir, "boards.json")
+        for bad in ("morning", ["noon"]):
+            with self.subTest(deep_slots=bad):
+                with open(path, "w", encoding="utf-8") as f:
+                    json.dump({"source": "x", "boards": [{"platform": "himalayas",
+                                                          "slug": "pakistan",
+                                                          "deep_slots": bad}]}, f)
+                with self.assertRaises(ConfigError):
+                    load_boards(path)
+
     def test_with_no_mark_the_walk_stops_at_the_age_limit(self):
         """A page wholly older than a week before now holds nothing D14 could
         admit, so it ends a first walk; without that, the walk reads on."""

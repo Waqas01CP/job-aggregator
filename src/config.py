@@ -69,6 +69,11 @@ class Board:
     employer_alias: str = None
     note: str = ""
     poll_slots: tuple = ()      # empty means every slot
+    # ADR-0053's Changes, 2026-10-16: the slots on which a paginated walk
+    # reads to the age limit instead of stopping at the board's stored mark.
+    # Postings reach Himalayas' search late, dated before the mark, and a walk
+    # that stops at the mark never reads them: 35 on 2026-10-16.
+    deep_slots: tuple = ()
 
     def polled_on(self, slot):
         """Whether a run in this slot asks this board. A run that is not a
@@ -137,8 +142,16 @@ def _validate(entry, index, seen):
         if s not in SLOTS:
             raise ConfigError("%s: poll_slot %r is not one of %s" % (where, s, list(SLOTS)))
 
+    deep = entry.get("deep_slots", [])
+    if not isinstance(deep, list):
+        raise ConfigError("%s: deep_slots is %s, expected a list" % (where, type(deep).__name__))
+    for s in deep:
+        if s not in SLOTS:
+            raise ConfigError("%s: deep_slot %r is not one of %s" % (where, s, list(SLOTS)))
+
     return Board(platform=platform, slug=slug, normalisations=tuple(norms),
-                 employer_alias=alias, note=entry.get("note", ""), poll_slots=tuple(slots))
+                 employer_alias=alias, note=entry.get("note", ""), poll_slots=tuple(slots),
+                 deep_slots=tuple(deep))
 
 
 def load_boards(path=None):

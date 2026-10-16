@@ -20,8 +20,8 @@
   {
     "label": "an unknown poll slot is accepted",
     "path": "src/config.py",
-    "find": "        if s not in SLOTS:",
-    "replace": "        if False:"
+    "find": "        if s not in SLOTS:\n            raise ConfigError(\"%s: poll_slot %r is not one of %s\" % (where, s, list(SLOTS)))",
+    "replace": "        if False:\n            raise ConfigError(\"%s: poll_slot %r is not one of %s\" % (where, s, list(SLOTS)))"
   },
   {
     "label": "a skipped board is still polled",

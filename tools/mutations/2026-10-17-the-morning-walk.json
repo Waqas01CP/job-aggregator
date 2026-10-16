@@ -1,0 +1,20 @@
+[
+  {
+    "label": "the morning walk stops at the mark",
+    "path": "src/run.py",
+    "find": "        if self.slot in board.deep_slots:",
+    "replace": "        if False:"
+  },
+  {
+    "label": "the search board walks deep on no slot",
+    "path": "config/boards.json",
+    "find": "      \"deep_slots\": [\"morning\"],",
+    "replace": "      \"deep_slots\": [],"
+  },
+  {
+    "label": "a deep slot no slot names is accepted",
+    "path": "src/config.py",
+    "find": "        if s not in SLOTS:\n            raise ConfigError(\"%s: deep_slot %r is not one of %s\" % (where, s, list(SLOTS)))",
+    "replace": "        if False:\n            raise ConfigError(\"%s: deep_slot %r is not one of %s\" % (where, s, list(SLOTS)))"
+  }
+]
