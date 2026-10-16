@@ -48,7 +48,7 @@ Records are written at the moment a decision concludes. A record's factual error
 | 0032 | The seniority rule | Accepted, extended to a source's stated level; Senior no longer drops, by title or level |
 | 0033 | The data branch is the store, local files are working copies | Accepted |
 | 0034 | Airtable gets its own client | Accepted |
-| 0035 | The projection upserts on Identity | Accepted |
+| 0035 | The projection upserts on Identity | Accepted; derived values, a reason field and a fixed row number classified |
 | 0036 | The contract check reports through the run log | Superseded by 0061 |
 | 0037 | The filtered layer stores rows, the projection groups them | Accepted |
 | 0038 | Role families are views, not a ranking | Accepted |

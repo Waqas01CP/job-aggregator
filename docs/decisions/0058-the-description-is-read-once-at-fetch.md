@@ -61,7 +61,7 @@ Chosen option: "read the description once at fetch, keep only derived values, an
 
 ADR-0016's deferred experience rule is built, nine days after ADR-0051 kept the data for it.
 
-The derived values sit on the public branch for Greenhouse and Lever rows. ADR-0011 is clarified rather than changed: a value from a closed vocabulary, a number, a configured place name or a flag, is metadata, and cannot carry an employer's words.
+The derived values sit on the public branch for Greenhouse and Lever rows. *(2026-10-16: they are also to be shown in `Jobs`, the operator's decision, classified in ADR-0035's Changes.)* ADR-0011 is clarified rather than changed: a value from a closed vocabulary, a number, a configured place name or a flag, is metadata, and cannot carry an employer's words.
 
 A posting whose description is missing, truncated or unreadable yields no derived values, and is kept.
 
