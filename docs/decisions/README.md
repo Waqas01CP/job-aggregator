@@ -28,7 +28,7 @@ Records are written at the moment a decision concludes. A record's factual error
 | 0012 | No email or search-alert ingestion path | Accepted |
 | 0013 | Three layers, filtered set persisted independently of the display | Accepted, clause reversed by 0030 |
 | 0014 | Weekly status sweep, with a four-status outcome taxonomy | Superseded by 0045 |
-| 0015 | Two measures, and the archive protocol | Accepted |
+| 0015 | Two measures, and the archive protocol | Accepted; Measure A met at two weeks |
 | 0016 | Title-only matching against a versioned title pool | Accepted, one clause reversed by 0021, one built by 0051, its deferred rule built by 0058 |
 | 0017 | Sanitised cassettes as adapter test fixtures | Accepted |
 | 0018 | Scheduled contract check against live boards | Accepted, clause reversed by 0036; each platform checked on its own |
@@ -45,7 +45,7 @@ Records are written at the moment a decision concludes. A record's factual error
 | 0029 | Adapter order after the slice, and Dover dropped | Accepted, adapter order replaced by 0059; Manatal and Workable built |
 | 0030 | A rule change backfills the filtered layer | Accepted |
 | 0031 | Personal preferences are configuration, not code | Accepted |
-| 0032 | The seniority rule | Accepted, extended to a source's stated level |
+| 0032 | The seniority rule | Accepted, extended to a source's stated level; Senior no longer drops, by title or level |
 | 0033 | The data branch is the store, local files are working copies | Accepted |
 | 0034 | Airtable gets its own client | Accepted |
 | 0035 | The projection upserts on Identity | Accepted |

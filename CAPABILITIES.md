@@ -10,7 +10,7 @@ status: current
 - **any chat** that needs to know the project, a chat drafting his CV among them, should learn everything from this file without exploring the repository;
 - **a person** reads `README.md` to set the system up and run it, and this file for the nuance: the measured numbers, how it was built and by whom, its decisions and where it is going.
 
-**Current as of 2026-10-15 UTC**, against `main` with the work of Brief 11 built and pushed, and every source run live. Every number carries its date and its source; one that can no longer be measured stays, marked. *(Until 2026-10-15 this said a number that could not be measured is not here.)* **The end state, the sources' order, the timeline's last rows and the operator's role are current as of 2026-10-09 UTC**, updated by the architecture chat from the decision records, the commit history and, where marked, the operator's own account to the chat.
+**Current as of 2026-10-15 UTC**, against `main` with the work of Brief 11 built and pushed, and every source run live. Every number carries its date and its source; one that can no longer be measured stays, marked. *(Until 2026-10-15 this said a number that could not be measured is not here.)* **The end state, the sources' order, the timeline's last rows and the operator's role are current as of 2026-10-09 UTC**, updated by the architecture chat from the decision records, the commit history and, where marked, the operator's own account to the chat. *(The operator's role brought to 2026-10-16 UTC.)*
 
 **Kept current.** Updated at the close of any session that changes a capability or a measured number. Sections that restate a decision name the record that holds it, so a reader who wants the reasoning can find it.
 
@@ -364,6 +364,7 @@ Each dated item below has its source in the session log of that date. The design
   - **Manatal's career-site endpoint for all nine of its boards**, chosen once the documented endpoint was found to give no working link to a posting, and **Workable's four new slugs**, added marked unproven: "add them as long as they are good and are useful" (ADR-0059's and ADR-0029's Changes).
 - **His answers of 2026-10-09:** a posting with no date counts as passing when platforms are compared, "if the post is genuine then i would like to see it"; the levels Workable and SmartRecruiters state are to be read, Mid-Senior level kept for now (ADR-0032, not yet built); Himalayas' own listing date accepted for 1.0.0 (ADR-0052); SmartRecruiters before Ashby (ADR-0059).
 - **His answers of 2026-10-10:** every level from the start of a career up to mid is kept on every source, whatever it is called, internship included, "so that no job skips my sight that i am eligible for" (ADR-0032, not yet built); Himalayas kept, its trial over, "it has proven itself to be worth keeping".
+- **His answers of 2026-10-16:** Senior no longer drops a posting, neither the word in a title nor a source's stated level, while every other seniority word in a title and every stated level above Senior still do, and the description decides the rest: "if there is senior written in title then it should not drop until the description is read" (ADR-0032, not yet built). A `Status` value of his own for a posting he finds gone, which also lets the system count how many die before he applies (not yet built; its record follows the design). Banyan Canopy kept. EWOR GmbH's postings and the "(100 % remote) (m/f/d)" title template are watched for a week before he decides which, if either, to exclude, and a daily check for Himalayas postings removed early waits the same week. In this file, when in doubt whether a change is the point, the old value stays.
 
 ### And he did what only he could
 
@@ -428,10 +429,10 @@ Short, role-neutral statements a reader can take as they are. Every figure is fr
 
 ## Keeping this file current
 
-**Add or update, never remove, both seats.** The operator's rule, accepted by both seats on 2026-10-10 and 2026-10-15: a line no longer true is updated in place with its date, so a reader sees how a figure changed and nothing here becomes false. *(Until 2026-10-15 this section said to remove a number that could no longer be measured.)*
+**Add or update, never remove, both seats.** The operator's rule, accepted by both seats on 2026-10-10 and 2026-10-15: a line no longer true is updated in place with its date, so a reader sees how a figure changed and nothing here becomes false. *(Until 2026-10-15 this section said to remove a number that could no longer be measured.)* *(2026-10-16, the operator: when in doubt whether a change is the point, the old value stays.)*
 
 **At the close of any session that changes a capability or a measured number:**
 - update the section it belongs to and the date at the top;
-- re-measure a number rather than carrying it forward, and replace it in place with its new date and source; keep the old value beside it only where the change is itself the point, a before and after or a correction, never as a running trail of counts that grow every session;
+- re-measure a number rather than carrying it forward, and replace it in place with its new date and source; keep the old value beside it only where the change is itself the point, a before and after or a correction, never as a running trail of counts that grow every session, and when in doubt, keep it;
 - mark a number that can no longer be measured, or a claim overtaken, in place with the date and why;
 - record a limit that is removed where it was listed, with the date.
