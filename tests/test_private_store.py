@@ -279,6 +279,21 @@ class TestTheFullBranch(Harness):
         self.assertEqual(self.show("data-full", "full/two.json"), '[{"posting": 2}]\n')
         self.assertEqual(self.branches(), ["data-full"], "the data branch was touched")
 
+    def test_the_full_read_returns_every_saved_file_and_leaves_the_save_partial(self):
+        """The re-read of stored facts (src/facts.py) reads every file the
+        full branch holds, in a scratch repository of its own; a later save
+        still fetches no earlier file's contents. Mutation: "the full read
+        returns the first file only"."""
+        s = self.store()
+        s.save_full("full/one.json", '[{"posting": 1}]\n', "one")
+        s.save_full("full/two.json", '[{"posting": 2}]\n', "two")
+        self.assertEqual(s.read_full(), ['[{"posting": 1}]\n', '[{"posting": 2}]\n'])
+        s.save_full("full/three.json", '[{"posting": 3}]\n', "three")
+        self.assertEqual(self.show("data-full", "full/three.json"), '[{"posting": 3}]\n')
+
+    def test_a_full_branch_not_yet_made_reads_as_nothing(self):
+        self.assertEqual(self.store().read_full(), [])
+
     def test_a_later_save_never_needs_an_earlier_files_contents(self):
         """The case the run of 2026-09-27T03:59Z met: the branch already holds
         a file, and the second save's partial fetch leaves it absent. The

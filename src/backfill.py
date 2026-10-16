@@ -23,6 +23,7 @@ the local filtered file and publishable rows to the committed one, split by
 import glob
 import os
 
+from . import facts
 from .config import is_publishable
 from .filters import TitleMatcher, apply_chain
 from .normalise import Row
@@ -62,7 +63,9 @@ def load_rows(paths, withhold=()):
             except TypeError as exc:
                 raise BackfillError("%s holds a record this code cannot read: %s"
                                     % (path, exc))
-    return rows
+    # Judged on the facts a re-read gives them, where one has (src/facts.py),
+    # so a widened rule adds only what today's reader passes.
+    return facts.applied(rows, paths)
 
 
 def admitted(rows, now_iso, matcher=None):

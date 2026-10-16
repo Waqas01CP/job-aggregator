@@ -95,10 +95,13 @@ CLEARING_DIR = "clearing"
 # it found in disagreement here, in the private store only, out of
 # OUTCOMES_DIR for the same reason as the clearing list: neither is a store.
 AGREEMENT_DIR = "agreement"
+# The overlay of re-read derived facts (src/facts.py), state like the layers,
+# so restored with them; rewritten whole at each re-read, never appended.
+FACTS_FILE = "facts.json"
 
 # What a committing run reads back from the branch before it starts. Run logs
 # are history rather than state, so they are not restored.
-RESTORED_FILES = (FILTERED_FILE, SEEN_FILE)
+RESTORED_FILES = (FILTERED_FILE, SEEN_FILE, FACTS_FILE)
 RESTORED_DIRS = (RAW_DIR, OUTCOMES_DIR)
 
 # ADR-0047: aggregator-sourced stores live in a private repository, reached
@@ -144,6 +147,8 @@ def layout(test_mode=False):
         "seen": "%s/%s" % (root, SEEN_FILE),
         "local_filtered": "%s/%s/%s" % (root, LOCAL_DIR, FILTERED_FILE),
         "local_seen": "%s/%s/%s" % (root, LOCAL_DIR, SEEN_FILE),
+        "facts": "%s/%s" % (root, FACTS_FILE),
+        "local_facts": "%s/%s/%s" % (root, LOCAL_DIR, FACTS_FILE),
         "runlog_dir": "%s/%s" % (root, RUNLOG_DIR),
         "outcomes_dir": "%s/%s" % (root, OUTCOMES_DIR),
         # ADR-0047: the private repository's copies of the outcome stores,

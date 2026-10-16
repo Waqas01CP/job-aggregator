@@ -38,7 +38,7 @@ import shutil
 import subprocess
 import tempfile
 
-from .storage import (AGREEMENT_DIR, CLEARING_DIR, COMMIT_IDENTITY, FILTERED_FILE,
+from .storage import (AGREEMENT_DIR, CLEARING_DIR, COMMIT_IDENTITY, FACTS_FILE, FILTERED_FILE,
                       OUTCOMES_DIR, PRIVATE_STORE_REPO_ENV, PRIVATE_STORE_TIMEOUT,
                       PRIVATE_STORE_TOKEN_ENV, RAW_DIR, SEEN_FILE, PrivateStoreUnreachable,
                       _scrub, data_branch, full_branch, private_store_basic, write_atomic)
@@ -64,6 +64,8 @@ def local_path_for(stored, paths):
         return paths["local_filtered"]
     if stored == SEEN_FILE:
         return paths["local_seen"]
+    if stored == FACTS_FILE:
+        return paths["local_facts"]
     for directory, key in DIRECTORIES:
         prefix = directory + "/"
         if stored.startswith(prefix) and stored.endswith(".json") \
@@ -79,7 +81,8 @@ def files_to_push(paths):
     dry-run list (ADR-0055), and the agreement check's waiting and
     disagreeing postings (ADR-0053)."""
     files = {}
-    for stored, key in ((FILTERED_FILE, "local_filtered"), (SEEN_FILE, "local_seen")):
+    for stored, key in ((FILTERED_FILE, "local_filtered"), (SEEN_FILE, "local_seen"),
+                        (FACTS_FILE, "local_facts")):
         if os.path.exists(paths[key]):
             files[stored] = paths[key]
     for directory, key in DIRECTORIES:
@@ -282,6 +285,37 @@ class PrivateStore:
                     "the full branch, read back after the push, holds different content "
                     "for %s than was written" % path)
             return blob
+        finally:
+            shutil.rmtree(work, ignore_errors=True)
+
+    def read_full(self):
+        """Every file this mode's full branch holds, as text, for the re-read
+        of stored facts (src/facts.py). Called at a change of the code that
+        derives them, never on an ordinary run. Its own scratch repository,
+        fetched with contents, so the save's partial fetch stays partial and
+        its refusal of on-demand downloads (ADR-0051) is untouched. A branch
+        not yet made holds nothing."""
+        work = tempfile.mkdtemp(prefix="private-full-read-")
+        try:
+            def git(args, what, **kw):
+                return self._git(args, what, cwd=work, **kw)
+
+            git(["init", "-q"], "preparing a scratch repository to read the full branch")
+            git(["remote", "add", "store", self._url], "naming the store")
+            ref = "refs/heads/%s" % self.full_branch
+            listing = git(["ls-remote", "--heads", "store"], "listing it",
+                          auth=True).stdout.decode("utf-8")
+            if not any(line.split("\t")[-1] == ref for line in listing.splitlines()):
+                return []
+            git(["fetch", "-q", "--depth", "1", "--no-tags", "store", "%s:%s" % (ref, ref)],
+                "fetching the full branch to read it", auth=True)
+            names = git(["ls-tree", "-r", "--name-only", ref],
+                        "listing the full branch").stdout.decode("utf-8").split()
+            texts = []
+            for name in sorted(n for n in names if n.endswith(".json")):
+                texts.append(git(["show", "%s:%s" % (ref, name)],
+                                 "reading a full file").stdout.decode("utf-8"))
+            return texts
         finally:
             shutil.rmtree(work, ignore_errors=True)
 

@@ -51,7 +51,7 @@ import sys
 import traceback
 from datetime import datetime, timedelta, timezone
 
-from . import clearing, envfile, private_store, projection, storage
+from . import clearing, envfile, facts, private_store, projection, storage
 from .airtable_sweep import JOBS, SweepClient, TABLE_SECRETS
 from .closure import Closure, covered as walk_covered
 from .sweep import Sweep, older_than
@@ -216,6 +216,28 @@ def open_private_store(paths, test_mode):
             store.close()
         block["failure"] = redact_secrets("%s: %s" % (type(e).__name__, e))
         return None, block
+
+
+def reread_facts(store, paths, boards):
+    """ADR-0040's and ADR-0058's re-read (src/facts.py): when the code or
+    configuration that derives a row's facts has changed since the overlay
+    was read, every saved posting is read again and the overlay rewritten,
+    before anything is judged. Never raises: a failure is recorded, the old
+    overlay stands, and the next run tries again."""
+    current = facts.fingerprint()
+    _, held = facts.load(paths)
+    block = {"fingerprint": current, "reread": False, "failure": None}
+    if held == {current}:
+        return block
+    try:
+        texts = store.read_full()
+        seen = storage.SeenStore.load_many([paths["seen"], paths["local_seen"]])
+        records, counts = facts.reread(texts, boards, seen.first_seen_map(), ADAPTERS)
+        facts.write(paths, records, current)
+        block.update(reread=True, files=len(texts), **counts)
+    except Exception as e:
+        block["failure"] = redact_secrets("%s: %s" % (type(e).__name__, e))
+    return block
 
 
 def save_private_store(store, block, paths, run_at, key="pushed"):
@@ -1154,7 +1176,7 @@ def files_to_commit(run_log, paths, log_path, test_mode):
         if os.path.exists(path):
             with open(path, encoding="utf-8") as f:
                 files[storage.branch_path(path, test_mode)] = f.read()
-    for path in (paths["filtered"], paths["seen"], log_path):
+    for path in (paths["filtered"], paths["seen"], paths["facts"], log_path):
         if os.path.exists(path):
             with open(path, encoding="utf-8") as f:
                 files[storage.branch_path(path, test_mode)] = f.read()
@@ -1171,6 +1193,10 @@ def files_to_commit(run_log, paths, log_path, test_mode):
         if committed_path.startswith(storage.RUNLOG_DIR + "/"):
             continue
         records = loads(text)
+        # The facts overlay holds its records under a key beside the
+        # fingerprint they were read under (src/facts.py).
+        if isinstance(records, dict) and isinstance(records.get("records"), list):
+            records = records["records"]
         entries = records.values() if isinstance(records, dict) else records
         refused = sorted({str(e.get("source")) for e in entries
                           if not is_publishable(e.get("source"))})
@@ -1246,10 +1272,17 @@ def main(argv=None):
     # A failed restore and a failed push differ: only the first leaves the
     # private outcome stores unknown, so only the first stops the projection.
     restore_failure = private_block and private_block["failure"]
+    # The re-read needs the private store, where the saved postings are, and
+    # comes before anything is judged.
+    facts_block = None
+    if store is not None and not restore_failure:
+        facts_block = reread_facts(store, storage.layout(test_mode), boards)
     run = Run(boards, client, test_mode=test_mode, matcher=matcher, slot=slot,
               private_unavailable=restore_failure)
     try:
         run_log = run.execute()
+        if facts_block is not None:
+            run_log["facts"] = facts_block
     except Exception:
         if store is not None:
             store.close()

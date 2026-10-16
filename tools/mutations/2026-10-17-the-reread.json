@@ -1,0 +1,50 @@
+[
+  {
+    "label": "the projection judges the stored facts",
+    "path": "src/projection.py",
+    "find": "    # Judged on the facts a re-read gives them, where one has (src/facts.py).\n    return facts.applied(rows, paths)",
+    "replace": "    return rows"
+  },
+  {
+    "label": "the backfill judges the stored facts",
+    "path": "src/backfill.py",
+    "find": "    return facts.applied(rows, paths)",
+    "replace": "    return rows"
+  },
+  {
+    "label": "the sweep judges the stored facts",
+    "path": "src/sweep.py",
+    "find": "        rows = facts.applied(rows, self.paths)\n",
+    "replace": ""
+  },
+  {
+    "label": "the run never re-reads",
+    "path": "src/run.py",
+    "find": "    if held == {current}:\n        return block",
+    "replace": "    if True:\n        return block"
+  },
+  {
+    "label": "line endings change the fingerprint",
+    "path": "src/facts.py",
+    "find": "                body = f.read().replace(b\"\\r\\n\", b\"\\n\")",
+    "replace": "                body = f.read()"
+  },
+  {
+    "label": "the overlay is not split by source class",
+    "path": "src/facts.py",
+    "find": "                if is_publishable(r[\"source\"]) == publishable]",
+    "replace": "                if True]"
+  },
+  {
+    "label": "the gate cannot read the overlay",
+    "path": "src/run.py",
+    "find": "        if isinstance(records, dict) and isinstance(records.get(\"records\"), list):\n            records = records[\"records\"]\n",
+    "replace": ""
+  },
+  {
+    "label": "the full read returns the first file only",
+    "path": "src/private_store.py",
+    "find": "            for name in sorted(n for n in names if n.endswith(\".json\")):",
+    "replace": "            for name in sorted(n for n in names if n.endswith(\".json\"))[:1]:"
+  }
+]

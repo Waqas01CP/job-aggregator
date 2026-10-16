@@ -79,7 +79,7 @@ client refuses anything else.
 
 from datetime import datetime, timedelta, timezone
 
-from . import storage
+from . import facts, storage
 from .airtable_sweep import (APPLIED, CLASSIFICATION_TABLES, COPY_FIELDS, DELETE_FIELD,
                              DELETE_YES, GONE, JOBS, JOBS_NUMBER_FIELD, NUMBER_FIELD,
                              OPERATOR_FIELD, REASON_FIELD, STAGE_APPLIED, STAGE_FIELD, STAGE_GONE,
@@ -259,6 +259,9 @@ class Sweep:
             if key == "local_filtered" and "private" not in self.stores.dirs:
                 continue
             rows.extend(Row(**r) for r in storage.read_records(self.paths[key]))
+        # Judged on the facts a re-read gives them, where one has, as the
+        # projection judges them (src/facts.py).
+        rows = facts.applied(rows, self.paths)
         self.rows = {r.identity: r for r in rows}
         kept, drops = apply_chain(rows, self.now_iso, matcher=self.matcher)
         self.dropped_by = {d["identity"]: d["rule"] for d in drops}

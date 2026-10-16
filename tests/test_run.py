@@ -904,7 +904,7 @@ class TestMain(unittest.TestCase):
         self.assertEqual(len(self.in_private("data", "filtered.json")), him["kept"])
         self.assertIn("himalayas:https://x.test/h1", self.in_private("data", "seen.json"))
         self.assertTrue(log["private_store"]["pushed"])
-        for path in ("fetch-all/greenhouse.json", "filtered.json", "seen.json"):
+        for path in ("fetch-all/greenhouse.json", "filtered.json", "seen.json", "facts.json"):
             self.assertNotIn("himalayas", self.on_branch("data", path),
                              "an aggregator row reached the public branch in %s" % path)
         self.assertNotEqual(self.git("cat-file", "-e", "data:fetch-all/himalayas.json")[0], 0)
@@ -913,7 +913,9 @@ class TestMain(unittest.TestCase):
         self.him = him_payload(["h1", "h2"])
         self.assertEqual(self.main()[0], EXIT_OK)
         log = self.last_run_log()
-        self.assertEqual(log["private_store"]["restored"], 3)
+        # The raw file, the kept rows, the seen entries and, since the
+        # re-read of 2026-10-16, the facts overlay.
+        self.assertEqual(log["private_store"]["restored"], 4)
         self.assertEqual(next(b for b in log["boards"] if b["board"] == "himalayas:browse")["new"],
                          1, "the second run did not know what the private store held")
         self.assertEqual(len(self.in_private("data", "fetch-all/himalayas.json")), 2)

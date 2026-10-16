@@ -34,7 +34,7 @@ looks like a bug:
 
 from datetime import datetime, timezone
 
-from . import storage
+from . import facts, storage
 from .airtable import PIPELINE_FIELDS
 from .config import is_publishable
 from .dedupe import group
@@ -162,7 +162,8 @@ def load_rows(paths):
             except TypeError as e:
                 raise ProjectionError("%s holds a record this code cannot read: %s"
                                       % (paths[key], e))
-    return rows
+    # Judged on the facts a re-read gives them, where one has (src/facts.py).
+    return facts.applied(rows, paths)
 
 
 def airtable_datetime(value):
