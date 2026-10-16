@@ -278,5 +278,8 @@ CONFIRMATIONS["0062"] = dict(CONFIRMATIONS["0050"], **{
     "A `Status` the sweep does not know must make no copy and move no clock.": {
         "unbuilt": _UNBUILT},
     "`Jobs No.` must be seen following the posting into `accepted`.": {"unbuilt": _UNBUILT},
-    "The ceiling must be seen refusing at the configured figure": {"unbuilt": _UNBUILT},
+    "The ceiling must be seen refusing at the configured figure": {"tests": [
+        "test_run.TestTheCeiling.test_the_shipped_ceiling_reaches_every_client_the_run_builds",
+        "test_run.TestTheCeiling.test_at_the_ceiling_the_display_stops_and_the_fetch_is_stored",
+        "test_run.TestTheCeiling.test_a_ceiling_above_the_allowance_is_refused"]},
 })

@@ -1,0 +1,20 @@
+[
+  {
+    "label": "the ceiling is Airtable's whole allowance",
+    "path": "src/run.py",
+    "find": "    return load_sweep_config().monthly_call_ceiling",
+    "replace": "    return 1000"
+  },
+  {
+    "label": "the sweep's client is built without the ceiling",
+    "path": "src/run.py",
+    "find": "    return SweepClient.from_env(test_mode, used_this_month=used_this_month,\n                                monthly_ceiling=monthly_ceiling())",
+    "replace": "    return SweepClient.from_env(test_mode, used_this_month=used_this_month)"
+  },
+  {
+    "label": "a ceiling above the allowance is accepted",
+    "path": "src/config.py",
+    "find": "    if ceiling > AIRTABLE_MONTHLY_ALLOWANCE:",
+    "replace": "    if False:"
+  }
+]

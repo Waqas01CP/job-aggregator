@@ -10,6 +10,8 @@
   "clearing_dry_run_valid_hours_note": "ADR-0055's tool removes nothing unless a dry run of the same table and threshold ran on this branch within this many hours. The implementing seat's value, approved by the operator 2026-09-30: long enough to read the dry run's report and decide the next day.",
   "run_log_window": 60,
   "run_log_window_note": "How many recent run logs the closure test reads: thirty days at two runs a day.",
+  "monthly_call_ceiling": 900,
+  "monthly_call_ceiling_note": "ADR-0062: the pipeline refuses any Airtable call that would take its own month's count to this figure. Airtable's limit is the workspace's 1,000, which the chats' connector calls also spend and the pipeline cannot see, so the hundred between is theirs. Reaching it stops the projection and the sweep, each run exiting 2, and leaves the fetch and its stores untouched; the display catches up when the month resets. The operator's decision of 2026-10-16: '900 for now'. What he watches is the workspace's Usage count.",
   "budget_warning_share": 0.6,
   "budget_warning_before_day": 15,
   "budget_warning_note": "Say so loudly when the month's Airtable calls pass this share of the allowance before this day of the month. ADR-0050's guard; ADR-0004 says why the warning must be ours."

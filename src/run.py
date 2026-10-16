@@ -173,10 +173,18 @@ def tell_the_workflow(name, value):
             f.write("%s=%s\n" % (name, value))
 
 
+def monthly_ceiling():
+    """ADR-0062's ceiling on the pipeline's own Airtable calls, from
+    `config/sweep.json`: 900 since 2026-10-16, against Airtable's 1,000 for
+    the whole workspace. Every client the run builds refuses a call past it."""
+    return load_sweep_config().monthly_call_ceiling
+
+
 def make_airtable_client(test_mode, used_this_month):
     """The one place the run builds its Airtable client. Tests replace it with
     a fake transport, so no unit test can reach a live base."""
-    return AirtableClient.from_env(test_mode, used_this_month=used_this_month)
+    return AirtableClient.from_env(test_mode, used_this_month=used_this_month,
+                                   monthly_ceiling=monthly_ceiling())
 
 
 def make_private_store(test_mode):
@@ -385,7 +393,8 @@ def make_health_client(test_mode, used_this_month):
     """The one place the run builds the health table's writer, or None while
     its secret is unset. Tests replace it."""
     return AirtableClient.health_from_env(test_mode, health.HEALTH_FIELDS, health.KEY_FIELD,
-                                          used_this_month=used_this_month)
+                                          used_this_month=used_this_month,
+                                          monthly_ceiling=monthly_ceiling())
 
 
 def write_health(run_log, no_commit, test_mode, now, used_before):
@@ -437,7 +446,8 @@ def with_reads(block, reader):
 
 def make_sweep_client(test_mode, used_this_month):
     """The one place the run builds the sweep's client. Tests replace it."""
-    return SweepClient.from_env(test_mode, used_this_month=used_this_month)
+    return SweepClient.from_env(test_mode, used_this_month=used_this_month,
+                                monthly_ceiling=monthly_ceiling())
 
 
 def previous_run_at(test_mode):

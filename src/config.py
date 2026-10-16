@@ -177,6 +177,15 @@ class SweepConfig:
     clearing_dry_run_valid_hours: int
     budget_warning_share: float
     budget_warning_before_day: int
+    # ADR-0062's guard on the pipeline's own calls. The default is Airtable's
+    # whole allowance, for tests that build a config by hand; the shipped
+    # figure is the file's.
+    monthly_call_ceiling: int = 1000
+
+
+# Airtable's free plan: 1,000 calls a month per workspace. A ceiling above it
+# would guard nothing.
+AIRTABLE_MONTHLY_ALLOWANCE = 1000
 
 
 def load_sweep_config(path=None):
@@ -218,7 +227,13 @@ def load_sweep_config(path=None):
         raise ConfigError("sweep config: run_log_window (%d) must hold at least "
                           "closed_after_polled_runs (%d) runs, or no posting can close"
                           % (window, runs))
-    return SweepConfig(closed_after_polled_runs=runs,
+    ceiling = whole("monthly_call_ceiling", 1)
+    if ceiling > AIRTABLE_MONTHLY_ALLOWANCE:
+        raise ConfigError("sweep config: monthly_call_ceiling (%d) is above Airtable's "
+                          "allowance of %d, so it guards nothing"
+                          % (ceiling, AIRTABLE_MONTHLY_ALLOWANCE))
+    return SweepConfig(monthly_call_ceiling=ceiling,
+                       closed_after_polled_runs=runs,
                        retire_after_days=whole("retire_after_days", 1),
                        run_log_window=window,
                        unreviewed_after_days=whole("unreviewed_after_days", 1),

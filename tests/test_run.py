@@ -22,7 +22,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src import projection as projection_module
 from src import run as run_module
 from src import storage
-from src.airtable import AirtableConfigError
+from src.airtable import AirtableClient, AirtableConfigError
 from src.config import Board, ConfigError
 from src.normalise import dumps
 from src.filters import TitleMatcher
@@ -1333,6 +1333,87 @@ class TestMain(unittest.TestCase):
         self.assertIn("could not start", err)
         self.assertFalse(os.path.exists("data/fetch-all/greenhouse.json"),
                          "the run fetched without its state")
+
+
+class TestTheCeiling(unittest.TestCase):
+    """ADR-0062: the pipeline refuses any Airtable call that would take its
+    own month's count to the configured ceiling, 900 since 2026-10-16, and
+    reaching it leaves the fetch and its stores untouched. Borrows TestMain's
+    harness, as TestTheSweepInTheRun does."""
+
+    setUp, tearDown = TestMain.setUp, TestMain.tearDown
+    main, git, on_branch = TestMain.main, TestMain.git, TestMain.on_branch
+    identities, last_run_log = TestMain.identities, TestMain.last_run_log
+
+    SECRETS = {"AIRTABLE_TOKEN": "patFAKE.0000", "AIRTABLE_BASE_ID": "appFAKEBASE000001",
+               "AIRTABLE_TABLE_ID": "tblJOBSFAKE000001",
+               "AIRTABLE_NOT_A_FIT_TABLE_ID": "tblNOTFITFAKE0001",
+               "AIRTABLE_POOR_FILTERING_TABLE_ID": "tblPOORFAKE000001",
+               "AIRTABLE_ACCEPTED_TABLE_ID": "tblACCEPTFAKE0001",
+               "AIRTABLE_HEALTH_TABLE_ID": "tblHEALTHFAKE0001"}
+
+    def test_the_shipped_ceiling_reaches_every_client_the_run_builds(self):
+        """The real factories, under fake secrets. Mutations: "the ceiling
+        is Airtable's whole allowance", "the sweep's client is built without
+        the ceiling"."""
+        self.assertEqual(run_module.monthly_ceiling(), 900)
+        real_airtable, real_sweep, real_health = self.real[5], self.real[7], self.real[8]
+        saved = {k: os.environ.get(k) for k in self.SECRETS}
+        os.environ.update(self.SECRETS)
+        try:
+            clients = [real_airtable(False, 0), real_sweep(False, 0), real_health(False, 0)]
+        finally:
+            for k, v in saved.items():
+                if v is None:
+                    os.environ.pop(k, None)
+                else:
+                    os.environ[k] = v
+        self.assertEqual([c.monthly_ceiling for c in clients], [900, 900, 900])
+
+    def test_a_ceiling_above_the_allowance_is_refused(self):
+        """A ceiling past Airtable's 1,000 would guard nothing. Mutation: "a
+        ceiling above the allowance is accepted"."""
+        from src.config import SWEEP_PATH, ConfigError, load_sweep_config
+        with open(SWEEP_PATH, encoding="utf-8") as f:
+            doc = json.load(f)
+        path = os.path.join(self.dir, "sweep.json")
+        for ceiling, refused in ((1001, True), (1000, False)):
+            with self.subTest(ceiling=ceiling):
+                with open(path, "w", encoding="utf-8") as f:
+                    json.dump(dict(doc, monthly_call_ceiling=ceiling), f)
+                if refused:
+                    with self.assertRaises(ConfigError):
+                        load_sweep_config(path)
+                else:
+                    self.assertEqual(load_sweep_config(path).monthly_call_ceiling, ceiling)
+
+    def test_at_the_ceiling_the_display_stops_and_the_fetch_is_stored(self):
+        """Every Airtable call refused, the month standing at the ceiling:
+        the projection and the sweep fail and the run exits 2, and the fetch
+        reaches the branch as on any run."""
+        ceiling = run_module.monthly_ceiling()
+
+        def full_airtable(test_mode, used_this_month):
+            return AirtableClient("patFAKE.0000", "appFAKEBASE000001", "tblJOBSFAKE000001",
+                                  session=self.base, min_interval=0, sleep=lambda s: None,
+                                  monthly_ceiling=ceiling, used_this_month=ceiling)
+
+        def full_sweep(test_mode, used_this_month):
+            tables = {JOBS: "tblJOBSFAKE000001"}
+            tables.update({t: "tblCOPY%s" % str(i).zfill(10)
+                           for i, t in enumerate(CLASSIFICATION_TABLES)})
+            return SweepClient("patFAKE.0000", "appFAKEBASE000001", tables,
+                               session=self.base, min_interval=0, sleep=lambda s: None,
+                               monthly_ceiling=ceiling, used_this_month=ceiling)
+        run_module.make_airtable_client = full_airtable
+        run_module.make_sweep_client = full_sweep
+        code, _, _ = self.main()
+        self.assertEqual(code, EXIT_STOPPED_RESUMABLE)
+        log = self.last_run_log()
+        self.assertIn("CallBudgetExhausted", log["airtable"]["failure"])
+        self.assertIn("CallBudgetExhausted", log["sweep"]["failure"])
+        self.assertEqual(self.base.calls, [], "a call past the ceiling reached the base")
+        self.assertEqual(self.identities("data"), ["greenhouse:1000"], "the fetch was lost")
 
 
 class TestTheSweepInTheRun(unittest.TestCase):
