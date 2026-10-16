@@ -814,6 +814,21 @@ class TestSeniority(unittest.TestCase):
         self.assertFalse(kept)
         self.assertEqual(drop["rule"], "seniority")
 
+    def test_a_listed_word_in_a_title_the_pool_never_admits_is_a_title_drop(self):
+        """ADR-0032's Confirmation, the case built to defeat the order: the
+        pool runs first, so a title it never admits is a title drop even when
+        it carries a listed word. "Principal Red Team Operator" replaces
+        "Senior Red Team Operator", which tests nothing once `senior` leaves
+        the list (Brief 12, 2026-10-16). Mutation: "chain: seniority runs
+        before the title rule"."""
+        title = "Principal Red Team Operator"
+        self.assertIsNone(MATCHER.match(title), "the pool admits the case, so it tests nothing")
+        self.assertEqual(MATCHER.excluded_word(title), "principal",
+                         "the case carries no listed word, so it tests nothing")
+        kept, drop = keep(title=title)
+        self.assertFalse(kept)
+        self.assertEqual(drop["rule"], "title")
+
     def test_words_match_whole_never_inside_another_word(self):
         for title in ("Staffing AI Engineer", "Headless AI Engineer",
                       "AI Engineer, Leadership Programme", "AI Engineer, Directory Services",
