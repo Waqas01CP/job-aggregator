@@ -181,6 +181,13 @@ class SweepConfig:
     # whole allowance, for tests that build a config by hand; the shipped
     # figure is the file's.
     monthly_call_ceiling: int = 1000
+    # ADR-0062: each rejection table's reason choices, mirroring the base, so
+    # `Reason` is written into a copy only when the field offers it.
+    reason_choices: dict = field(default_factory=dict)
+
+
+# The tables whose reason field the sweep may fill from `Reason`.
+REASON_TABLES = ("rejected-not-a-fit", "rejected-poor-filtering")
 
 
 # Airtable's free plan: 1,000 calls a month per workspace. A ceiling above it
@@ -232,7 +239,14 @@ def load_sweep_config(path=None):
         raise ConfigError("sweep config: monthly_call_ceiling (%d) is above Airtable's "
                           "allowance of %d, so it guards nothing"
                           % (ceiling, AIRTABLE_MONTHLY_ALLOWANCE))
+    choices = doc.get("reason_choices")
+    if not isinstance(choices, dict) or set(choices) != set(REASON_TABLES) or not all(
+            isinstance(v, list) and v and all(isinstance(c, str) and c.strip() for c in v)
+            for v in choices.values()):
+        raise ConfigError("sweep config: reason_choices must give each of %s a non-empty list "
+                          "of choices" % ", ".join(REASON_TABLES))
     return SweepConfig(monthly_call_ceiling=ceiling,
+                       reason_choices={t: tuple(v) for t, v in choices.items()},
                        closed_after_polled_runs=runs,
                        retire_after_days=whole("retire_after_days", 1),
                        run_log_window=window,

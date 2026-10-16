@@ -508,6 +508,25 @@ class TestRowsLeave(ClearingHarness):
         self.assertEqual((self.jobs(), self.copies("rejected-not-a-fit")), ([], []))
         self.assertEqual(self.store("removed_unreviewed.json"), [])
 
+    def test_an_applied_row_is_cleared_as_accepted_and_a_gone_row_is_already_leaving(self):
+        """ADR-0062's two statuses through the tool: `applied` feeds
+        `accepted`, so it is stored there with `applied` in its record; a
+        `gone` row leaves at the next morning sweep anyway, so the tool
+        writes nothing for it and counts it. Mutation: "the tool clears an
+        applied row as nothing"."""
+        r1, r2 = make_row(1, published=ago(40)), make_row(2, published=ago(40))
+        self.store_rows([r1, r2])
+        self.in_jobs(r1, status="applied", classified_days_ago=3)
+        self.in_jobs(r2, status="gone", classified_days_ago=3)
+        report = self.confirmed(JOBS, 30)
+        self.assertEqual(report["classified"], {"applied": 1, "gone": 1})
+        [record] = self.store("accepted.json")
+        self.assertEqual((record["identity"], record["status"], record["removed_by"]),
+                         ("greenhouse:1", "applied", "operator"))
+        self.assertEqual(report["written"], 1)
+        self.assertEqual(report["already_leaving"], 1)
+        self.assertEqual(self.store("gone.json"), [])
+
     def test_an_aggregator_row_is_masked_in_the_report_and_named_privately(self):
         r = make_row(1, source="himalayas", published=ago(40))
         self.store_rows([r])

@@ -73,6 +73,7 @@ from .airtable_sweep import (CLASSIFICATION_TABLES, COPY_FIELDS, DELETE_FIELD, D
 from .normalise import Row
 from .projection import REASON_OPERATOR, REMOVED_UNREVIEWED_STORE, removal_key
 from .storage import CLEARING_DIR
+from .airtable_sweep import GONE, TABLE_FOR_STATUS
 from .sweep import (JOBS_FIELDS, REMOVED_BY_OPERATOR, STORE_FOR, Stores, jobs_fields_record,
                     masked, older_than, parse_time, source_of)
 
@@ -211,7 +212,7 @@ class Clearing:
             classified = {}
             for r in chosen:
                 status = r["fields"].get("Status")
-                if status in STORE_FOR:
+                if status in TABLE_FOR_STATUS or status == GONE:
                     classified[status] = classified.get(status, 0) + 1
             report["classified"] = classified
         if not confirmed:
@@ -252,8 +253,12 @@ class Clearing:
             if where is None:
                 continue
             status = r["fields"].get("Status") if table == JOBS else table
-            if status in STORE_FOR:
-                count += self.stores.durable_has(where, STORE_FOR[status], identity)
+            if status == GONE:
+                # ADR-0062: the next morning sweep takes a gone row anyway.
+                count += 1
+            elif status in TABLE_FOR_STATUS:
+                count += self.stores.durable_has(where, STORE_FOR[TABLE_FOR_STATUS[status]],
+                                                 identity)
             elif self.stores.kept_out_reason(where, identity) is not None or identity in swept:
                 count += 1
         return count
@@ -315,13 +320,18 @@ class Clearing:
                                   key="removal")
                 report["written"] += 1
                 continue
-            if status not in STORE_FOR:
+            if status == GONE:
+                # Leaving at the next morning sweep, by ADR-0062's step 7.
+                report["already_leaving"] += 1
+                continue
+            if status not in TABLE_FOR_STATUS:
                 continue
             if copies is None:
                 copies = {t: {c["fields"].get("Identity"): c for c in self.client.list_records(
                     t, ("Identity", OPERATOR_FIELD[t]))} for t in CLASSIFICATION_TABLES}
-            copy = copies[status].get(identity)
-            reason = copy["fields"].get(OPERATOR_FIELD[status]) if copy else None
+            table = TABLE_FOR_STATUS[status]
+            copy = copies[table].get(identity)
+            reason = copy["fields"].get(OPERATOR_FIELD[table]) if copy else None
             self.store_outcome(where, status, identity, f, reason,
                                f.get("Classified at"), report)
 
@@ -343,7 +353,7 @@ class Clearing:
         removal, so its row and copy leave before their fifteen days. An
         identity already in its corpus is already leaving; one in another
         corpus is left and reported, since routing is exclusive (ADR-0043)."""
-        name = STORE_FOR[status]
+        name = STORE_FOR[TABLE_FOR_STATUS[status]]
         if self.stores.classified_elsewhere(where, name, identity):
             report["problems"].append("%s is already in another classification store; left"
                                       % masked(identity))

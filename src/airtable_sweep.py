@@ -13,9 +13,14 @@ makes dangerous and a create or an update makes no safer:
 
 - on `Jobs`, the one field `Closed`, never `Status`, whose every write would
   restart the fifteen-day clock on `Classified at`;
-- on a classification table, the ten identifying fields of the copy, never
-  the operator's reason or `Stage`, and never `Classified`, which Airtable
-  sets.
+- on a classification table, the ten identifying fields of the copy, and on
+  `accepted` the row's `Jobs No.`; never `Classified`, which Airtable sets.
+
+**Since ADR-0062 it also writes the operator's own `Stage` and reasons, but
+only as a transcription of a value he set in `Jobs` on the same posting**:
+`Stage` applied when he sets `Status` to `applied`, a reason when he sets
+`Reason`. `Stage` is only ever written as applied, never `gone`, and the
+sweep never writes over a value he set.
 
 Anything else is refused before a request is made.
 
@@ -60,10 +65,35 @@ OPERATOR_FIELD = {"rejected-not-a-fit": "Choice reason",
 # it and never writes it. The operator's D12, 2026-09-26.
 DELETE_FIELD = "Delete"
 DELETE_YES = "yes"
+# ADR-0062's two further `Status` values. `applied` feeds `accepted`, its
+# copy made with `Stage` applied in the same create; `gone` feeds no table:
+# the sweep records the posting in `gone.json` and removes its row.
+APPLIED = "applied"
+GONE = "gone"
+# The table each `Status` value feeds. A value not here feeds none.
+TABLE_FOR_STATUS = {table: table for table in CLASSIFICATION_TABLES}
+TABLE_FOR_STATUS[APPLIED] = "accepted"
+STAGE_FIELD = OPERATOR_FIELD["accepted"]
+STAGE_APPLIED = "applied"
+STAGE_GONE = "gone"
+# The operator's reason in `Jobs`, set beside `Status` (ADR-0062); the row
+# number Airtable assigns there; and its copy in `accepted`, written by the
+# sweep, so one number follows the posting (ADR-0035's Changes).
+REASON_FIELD = "Reason"
+NUMBER_FIELD = "No."
+JOBS_NUMBER_FIELD = "Jobs No."
 # What the sweep may write, per table. Nothing else leaves this module for a
 # pipeline writer.
 WRITES = {JOBS: ("Closed",)}
 WRITES.update({table: COPY_FIELDS for table in CLASSIFICATION_TABLES})
+WRITES["accepted"] = COPY_FIELDS + (JOBS_NUMBER_FIELD,)
+# The operator's own fields the sweep may write, and only as a transcription
+# of a value he set in `Jobs` on the same posting: `Stage` applied from
+# `Status` `applied`, a reason from `Reason` (ADR-0062, ADR-0035). Never from
+# the pipeline's judgement, never `gone` into `Stage`, and never over a value
+# he set: the sweep decides when, this list only what.
+TRANSCRIBED = {table: (OPERATOR_FIELD[table],) for table in CLASSIFICATION_TABLES}
+TRANSCRIBED_STAGE_VALUES = (STAGE_APPLIED,)
 # What the operator's own clearing tool may write: his `Delete` mark, on
 # `accepted` alone. A tool he invokes is him acting, not the pipeline, which
 # is why ADR-0055 scopes ADR-0035's ownership rule to the pipeline's writers
@@ -199,11 +229,16 @@ class SweepClient(ResilientClient):
         for start in range(0, len(items), BATCH_SIZE):
             yield items[start:start + BATCH_SIZE]
 
-    def _refuse_foreign_fields(self, table, fields, index):
-        extra = sorted(set(fields) - set(WRITES[table]))
+    def _refuse_foreign_fields(self, table, fields, index, transcribed=()):
+        extra = sorted(set(fields) - set(WRITES[table]) - set(transcribed))
         if extra:
             raise ValueError("record %d for %s carries fields the pipeline does not own: %s"
                              % (index, table, extra))
+        if STAGE_FIELD in fields and STAGE_FIELD in transcribed \
+                and fields[STAGE_FIELD] not in TRANSCRIBED_STAGE_VALUES:
+            raise ValueError("record %d for %s would write Stage %r; the sweep writes only %s"
+                             % (index, table, fields[STAGE_FIELD],
+                                " or ".join(TRANSCRIBED_STAGE_VALUES)))
 
     # ----------------------------------------------------------------- read
     def list_records(self, table, fields):
@@ -231,7 +266,7 @@ class SweepClient(ResilientClient):
         if table not in CLASSIFICATION_TABLES:
             raise ValueError("copies go to a classification table, not %s" % table)
         for index, fields in enumerate(records):
-            self._refuse_foreign_fields(table, fields, index)
+            self._refuse_foreign_fields(table, fields, index, TRANSCRIBED[table])
             if not fields.get("Identity"):
                 raise ValueError("record %d has no Identity" % index)
         created = []
@@ -260,6 +295,34 @@ class SweepClient(ResilientClient):
             for index, r in enumerate(records):
                 self._refuse_foreign_fields(JOBS, r["fields"], index)
             payload = self._call("PATCH", JOBS, target, repeatable=True, body={"records": records})
+            got = {r.get("id") for r in payload.get("records") or []}
+            missing = [record_id for record_id, _ in batch if record_id not in got]
+            if missing:
+                raise ResponseMismatch(target, "%d of %d updates are not in the response"
+                                       % (len(missing), len(batch)), missing)
+            done.extend(record_id for record_id, _ in batch)
+        return done
+
+    def transcribe(self, table, updates):
+        """Write the table's one transcribed field on existing copies:
+        `Stage` raised to applied on an `accepted` copy, or an empty reason
+        filled on a rejection copy, each from the value he set in `Jobs`
+        (ADR-0062). `updates` is a list of (record ID, value). The only field
+        sent is that one, and `Stage` only ever as applied."""
+        [field] = TRANSCRIBED[table]
+        done = []
+        batches = list(self._batches(list(updates)))
+        for number, batch in enumerate(batches, 1):
+            target = "airtable transcription of %s in %s, batch %d of %d" % (
+                field, table, number, len(batches))
+            records = [{"id": record_id, "fields": {field: value}} for record_id, value in batch]
+            for index, r in enumerate(records):
+                self._refuse_foreign_fields(table, r["fields"], index, TRANSCRIBED[table])
+                extra = sorted(set(r["fields"]) - {field})
+                if extra:
+                    raise ValueError("record %d for %s carries more than %s: %s"
+                                     % (index, table, field, extra))
+            payload = self._call("PATCH", table, target, repeatable=True, body={"records": records})
             got = {r.get("id") for r in payload.get("records") or []}
             missing = [record_id for record_id, _ in batch if record_id not in got]
             if missing:

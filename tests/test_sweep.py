@@ -75,13 +75,14 @@ class Harness(unittest.TestCase):
         for r in rows:
             self.last_seen.setdefault(r.identity, "2026-10-10T03:40:00Z")
 
-    def in_jobs(self, row, status=None, classified_days_ago=None, closed=None):
+    def in_jobs(self, row, status=None, classified_days_ago=None, closed=None, extra=None):
         fields = fields_for(group([row])[0], MATCHER)
         fields = {k: fields[k] for k in COPY_FIELDS}
         if status:
             fields["Status"] = status
         if closed:
             fields["Closed"] = closed
+        fields.update(extra or {})
         classified = NOW - timedelta(days=classified_days_ago) if status else None
         return self.base.seed(TABLES[JOBS], fields, classified_at=classified)
 
@@ -89,11 +90,11 @@ class Harness(unittest.TestCase):
         return SweepClient("patFAKE.0000", "appFAKEBASE000001", TABLES, session=self.base,
                            min_interval=0, sleep=lambda s: None)
 
-    def sweep(self, daily=True, private_ok=True, since=None, now=NOW):
+    def sweep(self, daily=True, private_ok=True, since=None, now=NOW, config=CONFIG):
         closure = Closure(self.last_seen, self.logs, lambda b: b.startswith("himalayas"),
-                          CONFIG.closed_after_polled_runs, now.isoformat().replace("+00:00", "Z"))
+                          config.closed_after_polled_runs, now.isoformat().replace("+00:00", "Z"))
         client = self.client()
-        report = Sweep(client, self.paths, now, MATCHER, closure, CONFIG,
+        report = Sweep(client, self.paths, now, MATCHER, closure, config,
                        private_ok).run(daily, since=since)
         report["calls_used"] = client.calls_used
         return report
@@ -626,6 +627,195 @@ class TestTheAuditOf20260925(Harness):
         self.assertEqual(len(self.copies("rejected-poor-filtering")), 25)
         posts = [len(c["json"]["records"]) for c in self.base.calls if c["method"] == "POST"]
         self.assertEqual(posts, [10, 10, 5])
+
+
+CHOICES = replace(CONFIG, reason_choices={
+    "rejected-not-a-fit": ("employer", "stack"),
+    "rejected-poor-filtering": ("wrong title match", "duplicate")})
+
+
+class ADR0062Harness(Harness):
+    def in_table(self, table, row, extra=None):
+        fields = fields_for(group([row])[0], MATCHER)
+        fields = {k: fields[k] for k in COPY_FIELDS}
+        fields.update(extra or {})
+        return self.base.seed(TABLES[table], fields)
+
+
+class TestGone(ADR0062Harness):
+    """ADR-0062's step 7: a posting he found gone is recorded and its row
+    leaves `Jobs` the morning after origin holds the record."""
+
+    def test_gone_keeps_a_posting_out_for_good(self):
+        """Stored at the first morning sweep, its row deleted only at the
+        next one, once the store is on origin; then the projection's skip
+        holds it out whatever the rules say. Mutation: "the gone store is
+        not read by the skip"."""
+        r = make_row(1)
+        self.store_rows([r])
+        self.in_jobs(r, status="gone", classified_days_ago=0, extra={"Reason": "duplicate"})
+        first = self.sweep()
+        [rec] = self.store("gone.json")
+        self.assertEqual((rec["identity"], rec["status"], rec["reason"], rec["accepted"],
+                          rec["marked_in"]), ("greenhouse:1", "gone", "duplicate", False, "Jobs"))
+        self.assertEqual(len(self.jobs()), 1, "deleted before origin held its record")
+        self.assertEqual(first["gone_recorded"], 1)
+        self.sweep()
+        self.assertEqual(self.jobs(), [])
+        from src.projection import identities_in, public_store_texts
+        self.assertIn("greenhouse:1", identities_in(public_store_texts(self.paths)))
+
+    def test_a_gone_row_waits_while_its_record_is_not_on_origin(self):
+        """A push that failed: the record is written again and the row stays."""
+        r = make_row(1)
+        self.store_rows([r])
+        self.in_jobs(r, status="gone", classified_days_ago=0)
+        self.sweep()
+        os.remove("%s/gone.json" % self.paths["outcomes_dir"])
+        self.sweep()
+        self.assertEqual(len(self.jobs()), 1)
+        self.assertEqual(len(self.store("gone.json")), 1)
+
+    def test_gone_on_an_accepted_posting_keeps_its_copy(self):
+        """Marked in `Jobs`, or by `Stage` on the copy once the row has left:
+        both reach the store, the copy stays, and neither is a problem."""
+        r1, r2 = make_row(1), make_row(2)
+        self.store_rows([r1, r2])
+        self.in_jobs(r1, status="gone", classified_days_ago=0)
+        self.in_table("accepted", r1)
+        self.in_table("accepted", r2, {"Stage": "gone"})
+        report = self.sweep()
+        self.sweep()
+        stored = {rec["identity"]: rec for rec in self.store("gone.json")}
+        self.assertEqual((stored["greenhouse:1"]["accepted"], stored["greenhouse:1"]["marked_in"]),
+                         (True, "Jobs"))
+        self.assertEqual((stored["greenhouse:2"]["accepted"], stored["greenhouse:2"]["marked_in"]),
+                         (True, "accepted"))
+        self.assertEqual(len(self.copies("accepted")), 2, "an accepted copy was removed")
+        self.assertEqual([p for p in report["problems"] if "accepted copy" in p], [])
+        self.assertEqual(self.jobs(), [])
+
+    def test_a_gone_mark_supersedes_a_rejection_copy_as_any_status_change(self):
+        r = make_row(1)
+        self.store_rows([r])
+        self.in_jobs(r, status="gone", classified_days_ago=0)
+        self.in_table("rejected-poor-filtering", r, {"Pipeline reason": "duplicate"})
+        self.sweep()
+        [saved] = self.store("removed_copies.json")
+        self.assertEqual(saved["reason"], "duplicate")
+        self.sweep()
+        self.assertEqual(self.copies("rejected-poor-filtering"), [])
+
+
+class TestApplied(ADR0062Harness):
+    def test_applied_makes_the_copy_with_its_stage_in_one_sweep(self):
+        """One sweep, the evening's copy step included: the copy arrives with
+        `Stage` applied. Mutation: "applied makes a copy without its
+        Stage"."""
+        r = make_row(1)
+        self.store_rows([r])
+        self.in_jobs(r, status="applied", classified_days_ago=0)
+        self.sweep(daily=False)
+        [c] = self.copies("accepted")
+        self.assertEqual((c["Identity"], c["Stage"]), ("greenhouse:1", "applied"))
+
+    def test_applied_raises_a_stage_and_never_lowers_or_overwrites_one(self):
+        """Empty and shortlisted are raised to applied; gone, which he set,
+        is left; and `accepted` never writes `Stage` at all. Mutation: "a
+        Stage is written over"."""
+        rows = [make_row(i) for i in range(1, 5)]
+        self.store_rows(rows)
+        for r, status, stage in ((rows[0], "applied", None), (rows[1], "applied", "shortlisted"),
+                                 (rows[2], "applied", "gone"), (rows[3], "accepted", None)):
+            self.in_jobs(r, status=status, classified_days_ago=0)
+            self.in_table("accepted", r, {"Stage": stage} if stage else None)
+        report = self.sweep(daily=False)
+        stages = {c["Identity"]: c.get("Stage") for c in self.copies("accepted")}
+        self.assertEqual(stages, {"greenhouse:1": "applied", "greenhouse:2": "applied",
+                                  "greenhouse:3": "gone", "greenhouse:4": None})
+        self.assertEqual(report["transcribed"], {"accepted": 2})
+
+    def test_an_applied_row_is_stored_as_accepted_with_applied_in_its_record(self):
+        r = make_row(1)
+        self.store_rows([r])
+        self.in_jobs(r, status="applied", classified_days_ago=16)
+        self.sweep()
+        [rec] = self.store("accepted.json")
+        self.assertEqual((rec["identity"], rec["status"], rec["reason"]),
+                         ("greenhouse:1", "applied", "applied"))
+
+
+class TestReason(ADR0062Harness):
+    def test_a_reason_reaches_the_copy_and_the_store(self):
+        """Mutation: "Reason never reaches the copy"."""
+        r = make_row(1)
+        self.store_rows([r])
+        self.in_jobs(r, status="rejected-poor-filtering", classified_days_ago=16,
+                     extra={"Reason": "duplicate"})
+        self.sweep(config=CHOICES, daily=False)
+        [c] = self.copies("rejected-poor-filtering")
+        self.assertEqual(c["Pipeline reason"], "duplicate")
+        self.sweep(config=CHOICES)
+        [rec] = self.store("rejected_poor_filtering.json")
+        self.assertEqual((rec["reason"], rec["reason_in_jobs"]), ("duplicate", "duplicate"))
+
+    def test_a_reason_outside_the_fields_choices_is_kept_and_named(self):
+        """One value the field lacks would fail a whole batch at Airtable;
+        it is kept in the store record and named in the run log instead.
+        Mutation: "a Reason outside the choices is sent"."""
+        r = make_row(1)
+        self.store_rows([r])
+        self.in_jobs(r, status="rejected-poor-filtering", classified_days_ago=16,
+                     extra={"Reason": "seniority in substance"})
+        report = self.sweep(config=CHOICES, daily=False)
+        [c] = self.copies("rejected-poor-filtering")
+        self.assertNotIn("Pipeline reason", c)
+        self.assertTrue([p for p in report["problems"] if "seniority in substance" in p])
+        self.sweep(config=CHOICES)
+        [rec] = self.store("rejected_poor_filtering.json")
+        self.assertEqual((rec["reason"], rec["reason_in_jobs"]), (None, "seniority in substance"))
+
+    def test_a_reason_he_set_on_a_copy_is_never_overwritten_and_an_empty_one_is_filled(self):
+        """Mutation: "a reason on a copy is written over"."""
+        r1, r2 = make_row(1), make_row(2)
+        self.store_rows([r1, r2])
+        for r in (r1, r2):
+            self.in_jobs(r, status="rejected-poor-filtering", classified_days_ago=1,
+                         extra={"Reason": "duplicate"})
+        self.in_table("rejected-poor-filtering", r1, {"Pipeline reason": "wrong title match"})
+        self.in_table("rejected-poor-filtering", r2)
+        report = self.sweep(config=CHOICES, daily=False)
+        reasons = {c["Identity"]: c.get("Pipeline reason")
+                   for c in self.copies("rejected-poor-filtering")}
+        self.assertEqual(reasons, {"greenhouse:1": "wrong title match",
+                                   "greenhouse:2": "duplicate"})
+        self.assertEqual(report["transcribed"], {"rejected-poor-filtering": 1})
+
+
+class TestUnknownStatusAndTheNumber(ADR0062Harness):
+    def test_a_status_the_sweep_does_not_know_makes_no_copy_and_moves_no_clock(self):
+        """Past the fifteen and the thirty days, nothing happens to it.
+        Mutation: "an unknown status is stored as accepted"."""
+        r = make_row(1)
+        self.store_rows([r])
+        self.in_jobs(r, status="later", classified_days_ago=40)
+        report = self.sweep()
+        for table in CLASSIFICATION_TABLES:
+            self.assertEqual(self.copies(table), [], table)
+        self.assertEqual(len(self.jobs()), 1)
+        for name in ("rejected_not_a_fit.json", "rejected_poor_filtering.json", "accepted.json",
+                     "removed_unreviewed.json", "gone.json"):
+            self.assertEqual(self.store(name), [], name)
+        self.assertEqual(report["deleted_from_jobs"], 0)
+
+    def test_the_jobs_number_follows_the_posting_into_accepted(self):
+        """Mutation: "an accepted copy is made without its Jobs No."."""
+        r = make_row(1)
+        self.store_rows([r])
+        self.in_jobs(r, status="accepted", classified_days_ago=0, extra={"No.": 42})
+        self.sweep(daily=False)
+        [c] = self.copies("accepted")
+        self.assertEqual(c["Jobs No."], 42)
 
 
 class TestNoClockMoves(Harness):

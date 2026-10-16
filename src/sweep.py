@@ -1,8 +1,13 @@
-"""The sweep. ADR-0050's six steps, in the record's order.
+"""The sweep. ADR-0062's steps, in the record's order; ADR-0062 consolidated
+ADR-0050 on 2026-10-16 and added `applied`, `gone` and `Reason`.
 
-1. **Copy.** Every row in `Jobs` with a status and no copy in the matching
-   table gets one. What happens to a copy its row's status no longer
-   matches is the operator's D12, 2026-09-26:
+1. **Copy.** Every row in `Jobs` whose status feeds a table and has no copy
+   there gets one: `applied` feeds `accepted`, with `Stage` applied in the
+   same create, and an `accepted` copy carries the row's `No.` as `Jobs No.`.
+   His `Reason` goes into a new rejection copy's reason field when the field
+   offers it, and fills an empty one; an existing copy's `Stage` is raised
+   to applied when he sets `applied`, never lowered. What happens to a copy
+   its row's status no longer matches is the operator's D12, 2026-09-26:
    - **a cleared status removes nothing**, since a clear is no new
      classification and one stray keystroke makes it;
    - **an `accepted` copy stays** whatever the status becomes, reported, for
@@ -26,6 +31,15 @@
 7. **ADR-0055's clock**: an unreviewed row leaves thirty days after it was
    first seen, with the reason `unreviewed-aged-out`. The number is
    `unreviewed_after_days` in `config/sweep.json`.
+8. **ADR-0062's step 7, gone**: a posting he marked `gone`, by `Status` in
+   `Jobs` or by `Stage` in `accepted`, is written to `gone.json`, and its
+   `Jobs` row leaves at the first morning sweep after origin holds it. An
+   `accepted` copy stays. (Numbered here after the clock, which this module
+   counts apart; the record numbers it seventh.)
+
+A `Status` the sweep does not know makes no copy and moves no clock: it
+feeds no table, the fifteen-day step skips it, and the unclassified steps
+skip any row with a status.
 
 **Rows the operator's tool removed leave by the same path.** ADR-0055's tool
 writes the store and nothing else; this sweep deletes the row once the store
@@ -57,20 +71,24 @@ store is never written to another; the row is reported and left.
 (ADR-0047). When it could not be restored they are copied, since a copy needs
 no store, and otherwise held and counted.
 
-**The pipeline writes none of the operator's fields.** `Status`, the reasons
-and `Stage` are read here and never sent; the client refuses them.
+**The pipeline never writes `Status`, and writes `Stage` and the reasons only
+as a transcription of a value he set in `Jobs` on the same posting**
+(ADR-0062): `Stage` only ever as applied, and never over a value he set. The
+client refuses anything else.
 """
 
 from datetime import datetime, timedelta, timezone
 
 from . import storage
-from .airtable_sweep import (CLASSIFICATION_TABLES, COPY_FIELDS, DELETE_FIELD, DELETE_YES, JOBS,
-                             OPERATOR_FIELD)
-from .config import is_publishable
+from .airtable_sweep import (APPLIED, CLASSIFICATION_TABLES, COPY_FIELDS, DELETE_FIELD,
+                             DELETE_YES, GONE, JOBS, JOBS_NUMBER_FIELD, NUMBER_FIELD,
+                             OPERATOR_FIELD, REASON_FIELD, STAGE_APPLIED, STAGE_FIELD, STAGE_GONE,
+                             TABLE_FOR_STATUS)
+from .config import REASON_TABLES, is_publishable
 from .dedupe import group
 from .filters import apply_chain
 from .normalise import Row
-from .projection import (REASON_AGED_OUT, REASON_CLOSED, REASON_REGROUPED,
+from .projection import (GONE_STORE, REASON_AGED_OUT, REASON_CLOSED, REASON_REGROUPED,
                          REMOVED_UNREVIEWED_STORE, RULE_REASON, latest_reasons, removal_key,
                          returns)
 
@@ -78,7 +96,9 @@ STORE_FOR = {"rejected-not-a-fit": "rejected_not_a_fit.json",
              "rejected-poor-filtering": "rejected_poor_filtering.json",
              "accepted": "accepted.json"}
 REJECTION_TABLES = ("rejected-not-a-fit", "rejected-poor-filtering")
-JOBS_FIELDS = COPY_FIELDS + ("Status", "Classified at", "Closed")
+JOBS_FIELDS = COPY_FIELDS + ("Status", "Classified at", "Closed", REASON_FIELD, NUMBER_FIELD)
+# Why a `gone` row leaves `Jobs`, in the run log.
+GONE_WHY = "he marked it gone"
 # Every copy the sweep removes from a classification table other than by the
 # fifteen-day clock, keyed by the copy's own record ID, since one posting can
 # be reclassified more than once. Not a classification store: the projection
@@ -116,7 +136,7 @@ class Stores:
         self.dirs = {"public": paths["outcomes_dir"]}
         if private_ok:
             self.dirs["private"] = paths["local_outcomes_dir"]
-        names = tuple(STORE_FOR.values()) + (REMOVED_UNREVIEWED_STORE,)
+        names = tuple(STORE_FOR.values()) + (REMOVED_UNREVIEWED_STORE, GONE_STORE)
         self.durable = {}
         self.durable_copies = {}
         # The removal store by (identity, reason): a row can leave, return
@@ -228,7 +248,8 @@ class Sweep:
                        "copies_deleted": {}, "closed_marked": 0, "closed_cleared": 0,
                        "waiting_for_the_store": 0, "held_private_unavailable": 0,
                        "not_in_the_stored_layers": 0, "kept_after_a_clear": 0,
-                       "aged_out": 0, "removals": [], "problems": []}
+                       "aged_out": 0, "gone_recorded": 0, "transcribed": {},
+                       "removals": [], "problems": []}
         self._load_rows()
 
     # ------------------------------------------------------------- the data
@@ -310,27 +331,39 @@ class Sweep:
                 index[t].setdefault(c["fields"].get("Identity"), []).append(c)
         self.copy_index = index
         create = {t: [] for t in CLASSIFICATION_TABLES}
+        transcribe = {t: [] for t in CLASSIFICATION_TABLES}
         superseded = {t: [] for t in REJECTION_TABLES}
         for r in jobs:
             identity, status = r["fields"].get("Identity"), r["fields"].get("Status")
             if not identity:
                 continue
+            # ADR-0062: `applied` feeds `accepted`; `gone`, and a value the
+            # sweep does not know, feed no table.
+            target = TABLE_FOR_STATUS.get(status)
             for t in CLASSIFICATION_TABLES:
                 held = index[t].get(identity, [])
-                if t == status and not held:
-                    create[t].append({name: r["fields"].get(name) for name in COPY_FIELDS})
-                elif t == status and len(held) > 1:
+                if t == target and not held:
+                    create[t].append(self.copy_fields(t, r["fields"], status))
+                elif t == target and len(held) > 1:
                     self._problem("%s has %d copies in %s" % (masked(identity), len(held), t))
-                elif t == status or not held:
+                elif t == target:
+                    update = self.transcription(t, held[0], r["fields"], status)
+                    if update is not None:
+                        transcribe[t].append(update)
+                elif not held:
                     continue
                 elif not status:
                     # A clear is no new classification, and one stray
                     # keystroke makes it: nothing is removed (D12).
                     self.report["kept_after_a_clear"] += len(held)
                 elif t == "accepted":
-                    self._problem("the accepted copy of %s is kept although its status is now %s; "
-                                  "set Delete on it to remove it from Airtable"
-                                  % (masked(identity), status))
+                    # A posting he accepted and then found gone keeps its
+                    # copy, as ADR-0062 says, and that is no problem to
+                    # report; any other new status is.
+                    if status != GONE:
+                        self._problem("the accepted copy of %s is kept although its status is "
+                                      "now %s; set Delete on it to remove it from Airtable"
+                                      % (masked(identity), status))
                 else:
                     superseded[t].extend((c, r["fields"], status) for c in held)
         for t in REJECTION_TABLES:
@@ -362,6 +395,54 @@ class Sweep:
             if create[t]:
                 self.client.create_copies(t, create[t])
                 self._bump("copied", t, len(create[t]))
+            if transcribe[t]:
+                self.client.transcribe(t, transcribe[t])
+                self._bump("transcribed", t, len(transcribe[t]))
+
+    # ------------------------------------------------- ADR-0062's transcription
+    def reason_for(self, table, fields):
+        """The `Reason` he set in `Jobs`, when `table`'s reason field offers
+        it; otherwise None, the value named in the run log and kept in the
+        store record, so one value the field lacks cannot fail a batch."""
+        value = fields.get(REASON_FIELD)
+        if not value or table not in REASON_TABLES:
+            return None
+        if value in self.config.reason_choices.get(table, ()):
+            return value
+        self._problem("the Reason %r of %s is not a choice of %s's %s; kept in its store "
+                      "record only" % (value, masked(fields.get("Identity")), table,
+                                       OPERATOR_FIELD[table]))
+        return None
+
+    def copy_fields(self, table, fields, status):
+        """A new copy: the ten identifying fields, and only as a transcription
+        of what he set in `Jobs` on this posting, `Stage` applied for an
+        `applied` row and the reason from `Reason`. An `accepted` copy carries
+        the row's `No.` as `Jobs No.`."""
+        record = {name: fields.get(name) for name in COPY_FIELDS}
+        if table == "accepted":
+            record[JOBS_NUMBER_FIELD] = fields.get(NUMBER_FIELD)
+            if status == APPLIED:
+                record[STAGE_FIELD] = STAGE_APPLIED
+        reason = self.reason_for(table, fields)
+        if reason is not None:
+            record[OPERATOR_FIELD[table]] = reason
+        return record
+
+    def transcription(self, table, copy, fields, status):
+        """What his `Jobs` row asks of a copy that exists, or None: `Stage`
+        raised to applied, from empty or shortlisted and never from any
+        other value, or an empty reason filled from `Reason`. A value he set
+        on the copy is never written over."""
+        held = copy["fields"].get(OPERATOR_FIELD[table])
+        if table == "accepted":
+            if status == APPLIED and held in (None, "", "shortlisted"):
+                return (copy["id"], STAGE_APPLIED)
+            return None
+        if held:
+            return None
+        reason = self.reason_for(table, fields)
+        return (copy["id"], reason) if reason is not None else None
 
     # ----------------------------------------------------------- steps 2-7
     def daily(self, jobs, copies, in_jobs=None):
@@ -376,9 +457,10 @@ class Sweep:
         for r in jobs:
             f = r["fields"]
             identity, status = f.get("Identity"), f.get("Status")
-            if not identity or status not in STORE_FOR:
+            table = TABLE_FOR_STATUS.get(status)
+            if not identity or table is None:
                 continue
-            where, name = self.stores.where(identity), STORE_FOR[status]
+            where, name = self.stores.where(identity), STORE_FOR[table]
             early = where is not None and self.stores.removed_by_operator(where, name, identity)
             if not early and not older_than(f.get("Classified at"), days, self.now):
                 continue
@@ -393,10 +475,17 @@ class Sweep:
             if self.stores.durable_has(where, name, identity):
                 delete_jobs.append((r["id"], identity, why))
                 continue
-            held = self.copy_index.get(status, {}).get(identity, [])
-            reason = held[0]["fields"].get(OPERATOR_FIELD[status]) if held else None
+            held = self.copy_index.get(table, {}).get(identity, [])
+            reason = held[0]["fields"].get(OPERATOR_FIELD[table]) if held else None
+            if reason is None and status == APPLIED:
+                # The `Stage` his `applied` means, before its copy is read.
+                reason = STAGE_APPLIED
+            # The copy's reason, or an accepted copy's `Stage`, as before,
+            # and his `Reason` from `Jobs` beside it (ADR-0062): two fields,
+            # since he may give one and change the other.
             self.stores.write(where, name, self.record(identity, f, status=status,
                                                        reason=reason,
+                                                       reason_in_jobs=f.get(REASON_FIELD),
                                                        classified_at=f.get("Classified at")))
             self._removal(identity, JOBS, why, "stored")
             self.report["waiting_for_the_store"] += 1
@@ -438,7 +527,8 @@ class Sweep:
                 self.report["held_private_unavailable"] += 1
                 continue
             row = in_jobs.get(identity)
-            row_accepted = row is not None and row["fields"].get("Status") == "accepted"
+            row_accepted = (row is not None
+                            and TABLE_FOR_STATUS.get(row["fields"].get("Status")) == "accepted")
             if row_accepted and self.stores.classified_elsewhere(where, STORE_FOR["accepted"],
                                                                  identity):
                 self._problem("%s is already in another classification store; its accepted "
@@ -462,7 +552,7 @@ class Sweep:
             if not stored:
                 rf = row["fields"]
                 self.stores.write(where, STORE_FOR["accepted"],
-                                  self.record(identity, rf, status="accepted",
+                                  self.record(identity, rf, status=rf.get("Status"),
                                               reason=f.get(OPERATOR_FIELD["accepted"]),
                                               classified_at=rf.get("Classified at")))
             self._removal(identity, "accepted", "the operator marked Delete", "stored")
@@ -470,6 +560,39 @@ class Sweep:
         if gone:
             self.client.delete("accepted", gone)
             self._bump("copies_deleted", "accepted", len(gone))
+
+        # ADR-0062's step 7: postings he found gone, by `Status` in `Jobs` or
+        # by `Stage` in `accepted`. Written to `gone.json` with his reason
+        # and whether he had accepted it; its `Jobs` row goes at the first
+        # morning sweep after origin holds the record, without the fifteen
+        # days. An `accepted` copy stays: `Delete` is still its only way out.
+        accepted_ids = {c["fields"].get("Identity") for c in copies["accepted"]}
+        for r in jobs:
+            f = r["fields"]
+            identity = f.get("Identity")
+            if not identity or f.get("Status") != GONE:
+                continue
+            where = self.stores.where(identity)
+            if where is None:
+                self.report["held_private_unavailable"] += 1
+                continue
+            if self.stores.durable_has(where, GONE_STORE, identity):
+                delete_jobs.append((r["id"], identity, GONE_WHY))
+                continue
+            self.record_gone(where, identity, f, f.get(REASON_FIELD), f.get("Classified at"),
+                             identity in accepted_ids, "Jobs")
+        for c in copies["accepted"]:
+            f = c["fields"]
+            identity = f.get("Identity")
+            if not identity or f.get(STAGE_FIELD) != STAGE_GONE:
+                continue
+            where = self.stores.where(identity)
+            if where is None:
+                self.report["held_private_unavailable"] += 1
+                continue
+            if self.stores.durable_has(where, GONE_STORE, identity):
+                continue
+            self.record_gone(where, identity, f, None, None, True, "accepted")
 
         # Steps 4 to 7: rows nobody classified.
         for r in jobs:
@@ -531,6 +654,21 @@ class Sweep:
             self.report["deleted_from_jobs"] += len(once)
             for identity, why in once.values():
                 self._removal(identity, JOBS, why, "deleted")
+
+    def record_gone(self, where, identity, fields, reason, classified_at, accepted, marked_in):
+        """One posting he found gone, into `gone.json`: what the posting was,
+        when he marked it, his reason, whether he had accepted it, and where
+        he marked it. Keyed by identity, so a posting marked in both places
+        is recorded once. The count of postings dead before he applied, by
+        source and by age at death, is read from this store."""
+        written = self.stores.write(where, GONE_STORE, self.record(
+            identity, fields, status=GONE, reason=reason, classified_at=classified_at,
+            accepted=accepted, marked_in=marked_in))
+        if written:
+            self._removal(identity, JOBS if marked_in == "Jobs" else "accepted", GONE_WHY,
+                          "stored")
+            self.report["gone_recorded"] += 1
+            self.report["waiting_for_the_store"] += 1
 
     def aged_out(self, identity, fields):
         """ADR-0055: first seen more than `unreviewed_after_days` ago. The

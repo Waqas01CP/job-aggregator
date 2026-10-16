@@ -1,0 +1,74 @@
+[
+  {
+    "label": "the gone store is not read by the skip",
+    "path": "src/projection.py",
+    "find": "    for name in CLASSIFICATION_STORES + (GONE_STORE, REMOVED_UNREVIEWED_STORE):",
+    "replace": "    for name in CLASSIFICATION_STORES + (REMOVED_UNREVIEWED_STORE,):"
+  },
+  {
+    "label": "a gone row is deleted before origin holds its record",
+    "path": "src/sweep.py",
+    "find": "            if self.stores.durable_has(where, GONE_STORE, identity):\n                delete_jobs.append((r[\"id\"], identity, GONE_WHY))",
+    "replace": "            if True:\n                delete_jobs.append((r[\"id\"], identity, GONE_WHY))"
+  },
+  {
+    "label": "a gone Stage on an accepted copy is not recorded",
+    "path": "src/sweep.py",
+    "find": "            if not identity or f.get(STAGE_FIELD) != STAGE_GONE:",
+    "replace": "            if True:"
+  },
+  {
+    "label": "applied makes a copy without its Stage",
+    "path": "src/sweep.py",
+    "find": "            if status == APPLIED:\n                record[STAGE_FIELD] = STAGE_APPLIED",
+    "replace": "            if False:\n                record[STAGE_FIELD] = STAGE_APPLIED"
+  },
+  {
+    "label": "a Stage is written over",
+    "path": "src/sweep.py",
+    "find": "            if status == APPLIED and held in (None, \"\", \"shortlisted\"):",
+    "replace": "            if status == APPLIED:"
+  },
+  {
+    "label": "Reason never reaches the copy",
+    "path": "src/sweep.py",
+    "find": "        if reason is not None:\n            record[OPERATOR_FIELD[table]] = reason",
+    "replace": "        if False:\n            record[OPERATOR_FIELD[table]] = reason"
+  },
+  {
+    "label": "a Reason outside the choices is sent",
+    "path": "src/sweep.py",
+    "find": "        if value in self.config.reason_choices.get(table, ()):\n            return value",
+    "replace": "        if True:\n            return value"
+  },
+  {
+    "label": "a reason on a copy is written over",
+    "path": "src/sweep.py",
+    "find": "        if held:\n            return None\n        reason = self.reason_for(table, fields)",
+    "replace": "        if False:\n            return None\n        reason = self.reason_for(table, fields)"
+  },
+  {
+    "label": "an unknown status is stored as accepted",
+    "path": "src/sweep.py",
+    "find": "            table = TABLE_FOR_STATUS.get(status)\n            if not identity or table is None:",
+    "replace": "            table = TABLE_FOR_STATUS.get(status, \"accepted\" if status else None)\n            if not identity or table is None:"
+  },
+  {
+    "label": "an accepted copy is made without its Jobs No.",
+    "path": "src/sweep.py",
+    "find": "            record[JOBS_NUMBER_FIELD] = fields.get(NUMBER_FIELD)",
+    "replace": "            pass"
+  },
+  {
+    "label": "Stage may be written as gone",
+    "path": "src/airtable_sweep.py",
+    "find": "TRANSCRIBED_STAGE_VALUES = (STAGE_APPLIED,)",
+    "replace": "TRANSCRIBED_STAGE_VALUES = (STAGE_APPLIED, STAGE_GONE, \"shortlisted\", None)"
+  },
+  {
+    "label": "the tool clears an applied row as nothing",
+    "path": "src/clearing.py",
+    "find": "            if status not in TABLE_FOR_STATUS:\n                continue\n            if copies is None:",
+    "replace": "            if status not in STORE_FOR:\n                continue\n            if copies is None:"
+  }
+]

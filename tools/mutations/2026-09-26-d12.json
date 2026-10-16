@@ -8,8 +8,8 @@
   {
     "label": "a status change deletes an accepted copy",
     "path": "src/sweep.py",
-    "find": "                    self._problem(\"the accepted copy of %s is kept although its status is now %s; \"\n                                  \"set Delete on it to remove it from Airtable\"\n                                  % (masked(identity), status))",
-    "replace": "                    self.client.delete(\"accepted\", [c[\"id\"] for c in held])"
+    "find": "                    if status != GONE:\n                        self._problem(\"the accepted copy of %s is kept although its status is \"\n                                      \"now %s; set Delete on it to remove it from Airtable\"\n                                      % (masked(identity), status))",
+    "replace": "                    if status != GONE:\n                        self.client.delete(\"accepted\", [c[\"id\"] for c in held])"
   },
   {
     "label": "a superseded copy is deleted before it is saved",

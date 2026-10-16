@@ -267,17 +267,38 @@ CONFIRMATIONS = {
 }
 
 # ADR-0062 consolidates ADR-0050 (2026-10-16): its eleven leads word for word,
-# held by the same tests, and six new ones, unbuilt until the build of
-# ADR-0062 holds them (Brief 13, items 0 and 1). ADR-0050's own entries stay,
-# since every record from ADR-0050 on is read.
-_UNBUILT = "designed and recorded in ADR-0062, not yet built; held by tests when its build lands"
+# held by the same tests, and six new ones, held since its build (Brief 13,
+# item 1). ADR-0050's own entries stay, since every record from ADR-0050 on
+# is read.
 CONFIRMATIONS["0062"] = dict(CONFIRMATIONS["0050"], **{
-    "`gone` must be seen keeping a posting out for good": {"unbuilt": _UNBUILT},
-    "`applied` must be seen making the copy with its `Stage` in one sweep": {"unbuilt": _UNBUILT},
-    "A `Reason` must be seen reaching the copy and the store": {"unbuilt": _UNBUILT},
-    "A `Status` the sweep does not know must make no copy and move no clock.": {
-        "unbuilt": _UNBUILT},
-    "`Jobs No.` must be seen following the posting into `accepted`.": {"unbuilt": _UNBUILT},
+    "`gone` must be seen keeping a posting out for good": {"tests": [
+        "test_sweep.TestGone.test_gone_keeps_a_posting_out_for_good",
+        "test_sweep.TestGone.test_a_gone_row_waits_while_its_record_is_not_on_origin",
+        "test_sweep.TestGone.test_gone_on_an_accepted_posting_keeps_its_copy",
+        "test_sweep.TestGone.test_a_gone_mark_supersedes_a_rejection_copy_as_any_status_change"]},
+    "`applied` must be seen making the copy with its `Stage` in one sweep": {"tests": [
+        "test_sweep.TestApplied.test_applied_makes_the_copy_with_its_stage_in_one_sweep",
+        "test_sweep.TestApplied.test_applied_raises_a_stage_and_never_lowers_or_overwrites_one",
+        "test_sweep.TestApplied.test_an_applied_row_is_stored_as_accepted_with_applied_in_its_record",
+        "test_airtable_sweep.TestOnlyWhatThePipelineOwns."
+        "test_a_transcription_sends_one_field_and_stage_only_as_applied",
+        "test_clearing.TestRowsLeave."
+        "test_an_applied_row_is_cleared_as_accepted_and_a_gone_row_is_already_leaving"]},
+    "A `Reason` must be seen reaching the copy and the store": {"tests": [
+        "test_sweep.TestReason.test_a_reason_reaches_the_copy_and_the_store",
+        "test_sweep.TestReason.test_a_reason_outside_the_fields_choices_is_kept_and_named",
+        "test_sweep.TestReason."
+        "test_a_reason_he_set_on_a_copy_is_never_overwritten_and_an_empty_one_is_filled",
+        "test_airtable_sweep.TestOnlyWhatThePipelineOwns."
+        "test_a_copy_carrying_status_or_another_tables_field_is_refused",
+        "test_fitness.TestFitnessFunctions.test_every_writer_sends_only_what_the_pipeline_owns"]},
+    "A `Status` the sweep does not know must make no copy and move no clock.": {"tests": [
+        "test_sweep.TestUnknownStatusAndTheNumber."
+        "test_a_status_the_sweep_does_not_know_makes_no_copy_and_moves_no_clock"]},
+    "`Jobs No.` must be seen following the posting into `accepted`.": {"tests": [
+        "test_sweep.TestUnknownStatusAndTheNumber.test_the_jobs_number_follows_the_posting_into_accepted",
+        "test_airtable_sweep.TestOnlyWhatThePipelineOwns."
+        "test_a_copy_may_carry_its_own_tables_transcribed_field"]},
     "The ceiling must be seen refusing at the configured figure": {"tests": [
         "test_run.TestTheCeiling.test_the_shipped_ceiling_reaches_every_client_the_run_builds",
         "test_run.TestTheCeiling.test_at_the_ceiling_the_display_stops_and_the_fetch_is_stored",

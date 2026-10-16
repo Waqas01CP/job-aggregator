@@ -26,7 +26,8 @@ sys.path.insert(0, ROOT)
 from src import storage
 from src.adapters import greenhouse, himalayas, lever
 from src.airtable import PIPELINE_FIELDS
-from src.airtable_sweep import CLASSIFICATION_TABLES, COPY_FIELDS, JOBS, TOOL_WRITES, WRITES
+from src.airtable_sweep import (CLASSIFICATION_TABLES, COPY_FIELDS, JOBS, JOBS_NUMBER_FIELD,
+                                TOOL_WRITES, TRANSCRIBED, WRITES)
 from src.config import Board
 from src.filters import TitleMatcher
 from src.normalise import Row, normalise
@@ -145,13 +146,24 @@ class TestFitnessFunctions(unittest.TestCase):
 
         copies = owners("## The three classification tables", ("Field", "Owner", "Holds"))
         self.assertTrue(set(copies.values()) <= {"pipeline", "operator", "Airtable"}, copies)
+        piped = {f for f, o in copies.items() if o == "pipeline"}
+        # `Jobs No.` is the pipeline's on `accepted` alone (ADR-0062).
         for table in CLASSIFICATION_TABLES:
-            self.assertEqual(set(WRITES[table]), {f for f, o in copies.items()
-                                                  if o == "pipeline"}, table)
-        self.assertEqual(set(COPY_FIELDS), {f for f, o in copies.items() if o == "pipeline"})
+            expected = piped if table == "accepted" else piped - {JOBS_NUMBER_FIELD}
+            self.assertEqual(set(WRITES[table]), expected, table)
+        self.assertEqual(set(COPY_FIELDS), piped - {JOBS_NUMBER_FIELD})
         for table, fields in TOOL_WRITES.items():
             for field in fields:
                 self.assertEqual(copies.get(field), "operator", "%s on %s" % (field, table))
+        # ADR-0062: the operator's fields the sweep transcribes are his, and
+        # nothing of the pipeline's own: the transcription is never a way
+        # for a pipeline value to reach an operator field.
+        operator = {name.strip() for f, o in copies.items() if o == "operator"
+                    for name in f.replace(" or ", ", ").split(",")}
+        for table, fields in TRANSCRIBED.items():
+            for field in fields:
+                self.assertIn(field, operator, "%s on %s" % (field, table))
+                self.assertNotIn(field, WRITES[table], "%s on %s" % (field, table))
 
         # The health table's writer, 2026-10-07: every field it sends is one
         # the pipeline owns there, and it owns nothing it does not send.

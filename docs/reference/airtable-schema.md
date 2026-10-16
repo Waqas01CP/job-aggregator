@@ -48,7 +48,7 @@ must be added here with its owner before the suite passes.
 run to be incapable of touching production state. Each has its own secret,
 and a test ID equal to a production one is refused.
 
-## `Jobs` and `Jobs test`, fourteen fields
+## `Jobs` and `Jobs test`, sixteen fields
 
 `Title` is the primary field. Airtable requires one and it cannot be removed,
 only renamed.
@@ -68,6 +68,8 @@ only renamed.
 | Family | single line text | pipeline | The role family of the matched term, ADR-0038. Created 2026-09-24 |
 | Closed | date | pipeline | The date the pipeline first saw the posting closed, ADR-0050; empty while open. The sweep writes it and nothing else touches it. Created 2026-09-25 |
 | Status | single select | operator | The operator's classification. See the choices below |
+| Reason | single select | operator | ADR-0062, 2026-10-16: his reason, set with `Status`, so it no longer waits for a copy. Its choices are those of `Choice reason` and `Pipeline reason` together. The sweep writes it into a new rejection copy's reason field when the field offers it, fills an empty one, and keeps it in every store record beside the copy's own |
+| No. | autonumber | Airtable | ADR-0062: a number Airtable assigns, so a row keeps a number he can quote. No client writes it, and the projection, the read-back, the sweep and the clearing tool each read only the fields they name, so none reads or compares it but the sweep, which copies it into `accepted` as `Jobs No.` |
 | Classified at | last modified time, watching `Status` alone | Airtable | When the classification was last set or changed, a clear included. The clock `Jobs` retires classified rows on |
 
 `Classified at` was created on 2026-09-20 on both tables and verified by
@@ -127,6 +129,7 @@ by D12 for the architecture chat to record.
 | Board | pipeline | Copied from `Jobs` |
 | Matched term | pipeline | Copied from `Jobs` |
 | Identity | pipeline | Copied from `Jobs`; what the store is keyed on and the verify checks |
+| Jobs No. | pipeline | `accepted` and `accepted test` only: the row's `No.` in `Jobs`, written by the sweep when it makes the copy, so one number follows the posting (ADR-0062) |
 | Choice reason, Pipeline reason or Stage | operator | The one that applies to the table, below |
 | Delete | operator | `accepted` and `accepted test` only. A single select whose one choice is yes: the operator's mark to remove the row from Airtable, once it is saved. Empty means keep. The pipeline reads it and never writes it (D12). *(2026-09-30: it has two writers, both his: him in the browser, and his clearing tool acting for him, which sets it on the rows he clears from `accepted` (ADR-0055). No pipeline writer sends it)* |
 | Classified | Airtable | Created time: when the copy arrived. The fifteen-day clock of the two rejection tables |
@@ -135,10 +138,20 @@ by D12 for the architecture chat to record.
 |---|---|---|
 | `rejected-not-a-fit` | Choice reason | employer, compensation, stack, recently applied to this employer, seniority in substance |
 | `rejected-poor-filtering` | Pipeline reason | wrong title match, location wrong, expired at surfacing, experience level, duplicate |
-| `accepted` | Stage | shortlisted, applied |
+| `accepted` | Stage | shortlisted, applied, gone |
 
 `Stage` on `accepted` is the operator's own distinction. Both values feed
 ADR-0044's star and nothing automated reads the difference.
+
+**Since ADR-0062 the sweep writes these operator fields, but only as a
+transcription of a value he set in `Jobs` on the same posting**: `Stage`
+applied when he sets `Status` to `applied`, raised from empty or shortlisted
+and never lowered; a reason from `Reason`, into a new copy or an empty
+reason, when the field offers it. It never writes `gone` into `Stage`; he
+sets that himself on a posting he had accepted and found dead, and the sweep
+records it in `gone.json`. The client refuses any other write to them.
+The reason choices are mirrored in `config/sweep.json`, so a choice he adds
+here is added there too, or that value is kept in the store only.
 
 ## Dates
 
@@ -163,9 +176,16 @@ it later as an inconsistency somebody chose.
   choice kept its ID, every marked row its meaning, and no `Classified at`
   moved. ADR-0046's `not fit` and `poor filtering` never reached the base.
   Empty means not yet reviewed, and that is what the `To review` view filters
-  on.
+  on. **ADR-0062, 2026-10-16, adds `applied` and `gone`**: `applied` feeds
+  `accepted`, its copy made with `Stage` applied; `gone`, for a posting he
+  finds dead, feeds no table: the sweep records it in `gone.json` and removes
+  the row. **He adds the two options only once the seat says the handling is
+  pushed**: before it, a row marked `applied` would get no copy.
+- **Reason**, on `Jobs` and `Jobs test`: the choices of `Choice reason` and
+  `Pipeline reason` together.
 - **Choice reason**, **Pipeline reason** and **Stage**: as the table above
-  lists, each on its own classification table.
+  lists, each on its own classification table; `gone` joins `Stage` with
+  `applied` and `gone` in `Status`.
 
 ## What the Airtable MCP cannot do
 

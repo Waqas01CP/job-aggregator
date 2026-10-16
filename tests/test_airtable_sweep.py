@@ -121,15 +121,53 @@ class TestOnlyWhatThePipelineOwns(unittest.TestCase):
     """ADR-0035: the operator's fields are never sent. Each case is refused
     before any request."""
 
-    def test_a_copy_carrying_status_or_a_reason_is_refused(self):
-        for extra in ({"Status": "accepted"}, {"Stage": "applied"},
-                      {"Pipeline reason": "duplicate"}, {"Classified": "2026-09-01"}):
-            with self.subTest(field=list(extra)[0]):
+    def test_a_copy_carrying_status_or_another_tables_field_is_refused(self):
+        """ADR-0062 lets a copy carry its own table's operator field, as a
+        transcription of what he set in `Jobs`, and nothing else of his:
+        never `Status`, never `Classified`, never another table's field, and
+        `Stage` only ever as applied. Mutation: "Stage may be written as
+        gone"."""
+        for table, extra in (("rejected-poor-filtering", {"Status": "accepted"}),
+                             ("rejected-poor-filtering", {"Stage": "applied"}),
+                             ("rejected-poor-filtering", {"Choice reason": "stack"}),
+                             ("rejected-poor-filtering", {"Classified": "2026-09-01"}),
+                             ("rejected-not-a-fit", {"Pipeline reason": "duplicate"}),
+                             ("accepted", {"Stage": "gone"}),
+                             ("accepted", {"Stage": "shortlisted"})):
+            with self.subTest(table=table, field=extra):
                 base = FakeBase({PROD[JOBS]})
                 c = client(base)
                 with self.assertRaises(ValueError):
-                    c.create_copies("rejected-poor-filtering", [dict(copy(1), **extra)])
+                    c.create_copies(table, [dict(copy(1), **extra)])
                 self.assertEqual(base.calls, [])
+
+    def test_a_copy_may_carry_its_own_tables_transcribed_field(self):
+        """The case built to defeat a refusal that refuses everything: the
+        transcriptions ADR-0062 allows are sent."""
+        for table, extra in (("rejected-poor-filtering", {"Pipeline reason": "duplicate"}),
+                             ("rejected-not-a-fit", {"Choice reason": "stack"}),
+                             ("accepted", {"Stage": "applied", "Jobs No.": 7})):
+            with self.subTest(table=table):
+                base = FakeBase({PROD[JOBS]})
+                client(base).create_copies(table, [dict(copy(1), **extra)])
+                [sent] = base.calls[0]["json"]["records"]
+                self.assertEqual({k: sent["fields"][k] for k in extra}, extra)
+
+    def test_a_transcription_sends_one_field_and_stage_only_as_applied(self):
+        """`transcribe` writes the table's one operator field on existing
+        copies, and refuses `Stage` as anything but applied."""
+        base = FakeBase({PROD[JOBS]})
+        record_id = base.seed(PROD["accepted"], copy(1))
+        c = client(base)
+        c.transcribe("accepted", [(record_id, "applied")])
+        self.assertEqual(base.calls[-1]["json"]["records"],
+                         [{"id": record_id, "fields": {"Stage": "applied"}}])
+        calls = len(base.calls)
+        for value in ("gone", "shortlisted", None):
+            with self.subTest(value=value):
+                with self.assertRaises(ValueError):
+                    c.transcribe("accepted", [(record_id, value)])
+        self.assertEqual(len(base.calls), calls)
 
     def test_a_copy_never_goes_to_jobs(self):
         c = client()

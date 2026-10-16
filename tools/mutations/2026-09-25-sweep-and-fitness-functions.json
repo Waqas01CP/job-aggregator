@@ -44,14 +44,14 @@
   {
     "label": "the reason is not carried to the store",
     "path": "src/sweep.py",
-    "find": "            reason = held[0][\"fields\"].get(OPERATOR_FIELD[status]) if held else None",
+    "find": "            reason = held[0][\"fields\"].get(OPERATOR_FIELD[table]) if held else None",
     "replace": "            reason = None"
   },
   {
     "label": "the copy step makes a second copy",
     "path": "src/sweep.py",
-    "find": "                if t == status and not held:",
-    "replace": "                if t == status:"
+    "find": "                if t == target and not held:",
+    "replace": "                if t == target:"
   },
   {
     "label": "a changed status keeps its old copy",

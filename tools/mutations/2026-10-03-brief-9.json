@@ -56,13 +56,13 @@
   {
     "label": "clearing Jobs passes over a classified row",
     "path": "src/clearing.py",
-    "find": "            if status not in STORE_FOR:\n                continue\n            if copies is None:",
+    "find": "            if status not in TABLE_FOR_STATUS:\n                continue\n            if copies is None:",
     "replace": "            if True:\n                continue\n            if copies is None:"
   },
   {
     "label": "clearing Jobs stores a classified row without its reason",
     "path": "src/clearing.py",
-    "find": "            reason = copy[\"fields\"].get(OPERATOR_FIELD[status]) if copy else None",
+    "find": "            reason = copy[\"fields\"].get(OPERATOR_FIELD[table]) if copy else None",
     "replace": "            reason = None"
   },
   {
@@ -182,7 +182,7 @@
   {
     "label": "a classified row with its outcome stored is not counted",
     "path": "src/clearing.py",
-    "find": "                count += self.stores.durable_has(where, STORE_FOR[status], identity)",
+    "find": "                count += self.stores.durable_has(where, STORE_FOR[TABLE_FOR_STATUS[status]],\n                                                 identity)",
     "replace": "                count += 0"
   },
   {

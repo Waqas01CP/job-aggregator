@@ -41,9 +41,12 @@ from .dedupe import group
 from .filters import apply_chain
 from .normalise import Row, loads
 
-# ADR-0043's three classification stores, the only ones the skip reads.
+# ADR-0043's three classification stores, read whole by the skip.
 CLASSIFICATION_STORES = ("rejected_not_a_fit.json", "rejected_poor_filtering.json",
                          "accepted.json")
+# ADR-0062's store of postings he found gone, ADR-0043's sixth. Read whole
+# too: a gone posting never returns, whatever a rule later says.
+GONE_STORE = "gone.json"
 # ADR-0046 step 4's store, read by the skip by reason and never as a whole:
 # read whole, a row that fell out on a narrowed rule could never return.
 REMOVED_UNREVIEWED_STORE = "removed_unreviewed.json"
@@ -102,7 +105,7 @@ class ProjectionError(Exception):
 
 def _store_texts(directory, label):
     out = []
-    for name in CLASSIFICATION_STORES + (REMOVED_UNREVIEWED_STORE,):
+    for name in CLASSIFICATION_STORES + (GONE_STORE, REMOVED_UNREVIEWED_STORE):
         path = "%s/%s" % (directory, name)
         try:
             with open(path, encoding="utf-8") as f:
