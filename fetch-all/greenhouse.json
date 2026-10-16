@@ -38274,5 +38274,33 @@
   "workplace": null,
   "required_places": null,
   "described_workplace": null
+ },
+ {
+  "identity": "greenhouse:5006251101",
+  "source": "greenhouse",
+  "board_id": "greenhouse:veeamsoftware",
+  "external_id": "5006251101",
+  "employer": "Veeam Software",
+  "employer_provenance": "payload",
+  "title": "Inside Sales Representative",
+  "title_normalised": "Inside Sales Representative",
+  "location": "Buenos Aires, Argentina",
+  "published_at": "2026-10-15T22:14:39Z",
+  "published_field": "first_published",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-16T03:25:03.566896Z",
+  "ordering_date": "2026-10-15T22:14:39Z",
+  "ordering_date_source": "publication",
+  "url": "https://job-boards.eu.greenhouse.io/veeamsoftware/jobs/5006251101",
+  "url_provenance": "payload",
+  "stated_experience": [
+   3
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": null,
+  "workplace": "Hybrid",
+  "required_places": null,
+  "described_workplace": null
  }
 ]
