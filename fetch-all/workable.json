@@ -1935,5 +1935,65 @@
   "workplace": "remote",
   "required_places": null,
   "described_workplace": null
+ },
+ {
+  "identity": "workable:29966B4E1F",
+  "source": "workable",
+  "board_id": "workable:petra-brands",
+  "external_id": "29966B4E1F",
+  "employer": "Petra Brands",
+  "employer_provenance": "envelope",
+  "title": "TikTok Shop Creator & Affiliate Specialist",
+  "title_normalised": "TikTok Shop Creator & Affiliate Specialist",
+  "location": "Manila, Metro Manila, Philippines",
+  "published_at": "2026-10-16T00:00:00Z",
+  "published_field": "published_on",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-16T17:13:38.579067Z",
+  "ordering_date": "2026-10-16T00:00:00Z",
+  "ordering_date_source": "publication",
+  "url": "https://apply.workable.com/j/29966B4E1F",
+  "url_provenance": "payload",
+  "stated_experience": [
+   1
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "PH"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null
+ },
+ {
+  "identity": "workable:29966B4E1F",
+  "source": "workable",
+  "board_id": "workable:petra-brands",
+  "external_id": "29966B4E1F",
+  "employer": "Petra Brands",
+  "employer_provenance": "envelope",
+  "title": "TikTok Shop Creator & Affiliate Specialist",
+  "title_normalised": "TikTok Shop Creator & Affiliate Specialist",
+  "location": "Pakistan",
+  "published_at": "2026-10-16T00:00:00Z",
+  "published_field": "published_on",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-16T17:13:38.579067Z",
+  "ordering_date": "2026-10-16T00:00:00Z",
+  "ordering_date_source": "publication",
+  "url": "https://apply.workable.com/j/29966B4E1F",
+  "url_provenance": "payload",
+  "stated_experience": [
+   1
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "PK"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null
  }
 ]

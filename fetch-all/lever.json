@@ -2100,5 +2100,35 @@
   "workplace": "onsite",
   "required_places": null,
   "described_workplace": null
+ },
+ {
+  "identity": "lever:bb1360f9-ecb4-4854-aa05-e55f040e8c13",
+  "source": "lever",
+  "board_id": "lever:spreetail",
+  "external_id": "bb1360f9-ecb4-4854-aa05-e55f040e8c13",
+  "employer": "Spreetail",
+  "employer_provenance": "slug",
+  "title": "FBA Analyst",
+  "title_normalised": "FBA Analyst",
+  "location": "Karachi",
+  "published_at": "2026-10-16T16:56:34.352000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-10-16T17:13:38.579067Z",
+  "ordering_date": "2026-10-16T16:56:34.352000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/spreetail/bb1360f9-ecb4-4854-aa05-e55f040e8c13",
+  "url_provenance": "payload",
+  "stated_experience": [
+   2
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "PK"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null
  }
 ]
