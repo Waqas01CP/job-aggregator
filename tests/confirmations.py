@@ -265,3 +265,18 @@ CONFIRMATIONS = {
             "test_run.TestMain.test_a_failure_reaches_the_health_table_once"]},
     },
 }
+
+# ADR-0062 consolidates ADR-0050 (2026-10-16): its eleven leads word for word,
+# held by the same tests, and six new ones, unbuilt until the build of
+# ADR-0062 holds them (Brief 13, items 0 and 1). ADR-0050's own entries stay,
+# since every record from ADR-0050 on is read.
+_UNBUILT = "designed and recorded in ADR-0062, not yet built; held by tests when its build lands"
+CONFIRMATIONS["0062"] = dict(CONFIRMATIONS["0050"], **{
+    "`gone` must be seen keeping a posting out for good": {"unbuilt": _UNBUILT},
+    "`applied` must be seen making the copy with its `Stage` in one sweep": {"unbuilt": _UNBUILT},
+    "A `Reason` must be seen reaching the copy and the store": {"unbuilt": _UNBUILT},
+    "A `Status` the sweep does not know must make no copy and move no clock.": {
+        "unbuilt": _UNBUILT},
+    "`Jobs No.` must be seen following the posting into `accepted`.": {"unbuilt": _UNBUILT},
+    "The ceiling must be seen refusing at the configured figure": {"unbuilt": _UNBUILT},
+})
