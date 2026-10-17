@@ -1,0 +1,662 @@
+{
+ "run_at": "2026-10-17T16:12:20.588444Z",
+ "test_mode": false,
+ "boards": [
+  {
+   "board": "greenhouse:banyancanopygroup",
+   "fetched": 8,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 8
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-05-14T09:16:38Z"
+  },
+  {
+   "board": "greenhouse:brkz",
+   "fetched": 23,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 21,
+    "seniority": 2
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2025-04-20T12:44:09Z"
+  },
+  {
+   "board": "greenhouse:careem",
+   "fetched": 14,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 11,
+    "seniority": 2,
+    "age": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2023-11-02T16:13:14Z"
+  },
+  {
+   "board": "greenhouse:coderoad",
+   "fetched": 25,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "experience": 2,
+    "location": 1,
+    "title": 15,
+    "seniority": 7
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-01-26T00:58:51Z"
+  },
+  {
+   "board": "greenhouse:globalli",
+   "fetched": 13,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 12,
+    "seniority": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-05-15T16:36:36Z"
+  },
+  {
+   "board": "greenhouse:gomotive",
+   "fetched": 153,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 147,
+    "experience": 1,
+    "seniority": 5
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2021-08-12T21:46:45Z"
+  },
+  {
+   "board": "greenhouse:joblogic",
+   "fetched": 26,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 2,
+   "drops": {
+    "age": 3,
+    "location": 1,
+    "title": 19,
+    "seniority": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-06-26T10:54:09Z"
+  },
+  {
+   "board": "greenhouse:speechify",
+   "fetched": 492,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 492
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2021-03-12T21:28:31Z"
+  },
+  {
+   "board": "greenhouse:veeamsoftware",
+   "fetched": 216,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 188,
+    "location": 10,
+    "experience": 1,
+    "seniority": 17
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2025-01-15T17:33:52Z"
+  },
+  {
+   "board": "himalayas:pakistan",
+   "fetched": 100,
+   "parse_problems": 0,
+   "new": 29,
+   "kept": 9,
+   "drops": {
+    "title": 84,
+    "experience": 1,
+    "level": 4,
+    "seniority": 2
+   },
+   "status": "ok",
+   "detail": null,
+   "pages": 5,
+   "walk": {
+    "stopped_by": "mark",
+    "mark": "2026-10-17T02:50:06Z"
+   },
+   "capped": false,
+   "agreement": {
+    "browse_read": 20,
+    "returned_by_search": 0,
+    "rule_excludes": 20,
+    "newly_waiting": 0,
+    "returned_since": 0,
+    "disagreements": 0,
+    "still_waiting": 0,
+    "gave_up": 0
+   },
+   "oldest_published": "2026-10-16T11:25:35Z"
+  },
+  {
+   "board": "lever:smart-working-solutions",
+   "fetched": 21,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 11,
+    "seniority": 7,
+    "authorisation": 1,
+    "location": 1,
+    "experience": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-07-03T10:32:20.479000Z"
+  },
+  {
+   "board": "lever:spreetail",
+   "fetched": 38,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 36,
+    "seniority": 2
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2025-09-23T21:08:41.072000Z"
+  },
+  {
+   "board": "manatal:abacus-consulting-3",
+   "fetched": 168,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 6,
+   "drops": {
+    "title": 156,
+    "experience": 2,
+    "seniority": 4
+   },
+   "status": "ok",
+   "detail": null,
+   "pages": 9,
+   "walk": {
+    "stopped_by": "end",
+    "mark": "2026-10-10T16:12:19.588444Z"
+   },
+   "capped": false,
+   "oldest_published": null
+  },
+  {
+   "board": "manatal:ahdus-technology-2",
+   "fetched": 27,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 1,
+   "drops": {
+    "location": 2,
+    "title": 17,
+    "seniority": 7
+   },
+   "status": "ok",
+   "detail": null,
+   "pages": 2,
+   "walk": {
+    "stopped_by": "end",
+    "mark": "2026-10-10T16:12:19.588444Z"
+   },
+   "capped": false,
+   "oldest_published": null
+  },
+  {
+   "board": "manatal:codedistrict",
+   "fetched": 6,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 6
+   },
+   "status": "ok",
+   "detail": null,
+   "pages": 1,
+   "walk": {
+    "stopped_by": "end",
+    "mark": "2026-10-10T16:12:19.588444Z"
+   },
+   "capped": false,
+   "oldest_published": null
+  },
+  {
+   "board": "manatal:gigalabs-private-ltd",
+   "fetched": 1,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "experience": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "pages": 1,
+   "walk": {
+    "stopped_by": "end",
+    "mark": "2026-10-10T16:12:19.588444Z"
+   },
+   "capped": false,
+   "oldest_published": null
+  },
+  {
+   "board": "manatal:hazen-technologies",
+   "fetched": 0,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {},
+   "status": "ok",
+   "detail": null,
+   "pages": 1,
+   "walk": {
+    "stopped_by": "end",
+    "mark": "2026-10-10T16:12:19.588444Z"
+   },
+   "capped": false,
+   "oldest_published": null
+  },
+  {
+   "board": "manatal:itc-worldwide-info",
+   "fetched": 336,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 1,
+   "drops": {
+    "title": 331,
+    "experience": 4
+   },
+   "status": "ok",
+   "detail": null,
+   "pages": 24,
+   "walk": {
+    "stopped_by": "end",
+    "mark": "2026-10-10T16:12:19.588444Z"
+   },
+   "capped": false,
+   "oldest_published": null
+  },
+  {
+   "board": "manatal:premiernx",
+   "fetched": 33,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 32,
+    "location": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "pages": 2,
+   "walk": {
+    "stopped_by": "end",
+    "mark": "2026-10-10T16:12:19.588444Z"
+   },
+   "capped": false,
+   "oldest_published": null
+  },
+  {
+   "board": "manatal:spursol",
+   "fetched": 7,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 5,
+    "seniority": 2
+   },
+   "status": "ok",
+   "detail": null,
+   "pages": 1,
+   "walk": {
+    "stopped_by": "end",
+    "mark": "2026-10-10T16:12:19.588444Z"
+   },
+   "capped": false,
+   "oldest_published": null
+  },
+  {
+   "board": "manatal:wadic-2",
+   "fetched": 9,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 9
+   },
+   "status": "ok",
+   "detail": null,
+   "pages": 1,
+   "walk": {
+    "stopped_by": "end",
+    "mark": "2026-10-10T16:12:19.588444Z"
+   },
+   "capped": false,
+   "oldest_published": null
+  },
+  {
+   "board": "smartrecruiters:OneScreen",
+   "fetched": 10,
+   "parse_problems": 0,
+   "new": 10,
+   "kept": 0,
+   "drops": {
+    "title": 9,
+    "level": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "pages": 1,
+   "walk": {
+    "stopped_by": "end",
+    "mark": "2026-10-10T16:12:19.588444Z"
+   },
+   "capped": false,
+   "details": 10,
+   "details_failed": 0,
+   "oldest_published": "2023-08-16T09:16:41.896000Z"
+  },
+  {
+   "board": "smartrecruiters:SeekaTechnology",
+   "fetched": 10,
+   "parse_problems": 0,
+   "new": 10,
+   "kept": 0,
+   "drops": {
+    "title": 7,
+    "experience": 1,
+    "location": 2
+   },
+   "status": "ok",
+   "detail": null,
+   "pages": 1,
+   "walk": {
+    "stopped_by": "end",
+    "mark": "2026-10-10T16:12:19.588444Z"
+   },
+   "capped": false,
+   "details": 10,
+   "details_failed": 0,
+   "oldest_published": "2025-05-27T07:34:47.230000Z"
+  },
+  {
+   "board": "workable:creative-chaos",
+   "fetched": 0,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {},
+   "status": "ok",
+   "detail": null,
+   "oldest_published": null
+  },
+  {
+   "board": "workable:igate-technologies",
+   "fetched": 21,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 20,
+    "seniority": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2025-03-19T00:00:00Z"
+  },
+  {
+   "board": "workable:inbox-business-technologies",
+   "fetched": 9,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 9
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-08-25T00:00:00Z"
+  },
+  {
+   "board": "workable:petra-brands",
+   "fetched": 21,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 21
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-08-10T00:00:00Z"
+  },
+  {
+   "board": "workable:staunch",
+   "fetched": 3,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 1,
+    "seniority": 2
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-09-21T00:00:00Z"
+  },
+  {
+   "board": "workable:thingtrax",
+   "fetched": 3,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 3
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-01-20T00:00:00Z"
+  }
+ ],
+ "totals": {
+  "fetched": 1793,
+  "new": 49,
+  "kept": 19,
+  "kept_without_description": 1,
+  "written_raw": {
+   "himalayas": 29,
+   "smartrecruiters": 20
+  },
+  "written_filtered": 1,
+  "backfilled": 0,
+  "backfilled_public": 0,
+  "backfilled_local": 0,
+  "written_filtered_local": 1,
+  "drops": {
+   "expiry": 0,
+   "annotation_vendor": 0,
+   "title": 1670,
+   "seniority": 62,
+   "level": 5,
+   "experience": 14,
+   "authorisation": 1,
+   "location": 18,
+   "age": 4
+  },
+  "dedupe": {
+   "postings": 1793,
+   "groups": 1186,
+   "collapsed": 607,
+   "largest_group": 184
+  }
+ },
+ "requests": {
+  "requests_used": 87,
+  "budget": 500,
+  "budget_remaining": 413,
+  "by_source": {
+   "greenhouse": 9,
+   "lever": 2,
+   "himalayas": 6,
+   "manatal": 42,
+   "workable": 6,
+   "smartrecruiters": 22
+  },
+  "retries": 0,
+  "failures": 0,
+  "refused": 0,
+  "circuit_open": false,
+  "circuits_open": []
+ },
+ "stopped": null,
+ "source_class": {
+  "greenhouse": "ats",
+  "lever": "ats",
+  "himalayas": "aggregator",
+  "manatal": "ats",
+  "workable": "ats",
+  "smartrecruiters": "ats"
+ },
+ "facts": {
+  "fingerprint": "d39368f63adc566a",
+  "reread": true,
+  "failure": null,
+  "files": 38,
+  "read": 4945,
+  "unknown_board": 0,
+  "unparseable": 0
+ },
+ "private_store": {
+  "branch": "data",
+  "restored": 9,
+  "pushed": true,
+  "failure": null,
+  "full": {
+   "pending": 48,
+   "saved": 48,
+   "file": "full/20261017T161220.588444Z.json",
+   "verified": true,
+   "failure": null,
+   "bytes": 293575
+  },
+  "files": 10,
+  "outcomes_pushed": false
+ },
+ "projection": {
+  "stored_identities": 34,
+  "rows_read": 561,
+  "rows_admitted": 132,
+  "groups": 128,
+  "groups_skipped_by_store": 14,
+  "groups_retired_closed": 0,
+  "rows_to_send": 114,
+  "rows_in_base": 154,
+  "rows_unchanged": 113,
+  "rows_new": 1,
+  "rows_changed": 0,
+  "rows_sent": 1
+ },
+ "airtable": {
+  "calls_used": 3,
+  "rows_sent": 1,
+  "monthly_ceiling": 900,
+  "month_to_date_before_run": 455,
+  "month_remaining": 442,
+  "retries": 0,
+  "failures": 0,
+  "refused": 0,
+  "circuit_open": false,
+  "failure": null,
+  "month_to_date_by_branch": {
+   "data": 412,
+   "data-test": 43
+  },
+  "read_calls": 2
+ },
+ "sweep": {
+  "copied": {},
+  "stale_copies_deleted": {},
+  "deleted_from_jobs": 0,
+  "copies_deleted": {},
+  "closed_marked": 0,
+  "closed_cleared": 0,
+  "waiting_for_the_store": 0,
+  "held_private_unavailable": 0,
+  "not_in_the_stored_layers": 0,
+  "kept_after_a_clear": 0,
+  "aged_out": 0,
+  "gone_recorded": 0,
+  "transcribed": {},
+  "removals": [],
+  "problems": [],
+  "daily": false,
+  "jobs_rows": 155,
+  "tables_read": false,
+  "stored_written": {},
+  "calls_used": 2,
+  "retries": 0,
+  "failures": 0,
+  "refused": 0,
+  "circuit_open": false,
+  "failure": null
+ },
+ "health": {
+  "calls_used": 1,
+  "sent": [
+   "contract 2026-10-17T11:04:48.333378Z smartrecruiters",
+   "contract 2026-10-17T11:04:48.333378Z workable posting.experience"
+  ],
+  "failure": null,
+  "pending": 2,
+  "rows_sent": 2
+ },
+ "budget": {
+  "month_to_date": 461,
+  "allowance": 900,
+  "share": 0.512,
+  "warning": null
+ },
+ "attention": {
+  "failed_in_a_row": 0,
+  "escalate": false
+ }
+}

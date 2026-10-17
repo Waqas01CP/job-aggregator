@@ -1,0 +1,633 @@
+[
+ {
+  "identity": "smartrecruiters:744000153018507",
+  "source": "smartrecruiters",
+  "board_id": "smartrecruiters:OneScreen",
+  "external_id": "744000153018507",
+  "employer": "OneScreen",
+  "employer_provenance": "payload",
+  "title": "Product Operations Engineer",
+  "title_normalised": "Product Operations Engineer",
+  "location": "Islamabad, Pakistan",
+  "published_at": "2026-10-01T19:44:01.110000Z",
+  "published_field": "releasedDate",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-17T16:12:20.588444Z",
+  "ordering_date": "2026-10-01T19:44:01.110000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.smartrecruiters.com/OneScreen/744000153018507-product-operations-engineer",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": [
+   "Entry Level"
+  ],
+  "places": [
+   "PK"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null,
+  "described": true
+ },
+ {
+  "identity": "smartrecruiters:744000143229669",
+  "source": "smartrecruiters",
+  "board_id": "smartrecruiters:OneScreen",
+  "external_id": "744000143229669",
+  "employer": "OneScreen",
+  "employer_provenance": "payload",
+  "title": "Sales Engineer",
+  "title_normalised": "Sales Engineer",
+  "location": "Islamabad, Pakistan",
+  "published_at": "2026-08-13T05:07:11.914000Z",
+  "published_field": "releasedDate",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-17T16:12:20.588444Z",
+  "ordering_date": "2026-08-13T05:07:11.914000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.smartrecruiters.com/OneScreen/744000143229669-sales-engineer",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": [
+   "Entry Level"
+  ],
+  "places": [
+   "PK"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": "on site",
+  "described": true
+ },
+ {
+  "identity": "smartrecruiters:744000139131871",
+  "source": "smartrecruiters",
+  "board_id": "smartrecruiters:OneScreen",
+  "external_id": "744000139131871",
+  "employer": "OneScreen",
+  "employer_provenance": "payload",
+  "title": "Android Developer Intern",
+  "title_normalised": "Android Developer Intern",
+  "location": "Islamabad, Islamabad Capital Territory, Pakistan",
+  "published_at": "2026-07-22T18:03:39.110000Z",
+  "published_field": "releasedDate",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-17T16:12:20.588444Z",
+  "ordering_date": "2026-07-22T18:03:39.110000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.smartrecruiters.com/OneScreen/744000139131871-android-developer-intern",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": [
+   "Entry Level"
+  ],
+  "places": [
+   "PK"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": "on site",
+  "described": true
+ },
+ {
+  "identity": "smartrecruiters:744000139128879",
+  "source": "smartrecruiters",
+  "board_id": "smartrecruiters:OneScreen",
+  "external_id": "744000139128879",
+  "employer": "OneScreen",
+  "employer_provenance": "payload",
+  "title": "Android Developer",
+  "title_normalised": "Android Developer",
+  "location": "Islamabad, Islamabad Capital Territory, Pakistan",
+  "published_at": "2026-07-22T17:29:15.214000Z",
+  "published_field": "releasedDate",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-17T16:12:20.588444Z",
+  "ordering_date": "2026-07-22T17:29:15.214000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.smartrecruiters.com/OneScreen/744000139128879-android-developer",
+  "url_provenance": "payload",
+  "stated_experience": [
+   1
+  ],
+  "expires_at": null,
+  "stated_levels": [
+   "Entry Level"
+  ],
+  "places": [
+   "PK"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": "on site",
+  "described": true
+ },
+ {
+  "identity": "smartrecruiters:744000133687159",
+  "source": "smartrecruiters",
+  "board_id": "smartrecruiters:OneScreen",
+  "external_id": "744000133687159",
+  "employer": "OneScreen",
+  "employer_provenance": "payload",
+  "title": "UI/UX Designer",
+  "title_normalised": "UI/UX Designer",
+  "location": "Islamabad, Islamabad Capital Territory, Pakistan",
+  "published_at": "2026-06-23T19:54:35.518000Z",
+  "published_field": "releasedDate",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-17T16:12:20.588444Z",
+  "ordering_date": "2026-06-23T19:54:35.518000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.smartrecruiters.com/OneScreen/744000133687159-ui-ux-designer",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": [
+   "Entry Level"
+  ],
+  "places": [
+   "PK"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": "on site",
+  "described": true
+ },
+ {
+  "identity": "smartrecruiters:744000115272321",
+  "source": "smartrecruiters",
+  "board_id": "smartrecruiters:OneScreen",
+  "external_id": "744000115272321",
+  "employer": "OneScreen",
+  "employer_provenance": "payload",
+  "title": "AI Engineer (Automation & Systems)",
+  "title_normalised": "AI Engineer (Automation & Systems)",
+  "location": "Islamabad, Pakistan",
+  "published_at": "2026-03-17T16:56:51.040000Z",
+  "published_field": "releasedDate",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-17T16:12:20.588444Z",
+  "ordering_date": "2026-03-17T16:56:51.040000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.smartrecruiters.com/OneScreen/744000115272321-ai-engineer-automation-systems-",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": [
+   "Executive"
+  ],
+  "places": [
+   "PK"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null,
+  "described": true
+ },
+ {
+  "identity": "smartrecruiters:744000058141205",
+  "source": "smartrecruiters",
+  "board_id": "smartrecruiters:OneScreen",
+  "external_id": "744000058141205",
+  "employer": "OneScreen",
+  "employer_provenance": "payload",
+  "title": "Video Editor and Content Creator",
+  "title_normalised": "Video Editor and Content Creator",
+  "location": "Islamabad, Pakistan",
+  "published_at": "2025-05-07T19:00:07.786000Z",
+  "published_field": "releasedDate",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-17T16:12:20.588444Z",
+  "ordering_date": "2025-05-07T19:00:07.786000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.smartrecruiters.com/OneScreen/744000058141205-video-editor-and-content-creator",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": [
+   "Entry Level"
+  ],
+  "places": [
+   "PK"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true
+ },
+ {
+  "identity": "smartrecruiters:744000015213792",
+  "source": "smartrecruiters",
+  "board_id": "smartrecruiters:OneScreen",
+  "external_id": "744000015213792",
+  "employer": "OneScreen",
+  "employer_provenance": "payload",
+  "title": "Product Operations Engineer",
+  "title_normalised": "Product Operations Engineer",
+  "location": "Islamabad, Pakistan",
+  "published_at": "2024-09-19T18:14:42.518000Z",
+  "published_field": "releasedDate",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-17T16:12:20.588444Z",
+  "ordering_date": "2024-09-19T18:14:42.518000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.smartrecruiters.com/OneScreen/744000015213792-product-operations-engineer",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": [
+   "Entry Level"
+  ],
+  "places": [
+   "PK"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null,
+  "described": true
+ },
+ {
+  "identity": "smartrecruiters:744000003939158",
+  "source": "smartrecruiters",
+  "board_id": "smartrecruiters:OneScreen",
+  "external_id": "744000003939158",
+  "employer": "OneScreen",
+  "employer_provenance": "payload",
+  "title": "Operations Executive",
+  "title_normalised": "Operations Executive",
+  "location": "Islamabad, ICT, Pakistan",
+  "published_at": "2024-07-31T20:39:44.334000Z",
+  "published_field": "releasedDate",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-17T16:12:20.588444Z",
+  "ordering_date": "2024-07-31T20:39:44.334000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.smartrecruiters.com/OneScreen/744000003939158-operations-executive",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": [
+   "Entry Level"
+  ],
+  "places": [
+   "PK"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null,
+  "described": true
+ },
+ {
+  "identity": "smartrecruiters:743999924896913",
+  "source": "smartrecruiters",
+  "board_id": "smartrecruiters:OneScreen",
+  "external_id": "743999924896913",
+  "employer": "OneScreen",
+  "employer_provenance": "payload",
+  "title": "Senior Customer Communications and Retention Lead",
+  "title_normalised": "Senior Customer Communications and Retention Lead",
+  "location": "Islamabad, Islamabad Capital Territory, Pakistan",
+  "published_at": "2023-08-16T09:16:41.896000Z",
+  "published_field": "releasedDate",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-17T16:12:20.588444Z",
+  "ordering_date": "2023-08-16T09:16:41.896000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.smartrecruiters.com/OneScreen/743999924896913-senior-customer-communications-and-retention-lead",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": [
+   "Mid-Senior Level"
+  ],
+  "places": [
+   "PK"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null,
+  "described": true
+ },
+ {
+  "identity": "smartrecruiters:744000126183660",
+  "source": "smartrecruiters",
+  "board_id": "smartrecruiters:SeekaTechnology",
+  "external_id": "744000126183660",
+  "employer": "Seeka Technology",
+  "employer_provenance": "payload",
+  "title": "AI Driven Marketing & Market Research Intern",
+  "title_normalised": "AI Driven Marketing & Market Research Intern",
+  "location": "Petaling Jaya, Selangor, Malaysia",
+  "published_at": "2026-05-13T00:37:13.746000Z",
+  "published_field": "releasedDate",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-17T16:12:20.588444Z",
+  "ordering_date": "2026-05-13T00:37:13.746000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.smartrecruiters.com/SeekaTechnology/744000126183660-ai-driven-marketing-market-research-intern",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": [
+   "Internship"
+  ],
+  "places": [
+   "MY"
+  ],
+  "workplace": "hybrid",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true
+ },
+ {
+  "identity": "smartrecruiters:744000125952509",
+  "source": "smartrecruiters",
+  "board_id": "smartrecruiters:SeekaTechnology",
+  "external_id": "744000125952509",
+  "employer": "Seeka Technology",
+  "employer_provenance": "payload",
+  "title": "Graphics Design Internship (Ui/UX) - WFH/Remote Work",
+  "title_normalised": "Graphics Design Internship (Ui/UX) - WFH/Remote Work",
+  "location": "Petaling Jaya, Selangor, Malaysia",
+  "published_at": "2026-05-11T23:37:13.142000Z",
+  "published_field": "releasedDate",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-17T16:12:20.588444Z",
+  "ordering_date": "2026-05-11T23:37:13.142000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.smartrecruiters.com/SeekaTechnology/744000125952509-graphics-design-internship-ui-ux-wfh-remote-work",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": [
+   "Internship"
+  ],
+  "places": [
+   "MY"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true
+ },
+ {
+  "identity": "smartrecruiters:744000125781539",
+  "source": "smartrecruiters",
+  "board_id": "smartrecruiters:SeekaTechnology",
+  "external_id": "744000125781539",
+  "employer": "Seeka Technology",
+  "employer_provenance": "payload",
+  "title": "Backend AI & Data Pipeline Engineer",
+  "title_normalised": "Backend AI & Data Pipeline Engineer",
+  "location": "Islamabad, Islamabad Capital Territory, Pakistan",
+  "published_at": "2026-05-11T08:44:32.961000Z",
+  "published_field": "releasedDate",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-17T16:12:20.588444Z",
+  "ordering_date": "2026-05-11T08:44:32.961000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.smartrecruiters.com/SeekaTechnology/744000125781539-backend-ai-data-pipeline-engineer",
+  "url_provenance": "payload",
+  "stated_experience": [
+   1
+  ],
+  "expires_at": null,
+  "stated_levels": [
+   "Internship"
+  ],
+  "places": [
+   "PK"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true
+ },
+ {
+  "identity": "smartrecruiters:744000125248224",
+  "source": "smartrecruiters",
+  "board_id": "smartrecruiters:SeekaTechnology",
+  "external_id": "744000125248224",
+  "employer": "Seeka Technology",
+  "employer_provenance": "payload",
+  "title": "Java Backend Developer - WFH/ Remote-Work (5 Years Exp Needed At least)",
+  "title_normalised": "Java Backend Developer - WFH/ Remote-Work (5 Years Exp Needed At least)",
+  "location": "Islamabad, Islamabad Capital Territory, Pakistan",
+  "published_at": "2026-05-08T02:21:42.406000Z",
+  "published_field": "releasedDate",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-17T16:12:20.588444Z",
+  "ordering_date": "2026-05-08T02:21:42.406000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.smartrecruiters.com/SeekaTechnology/744000125248224-java-backend-developer-wfh-remote-work-5-years-exp-needed-at-least-",
+  "url_provenance": "payload",
+  "stated_experience": [
+   5,
+   4
+  ],
+  "expires_at": null,
+  "stated_levels": [
+   "Mid-Senior Level"
+  ],
+  "places": [
+   "PK"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true
+ },
+ {
+  "identity": "smartrecruiters:744000094288379",
+  "source": "smartrecruiters",
+  "board_id": "smartrecruiters:SeekaTechnology",
+  "external_id": "744000094288379",
+  "employer": "Seeka Technology",
+  "employer_provenance": "payload",
+  "title": "Full-Time QA Tester - WFH/Remote",
+  "title_normalised": "Full-Time QA Tester - WFH/Remote",
+  "location": "Islamabad, Islamabad Capital Territory, Pakistan",
+  "published_at": "2025-11-18T23:34:36.386000Z",
+  "published_field": "releasedDate",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-17T16:12:20.588444Z",
+  "ordering_date": "2025-11-18T23:34:36.386000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.smartrecruiters.com/SeekaTechnology/744000094288379-full-time-qa-tester-wfh-remote-",
+  "url_provenance": "payload",
+  "stated_experience": [
+   5
+  ],
+  "expires_at": null,
+  "stated_levels": [
+   "Entry Level"
+  ],
+  "places": [
+   "PK"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true
+ },
+ {
+  "identity": "smartrecruiters:744000088287036",
+  "source": "smartrecruiters",
+  "board_id": "smartrecruiters:SeekaTechnology",
+  "external_id": "744000088287036",
+  "employer": "Seeka Technology",
+  "employer_provenance": "payload",
+  "title": "IT / Web Scrapping / QA Tester Internship / A.I. Automation - WFH/Remote Work",
+  "title_normalised": "IT / Web Scrapping / QA Tester Internship / A.I. Automation - WFH/Remote Work",
+  "location": "Petaling Jaya, Selangor, Malaysia",
+  "published_at": "2025-10-16T09:54:44.019000Z",
+  "published_field": "releasedDate",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-17T16:12:20.588444Z",
+  "ordering_date": "2025-10-16T09:54:44.019000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.smartrecruiters.com/SeekaTechnology/744000088287036-it-web-scrapping-qa-tester-internship-a-i-automation-wfh-remote-work",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": [
+   "Internship"
+  ],
+  "places": [
+   "MY"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true
+ },
+ {
+  "identity": "smartrecruiters:744000063648206",
+  "source": "smartrecruiters",
+  "board_id": "smartrecruiters:SeekaTechnology",
+  "external_id": "744000063648206",
+  "employer": "Seeka Technology",
+  "employer_provenance": "payload",
+  "title": "Software Engineer Internship - Testing, Technical Analysis, and Automation (WFH Only)",
+  "title_normalised": "Software Engineer Internship - Testing, Technical Analysis, and Automation (WFH Only)",
+  "location": "Petaling Jaya, Selangor, Malaysia",
+  "published_at": "2025-06-06T01:41:57.283000Z",
+  "published_field": "releasedDate",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-17T16:12:20.588444Z",
+  "ordering_date": "2025-06-06T01:41:57.283000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.smartrecruiters.com/SeekaTechnology/744000063648206-software-engineer-internship-testing-technical-analysis-and-automation-wfh-only-",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": [
+   "Internship"
+  ],
+  "places": [
+   "MY"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true
+ },
+ {
+  "identity": "smartrecruiters:744000063614655",
+  "source": "smartrecruiters",
+  "board_id": "smartrecruiters:SeekaTechnology",
+  "external_id": "744000063614655",
+  "employer": "Seeka Technology",
+  "employer_provenance": "payload",
+  "title": "Business Internship - WFH/ Remote Job",
+  "title_normalised": "Business Internship - WFH/ Remote Job",
+  "location": "Petaling Jaya, Selangor, Malaysia",
+  "published_at": "2025-06-05T22:09:07.490000Z",
+  "published_field": "releasedDate",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-17T16:12:20.588444Z",
+  "ordering_date": "2025-06-05T22:09:07.490000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.smartrecruiters.com/SeekaTechnology/744000063614655-business-internship-wfh-remote-job-",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": [
+   "Internship"
+  ],
+  "places": [
+   "MY"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true
+ },
+ {
+  "identity": "smartrecruiters:744000062151525",
+  "source": "smartrecruiters",
+  "board_id": "smartrecruiters:SeekaTechnology",
+  "external_id": "744000062151525",
+  "employer": "Seeka Technology",
+  "employer_provenance": "payload",
+  "title": "Business Administration Assistant - Fresh Grads Welcome to Apply",
+  "title_normalised": "Business Administration Assistant - Fresh Grads Welcome to Apply",
+  "location": "Islamabad, Islamabad Capital Territory, Pakistan",
+  "published_at": "2025-05-29T16:03:27.385000Z",
+  "published_field": "releasedDate",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-17T16:12:20.588444Z",
+  "ordering_date": "2025-05-29T16:03:27.385000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.smartrecruiters.com/SeekaTechnology/744000062151525-business-administration-assistant-fresh-grads-welcome-to-apply",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": [
+   "Mid-Senior Level"
+  ],
+  "places": [
+   "PK"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true
+ },
+ {
+  "identity": "smartrecruiters:744000061577491",
+  "source": "smartrecruiters",
+  "board_id": "smartrecruiters:SeekaTechnology",
+  "external_id": "744000061577491",
+  "employer": "Seeka Technology",
+  "employer_provenance": "payload",
+  "title": "Ionic Framework Developer - WFH/ Remote Job",
+  "title_normalised": "Ionic Framework Developer - WFH/ Remote Job",
+  "location": "Kecamatan Pasar Rebo, Daerah Khusus Ibukota Jakarta, Indonesia",
+  "published_at": "2025-05-27T07:34:47.230000Z",
+  "published_field": "releasedDate",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-17T16:12:20.588444Z",
+  "ordering_date": "2025-05-27T07:34:47.230000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.smartrecruiters.com/SeekaTechnology/744000061577491-ionic-framework-developer-wfh-remote-job",
+  "url_provenance": "payload",
+  "stated_experience": [
+   2
+  ],
+  "expires_at": null,
+  "stated_levels": [
+   "Mid-Senior Level"
+  ],
+  "places": [
+   "ID"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true
+ }
+]
