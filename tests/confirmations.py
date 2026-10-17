@@ -102,6 +102,10 @@ CONFIRMATIONS = {
                     "run logs, and found false on 2026-09-30"},
         "The agreement check must be seen disagreeing.": {"tests": [
             "test_himalayas.TestRunIntegration.test_the_agreement_check_is_seen_disagreeing"]},
+        "The morning walk must be seen reading past the stored mark to the age limit, and the "
+        "evening walk stopping at its mark.": {"tests": [
+            "test_himalayas.TestRunIntegration.test_the_morning_walk_reads_to_the_age_limit_and_the_evening_stops_at_its_mark",
+            "test_himalayas.TestRunIntegration.test_the_shipped_search_board_walks_deep_on_the_morning_only"]},
         "Pages per morning must be reported for a week": {
             "live": "a count over a week of production mornings; each walk's pages are in its "
                     "run log"},
