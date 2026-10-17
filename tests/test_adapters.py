@@ -14,7 +14,7 @@ from datetime import datetime, timezone
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from src.adapters import greenhouse, lever, manatal, workable
+from src.adapters import greenhouse, lever, manatal, smartrecruiters, workable
 from src.adapters.base import AdapterError, Posting
 from src.config import Board
 
@@ -420,6 +420,115 @@ class TestWorkable(unittest.TestCase):
     def test_wrong_envelope_raises(self):
         with self.assertRaises(AdapterError):
             workable.parse({"results": []}, WK_BOARD)
+
+
+SR_BOARD = Board(platform="smartrecruiters", slug="OneScreen", employer_alias="OneScreen")
+
+
+class TestSmartRecruiters(unittest.TestCase):
+    """SmartRecruiters' public Posting API. Cassettes: OneScreen's and
+    SeekaTechnology's boards and one detail each, 2026-10-17, sanitised."""
+
+    def setUp(self):
+        self.payload = cassette("smartrecruiters-onescreen.json")
+        self.seeka = cassette("smartrecruiters-seekatechnology.json")
+        self.detail = cassette("smartrecruiters-onescreen-detail.json")
+
+    def entry(self, **extra):
+        return dict(self.payload["content"][0], **extra)
+
+    def one(self, entry, board=SR_BOARD):
+        return smartrecruiters.parse({"content": [entry]}, board).postings[0]
+
+    def test_the_list_is_read_by_offset_to_its_end(self):
+        """Mutation: "the SmartRecruiters walk stops after the first
+        page"."""
+        self.assertEqual(smartrecruiters.url_for(SR_BOARD),
+                         "https://api.smartrecruiters.com/v1/companies/OneScreen/postings"
+                         "?limit=100&offset=0")
+        self.assertEqual(smartrecruiters.url_for(SR_BOARD, 100)[-10:], "offset=100")
+        page = {"content": [{}] * 100, "offset": 0, "totalFound": 130}
+        self.assertEqual(smartrecruiters.next_cursor(page), 100)
+        self.assertIsNone(smartrecruiters.next_cursor(
+            {"content": [{}] * 30, "offset": 100, "totalFound": 130}))
+        self.assertIsNone(smartrecruiters.next_cursor(self.payload))
+        self.assertFalse(smartrecruiters.stop_after(page, "2099-01-01"))
+
+    def test_parses_every_posting_on_both_boards(self):
+        for payload in (self.payload, self.seeka):
+            result = smartrecruiters.parse(payload, SR_BOARD)
+            self.assertEqual((len(result.postings), result.problems), (10, []))
+
+    def test_the_date_is_released_date_in_utc(self):
+        """The operator's decision of 2026-10-17: trusted as the
+        publication date."""
+        p = self.one(self.entry())
+        self.assertEqual(p.published_at, datetime(2026, 10, 1, 19, 44, 1, 110000,
+                                                  tzinfo=timezone.utc))
+        self.assertEqual(p.published_field, "releasedDate")
+        for bad in (None, "", "yesterday", "2026-10-01T19:44:01"):
+            with self.subTest(bad=bad):
+                result = smartrecruiters.parse({"content": [self.entry(releasedDate=bad)]},
+                                               SR_BOARD)
+                self.assertEqual(result.postings, [])
+                self.assertIn("releasedDate", result.problems[0]["reason"])
+
+    def test_the_link_is_the_details_page_else_one_built_from_the_list(self):
+        """Read from the list alone, as every run after a posting's first
+        sight reads it, the link is the page built from the company and the
+        id, which answered 200 on 2026-10-17. Mutation: "the built link
+        replaces the detail's"."""
+        p = self.one(self.entry())
+        self.assertEqual((p.url, p.url_provenance),
+                         ("https://jobs.smartrecruiters.com/OneScreen/744000153018507",
+                          "constructed"))
+        merged = self.entry(**smartrecruiters.from_detail(self.detail))
+        p = self.one(merged)
+        self.assertEqual((p.url, p.url_provenance), (self.detail["postingUrl"], "payload"))
+
+    def test_the_employer_is_the_postings_company_else_the_alias(self):
+        p = self.one(self.entry())
+        self.assertEqual((p.employer, p.employer_provenance), ("OneScreen", "payload"))
+        p = self.one(self.entry(company={"identifier": "OneScreen", "name": ""}))
+        self.assertEqual((p.employer, p.employer_provenance), ("OneScreen", "slug"))
+
+    def test_the_place_without_its_empty_and_repeated_parts_and_its_country(self):
+        p = self.one(self.entry(location={"fullLocation": "Islamabad,, Islamabad, Pakistan",
+                                          "city": "Islamabad", "country": "pk"}))
+        self.assertEqual((p.location, p.places), ("Islamabad, Pakistan", ("PK",)))
+
+    def test_remote_and_hybrid_are_read_and_neither_says_nothing(self):
+        """Mutation: "SmartRecruiters' remote is not read"."""
+        workplaces = [p.workplace for p in smartrecruiters.parse(self.seeka, SR_BOARD).postings]
+        self.assertEqual(workplaces[:3], ["hybrid", "remote", "remote"])
+        p = self.one(self.entry())
+        self.assertIsNone(p.workplace)
+
+    def test_the_stated_level_is_the_experience_levels_label(self):
+        """OneScreen labels one posting Executive, which the level rule
+        drops. Mutation: "the SmartRecruiters adapter reads no level"."""
+        levels = {p.levels for p in smartrecruiters.parse(self.payload, SR_BOARD).postings}
+        self.assertEqual(levels, {("Entry Level",), ("Executive",), ("Mid-Senior Level",)})
+
+    def test_the_description_is_the_job_ads_sections_and_none_when_unread(self):
+        """Not read is not the same as none: the list alone gives None, a
+        detail gives its four sections, and a job ad with no sections an
+        empty tuple."""
+        self.assertIsNone(self.one(self.entry()).description)
+        merged = self.entry(**smartrecruiters.from_detail(self.detail))
+        self.assertEqual(self.one(merged).description, ("STRIPPED",) * 4)
+        self.assertEqual(self.one(self.entry(jobAd={"sections": {}})).description, ())
+
+    def test_the_detail_gives_the_posting_its_link_and_job_ad_and_nothing_else(self):
+        self.assertEqual(set(smartrecruiters.from_detail(self.detail)), {"postingUrl", "jobAd"})
+        self.assertEqual(smartrecruiters.from_detail(None), {})
+        self.assertEqual(smartrecruiters.detail_url(SR_BOARD, "744000153018507"),
+                         "https://api.smartrecruiters.com/v1/companies/OneScreen/postings/"
+                         "744000153018507")
+
+    def test_wrong_envelope_raises(self):
+        with self.assertRaises(AdapterError):
+            smartrecruiters.parse({"jobs": []}, SR_BOARD)
 
 
 class TestPostingInvariants(unittest.TestCase):

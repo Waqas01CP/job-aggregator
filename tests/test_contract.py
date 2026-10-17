@@ -33,7 +33,12 @@ LV = Board(platform="lever", slug="smart-working-solutions")
 HIM = Board(platform="himalayas", slug="browse")
 MN = Board(platform="manatal", slug="premiernx", employer_alias="Premier NX")
 WK = Board(platform="workable", slug="igate-technologies", employer_alias="iGATE Technology")
-BOARDS = [GH, LV, HIM, MN, WK]
+SR = Board(platform="smartrecruiters", slug="OneScreen", employer_alias="OneScreen")
+BOARDS = [GH, LV, HIM, MN, WK, SR]
+# The requests a check makes: one a platform, and one more for each whose
+# description is a request of its own.
+REQUESTS = len(contract.PLATFORMS) + sum(1 for a in contract.PLATFORMS.values()
+                                         if getattr(a, "DETAIL", False))
 
 
 class FakeResponse:
@@ -68,7 +73,9 @@ def responses():
             "smart-working": cassette("lever-smart-working-solutions.json"),
             "himalayas": cassette("himalayas-browse.json"),
             "careers-page.com": cassette("manatal-premiernx-page1.json"),
-            "workable.com/api/accounts": cassette("workable-igate-technologies.json")}
+            "workable.com/api/accounts": cassette("workable-igate-technologies.json"),
+            "OneScreen/postings?limit": cassette("smartrecruiters-onescreen.json"),
+            "OneScreen/postings/": cassette("smartrecruiters-onescreen-detail.json")}
 
 
 def client(routes, max_attempts=1, budget=contract.PER_PLATFORM_BUDGET):
@@ -127,11 +134,36 @@ class TestConsumedFields(unittest.TestCase):
     that is read, and the check would watch the wrong thing."""
 
     def test_each_adapter_declares_exactly_what_it_reads(self):
-        for module in (greenhouse, lever, himalayas):
+        from src.adapters import smartrecruiters
+        for module in (greenhouse, lever, himalayas, smartrecruiters):
             with self.subTest(adapter=module.PLATFORM):
                 declared = {path.split(".")[-1]
-                            for path in module.CONSUMED + module.CONSUMED_RESPONSE}
+                            for path in module.CONSUMED + module.CONSUMED_RESPONSE
+                            + getattr(module, "CONSUMED_DETAIL", ())}
                 self.assertEqual(reads_of(module), declared)
+
+    def test_smartrecruiters_declares_real_paths_in_its_list_and_its_detail(self):
+        """Each declared path hangs off a declared parent and its root is a
+        key the saved response really has: the list's in the list, the
+        detail's in the detail."""
+        from src.adapters import smartrecruiters
+        listing = cassette("smartrecruiters-onescreen.json")
+        detail = cassette("smartrecruiters-onescreen-detail.json")
+        keys = set().union(*(set(p) for p in listing["content"]))
+        for declared, held in ((smartrecruiters.CONSUMED, keys),
+                               (smartrecruiters.CONSUMED_DETAIL, set(detail))):
+            for path in declared:
+                parent = path.rpartition(".")[0]
+                with self.subTest(path=path):
+                    if parent:
+                        self.assertIn(parent, declared)
+                        self.assertTrue(contract.resolve(
+                            detail if declared is smartrecruiters.CONSUMED_DETAIL
+                            else listing["content"][0], path)[0])
+                    else:
+                        self.assertIn(path, held)
+        for path in smartrecruiters.CONSUMED_RESPONSE:
+            self.assertIn(path, listing)
 
     def test_each_declared_path_is_a_real_path_in_a_saved_response(self):
         """Compared on its last name alone, `location.name` could become a
@@ -220,6 +252,25 @@ class TestShape(unittest.TestCase):
                          [PLACEHOLDER, PLACEHOLDER, "Pakistan"])
         self.assertEqual(out[0]["note"], PLACEHOLDER)
 
+    def test_the_cassette_tool_strips_a_job_ads_sections_and_its_creator(self):
+        """SmartRecruiters' prose sits in `jobAd.sections.*.text`, and
+        `text` cannot join the field list, since it is Lever's title; the
+        posting's `creator` is a person. Mutation: "the cassette tool keeps
+        a job ad's sections"."""
+        from tools.make_cassette import PLACEHOLDER, sanitise, sections_with_text
+        posting = {"text": "AI Engineer", "creator": {"name": "A Person"},
+                   "location": {"hybridDescription": "Two days in the office."},
+                   "jobAd": {"sections": {"jobDescription": {"title": "Job Description",
+                                                             "text": "Build agents."}}}}
+        self.assertEqual(sections_with_text(posting), ["jobDescription"])
+        out = sanitise(posting)
+        self.assertEqual(out["text"], "AI Engineer")
+        self.assertEqual((out["creator"], out["location"]["hybridDescription"]),
+                         (PLACEHOLDER, PLACEHOLDER))
+        self.assertEqual(out["jobAd"]["sections"]["jobDescription"],
+                         {"title": "Job Description", "text": PLACEHOLDER})
+        self.assertEqual(sections_with_text(out), [])
+
     def test_no_committed_cassette_holds_a_description_anywhere(self):
         """ADR-0011 over every cassette on disk, envelope included: Workable's
         envelope carries the account's own description, which the tool left
@@ -238,10 +289,13 @@ class TestShape(unittest.TestCase):
             elif isinstance(node, list):
                 for item in node:
                     walk(item, where)
+        from tools.make_cassette import sections_with_text
         for name in sorted(os.listdir(root)):
             if name.endswith(".json"):
                 with open(os.path.join(root, name), encoding="utf-8") as f:
-                    walk(json.load(f), name)
+                    doc = json.load(f)
+                walk(doc, name)
+                found += ["%s: section %s" % (name, s) for s in sections_with_text(doc)]
         self.assertEqual(found, [])
 
     def test_the_cassette_tool_sanitises_the_envelope_too(self):
@@ -331,10 +385,36 @@ class TestCheck(unittest.TestCase):
         self.assertEqual(entry["postings"], 0)
         self.assertEqual([c["field"] for c in entry["changes"]], ["jobs"])
 
-    def test_one_request_per_platform(self):
+    def test_one_request_per_platform_and_one_for_a_detail(self):
         c = client(responses())
         contract.check(BOARDS, c, {}, NOW)
-        self.assertEqual(len(c.session.calls), len(contract.PLATFORMS))
+        self.assertEqual(len(c.session.calls), REQUESTS)
+        self.assertEqual(REQUESTS, len(contract.PLATFORMS) + 1)
+
+    def test_the_detail_is_fingerprinted_and_a_change_in_it_is_named(self):
+        """SmartRecruiters' description is on the detail, so its shape is
+        watched as the list's is: a renamed section shows as a change in
+        `detail`. Mutation: "the contract check ignores the detail"."""
+        fp, log = contract.check(BOARDS, client(responses()), {}, NOW)
+        self.assertEqual(fp["smartrecruiters"]["detail"]["jobAd.sections.jobDescription.text"],
+                         {"present": "all", "null": "never", "types": ["string"]})
+        routes = responses()
+        sections = routes["OneScreen/postings/"]["jobAd"]["sections"]
+        sections["description"] = sections.pop("jobDescription")
+        _, log = contract.check(BOARDS, client(routes), fp, LATER)
+        entry = log["platforms"]["smartrecruiters"]
+        self.assertEqual(entry["status"], "changed")
+        self.assertIn(("detail", "jobAd.sections.jobDescription.text"),
+                      [(c["in"], c["field"]) for c in entry["changes"]])
+        self.assertEqual(log["platforms"]["greenhouse"]["status"], "unchanged")
+
+    def test_an_unreachable_detail_keeps_the_stored_shape(self):
+        fp, _ = contract.check(BOARDS, client(responses()), {}, NOW)
+        routes = responses()
+        routes["OneScreen/postings/"] = 503
+        after, log = contract.check(BOARDS, client(routes), fp, LATER)
+        self.assertEqual(log["platforms"]["smartrecruiters"]["status"], "unreachable")
+        self.assertEqual(after["smartrecruiters"], fp["smartrecruiters"])
 
 
 class TestEachSourceOnItsOwn(unittest.TestCase):
@@ -360,7 +440,7 @@ class TestEachSourceOnItsOwn(unittest.TestCase):
         self.assertEqual(log["platforms"]["lever"]["status"], "changed")
         self.assertIn("hostedUrl", [c["field"] for c in log["platforms"]["lever"]["changes"]])
         self.assertEqual(log["platforms"]["himalayas"]["status"], "unchanged")
-        self.assertEqual(len(c.session.calls), len(contract.PLATFORMS))
+        self.assertEqual(len(c.session.calls), REQUESTS)
         self.assertEqual(contract.failed_platforms(log), ["greenhouse"])
 
     def test_a_failed_check_names_where_it_raised_and_never_its_message(self):

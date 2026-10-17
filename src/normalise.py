@@ -98,7 +98,8 @@ class Row:
     described_workplace: str = None
     # Whether the posting carried description text: False when it carried
     # none, so no description rule could read it and every one keeps it.
-    # None on rows stored before 2026-10-17 that no re-read has reached.
+    # None on rows stored before 2026-10-17 that no re-read has reached, and
+    # where the adapter read no description at all.
     # Brief 13: once Senior leaves the seniority words, a Senior posting
     # with no description passes on its title alone, and the display flags
     # it rather than hiding it. Named for the fact, never the text: no row
@@ -259,7 +260,11 @@ def normalise(postings, board, now, seen=None):
             workplace=getattr(p, "workplace", None),
             required_places=_required_places(facts),
             described_workplace="on site" if facts and facts.on_site else None,
-            described=facts is not None,
+            # None where the adapter read no description at all, as
+            # SmartRecruiters' list does after a posting's first sight:
+            # not read is not the same as none.
+            described=(None if getattr(p, "description", None) is None
+                       else facts is not None),
         )
         rows.append(row)
     return rows

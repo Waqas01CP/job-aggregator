@@ -55,7 +55,7 @@ from . import clearing, envfile, facts, private_store, projection, storage
 from .airtable_sweep import JOBS, SweepClient, TABLE_SECRETS
 from .closure import Closure, covered as walk_covered
 from .sweep import Sweep, older_than
-from .adapters import greenhouse, himalayas, lever, manatal, workable
+from .adapters import greenhouse, himalayas, lever, manatal, smartrecruiters, workable
 from . import health
 from .airtable import (BASE_ENV, CALL_LOG_KEYS, HEALTH_LOG_KEY, HEALTH_TABLE_ENV,
                        HEALTH_TEST_TABLE_ENV, RUN_LOG_KEY, TABLE_ENV, TEST_TABLE_ENV,
@@ -74,8 +74,8 @@ EXIT_OK = 0
 EXIT_CANNOT_START = 1
 EXIT_STOPPED_RESUMABLE = 2
 
-ADAPTERS = {"greenhouse": greenhouse, "lever": lever,
-            "himalayas": himalayas, "manatal": manatal, "workable": workable}
+ADAPTERS = {"greenhouse": greenhouse, "lever": lever, "himalayas": himalayas,
+            "manatal": manatal, "workable": workable, "smartrecruiters": smartrecruiters}
 
 # A paginated feed is read until it reaches postings already stored, or
 # postings too old for the age rule to admit. The cap is a runaway guard on top
@@ -714,6 +714,8 @@ class Run:
                 payload = self._fetch_pages(adapter, board, log)
             else:
                 payload = self.client.get_json(adapter.url_for(board), board.source)
+            if getattr(adapter, "DETAIL", False):
+                self._fetch_details(adapter, board, payload, seen_first_seen, log)
         except (BudgetExhausted, CircuitOpen) as stop:
             log["status"] = "not reached"
             log["detail"] = str(stop)
@@ -765,6 +767,35 @@ class Run:
         self.board_logs.append(log)
         self._log_for = log
         return rows
+
+    def _fetch_details(self, adapter, board, payload, seen_first_seen, log):
+        """ADR-0028: a posting's detail is asked for once, ever, when the
+        run first sees it; a posting the seen store holds is read from the
+        list alone, its row already stored. What the detail gives is merged
+        into the posting in place, so the parse reads it and the full branch
+        saves it (D11), and a later re-read finds the description there.
+
+        A detail that fails costs that posting its description, never the
+        board its postings: the posting is stored from the list, its
+        description recorded as not read, and counted here. A stop, the
+        budget or the platform's breaker, ends the board as any request's
+        does."""
+        asked = failed = 0
+        for entry in (payload.get(adapter.POSTINGS_AT) or []
+                      if isinstance(payload, dict) else []):
+            external_id = adapter.external_id_of(entry)
+            if not external_id or "%s:%s" % (board.source, external_id) in seen_first_seen:
+                continue
+            asked += 1
+            try:
+                detail = self.client.get_json(adapter.detail_url(board, external_id),
+                                              board.source)
+            except HttpError:
+                failed += 1
+                continue
+            entry.update(adapter.from_detail(detail))
+        log["details"] = asked
+        log["details_failed"] = failed
 
     def _agreement(self, adapter, board, search, log):
         """ADR-0053: one page of the whole feed against what the search

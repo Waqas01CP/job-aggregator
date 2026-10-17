@@ -58,6 +58,8 @@ class Posting:
     # The description's parts as the platform returned them, HTML or text:
     # the normaliser reads them once (src/description.py) and keeps only what
     # they state, never the words. Out of equality and repr, as `raw` is.
+    # None when the adapter read none at all, as SmartRecruiters' list after
+    # a posting's first sight: an empty tuple is a posting that carried none.
     description: tuple = field(default=None, compare=False, repr=False)
     # The posting exactly as the board returned it, description included.
     # Carried, never read: the run saves it to the private store's full

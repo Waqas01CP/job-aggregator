@@ -1,0 +1,606 @@
+{
+ "content": [
+  {
+   "company": {
+    "identifier": "OneScreen",
+    "name": "OneScreen"
+   },
+   "customField": [
+    {
+     "fieldId": "COUNTRY",
+     "fieldLabel": "Country/Region",
+     "valueId": "pk",
+     "valueLabel": "Pakistan"
+    },
+    {
+     "fieldId": "61ae33e477ee680c972e9a1d",
+     "fieldLabel": "Brands",
+     "valueId": "default",
+     "valueLabel": "OneScreen"
+    }
+   ],
+   "defaultJobAd": true,
+   "department": {},
+   "experienceLevel": {
+    "id": "entry_level",
+    "label": "Entry Level"
+   },
+   "function": {
+    "id": "information_technology",
+    "label": "Information Technology"
+   },
+   "id": "744000153018507",
+   "industry": {
+    "id": "it_and_services",
+    "label": "Information Technology And Services"
+   },
+   "jobAdId": "9efc8a9f-b0ce-4bb8-b880-66ca94511f63",
+   "language": {
+    "code": "en",
+    "label": "English",
+    "labelNative": "English (US)"
+   },
+   "location": {
+    "address": "Sector G-9/4",
+    "city": "Islamabad",
+    "country": "pk",
+    "fullLocation": "Islamabad, , Pakistan",
+    "hybrid": false,
+    "remote": false
+   },
+   "name": "Product Operations Engineer",
+   "ref": "https://api.smartrecruiters.com/v1/companies/OneScreen/postings/744000153018507",
+   "refNumber": "REF46D",
+   "releasedDate": "2026-10-01T19:44:01.110Z",
+   "typeOfEmployment": {
+    "id": "permanent",
+    "label": "Full-time"
+   },
+   "uuid": "3c02ac59-716c-4ce0-8b31-8ac394adcd68",
+   "visibility": "PUBLIC"
+  },
+  {
+   "company": {
+    "identifier": "OneScreen",
+    "name": "OneScreen"
+   },
+   "customField": [
+    {
+     "fieldId": "COUNTRY",
+     "fieldLabel": "Country/Region",
+     "valueId": "pk",
+     "valueLabel": "Pakistan"
+    },
+    {
+     "fieldId": "61ae33e477ee680c972e9a1d",
+     "fieldLabel": "Brands",
+     "valueId": "default",
+     "valueLabel": "OneScreen"
+    }
+   ],
+   "defaultJobAd": true,
+   "department": {},
+   "experienceLevel": {
+    "id": "entry_level",
+    "label": "Entry Level"
+   },
+   "function": {
+    "id": "other",
+    "label": "Other"
+   },
+   "id": "744000143229669",
+   "industry": {
+    "id": "it_and_services",
+    "label": "Information Technology And Services"
+   },
+   "jobAdId": "2a7bbea3-00f7-4ef2-9b99-96cf125d9f97",
+   "language": {
+    "code": "en",
+    "label": "English",
+    "labelNative": "English (US)"
+   },
+   "location": {
+    "address": "Fast Foundation Building, Main Rohtas Road G9/4, Islamabad",
+    "city": "Islamabad,",
+    "country": "pk",
+    "fullLocation": "Islamabad,, Islamabad, Pakistan",
+    "hybrid": false,
+    "region": "Islamabad",
+    "remote": false
+   },
+   "name": "Sales Engineer",
+   "ref": "https://api.smartrecruiters.com/v1/companies/OneScreen/postings/744000143229669",
+   "refNumber": "REF45O",
+   "releasedDate": "2026-08-13T05:07:11.914Z",
+   "typeOfEmployment": {
+    "id": "permanent",
+    "label": "Full-time"
+   },
+   "uuid": "d3c0c096-da66-40fb-a920-4bbb6507f103",
+   "visibility": "PUBLIC"
+  },
+  {
+   "company": {
+    "identifier": "OneScreen",
+    "name": "OneScreen"
+   },
+   "customField": [
+    {
+     "fieldId": "COUNTRY",
+     "fieldLabel": "Country/Region",
+     "valueId": "pk",
+     "valueLabel": "Pakistan"
+    },
+    {
+     "fieldId": "61ae33e477ee680c972e9a1d",
+     "fieldLabel": "Brands",
+     "valueId": "default",
+     "valueLabel": "OneScreen"
+    }
+   ],
+   "defaultJobAd": true,
+   "department": {},
+   "experienceLevel": {
+    "id": "entry_level",
+    "label": "Entry Level"
+   },
+   "function": {
+    "id": "other",
+    "label": "Other"
+   },
+   "id": "744000139131871",
+   "industry": {
+    "id": "it_and_services",
+    "label": "Information Technology And Services"
+   },
+   "jobAdId": "80278308-d0ea-4370-952e-23606bcab13c",
+   "language": {
+    "code": "en",
+    "label": "English",
+    "labelNative": "English (US)"
+   },
+   "location": {
+    "address": "OneScreen office, Basement FAST Foundation, Rohtas Road, G9/4",
+    "city": "Islamabad",
+    "country": "pk",
+    "fullLocation": "Islamabad, Islamabad Capital Territory, Pakistan",
+    "hybrid": false,
+    "region": "Islamabad Capital Territory",
+    "remote": false
+   },
+   "name": "Android Developer Intern",
+   "ref": "https://api.smartrecruiters.com/v1/companies/OneScreen/postings/744000139131871",
+   "refNumber": "REF43K",
+   "releasedDate": "2026-07-22T18:03:39.110Z",
+   "typeOfEmployment": {
+    "id": "permanent",
+    "label": "Full-time"
+   },
+   "uuid": "7a2a13b7-20ac-442b-9478-6ab829b77be4",
+   "visibility": "PUBLIC"
+  },
+  {
+   "company": {
+    "identifier": "OneScreen",
+    "name": "OneScreen"
+   },
+   "customField": [
+    {
+     "fieldId": "COUNTRY",
+     "fieldLabel": "Country/Region",
+     "valueId": "pk",
+     "valueLabel": "Pakistan"
+    },
+    {
+     "fieldId": "61ae33e477ee680c972e9a1d",
+     "fieldLabel": "Brands",
+     "valueId": "default",
+     "valueLabel": "OneScreen"
+    }
+   ],
+   "defaultJobAd": true,
+   "department": {},
+   "experienceLevel": {
+    "id": "entry_level",
+    "label": "Entry Level"
+   },
+   "function": {
+    "id": "other",
+    "label": "Other"
+   },
+   "id": "744000139128879",
+   "industry": {
+    "id": "it_and_services",
+    "label": "Information Technology And Services"
+   },
+   "jobAdId": "ad20e3de-c7d1-46a8-8621-9b8c58d88a7f",
+   "language": {
+    "code": "en",
+    "label": "English",
+    "labelNative": "English (US)"
+   },
+   "location": {
+    "address": "OneScreen office, Basement FAST Foundation, Rohtas Road, G9/4",
+    "city": "Islamabad",
+    "country": "pk",
+    "fullLocation": "Islamabad, Islamabad Capital Territory, Pakistan",
+    "hybrid": false,
+    "region": "Islamabad Capital Territory",
+    "remote": false
+   },
+   "name": "Android Developer",
+   "ref": "https://api.smartrecruiters.com/v1/companies/OneScreen/postings/744000139128879",
+   "refNumber": "REF42Y",
+   "releasedDate": "2026-07-22T17:29:15.214Z",
+   "typeOfEmployment": {
+    "id": "permanent",
+    "label": "Full-time"
+   },
+   "uuid": "eba3323a-528e-4dac-8520-91e373276cdc",
+   "visibility": "PUBLIC"
+  },
+  {
+   "company": {
+    "identifier": "OneScreen",
+    "name": "OneScreen"
+   },
+   "customField": [
+    {
+     "fieldId": "COUNTRY",
+     "fieldLabel": "Country/Region",
+     "valueId": "pk",
+     "valueLabel": "Pakistan"
+    },
+    {
+     "fieldId": "61ae33e477ee680c972e9a1d",
+     "fieldLabel": "Brands",
+     "valueId": "default",
+     "valueLabel": "OneScreen"
+    }
+   ],
+   "defaultJobAd": true,
+   "department": {},
+   "experienceLevel": {
+    "id": "entry_level",
+    "label": "Entry Level"
+   },
+   "function": {
+    "id": "design",
+    "label": "Design"
+   },
+   "id": "744000133687159",
+   "industry": {
+    "id": "it_and_services",
+    "label": "Information Technology And Services"
+   },
+   "jobAdId": "3b2f8a93-9942-4cd5-9314-3e972ddbde73",
+   "language": {
+    "code": "en",
+    "label": "English",
+    "labelNative": "English (US)"
+   },
+   "location": {
+    "address": "Fast Foundation Building, Main Rohtas Road, G9/4",
+    "city": "Islamabad",
+    "country": "pk",
+    "fullLocation": "Islamabad, Islamabad Capital Territory, Pakistan",
+    "hybrid": false,
+    "region": "Islamabad Capital Territory",
+    "remote": false
+   },
+   "name": "UI/UX Designer",
+   "ref": "https://api.smartrecruiters.com/v1/companies/OneScreen/postings/744000133687159",
+   "refNumber": "REF31D",
+   "releasedDate": "2026-06-23T19:54:35.518Z",
+   "typeOfEmployment": {
+    "id": "permanent",
+    "label": "Full-time"
+   },
+   "uuid": "2476539e-4fed-454f-982a-6e2efbf5f5df",
+   "visibility": "PUBLIC"
+  },
+  {
+   "company": {
+    "identifier": "OneScreen",
+    "name": "OneScreen"
+   },
+   "customField": [
+    {
+     "fieldId": "COUNTRY",
+     "fieldLabel": "Country/Region",
+     "valueId": "pk",
+     "valueLabel": "Pakistan"
+    },
+    {
+     "fieldId": "61ae33e477ee680c972e9a1d",
+     "fieldLabel": "Brands",
+     "valueId": "default",
+     "valueLabel": "OneScreen"
+    }
+   ],
+   "defaultJobAd": true,
+   "department": {},
+   "experienceLevel": {
+    "id": "executive",
+    "label": "Executive"
+   },
+   "function": {
+    "id": "engineering",
+    "label": "Engineering"
+   },
+   "id": "744000115272321",
+   "industry": {
+    "id": "it_and_services",
+    "label": "Information Technology And Services"
+   },
+   "jobAdId": "cab3ad69-3561-4599-b66f-89a1519d8950",
+   "language": {
+    "code": "en",
+    "label": "English",
+    "labelNative": "English (US)"
+   },
+   "location": {
+    "address": "OneScreen Solutions",
+    "city": "Islamabad",
+    "country": "pk",
+    "fullLocation": "Islamabad, , Pakistan",
+    "hybrid": false,
+    "remote": false
+   },
+   "name": "AI Engineer (Automation & Systems)",
+   "ref": "https://api.smartrecruiters.com/v1/companies/OneScreen/postings/744000115272321",
+   "refNumber": "REF39J",
+   "releasedDate": "2026-03-17T16:56:51.040Z",
+   "typeOfEmployment": {
+    "id": "permanent",
+    "label": "Full-time"
+   },
+   "uuid": "62ba1e2e-94f2-4600-84a9-86ab200a35f1",
+   "visibility": "PUBLIC"
+  },
+  {
+   "company": {
+    "identifier": "OneScreen",
+    "name": "OneScreen"
+   },
+   "customField": [
+    {
+     "fieldId": "COUNTRY",
+     "fieldLabel": "Country/Region",
+     "valueId": "pk",
+     "valueLabel": "Pakistan"
+    },
+    {
+     "fieldId": "61ae33e477ee680c972e9a1d",
+     "fieldLabel": "Brands",
+     "valueId": "default",
+     "valueLabel": "OneScreen"
+    }
+   ],
+   "defaultJobAd": true,
+   "department": {},
+   "experienceLevel": {
+    "id": "entry_level",
+    "label": "Entry Level"
+   },
+   "function": {
+    "id": "art_creative",
+    "label": "Art/Creative"
+   },
+   "id": "744000058141205",
+   "industry": {
+    "id": "it_and_services",
+    "label": "Information Technology And Services"
+   },
+   "jobAdId": "3db7a9a0-a3ab-4eb3-901d-a3356047864f",
+   "language": {
+    "code": "en",
+    "label": "English",
+    "labelNative": "English (US)"
+   },
+   "location": {
+    "address": "OneScreen Office, FAST Foundation Building",
+    "city": "Islamabad",
+    "country": "pk",
+    "fullLocation": "Islamabad, , Pakistan",
+    "hybrid": false,
+    "remote": true
+   },
+   "name": "Video Editor and Content Creator",
+   "ref": "https://api.smartrecruiters.com/v1/companies/OneScreen/postings/744000058141205",
+   "refNumber": "REF35A",
+   "releasedDate": "2025-05-07T19:00:07.786Z",
+   "typeOfEmployment": {
+    "id": "intern",
+    "label": "Intern"
+   },
+   "uuid": "7f460c42-366a-41b8-a761-aa25e1c55499",
+   "visibility": "PUBLIC"
+  },
+  {
+   "company": {
+    "identifier": "OneScreen",
+    "name": "OneScreen"
+   },
+   "customField": [
+    {
+     "fieldId": "COUNTRY",
+     "fieldLabel": "Country/Region",
+     "valueId": "pk",
+     "valueLabel": "Pakistan"
+    },
+    {
+     "fieldId": "61ae33e477ee680c972e9a1d",
+     "fieldLabel": "Brands",
+     "valueId": "default",
+     "valueLabel": "OneScreen"
+    }
+   ],
+   "defaultJobAd": true,
+   "department": {},
+   "experienceLevel": {
+    "id": "entry_level",
+    "label": "Entry Level"
+   },
+   "function": {
+    "id": "information_technology",
+    "label": "Information Technology"
+   },
+   "id": "744000015213792",
+   "industry": {
+    "id": "it_and_services",
+    "label": "Information Technology And Services"
+   },
+   "jobAdId": "17958ba7-92d1-4b04-b6af-9c8b39279eac",
+   "language": {
+    "code": "en",
+    "label": "English",
+    "labelNative": "English (US)"
+   },
+   "location": {
+    "address": "Sector G-9",
+    "city": "Islamabad",
+    "country": "pk",
+    "fullLocation": "Islamabad, Islamabad, Pakistan",
+    "hybrid": false,
+    "postalCode": "44000",
+    "region": "Islamabad",
+    "remote": false
+   },
+   "name": "Product Operations Engineer",
+   "ref": "https://api.smartrecruiters.com/v1/companies/OneScreen/postings/744000015213792",
+   "refNumber": "REF3X",
+   "releasedDate": "2024-09-19T18:14:42.518Z",
+   "typeOfEmployment": {
+    "id": "permanent",
+    "label": "Full-time"
+   },
+   "uuid": "05f822f2-3256-4ee8-9ed2-fd736107d316",
+   "visibility": "PUBLIC"
+  },
+  {
+   "company": {
+    "identifier": "OneScreen",
+    "name": "OneScreen"
+   },
+   "customField": [
+    {
+     "fieldId": "COUNTRY",
+     "fieldLabel": "Country/Region",
+     "valueId": "pk",
+     "valueLabel": "Pakistan"
+    },
+    {
+     "fieldId": "61ae33e477ee680c972e9a1d",
+     "fieldLabel": "Brands",
+     "valueId": "default",
+     "valueLabel": "OneScreen"
+    }
+   ],
+   "defaultJobAd": true,
+   "department": {},
+   "experienceLevel": {
+    "id": "entry_level",
+    "label": "Entry Level"
+   },
+   "function": {
+    "id": "management",
+    "label": "Management"
+   },
+   "id": "744000003939158",
+   "industry": {
+    "id": "it_and_services",
+    "label": "Information Technology And Services"
+   },
+   "jobAdId": "22139fef-8d72-42c5-a636-d3a38769cc07",
+   "language": {
+    "code": "en",
+    "label": "English",
+    "labelNative": "English (US)"
+   },
+   "location": {
+    "address": "Sector G-9",
+    "city": "Islamabad",
+    "country": "pk",
+    "fullLocation": "Islamabad, ICT, Pakistan",
+    "hybrid": false,
+    "region": "ICT",
+    "remote": false
+   },
+   "name": "Operations Executive",
+   "ref": "https://api.smartrecruiters.com/v1/companies/OneScreen/postings/744000003939158",
+   "refNumber": "REF13E",
+   "releasedDate": "2024-07-31T20:39:44.334Z",
+   "typeOfEmployment": {
+    "id": "permanent",
+    "label": "Full-time"
+   },
+   "uuid": "66d34224-bf0d-4046-a5e3-d0785e9cd742",
+   "visibility": "PUBLIC"
+  },
+  {
+   "company": {
+    "identifier": "OneScreen",
+    "name": "OneScreen"
+   },
+   "customField": [
+    {
+     "fieldId": "COUNTRY",
+     "fieldLabel": "Country/Region",
+     "valueId": "pk",
+     "valueLabel": "Pakistan"
+    },
+    {
+     "fieldId": "61ae33e477ee680c972e9a1d",
+     "fieldLabel": "Brands",
+     "valueId": "default",
+     "valueLabel": "OneScreen"
+    }
+   ],
+   "defaultJobAd": true,
+   "department": {},
+   "experienceLevel": {
+    "id": "mid_senior_level",
+    "label": "Mid-Senior Level"
+   },
+   "function": {
+    "id": "information_technology",
+    "label": "Information Technology"
+   },
+   "id": "743999924896913",
+   "industry": {
+    "id": "it_and_services",
+    "label": "Information Technology And Services"
+   },
+   "jobAdId": "c6e2bc86-f458-4472-92b7-38651eb86c79",
+   "language": {
+    "code": "en",
+    "label": "English",
+    "labelNative": "English (US)"
+   },
+   "location": {
+    "address": "OneScreen office, Basement FAST Foundation, Rohtas Road, G9/4",
+    "city": "Islamabad",
+    "country": "pk",
+    "fullLocation": "Islamabad, Islamabad Capital Territory, Pakistan",
+    "hybrid": false,
+    "postalCode": "",
+    "region": "Islamabad Capital Territory",
+    "remote": false
+   },
+   "name": "Senior Customer Communications and Retention Lead",
+   "ref": "https://api.smartrecruiters.com/v1/companies/OneScreen/postings/743999924896913",
+   "refNumber": "REF17R",
+   "releasedDate": "2023-08-16T09:16:41.896Z",
+   "typeOfEmployment": {
+    "id": "permanent",
+    "label": "Full-time"
+   },
+   "uuid": "8b6826a0-9abd-4183-a41e-e51a29b0f97c",
+   "visibility": "PUBLIC"
+  }
+ ],
+ "limit": 100,
+ "offset": 0,
+ "totalFound": 10
+}

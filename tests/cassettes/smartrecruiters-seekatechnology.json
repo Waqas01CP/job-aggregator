@@ -1,0 +1,631 @@
+{
+ "content": [
+  {
+   "company": {
+    "identifier": "SeekaTechnology",
+    "name": "Seeka Technology"
+   },
+   "customField": [
+    {
+     "fieldId": "COUNTRY",
+     "fieldLabel": "Country/Region",
+     "valueId": "my",
+     "valueLabel": "Malaysia"
+    },
+    {
+     "fieldId": "58b7eaffe4b09a6d37a0d81b",
+     "fieldLabel": "Brands",
+     "valueId": "default",
+     "valueLabel": "Seeka Technology"
+    }
+   ],
+   "defaultJobAd": true,
+   "department": {},
+   "experienceLevel": {
+    "id": "internship",
+    "label": "Internship"
+   },
+   "function": {
+    "id": "advertising",
+    "label": "Advertising"
+   },
+   "id": "744000126183660",
+   "industry": {
+    "id": "marketing_and_advertising",
+    "label": "Marketing And Advertising"
+   },
+   "jobAdId": "35793e15-3e3f-43bc-b857-d6fbd36fc0ab",
+   "language": {
+    "code": "en",
+    "label": "English",
+    "labelNative": "English (US)"
+   },
+   "location": {
+    "address": "5 Jalan Professor Khoo Kay Kim",
+    "city": "Petaling Jaya",
+    "country": "my",
+    "fullLocation": "Petaling Jaya, Selangor, Malaysia",
+    "hybrid": true,
+    "hybridDescription": "STRIPPED",
+    "latitude": "3.11088",
+    "longitude": "101.6365849",
+    "postalCode": "46200",
+    "region": "Selangor",
+    "remote": false
+   },
+   "name": "AI Driven Marketing & Market Research Intern",
+   "ref": "https://api.smartrecruiters.com/v1/companies/SeekaTechnology/postings/744000126183660",
+   "refNumber": "REF5051W",
+   "releasedDate": "2026-05-13T00:37:13.746Z",
+   "typeOfEmployment": {
+    "id": "intern",
+    "label": "Intern"
+   },
+   "uuid": "09fb0264-9a05-4f05-8643-7ddc5ac21fbc",
+   "visibility": "PUBLIC"
+  },
+  {
+   "company": {
+    "identifier": "SeekaTechnology",
+    "name": "Seeka Technology"
+   },
+   "customField": [
+    {
+     "fieldId": "COUNTRY",
+     "fieldLabel": "Country/Region",
+     "valueId": "my",
+     "valueLabel": "Malaysia"
+    },
+    {
+     "fieldId": "58b7eaffe4b09a6d37a0d81b",
+     "fieldLabel": "Brands",
+     "valueId": "default",
+     "valueLabel": "Seeka Technology"
+    }
+   ],
+   "defaultJobAd": true,
+   "department": {},
+   "experienceLevel": {
+    "id": "internship",
+    "label": "Internship"
+   },
+   "function": {
+    "id": "design",
+    "label": "Design"
+   },
+   "id": "744000125952509",
+   "industry": {
+    "id": "graphic_design",
+    "label": "Graphic Design"
+   },
+   "jobAdId": "15eac143-4bb8-47a0-9d0b-886ef3d997cb",
+   "language": {
+    "code": "en",
+    "label": "English",
+    "labelNative": "English (US)"
+   },
+   "location": {
+    "address": "Persiaran Bandar Utama",
+    "city": "Petaling Jaya",
+    "country": "my",
+    "fullLocation": "Petaling Jaya, Selangor, Malaysia",
+    "hybrid": false,
+    "latitude": "3.143629",
+    "longitude": "101.614856",
+    "region": "Selangor",
+    "remote": true
+   },
+   "name": "Graphics Design Internship (Ui/UX) - WFH/Remote Work",
+   "ref": "https://api.smartrecruiters.com/v1/companies/SeekaTechnology/postings/744000125952509",
+   "refNumber": "REF5047G",
+   "releasedDate": "2026-05-11T23:37:13.142Z",
+   "typeOfEmployment": {
+    "id": "intern",
+    "label": "Intern"
+   },
+   "uuid": "ce4b8ee6-f66d-487b-aa60-7772e5937e88",
+   "visibility": "PUBLIC"
+  },
+  {
+   "company": {
+    "identifier": "SeekaTechnology",
+    "name": "Seeka Technology"
+   },
+   "customField": [
+    {
+     "fieldId": "COUNTRY",
+     "fieldLabel": "Country/Region",
+     "valueId": "pk",
+     "valueLabel": "Pakistan"
+    },
+    {
+     "fieldId": "58b7eaffe4b09a6d37a0d81b",
+     "fieldLabel": "Brands",
+     "valueId": "default",
+     "valueLabel": "Seeka Technology"
+    }
+   ],
+   "defaultJobAd": true,
+   "department": {},
+   "experienceLevel": {
+    "id": "internship",
+    "label": "Internship"
+   },
+   "function": {
+    "id": "administrative",
+    "label": "Administrative"
+   },
+   "id": "744000125781539",
+   "industry": {
+    "id": "it_and_services",
+    "label": "Information Technology And Services"
+   },
+   "jobAdId": "68906c3e-d54c-4a70-aa68-a14f51638885",
+   "language": {
+    "code": "en",
+    "label": "English",
+    "labelNative": "English (US)"
+   },
+   "location": {
+    "address": "Street F5",
+    "city": "Islamabad",
+    "country": "pk",
+    "fullLocation": "Islamabad, Islamabad Capital Territory, Pakistan",
+    "hybrid": false,
+    "latitude": "33.6375522",
+    "longitude": "73.155508",
+    "region": "Islamabad Capital Territory",
+    "remote": true
+   },
+   "name": "Backend AI & Data Pipeline Engineer",
+   "ref": "https://api.smartrecruiters.com/v1/companies/SeekaTechnology/postings/744000125781539",
+   "refNumber": "REF5049T",
+   "releasedDate": "2026-05-11T08:44:32.961Z",
+   "typeOfEmployment": {
+    "id": "intern",
+    "label": "Intern"
+   },
+   "uuid": "958faf3a-e9c3-4323-9ef3-cd02fd14d7e4",
+   "visibility": "PUBLIC"
+  },
+  {
+   "company": {
+    "identifier": "SeekaTechnology",
+    "name": "Seeka Technology"
+   },
+   "customField": [
+    {
+     "fieldId": "COUNTRY",
+     "fieldLabel": "Country/Region",
+     "valueId": "pk",
+     "valueLabel": "Pakistan"
+    },
+    {
+     "fieldId": "58b7eaffe4b09a6d37a0d81b",
+     "fieldLabel": "Brands",
+     "valueId": "default",
+     "valueLabel": "Seeka Technology"
+    }
+   ],
+   "defaultJobAd": true,
+   "department": {},
+   "experienceLevel": {
+    "id": "mid_senior_level",
+    "label": "Mid-Senior Level"
+   },
+   "function": {
+    "id": "information_technology",
+    "label": "Information Technology"
+   },
+   "id": "744000125248224",
+   "industry": {
+    "id": "it_and_services",
+    "label": "Information Technology And Services"
+   },
+   "jobAdId": "a9dd865e-8d61-4d28-937e-a414e45c6859",
+   "language": {
+    "code": "en",
+    "label": "English",
+    "labelNative": "English (US)"
+   },
+   "location": {
+    "address": "349 Street 1",
+    "city": "Islamabad",
+    "country": "pk",
+    "fullLocation": "Islamabad, Islamabad Capital Territory, Pakistan",
+    "hybrid": false,
+    "latitude": "33.6606999",
+    "longitude": "73.0591464",
+    "postalCode": "44000",
+    "region": "Islamabad Capital Territory",
+    "remote": true
+   },
+   "name": "Java Backend Developer - WFH/ Remote-Work (5 Years Exp Needed At least)",
+   "ref": "https://api.smartrecruiters.com/v1/companies/SeekaTechnology/postings/744000125248224",
+   "refNumber": "REF4393H",
+   "releasedDate": "2026-05-08T02:21:42.406Z",
+   "typeOfEmployment": {
+    "id": "permanent",
+    "label": "Full-time"
+   },
+   "uuid": "83590186-ec40-4e69-97e4-729be1820072",
+   "visibility": "PUBLIC"
+  },
+  {
+   "company": {
+    "identifier": "SeekaTechnology",
+    "name": "Seeka Technology"
+   },
+   "customField": [
+    {
+     "fieldId": "COUNTRY",
+     "fieldLabel": "Country/Region",
+     "valueId": "pk",
+     "valueLabel": "Pakistan"
+    },
+    {
+     "fieldId": "58b7eaffe4b09a6d37a0d81b",
+     "fieldLabel": "Brands",
+     "valueId": "default",
+     "valueLabel": "Seeka Technology"
+    }
+   ],
+   "defaultJobAd": true,
+   "department": {},
+   "experienceLevel": {
+    "id": "entry_level",
+    "label": "Entry Level"
+   },
+   "function": {
+    "id": "quality_assurance",
+    "label": "Quality Assurance"
+   },
+   "id": "744000094288379",
+   "industry": {
+    "id": "it_and_services",
+    "label": "Information Technology And Services"
+   },
+   "jobAdId": "a11c7807-1818-45b8-8869-af0ad13ec00c",
+   "language": {
+    "code": "en",
+    "label": "English",
+    "labelNative": "English (US)"
+   },
+   "location": {
+    "address": "Street 1 349",
+    "city": "Islamabad",
+    "country": "pk",
+    "fullLocation": "Islamabad, Islamabad Capital Territory, Pakistan",
+    "hybrid": false,
+    "latitude": "33.6606899",
+    "longitude": "73.0595143",
+    "postalCode": "46000",
+    "region": "Islamabad Capital Territory",
+    "remote": true
+   },
+   "name": "Full-Time QA Tester - WFH/Remote ",
+   "ref": "https://api.smartrecruiters.com/v1/companies/SeekaTechnology/postings/744000094288379",
+   "refNumber": "REF4982Y",
+   "releasedDate": "2025-11-18T23:34:36.386Z",
+   "typeOfEmployment": {
+    "id": "permanent",
+    "label": "Full-time"
+   },
+   "uuid": "4b6c6232-bca3-45da-95c0-048376d15992",
+   "visibility": "PUBLIC"
+  },
+  {
+   "company": {
+    "identifier": "SeekaTechnology",
+    "name": "Seeka Technology"
+   },
+   "customField": [
+    {
+     "fieldId": "COUNTRY",
+     "fieldLabel": "Country/Region",
+     "valueId": "my",
+     "valueLabel": "Malaysia"
+    },
+    {
+     "fieldId": "58b7eaffe4b09a6d37a0d81b",
+     "fieldLabel": "Brands",
+     "valueId": "default",
+     "valueLabel": "Seeka Technology"
+    }
+   ],
+   "defaultJobAd": true,
+   "department": {},
+   "experienceLevel": {
+    "id": "internship",
+    "label": "Internship"
+   },
+   "function": {
+    "id": "information_technology",
+    "label": "Information Technology"
+   },
+   "id": "744000088287036",
+   "industry": {
+    "id": "it_and_services",
+    "label": "Information Technology And Services"
+   },
+   "jobAdId": "66d84b78-5ff6-4b76-9f4c-e81857929096",
+   "language": {
+    "code": "en",
+    "label": "English",
+    "labelNative": "English (US)"
+   },
+   "location": {
+    "address": "Persiaran Bandar Utama",
+    "city": "Petaling Jaya",
+    "country": "my",
+    "fullLocation": "Petaling Jaya, Selangor, Malaysia",
+    "hybrid": false,
+    "latitude": "3.143629",
+    "longitude": "101.614856",
+    "region": "Selangor",
+    "remote": true
+   },
+   "name": "IT / Web Scrapping / QA Tester Internship / A.I. Automation - WFH/Remote Work",
+   "ref": "https://api.smartrecruiters.com/v1/companies/SeekaTechnology/postings/744000088287036",
+   "refNumber": "REF5044M",
+   "releasedDate": "2025-10-16T09:54:44.019Z",
+   "typeOfEmployment": {
+    "id": "intern",
+    "label": "Intern"
+   },
+   "uuid": "2cae6f61-e5a1-4eb5-9d78-ef0b2872b4db",
+   "visibility": "PUBLIC"
+  },
+  {
+   "company": {
+    "identifier": "SeekaTechnology",
+    "name": "Seeka Technology"
+   },
+   "customField": [
+    {
+     "fieldId": "COUNTRY",
+     "fieldLabel": "Country/Region",
+     "valueId": "my",
+     "valueLabel": "Malaysia"
+    },
+    {
+     "fieldId": "58b7eaffe4b09a6d37a0d81b",
+     "fieldLabel": "Brands",
+     "valueId": "default",
+     "valueLabel": "Seeka Technology"
+    }
+   ],
+   "defaultJobAd": true,
+   "department": {},
+   "experienceLevel": {
+    "id": "internship",
+    "label": "Internship"
+   },
+   "function": {
+    "id": "information_technology",
+    "label": "Information Technology"
+   },
+   "id": "744000063648206",
+   "industry": {
+    "id": "it_and_services",
+    "label": "Information Technology And Services"
+   },
+   "jobAdId": "0e6e2d23-a74a-4209-8d6a-0f6542517de3",
+   "language": {
+    "code": "en",
+    "label": "English",
+    "labelNative": "English (US)"
+   },
+   "location": {
+    "address": "Persiaran Bandar Utama",
+    "city": "Petaling Jaya",
+    "country": "my",
+    "fullLocation": "Petaling Jaya, Selangor, Malaysia",
+    "hybrid": false,
+    "latitude": "3.143624",
+    "longitude": "101.614791",
+    "region": "Selangor",
+    "remote": true
+   },
+   "name": "Software Engineer Internship - Testing, Technical Analysis, and Automation (WFH Only)",
+   "ref": "https://api.smartrecruiters.com/v1/companies/SeekaTechnology/postings/744000063648206",
+   "refNumber": "REF5043J",
+   "releasedDate": "2025-06-06T01:41:57.283Z",
+   "typeOfEmployment": {
+    "id": "intern",
+    "label": "Intern"
+   },
+   "uuid": "a8f863ea-c116-45b9-9e49-e56ad16833f0",
+   "visibility": "PUBLIC"
+  },
+  {
+   "company": {
+    "identifier": "SeekaTechnology",
+    "name": "Seeka Technology"
+   },
+   "customField": [
+    {
+     "fieldId": "COUNTRY",
+     "fieldLabel": "Country/Region",
+     "valueId": "my",
+     "valueLabel": "Malaysia"
+    },
+    {
+     "fieldId": "58b7eaffe4b09a6d37a0d81b",
+     "fieldLabel": "Brands",
+     "valueId": "default",
+     "valueLabel": "Seeka Technology"
+    }
+   ],
+   "defaultJobAd": true,
+   "department": {},
+   "experienceLevel": {
+    "id": "internship",
+    "label": "Internship"
+   },
+   "function": {
+    "id": "information_technology",
+    "label": "Information Technology"
+   },
+   "id": "744000063614655",
+   "industry": {
+    "id": "it_and_services",
+    "label": "Information Technology And Services"
+   },
+   "jobAdId": "9733d221-df1a-4b07-9556-ddb0c79c610e",
+   "language": {
+    "code": "en",
+    "label": "English",
+    "labelNative": "English (US)"
+   },
+   "location": {
+    "address": "Persiaran Bandar Utama",
+    "city": "Petaling Jaya",
+    "country": "my",
+    "fullLocation": "Petaling Jaya, Selangor, Malaysia",
+    "hybrid": false,
+    "latitude": "3.143629",
+    "longitude": "101.614856",
+    "region": "Selangor",
+    "remote": true
+   },
+   "name": "Business Internship - WFH/ Remote Job ",
+   "ref": "https://api.smartrecruiters.com/v1/companies/SeekaTechnology/postings/744000063614655",
+   "refNumber": "REF5042X",
+   "releasedDate": "2025-06-05T22:09:07.490Z",
+   "typeOfEmployment": {
+    "id": "intern",
+    "label": "Intern"
+   },
+   "uuid": "d6283d2f-c301-4bc2-9971-127218928584",
+   "visibility": "PUBLIC"
+  },
+  {
+   "company": {
+    "identifier": "SeekaTechnology",
+    "name": "Seeka Technology"
+   },
+   "customField": [
+    {
+     "fieldId": "COUNTRY",
+     "fieldLabel": "Country/Region",
+     "valueId": "pk",
+     "valueLabel": "Pakistan"
+    },
+    {
+     "fieldId": "58b7eaffe4b09a6d37a0d81b",
+     "fieldLabel": "Brands",
+     "valueId": "default",
+     "valueLabel": "Seeka Technology"
+    }
+   ],
+   "defaultJobAd": true,
+   "department": {},
+   "experienceLevel": {
+    "id": "mid_senior_level",
+    "label": "Mid-Senior Level"
+   },
+   "function": {
+    "id": "information_technology",
+    "label": "Information Technology"
+   },
+   "id": "744000062151525",
+   "industry": {
+    "id": "it_and_services",
+    "label": "Information Technology And Services"
+   },
+   "jobAdId": "64efbf76-cb2d-4afc-8d91-089bfff97f4f",
+   "language": {
+    "code": "en",
+    "label": "English",
+    "labelNative": "English (US)"
+   },
+   "location": {
+    "address": "Street 1 349",
+    "city": "Islamabad",
+    "country": "pk",
+    "fullLocation": "Islamabad, Islamabad Capital Territory, Pakistan",
+    "hybrid": false,
+    "latitude": "33.6606899",
+    "longitude": "73.0595143",
+    "region": "Islamabad Capital Territory",
+    "remote": true
+   },
+   "name": "Business Administration Assistant - Fresh Grads Welcome to Apply",
+   "ref": "https://api.smartrecruiters.com/v1/companies/SeekaTechnology/postings/744000062151525",
+   "refNumber": "REF5024V",
+   "releasedDate": "2025-05-29T16:03:27.385Z",
+   "typeOfEmployment": {
+    "id": "permanent",
+    "label": "Full-time"
+   },
+   "uuid": "e488529f-33c8-46f8-aead-37e4cc2fe1d6",
+   "visibility": "PUBLIC"
+  },
+  {
+   "company": {
+    "identifier": "SeekaTechnology",
+    "name": "Seeka Technology"
+   },
+   "customField": [
+    {
+     "fieldId": "COUNTRY",
+     "fieldLabel": "Country/Region",
+     "valueId": "id",
+     "valueLabel": "Indonesia"
+    },
+    {
+     "fieldId": "58b7eaffe4b09a6d37a0d81b",
+     "fieldLabel": "Brands",
+     "valueId": "default",
+     "valueLabel": "Seeka Technology"
+    }
+   ],
+   "defaultJobAd": true,
+   "department": {},
+   "experienceLevel": {
+    "id": "mid_senior_level",
+    "label": "Mid-Senior Level"
+   },
+   "function": {
+    "id": "information_technology",
+    "label": "Information Technology"
+   },
+   "id": "744000061577491",
+   "industry": {
+    "id": "it_and_services",
+    "label": "Information Technology And Services"
+   },
+   "jobAdId": "a0c54f54-cda1-4333-8914-2ada5d667ee2",
+   "language": {
+    "code": "en",
+    "label": "English",
+    "labelNative": "English (US)"
+   },
+   "location": {
+    "address": "Bali",
+    "city": "Kecamatan Pasar Rebo",
+    "country": "id",
+    "fullLocation": "Kecamatan Pasar Rebo, Daerah Khusus Ibukota Jakarta, Indonesia",
+    "hybrid": false,
+    "latitude": "-6.3166121",
+    "longitude": "106.855399",
+    "region": "Daerah Khusus Ibukota Jakarta",
+    "remote": true
+   },
+   "name": "Ionic Framework Developer - WFH/ Remote Job",
+   "ref": "https://api.smartrecruiters.com/v1/companies/SeekaTechnology/postings/744000061577491",
+   "refNumber": "REF5023P",
+   "releasedDate": "2025-05-27T07:34:47.230Z",
+   "typeOfEmployment": {
+    "id": "permanent",
+    "label": "Full-time"
+   },
+   "uuid": "859c9bdf-c3b5-4266-8653-f84d16ebf32b",
+   "visibility": "PUBLIC"
+  }
+ ],
+ "limit": 100,
+ "offset": 0,
+ "totalFound": 10
+}

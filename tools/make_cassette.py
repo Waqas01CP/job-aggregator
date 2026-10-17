@@ -32,8 +32,15 @@ DESCRIPTION_FIELDS = frozenset({
     "openingPlain", "job_description", "jobDescription", "excerpt",
     "salaryDescription", "salaryDescriptionPlain", "benefits",
     "key_responsibilities", "skills_knowledge_expertise", "publicDescription",
-    "Job_Description", "descriptionHtml", "companyLogo",
+    "Job_Description", "descriptionHtml", "companyLogo", "hybridDescription",
 })
+
+# SmartRecruiters' job ad, 2026-10-17: four named sections under
+# `jobAd.sections`, each `{title, text}`. `text` cannot join the list above,
+# since it is Lever's title, so a section's text is stripped by where it sits.
+SECTIONS = "sections"
+# Fields that name a person, stripped whole: SmartRecruiters' `creator`.
+PEOPLE_FIELDS = frozenset({"creator"})
 
 # The fields the adapters actually read. --keep-only-read-fields trims to these,
 # for the one cassette that needs every posting rather than every field.
@@ -70,6 +77,12 @@ def sanitise(node):
         for key, value in node.items():
             if key in DESCRIPTION_FIELDS and isinstance(value, str):
                 out[key] = PLACEHOLDER
+            elif key in PEOPLE_FIELDS:
+                out[key] = PLACEHOLDER
+            elif key == SECTIONS and isinstance(value, dict):
+                out[key] = {name: dict(section, text=PLACEHOLDER)
+                            if isinstance(section, dict) and "text" in section
+                            else sanitise(section) for name, section in value.items()}
             elif key == "lists" and isinstance(value, list):
                 # Lever's `lists` is prose in {text, content} pairs.
                 out[key] = [{"text": item.get("text", ""), "content": PLACEHOLDER}
@@ -100,6 +113,13 @@ def postings_of(doc):
     # `count`, `next` and `previous`, which the envelope keeps.
     if isinstance(doc, dict) and isinstance(doc.get("results"), list):
         return doc["results"], "results"
+    # SmartRecruiters' list pages postings under `content`, beside
+    # `totalFound`, `offset` and `limit`.
+    if isinstance(doc, dict) and isinstance(doc.get("content"), list):
+        return doc["content"], "content"
+    # SmartRecruiters' detail is one posting, its job ad included.
+    if isinstance(doc, dict) and "jobAd" in doc:
+        return [doc], "single"
     raise SystemExit("unrecognised payload shape: %s" % type(doc).__name__)
 
 
@@ -121,7 +141,9 @@ def main():
     if args.keep_only_read_fields:
         postings = trim(postings)
 
-    if key:
+    if key == "single":
+        out_doc = postings[0]
+    elif key:
         doc = dict(doc)
         doc[key] = postings
         if "meta" in doc:
@@ -149,7 +171,27 @@ def main():
     if EMAIL.search(text):
         print("REFUSING: an email address survived sanitising")
         return 1
+    if sections_with_text(out_doc):
+        print("REFUSING: a job ad section still carries text")
+        return 1
     return 0
+
+
+def sections_with_text(node):
+    """Every SmartRecruiters section whose text is not the placeholder."""
+    found = []
+    if isinstance(node, dict):
+        for key, value in node.items():
+            if key == SECTIONS and isinstance(value, dict):
+                found += [name for name, section in value.items()
+                          if isinstance(section, dict)
+                          and section.get("text") not in (None, "", PLACEHOLDER)]
+            else:
+                found += sections_with_text(value)
+    elif isinstance(node, list):
+        for item in node:
+            found += sections_with_text(item)
+    return found
 
 
 if __name__ == "__main__":

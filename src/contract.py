@@ -78,22 +78,24 @@ import traceback
 from datetime import datetime, timezone
 
 from . import envfile, storage
-from .adapters import greenhouse, himalayas, lever, manatal, workable
+from .adapters import greenhouse, himalayas, lever, manatal, smartrecruiters, workable
 from .config import REPO_ROOT, ConfigError, load_boards
 from .http_client import HttpClient, HttpError
 from .normalise import dumps, iso, loads
 
 PLATFORMS = {"greenhouse": greenhouse, "lever": lever, "himalayas": himalayas, "manatal": manatal,
-             "workable": workable}
+             "workable": workable, "smartrecruiters": smartrecruiters}
 
 FINGERPRINT_FILE = "contract/fingerprint.json"
 REBASELINES_PATH = os.path.join(REPO_ROOT, "config", "contract_rebaselines.json")
 LOG_DIR = "logs-contract"
 
-# One request per platform, and a little room: each platform's own client
-# counts every attempt, including retries, against this, so a failing board
-# spends its own allowance and never another platform's.
-PER_PLATFORM_BUDGET = 2
+# One request per platform, two for one whose description is a request of
+# its own (SmartRecruiters' list and one detail, 2026-10-17), and a little
+# room: each platform's own client counts every attempt, including retries,
+# against this, so a failing board spends its own allowance and never
+# another platform's.
+PER_PLATFORM_BUDGET = 3
 
 # The exit code of a check that committed its log with at least one platform's
 # check failed: resumable, as the fetch run's 2 is, and marked failed by the
@@ -175,7 +177,7 @@ def compare(before, after):
     one fingerprint and not the other is a change too: that is the case
     ADR-0018's Confirmation builds by hand-editing a stored fingerprint."""
     changes = []
-    for section in ("response", "posting"):
+    for section in ("response", "posting", "detail"):
         old, new = before.get(section) or {}, after.get(section) or {}
         for path in sorted(set(old) | set(new)):
             if old.get(path) != new.get(path):
@@ -258,6 +260,20 @@ def explain(platform, changes, rebaselines, since, now):
     return changes
 
 
+def detail_fingerprint(adapter, board, client, payload, previous):
+    """For a platform whose description is on a request of its own,
+    SmartRecruiters': the first posting's detail, one more request,
+    fingerprinted over the fields the parse reads from it, `CONSUMED_DETAIL`.
+    With no posting to ask about, the stored shape stands, as the postings'
+    does."""
+    entries = [p for p in (postings_in(adapter, payload) or []) if isinstance(p, dict)]
+    external_id = adapter.external_id_of(entries[0]) if entries else ""
+    if not external_id:
+        return (previous or {}).get("detail", {})
+    detail = client.get_json(adapter.detail_url(board, external_id), board.source)
+    return {path: shape([resolve(detail, path)]) for path in adapter.CONSUMED_DETAIL}
+
+
 def first_board(boards, platform):
     return next((b for b in boards if b.platform == platform), None)
 
@@ -309,6 +325,13 @@ def check_one(platform, adapter, board, client, stored, entry, now, rebaselines)
         entry.update(status="unreachable", detail=str(e))
         return None
     fp, count = fingerprint(adapter, payload)
+    if getattr(adapter, "DETAIL", False):
+        try:
+            fp["detail"] = detail_fingerprint(adapter, board, client, payload,
+                                              stored.get(platform))
+        except HttpError as e:
+            entry.update(status="unreachable", detail="the detail: %s" % e)
+            return None
     entry["postings"] = count
     if not count:
         # Nothing to fingerprint the postings over. The response's own

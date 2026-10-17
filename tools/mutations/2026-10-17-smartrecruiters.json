@@ -1,0 +1,68 @@
+[
+  {
+    "label": "the SmartRecruiters walk stops after the first page",
+    "path": "src/adapters/smartrecruiters.py",
+    "find": "    return reached if content and reached < total else None",
+    "replace": "    return None"
+  },
+  {
+    "label": "the built link replaces the detail's",
+    "path": "src/adapters/smartrecruiters.py",
+    "find": "        if require_absolute(url):\n            url_provenance = \"payload\"",
+    "replace": "        if False:\n            url_provenance = \"payload\""
+  },
+  {
+    "label": "SmartRecruiters' remote is not read",
+    "path": "src/adapters/smartrecruiters.py",
+    "find": "    if location.get(\"remote\") is True:\n        return \"remote\"",
+    "replace": "    if False:\n        return \"remote\""
+  },
+  {
+    "label": "the SmartRecruiters adapter reads no level",
+    "path": "src/adapters/smartrecruiters.py",
+    "find": "            levels=(label,) if label else None,",
+    "replace": "            levels=None,"
+  },
+  {
+    "label": "a posting's detail is asked on every run",
+    "path": "src/run.py",
+    "find": "            if not external_id or \"%s:%s\" % (board.source, external_id) in seen_first_seen:",
+    "replace": "            if not external_id:"
+  },
+  {
+    "label": "a failed detail fails the board",
+    "path": "src/run.py",
+    "find": "            except HttpError:\n                failed += 1\n                continue",
+    "replace": "            except ValueError:\n                failed += 1\n                continue"
+  },
+  {
+    "label": "the detail is never merged into the posting",
+    "path": "src/run.py",
+    "find": "            entry.update(adapter.from_detail(detail))",
+    "replace": "            adapter.from_detail(detail)"
+  },
+  {
+    "label": "the contract check ignores the detail",
+    "path": "src/contract.py",
+    "find": "    for section in (\"response\", \"posting\", \"detail\"):",
+    "replace": "    for section in (\"response\", \"posting\"):"
+  },
+  {
+    "label": "the cassette tool keeps a job ad's sections",
+    "path": "tools/make_cassette.py",
+    "find": "            elif key == SECTIONS and isinstance(value, dict):",
+    "replace": "            elif False:"
+  },
+  {
+    "label": "an unread description is recorded as none",
+    "path": "src/normalise.py",
+    "find": "            described=(None if getattr(p, \"description\", None) is None\n                       else facts is not None),",
+    "replace": "            described=facts is not None,"
+  },
+  {
+    "label": "SmartRecruiters' boards are configured and not polled",
+    "path": "src/run.py",
+    "find": "            \"manatal\": manatal, \"workable\": workable, \"smartrecruiters\": smartrecruiters}",
+    "replace": "            \"manatal\": manatal, \"workable\": workable}"
+  }
+]

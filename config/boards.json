@@ -183,6 +183,20 @@
       "employer_alias": "Inbox Business Technologies",
       "normalisations": [],
       "note": "Registry Part 3, slug found 2026-10-04 by the account's name matching the registry's employer and added to the registry on the operator's yes, marked unproven: none of its postings passed the rules that day. Workable, through its documented endpoint. ADR-0026."
+    },
+    {
+      "platform": "smartrecruiters",
+      "slug": "OneScreen",
+      "employer_alias": "OneScreen",
+      "normalisations": [],
+      "note": "Registry Part 3. SmartRecruiters, through its public Posting API (ADR-0059's first wave, third, the operator's order of 2026-10-09). The slug is the company's identifier, as its job pages spell it. The alias is used where a posting names no company. ADR-0026."
+    },
+    {
+      "platform": "smartrecruiters",
+      "slug": "SeekaTechnology",
+      "employer_alias": "Seeka Technology",
+      "normalisations": [],
+      "note": "Registry Part 13. SmartRecruiters, through its public Posting API (ADR-0059's first wave, third, the operator's order of 2026-10-09). The slug is the company's identifier, as its job pages spell it. The alias is used where a posting names no company. ADR-0026."
     }
   ]
 }

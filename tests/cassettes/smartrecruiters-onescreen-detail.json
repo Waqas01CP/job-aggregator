@@ -1,0 +1,83 @@
+{
+ "active": true,
+ "applyUrl": "https://jobs.smartrecruiters.com/OneScreen/744000153018507-product-operations-engineer?oga=true",
+ "company": {
+  "identifier": "OneScreen",
+  "name": "OneScreen"
+ },
+ "creator": "STRIPPED",
+ "customField": [
+  {
+   "fieldId": "COUNTRY",
+   "fieldLabel": "Country/Region",
+   "valueId": "pk",
+   "valueLabel": "Pakistan"
+  },
+  {
+   "fieldId": "61ae33e477ee680c972e9a1d",
+   "fieldLabel": "Brands",
+   "valueId": "default",
+   "valueLabel": "OneScreen"
+  }
+ ],
+ "defaultJobAd": true,
+ "experienceLevel": {
+  "id": "entry_level",
+  "label": "Entry Level"
+ },
+ "function": {
+  "id": "information_technology",
+  "label": "Information Technology"
+ },
+ "id": "744000153018507",
+ "industry": {
+  "id": "it_and_services",
+  "label": "Information Technology And Services"
+ },
+ "jobAd": {
+  "sections": {
+   "additionalInformation": {
+    "text": "STRIPPED",
+    "title": "Additional Information"
+   },
+   "companyDescription": {
+    "text": "STRIPPED",
+    "title": "Company Description"
+   },
+   "jobDescription": {
+    "text": "STRIPPED",
+    "title": "Job Description"
+   },
+   "qualifications": {
+    "text": "STRIPPED",
+    "title": "Qualifications"
+   }
+  }
+ },
+ "jobAdId": "9efc8a9f-b0ce-4bb8-b880-66ca94511f63",
+ "jobId": "bfc3df5a-e78f-4067-8c8a-27c0bd7999ce",
+ "language": {
+  "code": "en",
+  "label": "English",
+  "labelNative": "English (US)"
+ },
+ "location": {
+  "address": "Sector G-9/4",
+  "city": "Islamabad",
+  "country": "pk",
+  "fullLocation": "Islamabad, , Pakistan",
+  "hybrid": false,
+  "remote": false
+ },
+ "name": "Product Operations Engineer",
+ "postingUrl": "https://jobs.smartrecruiters.com/OneScreen/744000153018507-product-operations-engineer",
+ "refNumber": "REF46D",
+ "referralUrl": "https://jobs.smartrecruiters.com/external-referrals/company/OneScreen/publication/3c02ac59-716c-4ce0-8b31-8ac394adcd68?dcr_ci=OneScreen",
+ "releasedDate": "2026-10-01T19:44:01.110Z",
+ "typeOfEmployment": {
+  "id": "permanent",
+  "label": "Full-time"
+ },
+ "uuid": "3c02ac59-716c-4ce0-8b31-8ac394adcd68",
+ "visibility": "PUBLIC"
+}

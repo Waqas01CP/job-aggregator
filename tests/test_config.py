@@ -30,6 +30,9 @@ REGISTRY_MANATAL = {"abacus-consulting-3", "ahdus-technology-2", "spursol", "pre
 # marked unproven. Built 2026-10-08.
 REGISTRY_WORKABLE = {"igate-technologies", "creative-chaos", "thingtrax", "staunch",
                      "petra-brands", "inbox-business-technologies"}
+# Parts 3 and 13, each board's company identifier as its job pages spell it.
+# Built 2026-10-17.
+REGISTRY_SMARTRECRUITERS = {"OneScreen", "SeekaTechnology"}
 
 
 def write_config(boards):
@@ -46,14 +49,15 @@ class TestRealConfig(unittest.TestCase):
     def setUp(self):
         self.boards = load_boards()
 
-    def test_twenty_six_ats_boards_plus_the_conditional_aggregator(self):
+    def test_twenty_eight_ats_boards_plus_the_conditional_aggregator(self):
         """ADR-0009 fixed the slice at eleven employer boards; ADR-0059's
-        Manatal adds nine, on 2026-10-07, and Workable six, on 2026-10-08.
-        Himalayas is the conditional aggregator from ADR-0019, not an
-        employer board, so it is counted separately."""
+        Manatal adds nine, on 2026-10-07, Workable six, on 2026-10-08, and
+        SmartRecruiters two, on 2026-10-17. Himalayas is the conditional
+        aggregator from ADR-0019, not an employer board, so it is counted
+        separately."""
         ats = [b for b in self.boards if b.source_class == "ats"]
         aggregators = [b for b in self.boards if b.source_class == "aggregator"]
-        self.assertEqual(len(ats), 26)
+        self.assertEqual(len(ats), 28)
         # The search endpoint filtered to the operator's country, since
         # 2026-09-26: the slug is the country.
         self.assertEqual([b.slug for b in aggregators], ["pakistan"])
@@ -68,6 +72,8 @@ class TestRealConfig(unittest.TestCase):
                          REGISTRY_MANATAL)
         self.assertEqual({b.slug for b in self.boards if b.platform == "workable"},
                          REGISTRY_WORKABLE)
+        self.assertEqual({b.slug for b in self.boards if b.platform == "smartrecruiters"},
+                         REGISTRY_SMARTRECRUITERS)
 
     def test_only_speechify_is_normalised(self):
         """ADR-0027: a normalisation is applied only where it was measured."""
@@ -91,7 +97,8 @@ class TestRealConfig(unittest.TestCase):
     def test_source_is_the_platform(self):
         """ADR-0020 stores one file per source, so source names the file."""
         self.assertEqual({b.source for b in self.boards},
-                         {"greenhouse", "lever", "himalayas", "manatal", "workable"})
+                         {"greenhouse", "lever", "himalayas", "manatal", "workable",
+                          "smartrecruiters"})
 
     def test_source_class_separates_employer_boards_from_aggregators(self):
         """ADR-0020 routes raw storage by source class: employer rows to the

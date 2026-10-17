@@ -1,0 +1,94 @@
+{
+ "active": true,
+ "applyUrl": "https://jobs.smartrecruiters.com/SeekaTechnology/744000126183660-ai-driven-marketing-market-research-intern?oga=true",
+ "company": {
+  "identifier": "SeekaTechnology",
+  "name": "Seeka Technology"
+ },
+ "compensation": {
+  "currency": "MYR",
+  "max": 700,
+  "min": 300,
+  "period": "MONTHLY"
+ },
+ "creator": "STRIPPED",
+ "customField": [
+  {
+   "fieldId": "COUNTRY",
+   "fieldLabel": "Country/Region",
+   "valueId": "my",
+   "valueLabel": "Malaysia"
+  },
+  {
+   "fieldId": "58b7eaffe4b09a6d37a0d81b",
+   "fieldLabel": "Brands",
+   "valueId": "default",
+   "valueLabel": "Seeka Technology"
+  }
+ ],
+ "defaultJobAd": true,
+ "experienceLevel": {
+  "id": "internship",
+  "label": "Internship"
+ },
+ "function": {
+  "id": "advertising",
+  "label": "Advertising"
+ },
+ "id": "744000126183660",
+ "industry": {
+  "id": "marketing_and_advertising",
+  "label": "Marketing And Advertising"
+ },
+ "jobAd": {
+  "sections": {
+   "additionalInformation": {
+    "text": "STRIPPED",
+    "title": "Additional Information"
+   },
+   "companyDescription": {
+    "text": "STRIPPED",
+    "title": "Company Description"
+   },
+   "jobDescription": {
+    "text": "STRIPPED",
+    "title": "Job Description"
+   },
+   "qualifications": {
+    "text": "STRIPPED",
+    "title": "Qualifications"
+   }
+  }
+ },
+ "jobAdId": "35793e15-3e3f-43bc-b857-d6fbd36fc0ab",
+ "jobId": "c1b8118e-4a0f-46d6-9fcf-b0c3fd3cfed7",
+ "language": {
+  "code": "en",
+  "label": "English",
+  "labelNative": "English (US)"
+ },
+ "location": {
+  "address": "5 Jalan Professor Khoo Kay Kim",
+  "city": "Petaling Jaya",
+  "country": "my",
+  "fullLocation": "Petaling Jaya, Selangor, Malaysia",
+  "hybrid": true,
+  "hybridDescription": "STRIPPED",
+  "latitude": "3.11088",
+  "longitude": "101.6365849",
+  "postalCode": "46200",
+  "region": "Selangor",
+  "remote": false
+ },
+ "name": "AI Driven Marketing & Market Research Intern",
+ "postingUrl": "https://jobs.smartrecruiters.com/SeekaTechnology/744000126183660-ai-driven-marketing-market-research-intern",
+ "refNumber": "REF5051W",
+ "referralUrl": "https://jobs.smartrecruiters.com/external-referrals/company/SeekaTechnology/publication/09fb0264-9a05-4f05-8643-7ddc5ac21fbc?dcr_ci=SeekaTechnology",
+ "releasedDate": "2026-05-13T00:37:13.746Z",
+ "typeOfEmployment": {
+  "id": "intern",
+  "label": "Intern"
+ },
+ "uuid": "09fb0264-9a05-4f05-8643-7ddc5ac21fbc",
+ "visibility": "PUBLIC"
+}

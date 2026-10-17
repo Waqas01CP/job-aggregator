@@ -21,8 +21,9 @@ DEFAULT_PATH = os.path.join(REPO_ROOT, "config", "boards.json")
 
 # Platforms this build adapts. ADR-0009 fixed the slice at the first two;
 # Manatal is ADR-0059's first, by measured yield, on 2026-10-07; Workable
-# second, on 2026-10-08.
-PLATFORMS = frozenset({"greenhouse", "lever", "himalayas", "manatal", "workable"})
+# second, on 2026-10-08; SmartRecruiters third, on 2026-10-17.
+PLATFORMS = frozenset({"greenhouse", "lever", "himalayas", "manatal", "workable",
+                       "smartrecruiters"})
 
 # Every normalisation that may be named by a board entry. A name outside this
 # set is a typo, and a typo that silently did nothing would be invisible: the

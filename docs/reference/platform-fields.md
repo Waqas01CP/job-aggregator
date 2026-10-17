@@ -44,15 +44,17 @@ category names a provider defines. The measurement script is in
 
 **No source gives years of experience as a field.** A number of years
 appears only inside the description text, which the pipeline reads for it
-since 2026-10-02 (below, "Decided"). **Two sources state a level:
-Himalayas, on every posting**, which the level rule reads since the same day,
-**and Workable, on some**, read since 2026-10-17.
+since 2026-10-02 (below, "Decided"). **Three sources state a level:
+Himalayas and SmartRecruiters, on every posting**, which the level rule reads
+since 2026-10-02 and 2026-10-17, **and Workable, on some**, read since
+2026-10-17.
 
 | Source | A stated level | Years as a field | Description states a number of years |
 |---|---|---|---|
 | Greenhouse | None standard. One board's custom `metadata` carries "Workday P Level", a grade code, on 269 postings | No | 435 of 823, 53% |
 | Lever | `categories.level` exists in Lever's schema and filters, and neither board sets it: 0 of 63 | No | 42 of 63, 67% |
 | Himalayas | `seniority`, 100%: Entry-level, Mid-level, Senior, Manager, Director, Executive, one or more | No | 406 of 809, 50% |
+| SmartRecruiters | `experienceLevel.label`, 100% of 20 on 2026-10-17: Entry Level 9, Internship 6, Mid-Senior Level 4, Executive 1 | No | not counted |
 | Workable | `experience`, one value where present: 20 of the 47 postings saved by 2026-10-16, Entry level 8, Mid-Senior level 6, Associate 4, Director 2 | No | not counted |
 
 "States a number of years" counts descriptions with a phrase like "3 years",
@@ -291,6 +293,37 @@ pipeline receives:
 | `industry`, `employment_type`, `education`, `department`, `function`, `code` | string | 74.4%, 70.5%, 62.8%, 34.6%, 21.8%, 0% | no | |
 
 The account's `name` sits beside `jobs` and is the employer; its `description`, the account's own prose, is not read.
+
+## SmartRecruiters
+
+`api.smartrecruiters.com/v1/companies/{company}/postings`, SmartRecruiters' documented public Posting API, no authentication for public postings, 100 a page under `content` beside `totalFound`, `offset` and `limit`. **The description is on a second endpoint**, `.../postings/{id}`, one request a posting, so the run asks for it once per posting, ever, at first sight (ADR-0028); a later run reads the posting from the list alone. Measured 2026-10-17 over the 20 postings on the registry's two boards, OneScreen and SeekaTechnology, ten each, and one detail on each `[VERIFIED]`:
+
+| Field | Type | Present | Read | Notes |
+|---|---|---|---|---|
+| `id` | string | 100% | yes | the identity |
+| `name` | string | 100% | yes | the title |
+| `releasedDate` | string | 100% | yes | ISO time in UTC. SmartRecruiters does not define it. It did not move on any of 9 postings read on 2026-09-16 and again on 2026-10-17, and the one posting new between carried a date between. **The operator's decision of 2026-10-17: trusted as the publication date.** 10 of 20 were released in 2026, one since 2026-09-17; OneScreen still lists postings released in 2023 |
+| `company.name`, `company.identifier` | string | 100% | yes | the employer, and the handle the job page's link is built from |
+| `location.fullLocation` | string | 100% | yes | the place, its empty and repeated parts removed: "Islamabad,, Islamabad, Pakistan" reads "Islamabad, Pakistan" |
+| `location.country` | string | 100% | yes | ISO-2 in lower case: pk 14, my 5, id 1 |
+| `location.remote`, `location.hybrid` | boolean | 100% | yes | remote on 10, hybrid on 1; neither set says nothing, as Workable's `telecommuting` false does |
+| `location.city`, `location.region` | string | 100%, 85% | city only, where `fullLocation` is empty | |
+| `experienceLevel` | object | 100% | **`label`** | **the stated level**: Entry Level 9, Internship 6, Mid-Senior Level 4, Executive 1. The level rule drops only the levels configured above mid |
+| `typeOfEmployment`, `function`, `industry`, `department` | object | 100%, 100%, 100%, 0% with a label | no | the job type is not filtered on any source, the operator's decision of 2026-10-02 |
+| `customField` | list | 100% | no | the country again, and a brand |
+| `ref`, `refNumber`, `uuid`, `jobAdId`, `language`, `visibility`, `defaultJobAd` | | 100% | no | `ref` is the detail's API address |
+
+**The detail**, one posting, carries the list's fields and these:
+
+| Field | Type | Read | Notes |
+|---|---|---|---|
+| `jobAd.sections` | object | **yes** | four sections, `companyDescription`, `jobDescription`, `qualifications` and `additionalInformation`, each `{title, text}`, the text HTML: the description rules read all four |
+| `postingUrl` | string | **yes** | the job's own page, preferred to the page built from the list, which answered 200 and named the posting on 2026-10-17 |
+| `applyUrl`, `referralUrl` | string | no | the form, and a referral link |
+| `creator` | object | no | a person, stripped from every cassette |
+| `location.hybridDescription`, `compensation` | | no | employer prose, stripped from every cassette, and pay, on one of the two |
+
+**What today's rules make of the 20**, read from the list on 2026-10-17: none is kept. The title rule drops 16, location 2, the level rule 1 (Executive) and age 1. Brief 10 measured 0 of 20 on 2026-10-04.
 
 ## What each API accepts
 
@@ -543,9 +576,10 @@ Ordered by what each would change, not by effort.
    board of nine, a grade code, no years.
 5. **Greenhouse `offices`.** 13.1%, structured locations beside the free-text
    one.
-6. **SmartRecruiters `experienceLevel` and Zoho `Work_Experience`**, when
-   those adapters exist. These are the only measured sources of the field the
-   stated-experience rule needs, which today has no source at all.
+6. **Zoho `Work_Experience`**, when its adapter exists. *(2026-10-17:
+   SmartRecruiters' `experienceLevel` is read, as the stated level. It is a
+   level, not a number of years, so the experience rule still reads the
+   description.)*
 
 Nothing here is a decision. Reading a field means deciding what it means and
 what happens when it is absent, and each of these deserves that separately.
@@ -554,6 +588,7 @@ what happens when it is absent, and each of these deserves that separately.
 
 | Date | Change | Reason |
 |---|---|---|
+| 2026-10-17 | SmartRecruiters' section added: its list and detail endpoints, every field counted over 20 postings and two details, `releasedDate` trusted on the operator's decision, `experienceLevel` read as the stated level | Its adapter is built, ADR-0059's third platform |
 | 2026-10-17 | Workable's `experience` marked read, its counts over the 47 saved postings added to the experience table, and the level rule's turn to a list of the levels that drop noted under "Decided" | The Senior change's build, Brief 13 item 3 |
 | 2026-10-08 | Workable's section added: its documented endpoint and the redirect it answers with, every field counted over 78 postings, the spec's two link fields found reversed | Its adapter is built, ADR-0059's second platform by its rule |
 | 2026-10-07 | Manatal's section added: the career site's endpoint, every field counted over 393 postings, no date and no workplace field, unstable pages | Its adapter is built, ADR-0059's first platform by measured yield, on the endpoint the operator accepted that day |

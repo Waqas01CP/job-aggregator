@@ -2,8 +2,8 @@
   {
     "label": "a posting with no description is not flagged",
     "path": "src/normalise.py",
-    "find": "            described=facts is not None,",
-    "replace": "            described=None,"
+    "find": "                       else facts is not None),",
+    "replace": "                       else None),"
   },
   {
     "label": "the re-read leaves out whether there was a description",

@@ -245,6 +245,61 @@ class TestManatalWalk(RunHarness):
         self.assertEqual(log["totals"]["new"], 32)
 
 
+class TestSmartRecruitersDetails(RunHarness):
+    """ADR-0028: a posting's detail is asked for once, ever, when the run
+    first sees it."""
+
+    SR = Board(platform="smartrecruiters", slug="OneScreen", employer_alias="OneScreen")
+
+    def routes(self, detail=None):
+        from tests.test_adapters import cassette
+        listing = cassette("smartrecruiters-onescreen.json")
+        listing["content"] = listing["content"][:2]
+        listing["totalFound"] = 2
+        detail = detail if detail is not None else cassette(
+            "smartrecruiters-onescreen-detail.json")
+        return {"OneScreen/postings?limit": listing, "OneScreen/postings/": detail}
+
+    def details_asked(self, client):
+        return [u for u in client._session.calls if "/postings/" in u]
+
+    def test_each_new_posting_is_asked_for_once_and_never_again(self):
+        """ADR-0028's Confirmation: run twice against a board with no new
+        postings, and the second run issues no detail request. The first
+        stores each posting with its description read, and saves the detail
+        with it for the full branch. Mutation: "a posting's detail is asked
+        on every run"."""
+        first = client_for(self.routes())
+        run = Run([self.SR], first, now=NOW, matcher=MATCHER)
+        log = run.execute()
+        self.assertEqual(len(self.details_asked(first)), 2)
+        self.assertEqual((log["boards"][0]["details"], log["boards"][0]["details_failed"]), (2, 0))
+        with open(storage.raw_path("smartrecruiters", False, "ats"), encoding="utf-8") as f:
+            rows = json.load(f)
+        self.assertEqual([r["described"] for r in rows], [True, True])
+        self.assertTrue(all("jobAd" in e["posting"] for e in run.full.values()))
+        second = client_for(self.routes())
+        log = Run([self.SR], second, now=NOW, matcher=MATCHER).execute()
+        self.assertEqual(self.details_asked(second), [])
+        self.assertEqual(log["boards"][0]["details"], 0)
+        self.assertEqual(log["boards"][0]["fetched"], 2)
+
+    def test_a_failed_detail_costs_the_posting_its_description_never_the_board(self):
+        """Mutations: "a failed detail fails the board", "the detail is
+        never merged into the posting"."""
+        import requests
+        client = client_for(self.routes(detail=requests.ConnectionError("down")),
+                            max_attempts=1)
+        log = Run([self.SR], client, now=NOW, matcher=MATCHER).execute()
+        [entry] = log["boards"]
+        self.assertEqual((entry["status"], entry["fetched"], entry["details_failed"]),
+                         ("ok", 2, 2))
+        with open(storage.raw_path("smartrecruiters", False, "ats"), encoding="utf-8") as f:
+            rows = json.load(f)
+        self.assertEqual([r["described"] for r in rows], [None, None])
+        self.assertEqual(rows[0]["url_provenance"], "constructed")
+
+
 class TestNormalRun(RunHarness):
     def test_writes_both_layers_and_logs_every_board(self):
         client = client_for({"careem": gh_payload(["AI Engineer", "Chief Happiness Officer"]),
