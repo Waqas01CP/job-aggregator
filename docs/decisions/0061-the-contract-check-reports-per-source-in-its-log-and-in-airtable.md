@@ -45,7 +45,7 @@ Chosen option: "consolidate ADR-0036 with both changes".
 
 **We will write each check's findings to its run log on the data branch**, naming each changed field, its previous shape and its current shape. A finding never fails the run. `tools/run_log_report.py` shows each platform's latest status, every change, and every failed or unreachable check with its detail.
 
-**We will check each platform on its own.** Each has its own client, with its own budget of 2 requests and its own circuit breaker, so the check costs what it did, and each runs inside its own exception boundary. A platform whose check fails is reported as `check failed`, with the exception's class, file, line and function and **never its message**; its last fingerprint stands, and the other platforms are checked.
+**We will check each platform on its own.** Each has its own client, with its own budget of 2 requests *(3 for SmartRecruiters since 2026-10-17, whose posting detail is fingerprinted as a section of its own; the implementing seat's report on Brief 13)* and its own circuit breaker, so the check costs what it did, and each runs inside its own exception boundary. A platform whose check fails is reported as `check failed`, with the exception's class, file, line and function and **never its message**; its last fingerprint stands, and the other platforms are checked.
 
 **We will keep three exit codes, and keep them meaning three things.**
 - **0:** the check ran; findings, if any, are in the log.
