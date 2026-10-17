@@ -34,7 +34,8 @@ HIM = Board(platform="himalayas", slug="browse")
 MN = Board(platform="manatal", slug="premiernx", employer_alias="Premier NX")
 WK = Board(platform="workable", slug="igate-technologies", employer_alias="iGATE Technology")
 SR = Board(platform="smartrecruiters", slug="OneScreen", employer_alias="OneScreen")
-BOARDS = [GH, LV, HIM, MN, WK, SR]
+AB = Board(platform="ashby", slug="Overjet", employer_alias="Overjet")
+BOARDS = [GH, LV, HIM, MN, WK, SR, AB]
 # The requests a check makes: one a platform, and one more for each whose
 # description is a request of its own.
 REQUESTS = len(contract.PLATFORMS) + sum(1 for a in contract.PLATFORMS.values()
@@ -75,7 +76,8 @@ def responses():
             "careers-page.com": cassette("manatal-premiernx-page1.json"),
             "workable.com/api/accounts": cassette("workable-igate-technologies.json"),
             "OneScreen/postings?limit": cassette("smartrecruiters-onescreen.json"),
-            "OneScreen/postings/": cassette("smartrecruiters-onescreen-detail.json")}
+            "OneScreen/postings/": cassette("smartrecruiters-onescreen-detail.json"),
+            "job-board/Overjet": cassette("ashby-overjet.json")}
 
 
 def client(routes, max_attempts=1, budget=contract.PER_PLATFORM_BUDGET):
@@ -134,8 +136,8 @@ class TestConsumedFields(unittest.TestCase):
     that is read, and the check would watch the wrong thing."""
 
     def test_each_adapter_declares_exactly_what_it_reads(self):
-        from src.adapters import smartrecruiters
-        for module in (greenhouse, lever, himalayas, smartrecruiters):
+        from src.adapters import ashby, smartrecruiters
+        for module in (greenhouse, lever, himalayas, smartrecruiters, ashby):
             with self.subTest(adapter=module.PLATFORM):
                 declared = {path.split(".")[-1]
                             for path in module.CONSUMED + module.CONSUMED_RESPONSE
@@ -173,10 +175,12 @@ class TestConsumedFields(unittest.TestCase):
         off a declared parent."""
         # Greenhouse's as the run requests it since 2026-09-26, with
         # `?content=true`, which adds `offices`.
+        from src.adapters import ashby
         saved = {"greenhouse": "greenhouse-careem-content.json",
                  "lever": "lever-smart-working-solutions.json",
-                 "himalayas": "himalayas-browse.json"}
-        for module in (greenhouse, lever, himalayas):
+                 "himalayas": "himalayas-browse.json",
+                 "ashby": "ashby-overjet.json"}
+        for module in (greenhouse, lever, himalayas, ashby):
             with self.subTest(adapter=module.PLATFORM):
                 payload = cassette(saved[module.PLATFORM])
                 keys = set()

@@ -44,7 +44,7 @@
   {
     "label": "Workable's boards are configured and not polled",
     "path": "src/run.py",
-    "find": "            \"manatal\": manatal, \"workable\": workable, \"smartrecruiters\": smartrecruiters}",
-    "replace": "            \"manatal\": manatal, \"smartrecruiters\": smartrecruiters}"
+    "find": "            \"manatal\": manatal, \"workable\": workable, \"smartrecruiters\": smartrecruiters,\n            \"ashby\": ashby}",
+    "replace": "            \"manatal\": manatal, \"smartrecruiters\": smartrecruiters,\n            \"ashby\": ashby}"
   }
 ]

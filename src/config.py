@@ -21,9 +21,10 @@ DEFAULT_PATH = os.path.join(REPO_ROOT, "config", "boards.json")
 
 # Platforms this build adapts. ADR-0009 fixed the slice at the first two;
 # Manatal is ADR-0059's first, by measured yield, on 2026-10-07; Workable
-# second, on 2026-10-08; SmartRecruiters third, on 2026-10-17.
+# second, on 2026-10-08; SmartRecruiters third, on 2026-10-17; Ashby fourth,
+# on 2026-10-17.
 PLATFORMS = frozenset({"greenhouse", "lever", "himalayas", "manatal", "workable",
-                       "smartrecruiters"})
+                       "smartrecruiters", "ashby"})
 
 # Every normalisation that may be named by a board entry. A name outside this
 # set is a typo, and a typo that silently did nothing would be invisible: the
@@ -49,7 +50,7 @@ def is_publishable(source):
 # Platforms whose payload carries no employer field. A board on one of these
 # needs an alias or its employer is unresolvable. ADR-0026 requires the absence
 # to be recorded rather than guessed, so this is not a hard error here.
-NO_EMPLOYER_IN_PAYLOAD = frozenset({"lever"})
+NO_EMPLOYER_IN_PAYLOAD = frozenset({"lever", "ashby"})
 
 
 class ConfigError(Exception):

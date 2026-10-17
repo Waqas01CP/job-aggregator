@@ -197,6 +197,20 @@
       "employer_alias": "Seeka Technology",
       "normalisations": [],
       "note": "Registry Part 13. SmartRecruiters, through its public Posting API (ADR-0059's first wave, third, the operator's order of 2026-10-09). The slug is the company's identifier, as its job pages spell it. The alias is used where a posting names no company. ADR-0026."
+    },
+    {
+      "platform": "ashby",
+      "slug": "Overjet",
+      "employer_alias": "Overjet",
+      "normalisations": [],
+      "note": "Registry Part 3. Ashby, through its public job board API (ADR-0059's first wave, fourth, the operator's go of 2026-10-17). The slug is the job board's name, as its job pages spell it. Ashby's postings carry no company field, so the alias is the employer. ADR-0026."
+    },
+    {
+      "platform": "ashby",
+      "slug": "deeter-analytics",
+      "employer_alias": "Deeter Analytics",
+      "normalisations": [],
+      "note": "Registry Part 12. Ashby, through its public job board API (ADR-0059's first wave, fourth, the operator's go of 2026-10-17). The slug is the job board's name, as its job pages spell it. Ashby's postings carry no company field, so the alias is the employer. ADR-0026."
     }
   ]
 }

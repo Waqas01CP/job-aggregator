@@ -14,7 +14,7 @@ from datetime import datetime, timezone
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from src.adapters import greenhouse, lever, manatal, smartrecruiters, workable
+from src.adapters import ashby, greenhouse, lever, manatal, smartrecruiters, workable
 from src.adapters.base import AdapterError, Posting
 from src.config import Board
 
@@ -529,6 +529,123 @@ class TestSmartRecruiters(unittest.TestCase):
     def test_wrong_envelope_raises(self):
         with self.assertRaises(AdapterError):
             smartrecruiters.parse({"jobs": []}, SR_BOARD)
+
+
+AB_BOARD = Board(platform="ashby", slug="Overjet", employer_alias="Overjet")
+AB_NO_ALIAS = Board(platform="ashby", slug="Overjet")
+# Overjet's postings, by id, as the cassette of 2026-10-17 holds them.
+EGYPT_AND_PAKISTAN = "50c2eb16-5800-4cbb-bd78-341c8af84c41"
+NO_ADDRESS = "daca62f6-04e0-4485-b714-be3d47b11c1c"
+HYBRID = "482071c4-40ac-4e53-94dc-f6c4f451b0a7"
+ON_SITE = "93a5111a-8e11-4444-81d8-40e55739bf4c"
+
+
+class TestAshby(unittest.TestCase):
+    """Ashby's public job board API. Cassettes: Overjet's and
+    deeter-analytics' boards, 2026-10-17, sanitised."""
+
+    def setUp(self):
+        self.payload = cassette("ashby-overjet.json")
+        self.deeter = cassette("ashby-deeter-analytics.json")
+
+    def entry(self, external_id=EGYPT_AND_PAKISTAN, **extra):
+        [found] = [j for j in self.payload["jobs"] if j["id"] == external_id]
+        return dict(found, **extra)
+
+    def one(self, entry, board=AB_BOARD):
+        return ashby.parse({"jobs": [entry]}, board).postings[0]
+
+    def test_one_request_a_board_on_the_documented_endpoint(self):
+        self.assertEqual(ashby.url_for(AB_BOARD),
+                         "https://api.ashbyhq.com/posting-api/job-board/Overjet"
+                         "?includeCompensation=true")
+        self.assertFalse(getattr(ashby, "PAGINATED", False))
+        self.assertFalse(getattr(ashby, "DETAIL", False))
+
+    def test_parses_every_posting_on_both_boards(self):
+        for payload, count in ((self.payload, 30), (self.deeter, 3)):
+            result = ashby.parse(payload, AB_BOARD)
+            self.assertEqual((len(result.postings), result.problems), (count, []))
+
+    def test_the_identity_is_the_id_and_the_link_its_job_page(self):
+        p = self.one(self.entry())
+        self.assertEqual((p.external_id, p.url, p.url_provenance),
+                         (EGYPT_AND_PAKISTAN,
+                          "https://jobs.ashbyhq.com/Overjet/" + EGYPT_AND_PAKISTAN, "payload"))
+        for bad in (None, "", "/Overjet/" + EGYPT_AND_PAKISTAN):
+            with self.subTest(bad=bad):
+                result = ashby.parse({"jobs": [self.entry(jobUrl=bad)]}, AB_BOARD)
+                self.assertEqual(result.postings, [])
+                self.assertIn("jobUrl", result.problems[0]["reason"])
+        for field in ("id", "title"):
+            with self.subTest(missing=field):
+                result = ashby.parse({"jobs": [self.entry(**{field: ""})]}, AB_BOARD)
+                self.assertEqual(result.postings, [])
+
+    def test_the_date_is_published_at_in_utc(self):
+        """Ashby's last publication, which a republish moves; the run keeps
+        the first (tests.test_run.TestAshbyRepublish). Mutation: "Ashby's
+        date keeps its own offset"."""
+        p = self.one(self.entry(publishedAt="2026-09-18T22:31:20.502+05:00"))
+        self.assertEqual(p.published_at, datetime(2026, 9, 18, 17, 31, 20, 502000,
+                                                  tzinfo=timezone.utc))
+        # Equal instants compare equal across offsets, so the offset itself.
+        self.assertEqual(p.published_at.utcoffset().total_seconds(), 0)
+        self.assertEqual(p.published_field, "publishedAt")
+        for bad in (None, "", "yesterday", "2026-09-18T22:31:20"):
+            with self.subTest(bad=bad):
+                result = ashby.parse({"jobs": [self.entry(publishedAt=bad)]}, AB_BOARD)
+                self.assertEqual(result.postings, [])
+                self.assertIn("publishedAt", result.problems[0]["reason"])
+
+    def test_the_employer_is_the_alias_since_no_posting_names_one(self):
+        """ADR-0026, the Lever case: derived with its provenance, and its
+        absence recorded rather than guessed. Mutation: "Ashby's employer is
+        guessed from the slug"."""
+        p = self.one(self.entry())
+        self.assertEqual((p.employer, p.employer_provenance), ("Overjet", "slug"))
+        p = self.one(self.entry(), board=AB_NO_ALIAS)
+        self.assertEqual((p.employer, p.employer_provenance), (None, None))
+
+    def test_every_place_is_read_the_postings_own_first(self):
+        """Overjet's Egypt posting lists Pakistan second, so D13 must see
+        both. Mutation: "Ashby's secondary locations are not read"."""
+        p = self.one(self.entry())
+        self.assertEqual((p.location, p.places), ("Egypt; Pakistan", ("Egypt", "Pakistan")))
+        p = self.one(self.entry(NO_ADDRESS))
+        self.assertEqual(p.location, "United States, Remote; Salt Lake City, UT; "
+                                     "San Mateo, CA; NYC based (Remote)")
+        self.assertEqual(p.places, ("United States",))
+        bare = self.entry(NO_ADDRESS, secondaryLocations=[])
+        self.assertEqual((self.one(bare).location, self.one(bare).places),
+                         ("United States, Remote", None))
+
+    def test_the_workplace_is_workplace_type_never_is_remote(self):
+        """`isRemote` is true on Hybrid postings too. Mutation: "Ashby's
+        workplace is read from isRemote"."""
+        self.assertEqual(self.one(self.entry(HYBRID)).workplace, "Hybrid")
+        self.assertEqual(self.one(self.entry(ON_SITE)).workplace, "OnSite")
+        self.assertEqual(self.one(self.entry()).workplace, "Remote")
+        self.assertIsNone(self.one(self.entry(workplaceType=None)).workplace)
+
+    def test_no_level_is_stated(self):
+        self.assertEqual({p.levels for p in ashby.parse(self.payload, AB_BOARD).postings},
+                         {None})
+
+    def test_the_description_is_in_the_list_and_none_is_an_empty_tuple(self):
+        """Read on every sight, so a posting with no description carried
+        none, never one not read. Mutation: "Ashby's missing description is
+        read as not read"."""
+        self.assertEqual(self.one(self.entry()).description, ("STRIPPED",))
+        self.assertEqual(self.one(self.entry(descriptionHtml="")).description, ())
+        missing = self.entry()
+        del missing["descriptionHtml"]
+        self.assertEqual(self.one(missing).description, ())
+
+    def test_wrong_envelope_raises(self):
+        for payload in ({"content": []}, [], {"jobs": None}):
+            with self.subTest(payload=payload), self.assertRaises(AdapterError):
+                ashby.parse(payload, AB_BOARD)
 
 
 class TestPostingInvariants(unittest.TestCase):

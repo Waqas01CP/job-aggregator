@@ -1,0 +1,1188 @@
+{
+ "apiVersion": "1",
+ "jobs": [
+  {
+   "address": null,
+   "applyUrl": "https://jobs.ashbyhq.com/Overjet/daca62f6-04e0-4485-b714-be3d47b11c1c/application",
+   "compensation": {
+    "compensationTierSummary": null,
+    "compensationTiers": [],
+    "scrapeableCompensationSalarySummary": null,
+    "summaryComponents": []
+   },
+   "department": "G&A",
+   "descriptionHtml": "STRIPPED",
+   "descriptionPlain": "STRIPPED",
+   "employmentType": "FullTime",
+   "id": "daca62f6-04e0-4485-b714-be3d47b11c1c",
+   "isListed": true,
+   "isRemote": true,
+   "jobUrl": "https://jobs.ashbyhq.com/Overjet/daca62f6-04e0-4485-b714-be3d47b11c1c",
+   "location": "United States, Remote",
+   "publishedAt": "2025-09-08T21:06:38.959+00:00",
+   "secondaryLocations": [
+    {
+     "address": {
+      "postalAddress": {
+       "addressCountry": "United States",
+       "addressLocality": "Salt Lake City",
+       "addressRegion": "UT"
+      }
+     },
+     "location": "Salt Lake City, UT"
+    },
+    {
+     "address": {
+      "postalAddress": {
+       "addressCountry": "United States",
+       "addressLocality": "San Mateo",
+       "addressRegion": "CA"
+      }
+     },
+     "location": "San Mateo, CA"
+    },
+    {
+     "address": {
+      "postalAddress": {
+       "addressCountry": "United States",
+       "addressLocality": "New York City",
+       "addressRegion": "NY"
+      }
+     },
+     "location": "NYC based (Remote)"
+    }
+   ],
+   "shouldDisplayCompensationOnJobPostings": false,
+   "team": "G&A",
+   "title": "Talent Pool at Overjet",
+   "workplaceType": "Remote"
+  },
+  {
+   "address": {
+    "postalAddress": {
+     "addressCountry": "United States",
+     "addressLocality": "San Mateo",
+     "addressRegion": "CA"
+    }
+   },
+   "applyUrl": "https://jobs.ashbyhq.com/Overjet/482071c4-40ac-4e53-94dc-f6c4f451b0a7/application",
+   "compensation": {
+    "compensationTierSummary": null,
+    "compensationTiers": [],
+    "scrapeableCompensationSalarySummary": null,
+    "summaryComponents": []
+   },
+   "department": "Sales & Marketing",
+   "descriptionHtml": "STRIPPED",
+   "descriptionPlain": "STRIPPED",
+   "employmentType": "FullTime",
+   "id": "482071c4-40ac-4e53-94dc-f6c4f451b0a7",
+   "isListed": true,
+   "isRemote": true,
+   "jobUrl": "https://jobs.ashbyhq.com/Overjet/482071c4-40ac-4e53-94dc-f6c4f451b0a7",
+   "location": "San Mateo, CA",
+   "publishedAt": "2026-04-08T19:16:53.271+00:00",
+   "secondaryLocations": [
+    {
+     "address": null,
+     "location": "United States, Remote"
+    },
+    {
+     "address": {
+      "postalAddress": {
+       "addressCountry": "United States",
+       "addressLocality": "Salt Lake City",
+       "addressRegion": "UT"
+      }
+     },
+     "location": "Salt Lake City, UT"
+    },
+    {
+     "address": {
+      "postalAddress": {
+       "addressCountry": "United States",
+       "addressLocality": "New York City",
+       "addressRegion": "NY"
+      }
+     },
+     "location": "NYC based (Remote)"
+    }
+   ],
+   "shouldDisplayCompensationOnJobPostings": false,
+   "team": "Practice SMB Sales",
+   "title": "Account Executive",
+   "workplaceType": "Hybrid"
+  },
+  {
+   "address": {
+    "postalAddress": {
+     "addressCountry": "United States",
+     "addressLocality": "San Mateo",
+     "addressRegion": "CA"
+    }
+   },
+   "applyUrl": "https://jobs.ashbyhq.com/Overjet/3b74e8b2-0872-48a6-8995-663b944c89aa/application",
+   "compensation": {
+    "compensationTierSummary": null,
+    "compensationTiers": [],
+    "scrapeableCompensationSalarySummary": null,
+    "summaryComponents": []
+   },
+   "department": "R&D",
+   "descriptionHtml": "STRIPPED",
+   "descriptionPlain": "STRIPPED",
+   "employmentType": "FullTime",
+   "id": "3b74e8b2-0872-48a6-8995-663b944c89aa",
+   "isListed": true,
+   "isRemote": true,
+   "jobUrl": "https://jobs.ashbyhq.com/Overjet/3b74e8b2-0872-48a6-8995-663b944c89aa",
+   "location": "San Mateo, CA",
+   "publishedAt": "2026-01-23T21:18:05.892+00:00",
+   "secondaryLocations": [],
+   "shouldDisplayCompensationOnJobPostings": false,
+   "team": "Insurance Product",
+   "title": "Lead Product Manager, New Products",
+   "workplaceType": "Hybrid"
+  },
+  {
+   "address": {
+    "postalAddress": {
+     "addressCountry": "Egypt"
+    }
+   },
+   "applyUrl": "https://jobs.ashbyhq.com/Overjet/50c2eb16-5800-4cbb-bd78-341c8af84c41/application",
+   "compensation": {
+    "compensationTierSummary": null,
+    "compensationTiers": [],
+    "scrapeableCompensationSalarySummary": null,
+    "summaryComponents": []
+   },
+   "department": "Sales & Marketing",
+   "descriptionHtml": "STRIPPED",
+   "descriptionPlain": "STRIPPED",
+   "employmentType": "FullTime",
+   "id": "50c2eb16-5800-4cbb-bd78-341c8af84c41",
+   "isListed": true,
+   "isRemote": true,
+   "jobUrl": "https://jobs.ashbyhq.com/Overjet/50c2eb16-5800-4cbb-bd78-341c8af84c41",
+   "location": "Egypt",
+   "publishedAt": "2026-09-18T22:31:20.502+00:00",
+   "secondaryLocations": [
+    {
+     "address": {
+      "postalAddress": {
+       "addressCountry": "Pakistan"
+      }
+     },
+     "location": "Pakistan"
+    }
+   ],
+   "shouldDisplayCompensationOnJobPostings": false,
+   "team": "Customer Success and Support",
+   "title": "Dental Customer Success Manager- Egypt/ Pakistan",
+   "workplaceType": "Remote"
+  },
+  {
+   "address": {
+    "postalAddress": {
+     "addressCountry": "United States",
+     "addressLocality": "San Mateo",
+     "addressRegion": "CA"
+    }
+   },
+   "applyUrl": "https://jobs.ashbyhq.com/Overjet/1e120a5f-cf9b-4849-9c2c-9b3309e44a76/application",
+   "compensation": {
+    "compensationTierSummary": null,
+    "compensationTiers": [],
+    "scrapeableCompensationSalarySummary": null,
+    "summaryComponents": []
+   },
+   "department": "G&A",
+   "descriptionHtml": "STRIPPED",
+   "descriptionPlain": "STRIPPED",
+   "employmentType": "FullTime",
+   "id": "1e120a5f-cf9b-4849-9c2c-9b3309e44a76",
+   "isListed": true,
+   "isRemote": true,
+   "jobUrl": "https://jobs.ashbyhq.com/Overjet/1e120a5f-cf9b-4849-9c2c-9b3309e44a76",
+   "location": "San Mateo, CA",
+   "publishedAt": "2026-04-21T18:43:03.410+00:00",
+   "secondaryLocations": [],
+   "shouldDisplayCompensationOnJobPostings": false,
+   "team": "Finance",
+   "title": "Senior FP&A Manager",
+   "workplaceType": "Hybrid"
+  },
+  {
+   "address": null,
+   "applyUrl": "https://jobs.ashbyhq.com/Overjet/48bc9ee9-daaa-4cd8-a007-30c95cf2c291/application",
+   "compensation": {
+    "compensationTierSummary": null,
+    "compensationTiers": [],
+    "scrapeableCompensationSalarySummary": null,
+    "summaryComponents": []
+   },
+   "department": "Sales & Marketing",
+   "descriptionHtml": "STRIPPED",
+   "descriptionPlain": "STRIPPED",
+   "employmentType": "FullTime",
+   "id": "48bc9ee9-daaa-4cd8-a007-30c95cf2c291",
+   "isListed": true,
+   "isRemote": true,
+   "jobUrl": "https://jobs.ashbyhq.com/Overjet/48bc9ee9-daaa-4cd8-a007-30c95cf2c291",
+   "location": "United States, Remote",
+   "publishedAt": "2026-05-01T15:42:48.462+00:00",
+   "secondaryLocations": [
+    {
+     "address": {
+      "postalAddress": {
+       "addressCountry": "United States",
+       "addressLocality": "San Mateo",
+       "addressRegion": "CA"
+      }
+     },
+     "location": "San Mateo, CA"
+    },
+    {
+     "address": {
+      "postalAddress": {
+       "addressCountry": "United States",
+       "addressLocality": "New York City",
+       "addressRegion": "NY"
+      }
+     },
+     "location": "NYC based (Remote)"
+    }
+   ],
+   "shouldDisplayCompensationOnJobPostings": false,
+   "team": "Practice SMB Customer Success",
+   "title": "Director of Customer Success, SMB",
+   "workplaceType": "Remote"
+  },
+  {
+   "address": {
+    "postalAddress": {
+     "addressCountry": "United States",
+     "addressLocality": "San Mateo",
+     "addressRegion": "CA"
+    }
+   },
+   "applyUrl": "https://jobs.ashbyhq.com/Overjet/98a8708b-3fe3-4483-bb31-802cde8c06f8/application",
+   "compensation": {
+    "compensationTierSummary": null,
+    "compensationTiers": [],
+    "scrapeableCompensationSalarySummary": null,
+    "summaryComponents": []
+   },
+   "department": "Sales & Marketing",
+   "descriptionHtml": "STRIPPED",
+   "descriptionPlain": "STRIPPED",
+   "employmentType": "FullTime",
+   "id": "98a8708b-3fe3-4483-bb31-802cde8c06f8",
+   "isListed": true,
+   "isRemote": true,
+   "jobUrl": "https://jobs.ashbyhq.com/Overjet/98a8708b-3fe3-4483-bb31-802cde8c06f8",
+   "location": "San Mateo, CA",
+   "publishedAt": "2026-05-15T17:06:50.428+00:00",
+   "secondaryLocations": [
+    {
+     "address": {
+      "postalAddress": {
+       "addressCountry": "United States",
+       "addressLocality": "Salt Lake City",
+       "addressRegion": "UT"
+      }
+     },
+     "location": "Salt Lake City, UT"
+    },
+    {
+     "address": {
+      "postalAddress": {
+       "addressCountry": "United States",
+       "addressLocality": "New York City",
+       "addressRegion": "NY"
+      }
+     },
+     "location": "NYC based (Remote)"
+    }
+   ],
+   "shouldDisplayCompensationOnJobPostings": false,
+   "team": "Practice SMB Customer Success",
+   "title": "Customer Success Manager, Mid-Market",
+   "workplaceType": "Hybrid"
+  },
+  {
+   "address": null,
+   "applyUrl": "https://jobs.ashbyhq.com/Overjet/adf77591-5025-47de-9de7-8d187463e82c/application",
+   "compensation": {
+    "compensationTierSummary": null,
+    "compensationTiers": [],
+    "scrapeableCompensationSalarySummary": null,
+    "summaryComponents": []
+   },
+   "department": "Sales & Marketing",
+   "descriptionHtml": "STRIPPED",
+   "descriptionPlain": "STRIPPED",
+   "employmentType": "FullTime",
+   "id": "adf77591-5025-47de-9de7-8d187463e82c",
+   "isListed": true,
+   "isRemote": true,
+   "jobUrl": "https://jobs.ashbyhq.com/Overjet/adf77591-5025-47de-9de7-8d187463e82c",
+   "location": "United States, Remote",
+   "publishedAt": "2026-05-15T17:02:35.474+00:00",
+   "secondaryLocations": [
+    {
+     "address": {
+      "postalAddress": {
+       "addressCountry": "United States",
+       "addressLocality": "San Mateo",
+       "addressRegion": "CA"
+      }
+     },
+     "location": "San Mateo, CA"
+    },
+    {
+     "address": {
+      "postalAddress": {
+       "addressCountry": "United States",
+       "addressLocality": "New York City",
+       "addressRegion": "NY"
+      }
+     },
+     "location": "NYC based (Remote)"
+    }
+   ],
+   "shouldDisplayCompensationOnJobPostings": false,
+   "team": "Practice Enterprise Customer Success",
+   "title": "Director of Customer Success, Enterprise",
+   "workplaceType": "Remote"
+  },
+  {
+   "address": {
+    "postalAddress": {
+     "addressCountry": "United States",
+     "addressLocality": "Salt Lake City",
+     "addressRegion": "UT"
+    }
+   },
+   "applyUrl": "https://jobs.ashbyhq.com/Overjet/93a5111a-8e11-4444-81d8-40e55739bf4c/application",
+   "compensation": {
+    "compensationTierSummary": "$60K – $65K • Offers Equity • Offers Commission • Uncapped Commission, OTE 80-85k",
+    "compensationTiers": [
+     {
+      "additionalInformation": "Uncapped Commission, OTE 80-85k",
+      "components": [
+       {
+        "compensationType": "Salary",
+        "currencyCode": "USD",
+        "id": "c57b0739-c333-4bea-af54-361e91139a81",
+        "interval": "1 YEAR",
+        "maxValue": 65000,
+        "minValue": 60000,
+        "summary": "Base Salary $60K – $65K"
+       },
+       {
+        "compensationType": "EquityPercentage",
+        "currencyCode": null,
+        "id": "9a5d5010-bd4b-49cd-9132-fb1cc4a1d79f",
+        "interval": "NONE",
+        "maxValue": null,
+        "minValue": null,
+        "summary": "Offers Equity"
+       },
+       {
+        "compensationType": "Commission",
+        "currencyCode": "USD",
+        "id": "a30cbccc-9488-4e80-b7e8-f393119ce85d",
+        "interval": "1 YEAR",
+        "maxValue": null,
+        "minValue": null,
+        "summary": "Offers Commission"
+       }
+      ],
+      "id": "9dab93d2-edbb-4f4b-ae6b-03c8b779860c",
+      "tierSummary": "Base Salary $60K – $65K • Offers Equity • Offers Commission • Uncapped Commission, OTE 80-85k",
+      "title": "Salt Lake City based SDRs"
+     }
+    ],
+    "scrapeableCompensationSalarySummary": "$60K - $65K",
+    "summaryComponents": [
+     {
+      "compensationType": "Salary",
+      "currencyCode": "USD",
+      "interval": "1 YEAR",
+      "maxValue": 65000,
+      "minValue": 60000
+     },
+     {
+      "compensationType": "EquityPercentage",
+      "currencyCode": null,
+      "interval": "NONE",
+      "maxValue": null,
+      "minValue": null
+     },
+     {
+      "compensationType": "Commission",
+      "currencyCode": "USD",
+      "interval": "1 YEAR",
+      "maxValue": null,
+      "minValue": null
+     }
+    ]
+   },
+   "department": "Sales & Marketing",
+   "descriptionHtml": "STRIPPED",
+   "descriptionPlain": "STRIPPED",
+   "employmentType": "FullTime",
+   "id": "93a5111a-8e11-4444-81d8-40e55739bf4c",
+   "isListed": true,
+   "isRemote": false,
+   "jobUrl": "https://jobs.ashbyhq.com/Overjet/93a5111a-8e11-4444-81d8-40e55739bf4c",
+   "location": "Salt Lake City, UT",
+   "publishedAt": "2026-07-02T23:18:09.429+00:00",
+   "secondaryLocations": [],
+   "shouldDisplayCompensationOnJobPostings": true,
+   "team": "Practice SDR",
+   "title": "Sales Development Representative (Salt Lake City, Utah based)",
+   "workplaceType": "OnSite"
+  },
+  {
+   "address": {
+    "postalAddress": {
+     "addressCountry": "United States",
+     "addressLocality": "Salt Lake City",
+     "addressRegion": "UT"
+    }
+   },
+   "applyUrl": "https://jobs.ashbyhq.com/Overjet/fc6d7226-0912-4ec1-9d4a-f7aa6a50c820/application",
+   "compensation": {
+    "compensationTierSummary": null,
+    "compensationTiers": [],
+    "scrapeableCompensationSalarySummary": null,
+    "summaryComponents": []
+   },
+   "department": "Sales & Marketing",
+   "descriptionHtml": "STRIPPED",
+   "descriptionPlain": "STRIPPED",
+   "employmentType": "FullTime",
+   "id": "fc6d7226-0912-4ec1-9d4a-f7aa6a50c820",
+   "isListed": true,
+   "isRemote": true,
+   "jobUrl": "https://jobs.ashbyhq.com/Overjet/fc6d7226-0912-4ec1-9d4a-f7aa6a50c820",
+   "location": "Salt Lake City, UT",
+   "publishedAt": "2026-08-13T22:36:40.395+00:00",
+   "secondaryLocations": [
+    {
+     "address": null,
+     "location": "United States, Remote"
+    },
+    {
+     "address": {
+      "postalAddress": {
+       "addressCountry": "United States",
+       "addressLocality": "San Mateo",
+       "addressRegion": "CA"
+      }
+     },
+     "location": "San Mateo, CA"
+    },
+    {
+     "address": {
+      "postalAddress": {
+       "addressCountry": "United States",
+       "addressLocality": "New York City",
+       "addressRegion": "NY"
+      }
+     },
+     "location": "NYC based (Remote)"
+    }
+   ],
+   "shouldDisplayCompensationOnJobPostings": false,
+   "team": "Practice Enterprise Sales",
+   "title": "Account Executive, Key Accounts",
+   "workplaceType": "Hybrid"
+  },
+  {
+   "address": {
+    "postalAddress": {
+     "addressCountry": "United States",
+     "addressLocality": "San Mateo",
+     "addressRegion": "CA"
+    }
+   },
+   "applyUrl": "https://jobs.ashbyhq.com/Overjet/03cc6c8c-1608-45b4-a237-2191169e8db7/application",
+   "compensation": {
+    "compensationTierSummary": null,
+    "compensationTiers": [],
+    "scrapeableCompensationSalarySummary": null,
+    "summaryComponents": []
+   },
+   "department": "R&D",
+   "descriptionHtml": "STRIPPED",
+   "descriptionPlain": "STRIPPED",
+   "employmentType": "FullTime",
+   "id": "03cc6c8c-1608-45b4-a237-2191169e8db7",
+   "isListed": true,
+   "isRemote": true,
+   "jobUrl": "https://jobs.ashbyhq.com/Overjet/03cc6c8c-1608-45b4-a237-2191169e8db7",
+   "location": "San Mateo, CA",
+   "publishedAt": "2026-07-23T16:50:51.065+00:00",
+   "secondaryLocations": [],
+   "shouldDisplayCompensationOnJobPostings": false,
+   "team": "Practice Engineering",
+   "title": "Director of Engineering, New Products",
+   "workplaceType": "Hybrid"
+  },
+  {
+   "address": {
+    "postalAddress": {
+     "addressCountry": "United States",
+     "addressLocality": "Salt Lake City",
+     "addressRegion": "UT"
+    }
+   },
+   "applyUrl": "https://jobs.ashbyhq.com/Overjet/cf982071-e3a6-4830-b26f-4fbbb1e18435/application",
+   "compensation": {
+    "compensationTierSummary": null,
+    "compensationTiers": [],
+    "scrapeableCompensationSalarySummary": null,
+    "summaryComponents": []
+   },
+   "department": "G&A",
+   "descriptionHtml": "STRIPPED",
+   "descriptionPlain": "STRIPPED",
+   "employmentType": "FullTime",
+   "id": "cf982071-e3a6-4830-b26f-4fbbb1e18435",
+   "isListed": true,
+   "isRemote": true,
+   "jobUrl": "https://jobs.ashbyhq.com/Overjet/cf982071-e3a6-4830-b26f-4fbbb1e18435",
+   "location": "Salt Lake City, UT",
+   "publishedAt": "2026-07-14T20:41:20.783+00:00",
+   "secondaryLocations": [
+    {
+     "address": {
+      "postalAddress": {
+       "addressCountry": "United States",
+       "addressLocality": "San Mateo",
+       "addressRegion": "CA"
+      }
+     },
+     "location": "San Mateo, CA"
+    }
+   ],
+   "shouldDisplayCompensationOnJobPostings": false,
+   "team": "Finance",
+   "title": "Revenue Accounting Manager",
+   "workplaceType": "Hybrid"
+  },
+  {
+   "address": null,
+   "applyUrl": "https://jobs.ashbyhq.com/Overjet/d9699d18-2821-4228-8404-cf2adb2d689f/application",
+   "compensation": {
+    "compensationTierSummary": null,
+    "compensationTiers": [],
+    "scrapeableCompensationSalarySummary": null,
+    "summaryComponents": []
+   },
+   "department": "Sales & Marketing",
+   "descriptionHtml": "STRIPPED",
+   "descriptionPlain": "STRIPPED",
+   "employmentType": "FullTime",
+   "id": "d9699d18-2821-4228-8404-cf2adb2d689f",
+   "isListed": true,
+   "isRemote": true,
+   "jobUrl": "https://jobs.ashbyhq.com/Overjet/d9699d18-2821-4228-8404-cf2adb2d689f",
+   "location": "United States, Remote",
+   "publishedAt": "2026-07-22T17:15:17.425+00:00",
+   "secondaryLocations": [],
+   "shouldDisplayCompensationOnJobPostings": false,
+   "team": "Insurance Sales",
+   "title": "Account Executive, Life & Annuity Insurance",
+   "workplaceType": "Remote"
+  },
+  {
+   "address": {
+    "postalAddress": {
+     "addressCountry": "United States",
+     "addressLocality": "Salt Lake City",
+     "addressRegion": "UT"
+    }
+   },
+   "applyUrl": "https://jobs.ashbyhq.com/Overjet/061f27e5-bd89-4d46-bea6-5af696401f98/application",
+   "compensation": {
+    "compensationTierSummary": null,
+    "compensationTiers": [],
+    "scrapeableCompensationSalarySummary": null,
+    "summaryComponents": []
+   },
+   "department": "G&A",
+   "descriptionHtml": "STRIPPED",
+   "descriptionPlain": "STRIPPED",
+   "employmentType": "FullTime",
+   "id": "061f27e5-bd89-4d46-bea6-5af696401f98",
+   "isListed": true,
+   "isRemote": true,
+   "jobUrl": "https://jobs.ashbyhq.com/Overjet/061f27e5-bd89-4d46-bea6-5af696401f98",
+   "location": "Salt Lake City, UT",
+   "publishedAt": "2026-07-23T17:50:53.116+00:00",
+   "secondaryLocations": [],
+   "shouldDisplayCompensationOnJobPostings": false,
+   "team": "Talent",
+   "title": "Senior Business Recruiter",
+   "workplaceType": "Hybrid"
+  },
+  {
+   "address": {
+    "postalAddress": {
+     "addressCountry": "United States",
+     "addressLocality": "San Mateo",
+     "addressRegion": "CA"
+    }
+   },
+   "applyUrl": "https://jobs.ashbyhq.com/Overjet/a234b6fb-7a62-4a8a-b6be-ae414943c947/application",
+   "compensation": {
+    "compensationTierSummary": null,
+    "compensationTiers": [],
+    "scrapeableCompensationSalarySummary": null,
+    "summaryComponents": []
+   },
+   "department": "R&D",
+   "descriptionHtml": "STRIPPED",
+   "descriptionPlain": "STRIPPED",
+   "employmentType": "FullTime",
+   "id": "a234b6fb-7a62-4a8a-b6be-ae414943c947",
+   "isListed": true,
+   "isRemote": true,
+   "jobUrl": "https://jobs.ashbyhq.com/Overjet/a234b6fb-7a62-4a8a-b6be-ae414943c947",
+   "location": "San Mateo, CA",
+   "publishedAt": "2026-07-27T17:40:15.045+00:00",
+   "secondaryLocations": [],
+   "shouldDisplayCompensationOnJobPostings": false,
+   "team": "Practice Product",
+   "title": "Head of Product, New Products",
+   "workplaceType": "Hybrid"
+  },
+  {
+   "address": {
+    "postalAddress": {
+     "addressCountry": "United States",
+     "addressLocality": "San Mateo",
+     "addressRegion": "CA"
+    }
+   },
+   "applyUrl": "https://jobs.ashbyhq.com/Overjet/2b55c1bb-34a8-416b-88a7-b5399a2a888e/application",
+   "compensation": {
+    "compensationTierSummary": null,
+    "compensationTiers": [],
+    "scrapeableCompensationSalarySummary": null,
+    "summaryComponents": []
+   },
+   "department": "R&D",
+   "descriptionHtml": "STRIPPED",
+   "descriptionPlain": "STRIPPED",
+   "employmentType": "FullTime",
+   "id": "2b55c1bb-34a8-416b-88a7-b5399a2a888e",
+   "isListed": true,
+   "isRemote": true,
+   "jobUrl": "https://jobs.ashbyhq.com/Overjet/2b55c1bb-34a8-416b-88a7-b5399a2a888e",
+   "location": "San Mateo, CA",
+   "publishedAt": "2026-08-11T18:55:09.036+00:00",
+   "secondaryLocations": [],
+   "shouldDisplayCompensationOnJobPostings": false,
+   "team": "Regulatory",
+   "title": "Head of Regulatory",
+   "workplaceType": "Hybrid"
+  },
+  {
+   "address": {
+    "postalAddress": {
+     "addressCountry": "Pakistan",
+     "addressLocality": "Lahore",
+     "addressRegion": "Punjab"
+    }
+   },
+   "applyUrl": "https://jobs.ashbyhq.com/Overjet/ff6cc7a1-3b13-4c83-afed-72143725dd34/application",
+   "compensation": {
+    "compensationTierSummary": null,
+    "compensationTiers": [],
+    "scrapeableCompensationSalarySummary": null,
+    "summaryComponents": []
+   },
+   "department": "R&D",
+   "descriptionHtml": "STRIPPED",
+   "descriptionPlain": "STRIPPED",
+   "employmentType": "FullTime",
+   "id": "ff6cc7a1-3b13-4c83-afed-72143725dd34",
+   "isListed": true,
+   "isRemote": true,
+   "jobUrl": "https://jobs.ashbyhq.com/Overjet/ff6cc7a1-3b13-4c83-afed-72143725dd34",
+   "location": "Lahore, Pakistan",
+   "publishedAt": "2026-08-17T18:27:01.412+00:00",
+   "secondaryLocations": [],
+   "shouldDisplayCompensationOnJobPostings": false,
+   "team": "Practice Engineering",
+   "title": "Staff Software Engineer",
+   "workplaceType": "Remote"
+  },
+  {
+   "address": {
+    "postalAddress": {
+     "addressCountry": "United States",
+     "addressLocality": "San Mateo",
+     "addressRegion": "CA"
+    }
+   },
+   "applyUrl": "https://jobs.ashbyhq.com/Overjet/6469524c-90c0-41a3-b4d9-53d0f38ed119/application",
+   "compensation": {
+    "compensationTierSummary": null,
+    "compensationTiers": [],
+    "scrapeableCompensationSalarySummary": null,
+    "summaryComponents": []
+   },
+   "department": "G&A",
+   "descriptionHtml": "STRIPPED",
+   "descriptionPlain": "STRIPPED",
+   "employmentType": "FullTime",
+   "id": "6469524c-90c0-41a3-b4d9-53d0f38ed119",
+   "isListed": true,
+   "isRemote": true,
+   "jobUrl": "https://jobs.ashbyhq.com/Overjet/6469524c-90c0-41a3-b4d9-53d0f38ed119",
+   "location": "San Mateo, CA",
+   "publishedAt": "2026-08-20T16:54:16.908+00:00",
+   "secondaryLocations": [],
+   "shouldDisplayCompensationOnJobPostings": false,
+   "team": "Talent",
+   "title": "Senior Technical Recruiter",
+   "workplaceType": "Hybrid"
+  },
+  {
+   "address": {
+    "postalAddress": {
+     "addressCountry": "United States",
+     "addressLocality": "San Mateo",
+     "addressRegion": "CA"
+    }
+   },
+   "applyUrl": "https://jobs.ashbyhq.com/Overjet/af59b3da-9c41-4992-95ca-04b382b46daa/application",
+   "compensation": {
+    "compensationTierSummary": null,
+    "compensationTiers": [],
+    "scrapeableCompensationSalarySummary": null,
+    "summaryComponents": []
+   },
+   "department": "G&A",
+   "descriptionHtml": "STRIPPED",
+   "descriptionPlain": "STRIPPED",
+   "employmentType": "FullTime",
+   "id": "af59b3da-9c41-4992-95ca-04b382b46daa",
+   "isListed": true,
+   "isRemote": true,
+   "jobUrl": "https://jobs.ashbyhq.com/Overjet/af59b3da-9c41-4992-95ca-04b382b46daa",
+   "location": "San Mateo, CA",
+   "publishedAt": "2026-08-19T14:02:09.418+00:00",
+   "secondaryLocations": [],
+   "shouldDisplayCompensationOnJobPostings": false,
+   "team": "People Operations",
+   "title": "People Operations Generalist",
+   "workplaceType": "Hybrid"
+  },
+  {
+   "address": {
+    "postalAddress": {
+     "addressCountry": "United States",
+     "addressLocality": "Salt Lake City",
+     "addressRegion": "UT"
+    }
+   },
+   "applyUrl": "https://jobs.ashbyhq.com/Overjet/10ee168e-ede1-4d38-81a4-e8a7de68387e/application",
+   "compensation": {
+    "compensationTierSummary": null,
+    "compensationTiers": [],
+    "scrapeableCompensationSalarySummary": null,
+    "summaryComponents": []
+   },
+   "department": "Sales & Marketing",
+   "descriptionHtml": "STRIPPED",
+   "descriptionPlain": "STRIPPED",
+   "employmentType": "FullTime",
+   "id": "10ee168e-ede1-4d38-81a4-e8a7de68387e",
+   "isListed": true,
+   "isRemote": true,
+   "jobUrl": "https://jobs.ashbyhq.com/Overjet/10ee168e-ede1-4d38-81a4-e8a7de68387e",
+   "location": "Salt Lake City, UT",
+   "publishedAt": "2026-10-13T16:37:29.767+00:00",
+   "secondaryLocations": [
+    {
+     "address": {
+      "postalAddress": {
+       "addressCountry": "United States",
+       "addressLocality": "San Mateo",
+       "addressRegion": "CA"
+      }
+     },
+     "location": "San Mateo, CA"
+    },
+    {
+     "address": {
+      "postalAddress": {
+       "addressCountry": "United States",
+       "addressLocality": "New York City",
+       "addressRegion": "NY"
+      }
+     },
+     "location": "NYC based (Remote)"
+    }
+   ],
+   "shouldDisplayCompensationOnJobPostings": false,
+   "team": "Practice SMB Sales",
+   "title": "SMB Sales Manager",
+   "workplaceType": "Hybrid"
+  },
+  {
+   "address": {
+    "postalAddress": {
+     "addressCountry": "United States",
+     "addressLocality": "San Mateo",
+     "addressRegion": "CA"
+    }
+   },
+   "applyUrl": "https://jobs.ashbyhq.com/Overjet/b2625b56-1848-46bb-abfd-b79739fc9a26/application",
+   "compensation": {
+    "compensationTierSummary": null,
+    "compensationTiers": [],
+    "scrapeableCompensationSalarySummary": null,
+    "summaryComponents": []
+   },
+   "department": "R&D",
+   "descriptionHtml": "STRIPPED",
+   "descriptionPlain": "STRIPPED",
+   "employmentType": "FullTime",
+   "id": "b2625b56-1848-46bb-abfd-b79739fc9a26",
+   "isListed": true,
+   "isRemote": true,
+   "jobUrl": "https://jobs.ashbyhq.com/Overjet/b2625b56-1848-46bb-abfd-b79739fc9a26",
+   "location": "San Mateo, CA",
+   "publishedAt": "2026-10-16T12:40:52.754+00:00",
+   "secondaryLocations": [
+    {
+     "address": {
+      "postalAddress": {
+       "addressCountry": "United States",
+       "addressLocality": "Boston",
+       "addressRegion": "MA"
+      }
+     },
+     "location": "Boston, MA"
+    },
+    {
+     "address": {
+      "postalAddress": {
+       "addressCountry": "United States",
+       "addressLocality": "New York City",
+       "addressRegion": "NY"
+      }
+     },
+     "location": "NYC based (Remote)"
+    }
+   ],
+   "shouldDisplayCompensationOnJobPostings": false,
+   "team": "DevOps",
+   "title": "Staff DevOps Engineer",
+   "workplaceType": "Hybrid"
+  },
+  {
+   "address": {
+    "postalAddress": {
+     "addressCountry": "Pakistan"
+    }
+   },
+   "applyUrl": "https://jobs.ashbyhq.com/Overjet/ce5f489f-a237-4eb6-ba57-806edde5f5a6/application",
+   "compensation": {
+    "compensationTierSummary": null,
+    "compensationTiers": [],
+    "scrapeableCompensationSalarySummary": null,
+    "summaryComponents": []
+   },
+   "department": "Sales & Marketing",
+   "descriptionHtml": "STRIPPED",
+   "descriptionPlain": "STRIPPED",
+   "employmentType": "FullTime",
+   "id": "ce5f489f-a237-4eb6-ba57-806edde5f5a6",
+   "isListed": true,
+   "isRemote": true,
+   "jobUrl": "https://jobs.ashbyhq.com/Overjet/ce5f489f-a237-4eb6-ba57-806edde5f5a6",
+   "location": "Pakistan",
+   "publishedAt": "2026-09-23T18:51:07.952+00:00",
+   "secondaryLocations": [],
+   "shouldDisplayCompensationOnJobPostings": false,
+   "team": "Practice Enterprise Customer Success",
+   "title": "Technical Support Engineering Manager",
+   "workplaceType": "Remote"
+  },
+  {
+   "address": {
+    "postalAddress": {
+     "addressCountry": "United States",
+     "addressLocality": "Salt Lake City",
+     "addressRegion": "UT"
+    }
+   },
+   "applyUrl": "https://jobs.ashbyhq.com/Overjet/ffd9b847-926d-43a1-a7ea-874f3a15feba/application",
+   "compensation": {
+    "compensationTierSummary": null,
+    "compensationTiers": [],
+    "scrapeableCompensationSalarySummary": null,
+    "summaryComponents": []
+   },
+   "department": "Sales & Marketing",
+   "descriptionHtml": "STRIPPED",
+   "descriptionPlain": "STRIPPED",
+   "employmentType": "FullTime",
+   "id": "ffd9b847-926d-43a1-a7ea-874f3a15feba",
+   "isListed": true,
+   "isRemote": true,
+   "jobUrl": "https://jobs.ashbyhq.com/Overjet/ffd9b847-926d-43a1-a7ea-874f3a15feba",
+   "location": "Salt Lake City, UT",
+   "publishedAt": "2026-09-23T17:33:35.356+00:00",
+   "secondaryLocations": [
+    {
+     "address": {
+      "postalAddress": {
+       "addressCountry": "United States",
+       "addressLocality": "San Mateo",
+       "addressRegion": "CA"
+      }
+     },
+     "location": "San Mateo, CA"
+    }
+   ],
+   "shouldDisplayCompensationOnJobPostings": false,
+   "team": "Practice Enterprise Customer Success",
+   "title": "Technical Support Engineering Manager",
+   "workplaceType": "Hybrid"
+  },
+  {
+   "address": {
+    "postalAddress": {
+     "addressCountry": "Egypt"
+    }
+   },
+   "applyUrl": "https://jobs.ashbyhq.com/Overjet/c09e75a5-cca2-4529-af4c-860299412887/application",
+   "compensation": {
+    "compensationTierSummary": null,
+    "compensationTiers": [],
+    "scrapeableCompensationSalarySummary": null,
+    "summaryComponents": []
+   },
+   "department": "G&A",
+   "descriptionHtml": "STRIPPED",
+   "descriptionPlain": "STRIPPED",
+   "employmentType": "FullTime",
+   "id": "c09e75a5-cca2-4529-af4c-860299412887",
+   "isListed": true,
+   "isRemote": true,
+   "jobUrl": "https://jobs.ashbyhq.com/Overjet/c09e75a5-cca2-4529-af4c-860299412887",
+   "location": "Egypt",
+   "publishedAt": "2026-10-02T15:53:37.142+00:00",
+   "secondaryLocations": [
+    {
+     "address": {
+      "postalAddress": {
+       "addressCountry": "Philippines"
+      }
+     },
+     "location": "Philippines"
+    },
+    {
+     "address": {
+      "postalAddress": {
+       "addressCountry": "Pakistan"
+      }
+     },
+     "location": "Pakistan"
+    }
+   ],
+   "shouldDisplayCompensationOnJobPostings": false,
+   "team": "Legal",
+   "title": "Corporate & Compliance Paralegal",
+   "workplaceType": "Remote"
+  },
+  {
+   "address": {
+    "postalAddress": {
+     "addressCountry": "Philippines"
+    }
+   },
+   "applyUrl": "https://jobs.ashbyhq.com/Overjet/6e4d0e8f-4415-4c8d-8ca1-32d246026fb9/application",
+   "compensation": {
+    "compensationTierSummary": null,
+    "compensationTiers": [],
+    "scrapeableCompensationSalarySummary": null,
+    "summaryComponents": []
+   },
+   "department": "Sales & Marketing",
+   "descriptionHtml": "STRIPPED",
+   "descriptionPlain": "STRIPPED",
+   "employmentType": "FullTime",
+   "id": "6e4d0e8f-4415-4c8d-8ca1-32d246026fb9",
+   "isListed": true,
+   "isRemote": true,
+   "jobUrl": "https://jobs.ashbyhq.com/Overjet/6e4d0e8f-4415-4c8d-8ca1-32d246026fb9",
+   "location": "Philippines",
+   "publishedAt": "2026-10-07T16:00:13.789+00:00",
+   "secondaryLocations": [
+    {
+     "address": {
+      "postalAddress": {
+       "addressCountry": "Egypt"
+      }
+     },
+     "location": "Egypt"
+    },
+    {
+     "address": {
+      "postalAddress": {
+       "addressCountry": "Pakistan"
+      }
+     },
+     "location": "Pakistan"
+    }
+   ],
+   "shouldDisplayCompensationOnJobPostings": false,
+   "team": "Sales",
+   "title": "Salesforce Analyst",
+   "workplaceType": "Remote"
+  },
+  {
+   "address": null,
+   "applyUrl": "https://jobs.ashbyhq.com/Overjet/b289423a-ddd8-40bf-a9cb-fa75e8bdd8fa/application",
+   "compensation": {
+    "compensationTierSummary": null,
+    "compensationTiers": [],
+    "scrapeableCompensationSalarySummary": null,
+    "summaryComponents": []
+   },
+   "department": "Sales & Marketing",
+   "descriptionHtml": "STRIPPED",
+   "descriptionPlain": "STRIPPED",
+   "employmentType": "FullTime",
+   "id": "b289423a-ddd8-40bf-a9cb-fa75e8bdd8fa",
+   "isListed": true,
+   "isRemote": true,
+   "jobUrl": "https://jobs.ashbyhq.com/Overjet/b289423a-ddd8-40bf-a9cb-fa75e8bdd8fa",
+   "location": "United States, Remote",
+   "publishedAt": "2026-10-08T19:13:13.571+00:00",
+   "secondaryLocations": [],
+   "shouldDisplayCompensationOnJobPostings": false,
+   "team": "ADE",
+   "title": "Dental Consultant- General Dentist",
+   "workplaceType": "Remote"
+  },
+  {
+   "address": null,
+   "applyUrl": "https://jobs.ashbyhq.com/Overjet/3dfb3173-ae74-4710-a5a6-8674f6f3d462/application",
+   "compensation": {
+    "compensationTierSummary": null,
+    "compensationTiers": [],
+    "scrapeableCompensationSalarySummary": null,
+    "summaryComponents": []
+   },
+   "department": "Sales & Marketing",
+   "descriptionHtml": "STRIPPED",
+   "descriptionPlain": "STRIPPED",
+   "employmentType": "FullTime",
+   "id": "3dfb3173-ae74-4710-a5a6-8674f6f3d462",
+   "isListed": true,
+   "isRemote": true,
+   "jobUrl": "https://jobs.ashbyhq.com/Overjet/3dfb3173-ae74-4710-a5a6-8674f6f3d462",
+   "location": "United States, Remote",
+   "publishedAt": "2026-10-07T20:19:11.897+00:00",
+   "secondaryLocations": [],
+   "shouldDisplayCompensationOnJobPostings": false,
+   "team": "Marketing",
+   "title": "AI Creative Director",
+   "workplaceType": "Remote"
+  },
+  {
+   "address": null,
+   "applyUrl": "https://jobs.ashbyhq.com/Overjet/ea8f23bf-5e87-4cd6-85be-73bd5d6114ff/application",
+   "compensation": {
+    "compensationTierSummary": null,
+    "compensationTiers": [],
+    "scrapeableCompensationSalarySummary": null,
+    "summaryComponents": []
+   },
+   "department": "Sales & Marketing",
+   "descriptionHtml": "STRIPPED",
+   "descriptionPlain": "STRIPPED",
+   "employmentType": "FullTime",
+   "id": "ea8f23bf-5e87-4cd6-85be-73bd5d6114ff",
+   "isListed": true,
+   "isRemote": true,
+   "jobUrl": "https://jobs.ashbyhq.com/Overjet/ea8f23bf-5e87-4cd6-85be-73bd5d6114ff",
+   "location": "United States, Remote",
+   "publishedAt": "2026-10-13T15:55:51.941+00:00",
+   "secondaryLocations": [],
+   "shouldDisplayCompensationOnJobPostings": false,
+   "team": "Practice SMB Customer Success",
+   "title": "Manager of Customer Success, SMB ",
+   "workplaceType": "Remote"
+  },
+  {
+   "address": null,
+   "applyUrl": "https://jobs.ashbyhq.com/Overjet/f4e10593-bce2-4fa1-8817-d6437e21f74e/application",
+   "compensation": {
+    "compensationTierSummary": null,
+    "compensationTiers": [],
+    "scrapeableCompensationSalarySummary": null,
+    "summaryComponents": []
+   },
+   "department": "Sales & Marketing",
+   "descriptionHtml": "STRIPPED",
+   "descriptionPlain": "STRIPPED",
+   "employmentType": "FullTime",
+   "id": "f4e10593-bce2-4fa1-8817-d6437e21f74e",
+   "isListed": true,
+   "isRemote": true,
+   "jobUrl": "https://jobs.ashbyhq.com/Overjet/f4e10593-bce2-4fa1-8817-d6437e21f74e",
+   "location": "United States, Remote",
+   "publishedAt": "2026-10-14T15:15:20.329+00:00",
+   "secondaryLocations": [],
+   "shouldDisplayCompensationOnJobPostings": false,
+   "team": "ADE",
+   "title": "Dental Consultant- Orthodontist",
+   "workplaceType": "Remote"
+  },
+  {
+   "address": {
+    "postalAddress": {
+     "addressCountry": "United States",
+     "addressLocality": "Salt Lake City",
+     "addressRegion": "UT"
+    }
+   },
+   "applyUrl": "https://jobs.ashbyhq.com/Overjet/ec61b33d-adde-4c68-8107-652a171d05d3/application",
+   "compensation": {
+    "compensationTierSummary": null,
+    "compensationTiers": [],
+    "scrapeableCompensationSalarySummary": null,
+    "summaryComponents": []
+   },
+   "department": "Sales & Marketing",
+   "descriptionHtml": "STRIPPED",
+   "descriptionPlain": "STRIPPED",
+   "employmentType": "FullTime",
+   "id": "ec61b33d-adde-4c68-8107-652a171d05d3",
+   "isListed": true,
+   "isRemote": false,
+   "jobUrl": "https://jobs.ashbyhq.com/Overjet/ec61b33d-adde-4c68-8107-652a171d05d3",
+   "location": "Salt Lake City, UT",
+   "publishedAt": "2026-10-14T20:02:05.336+00:00",
+   "secondaryLocations": [],
+   "shouldDisplayCompensationOnJobPostings": false,
+   "team": "Practice SDR",
+   "title": "SDR Manager",
+   "workplaceType": "OnSite"
+  }
+ ]
+}

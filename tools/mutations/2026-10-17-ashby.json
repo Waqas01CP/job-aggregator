@@ -1,0 +1,50 @@
+[
+  {
+    "label": "Ashby's secondary locations are not read",
+    "path": "src/adapters/ashby.py",
+    "find": "    located = [entry] + [s for s in (entry.get(\"secondaryLocations\") or [])",
+    "replace": "    located = [entry] + [s for s in ([] or [])"
+  },
+  {
+    "label": "Ashby's workplace is read from isRemote",
+    "path": "src/adapters/ashby.py",
+    "find": "            workplace=str(entry.get(\"workplaceType\") or \"\").strip() or None,",
+    "replace": "            workplace=\"Remote\" if entry.get(\"isRemote\") else None,"
+  },
+  {
+    "label": "Ashby's date keeps its own offset",
+    "path": "src/adapters/ashby.py",
+    "find": "    return parsed.astimezone(timezone.utc) if parsed.tzinfo is not None else None",
+    "replace": "    return parsed if parsed.tzinfo is not None else None"
+  },
+  {
+    "label": "Ashby's employer is guessed from the slug",
+    "path": "src/adapters/ashby.py",
+    "find": "    employer = board.employer_alias or None",
+    "replace": "    employer = board.employer_alias or board.slug"
+  },
+  {
+    "label": "Ashby's missing description is read as not read",
+    "path": "src/adapters/ashby.py",
+    "find": "            description=(html,) if isinstance(html, str) and html.strip() else (),",
+    "replace": "            description=(html,) if isinstance(html, str) and html.strip() else None,"
+  },
+  {
+    "label": "a posting seen again is stored again",
+    "path": "src/run.py",
+    "find": "        new_rows, _ = split_new(all_rows, seen.identities)",
+    "replace": "        new_rows = list(all_rows)"
+  },
+  {
+    "label": "the seen store takes a republished date",
+    "path": "src/storage.py",
+    "find": "            entry[\"published_at\"] = entry.get(\"published_at\") or row.published_at",
+    "replace": "            entry[\"published_at\"] = row.published_at"
+  },
+  {
+    "label": "Ashby's boards are configured and not polled",
+    "path": "src/run.py",
+    "find": "            \"manatal\": manatal, \"workable\": workable, \"smartrecruiters\": smartrecruiters,\n            \"ashby\": ashby}",
+    "replace": "            \"manatal\": manatal, \"workable\": workable, \"smartrecruiters\": smartrecruiters}"
+  }
+]

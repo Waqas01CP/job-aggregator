@@ -56,6 +56,7 @@ since 2026-10-02 and 2026-10-17, **and Workable, on some**, read since
 | Himalayas | `seniority`, 100%: Entry-level, Mid-level, Senior, Manager, Director, Executive, one or more | No | 406 of 809, 50% |
 | SmartRecruiters | `experienceLevel.label`, 100% of 20 on 2026-10-17: Entry Level 9, Internship 6, Mid-Senior Level 4, Executive 1 | No | not counted |
 | Workable | `experience`, one value where present: 20 of the 47 postings saved by 2026-10-16, Entry level 8, Mid-Senior level 6, Associate 4, Director 2 | No | not counted |
+| Ashby | None: no level field on any of 33 postings, 2026-10-17 | No | not counted |
 
 "States a number of years" counts descriptions with a phrase like "3 years",
 "3+ years" or "3-5 yrs". It also matches "10 years in business", so it is an
@@ -325,6 +326,33 @@ The account's `name` sits beside `jobs` and is the employer; its `description`, 
 
 **What today's rules make of the 20**, read from the list on 2026-10-17: none is kept. The title rule drops 16, location 2, the level rule 1 (Executive) and age 1. Brief 10 measured 0 of 20 on 2026-10-04.
 
+## Ashby
+
+`api.ashbyhq.com/posting-api/job-board/{board}?includeCompensation=true`, Ashby's documented public job board API, no authentication, one request a board: every listed posting with its description, under `jobs` beside `apiVersion`. No detail request. Measured 2026-10-17 over the 33 postings on the registry's two boards, Overjet 30 and deeter-analytics 3 `[VERIFIED]`:
+
+| Field | Type | Present | Read | Notes |
+|---|---|---|---|---|
+| `id` | string | 100% | yes | the identity, a UUID; the last segment of `jobUrl` on 33 of 33 |
+| `title` | string | 100% | yes | |
+| `jobUrl` | string | 100% | yes | the posting's own page on `jobs.ashbyhq.com` |
+| `publishedAt` | string | 100% | yes | ISO time with an offset, converted to UTC. **Ashby defines it as when the posting was last published**, so a republish of the same posting moves it (ADR-0052's row of 2026-10-09). The run keeps the first value: it stores only identities it has not seen, and the seen store keeps the first date it recorded. 32 of 33 published in 2026, 12 since 2026-09-17, 5 since 2026-10-10 |
+| `location` | string | 100% | yes | the posting's own place: "Lahore, Pakistan", "Salt Lake City, UT", "United States, Remote" |
+| `secondaryLocations[].location` | string | 13 of 33 non-empty | yes | further places, read as places of their own: Overjet's Egypt posting lists Pakistan second. The location text joins every place with semicolons, so D13 drops a posting only when every place is closed |
+| `address.postalAddress.addressCountry`, and each secondary location's | string | 25 of 33 primary; `address` null on 8, each "United States, Remote" | yes | a country's **name**, not a code, as the structured places: United States 39, Pakistan 5, Egypt 3, Philippines 2 across every place |
+| `workplaceType` | string | 100% | yes | Remote 16, Hybrid 15, OnSite 2 |
+| `isRemote` | boolean | 100% | no | true on every Hybrid posting as well as every Remote one, so it cannot tell them apart |
+| `descriptionHtml` | string | 100% | **yes** | the description rules read it; stripped from every cassette |
+| `descriptionPlain` | string | 100% | no | the same text without markup; stripped from every cassette |
+| `employmentType` | string | 100% | no | FullTime on 33; the job type is not filtered on any source |
+| `department`, `team` | string | 100% | no | |
+| `compensation`, `shouldDisplayCompensationOnJobPostings` | | 100% | no | a pay band on 1 posting, figures only |
+| `isListed` | boolean | 100%, true on 33 | no | an unlisted posting has not been seen, so none is filtered |
+| `applyUrl` | string | 100% | no | `jobUrl` plus `/application` on 33 of 33 |
+
+**No company field and no stated level.** Every key on all 33 was enumerated: the employer is the board's alias, provenance `slug`, as on Lever (ADR-0026).
+
+**What today's rules make of the 33**, through the real chain on 2026-10-17: none is kept. The title rule drops 32 and the seniority rule 1 ("Staff Software Engineer", in Lahore). Five list Pakistan among their places. Brief 10 measured 0 of 25 on 2026-10-04.
+
 ## What each API accepts
 
 From each provider's own documentation, read 2026-10-02 `[outside this
@@ -588,6 +616,7 @@ what happens when it is absent, and each of these deserves that separately.
 
 | Date | Change | Reason |
 |---|---|---|
+| 2026-10-17 | Ashby's section added: its one endpoint, every field counted over 33 postings, `publishedAt`'s first value kept by the store, the secondary locations read as places of their own; Ashby added to the experience table as stating no level | Its adapter is built, ADR-0059's fourth platform, the operator's go of 2026-10-17 |
 | 2026-10-17 | SmartRecruiters' section added: its list and detail endpoints, every field counted over 20 postings and two details, `releasedDate` trusted on the operator's decision, `experienceLevel` read as the stated level | Its adapter is built, ADR-0059's third platform |
 | 2026-10-17 | Workable's `experience` marked read, its counts over the 47 saved postings added to the experience table, and the level rule's turn to a list of the levels that drop noted under "Decided" | The Senior change's build, Brief 13 item 3 |
 | 2026-10-08 | Workable's section added: its documented endpoint and the redirect it answers with, every field counted over 78 postings, the spec's two link fields found reversed | Its adapter is built, ADR-0059's second platform by its rule |

@@ -55,7 +55,7 @@ from . import clearing, envfile, facts, private_store, projection, storage
 from .airtable_sweep import JOBS, SweepClient, TABLE_SECRETS
 from .closure import Closure, covered as walk_covered
 from .sweep import Sweep, older_than
-from .adapters import greenhouse, himalayas, lever, manatal, smartrecruiters, workable
+from .adapters import ashby, greenhouse, himalayas, lever, manatal, smartrecruiters, workable
 from . import health
 from .airtable import (BASE_ENV, CALL_LOG_KEYS, HEALTH_LOG_KEY, HEALTH_TABLE_ENV,
                        HEALTH_TEST_TABLE_ENV, RUN_LOG_KEY, TABLE_ENV, TEST_TABLE_ENV,
@@ -75,7 +75,8 @@ EXIT_CANNOT_START = 1
 EXIT_STOPPED_RESUMABLE = 2
 
 ADAPTERS = {"greenhouse": greenhouse, "lever": lever, "himalayas": himalayas,
-            "manatal": manatal, "workable": workable, "smartrecruiters": smartrecruiters}
+            "manatal": manatal, "workable": workable, "smartrecruiters": smartrecruiters,
+            "ashby": ashby}
 
 # A paginated feed is read until it reaches postings already stored, or
 # postings too old for the age rule to admit. The cap is a runaway guard on top

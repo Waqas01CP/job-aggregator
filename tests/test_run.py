@@ -24,7 +24,7 @@ from src import run as run_module
 from src import storage
 from src.airtable import AirtableClient, AirtableConfigError
 from src.config import Board, ConfigError
-from src.normalise import dumps
+from src.normalise import dumps, iso
 from src.filters import TitleMatcher
 from src.http_client import HttpClient
 from src.private_store import PrivateStore
@@ -298,6 +298,71 @@ class TestSmartRecruitersDetails(RunHarness):
             rows = json.load(f)
         self.assertEqual([r["described"] for r in rows], [None, None])
         self.assertEqual(rows[0]["url_provenance"], "constructed")
+
+
+class TestAshbyRepublish(RunHarness):
+    """ADR-0052's row of 2026-10-09: Ashby's `publishedAt` is the last
+    publication, so a republish of the same posting moves it, and the first
+    value seen must be kept. The run keeps it: only an identity it has not
+    seen is stored, and the seen store keeps the first date it recorded."""
+
+    AB = Board(platform="ashby", slug="Overjet", employer_alias="Overjet")
+
+    def board(self, published):
+        """Overjet's Egypt posting, retitled into the pool and placed in
+        Lahore so the rules keep it when it is fresh."""
+        from tests.test_adapters import EGYPT_AND_PAKISTAN, cassette
+        [entry] = [j for j in cassette("ashby-overjet.json")["jobs"]
+                   if j["id"] == EGYPT_AND_PAKISTAN]
+        entry = dict(entry, title="AI Engineer", location="Lahore, Pakistan",
+                     secondaryLocations=[], publishedAt=published)
+        return {"job-board/Overjet": {"apiVersion": "1", "jobs": [entry]}}
+
+    def stored(self, run):
+        with open(storage.raw_path("ashby", False, "ats"), encoding="utf-8") as f:
+            raw = json.load(f)
+        filtered = []
+        # Written only once a posting is kept.
+        if os.path.exists(run.paths["filtered"]):
+            with open(run.paths["filtered"], encoding="utf-8") as f:
+                filtered = json.load(f)
+        with open(run.paths["seen"], encoding="utf-8") as f:
+            seen = json.load(f)
+        return raw, filtered, seen
+
+    def test_a_republished_posting_keeps_its_first_date(self):
+        """Mutations: "a posting seen again is stored again", "the seen
+        store takes a republished date"."""
+        first = iso(NOW - timedelta(days=1))
+        run = Run([self.AB], client_for(self.board(first)), now=NOW, matcher=MATCHER)
+        log = run.execute()
+        self.assertEqual((log["totals"]["new"], log["totals"]["kept"]), (1, 1))
+        later = NOW + timedelta(days=3)
+        run = Run([self.AB], client_for(self.board(iso(later - timedelta(hours=2)))),
+                  now=later, matcher=MATCHER)
+        log = run.execute()
+        self.assertEqual((log["totals"]["fetched"], log["totals"]["new"]), (1, 0))
+        raw, filtered, seen = self.stored(run)
+        self.assertEqual([r["published_at"] for r in raw], [first])
+        self.assertEqual([r["published_at"] for r in filtered], [first])
+        [entry] = seen.values()
+        self.assertEqual(entry["published_at"], first)
+
+    def test_a_posting_too_old_at_first_sight_stays_dropped_when_republished(self):
+        """ADR-0052: judged once, at first sight. A republish dates it after
+        its first sight, which would pass the age rule if it were judged
+        again."""
+        old = iso(NOW - timedelta(days=30))
+        run = Run([self.AB], client_for(self.board(old)), now=NOW, matcher=MATCHER)
+        log = run.execute()
+        self.assertEqual((log["totals"]["new"], log["totals"]["kept"]), (1, 0))
+        later = NOW + timedelta(days=3)
+        run = Run([self.AB], client_for(self.board(iso(later - timedelta(hours=2)))),
+                  now=later, matcher=MATCHER)
+        run.execute()
+        raw, filtered, _ = self.stored(run)
+        self.assertEqual([r["published_at"] for r in raw], [old])
+        self.assertEqual(filtered, [])
 
 
 class TestNormalRun(RunHarness):

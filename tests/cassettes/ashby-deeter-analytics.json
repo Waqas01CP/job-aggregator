@@ -1,0 +1,95 @@
+{
+ "apiVersion": "1",
+ "jobs": [
+  {
+   "address": {
+    "postalAddress": {
+     "addressCountry": "United States",
+     "addressLocality": ""
+    }
+   },
+   "applyUrl": "https://jobs.ashbyhq.com/deeter-analytics/3cf41e6a-e936-41ae-b847-a95562cd1fb8/application",
+   "compensation": {
+    "compensationTierSummary": null,
+    "compensationTiers": [],
+    "scrapeableCompensationSalarySummary": null,
+    "summaryComponents": []
+   },
+   "department": "Execution",
+   "descriptionHtml": "STRIPPED",
+   "descriptionPlain": "STRIPPED",
+   "employmentType": "FullTime",
+   "id": "3cf41e6a-e936-41ae-b847-a95562cd1fb8",
+   "isListed": true,
+   "isRemote": true,
+   "jobUrl": "https://jobs.ashbyhq.com/deeter-analytics/3cf41e6a-e936-41ae-b847-a95562cd1fb8",
+   "location": "US - Remote",
+   "publishedAt": "2026-02-18T20:20:18.483+00:00",
+   "secondaryLocations": [],
+   "shouldDisplayCompensationOnJobPostings": false,
+   "team": "Execution",
+   "title": "Trading & Execution",
+   "workplaceType": "Remote"
+  },
+  {
+   "address": {
+    "postalAddress": {
+     "addressCountry": "United States",
+     "addressLocality": ""
+    }
+   },
+   "applyUrl": "https://jobs.ashbyhq.com/deeter-analytics/8f42c95e-6cee-4811-ba1c-cd6b74e7b01d/application",
+   "compensation": {
+    "compensationTierSummary": null,
+    "compensationTiers": [],
+    "scrapeableCompensationSalarySummary": null,
+    "summaryComponents": []
+   },
+   "department": "Research",
+   "descriptionHtml": "STRIPPED",
+   "descriptionPlain": "STRIPPED",
+   "employmentType": "FullTime",
+   "id": "8f42c95e-6cee-4811-ba1c-cd6b74e7b01d",
+   "isListed": true,
+   "isRemote": true,
+   "jobUrl": "https://jobs.ashbyhq.com/deeter-analytics/8f42c95e-6cee-4811-ba1c-cd6b74e7b01d",
+   "location": "US - Remote",
+   "publishedAt": "2026-08-02T20:55:27.824+00:00",
+   "secondaryLocations": [],
+   "shouldDisplayCompensationOnJobPostings": false,
+   "team": "Research",
+   "title": "Head of Research",
+   "workplaceType": "Remote"
+  },
+  {
+   "address": {
+    "postalAddress": {
+     "addressCountry": "United States",
+     "addressLocality": ""
+    }
+   },
+   "applyUrl": "https://jobs.ashbyhq.com/deeter-analytics/a93aae94-6025-4977-a5c0-657874c6a230/application",
+   "compensation": {
+    "compensationTierSummary": null,
+    "compensationTiers": [],
+    "scrapeableCompensationSalarySummary": null,
+    "summaryComponents": []
+   },
+   "department": "Research",
+   "descriptionHtml": "STRIPPED",
+   "descriptionPlain": "STRIPPED",
+   "employmentType": "FullTime",
+   "id": "a93aae94-6025-4977-a5c0-657874c6a230",
+   "isListed": true,
+   "isRemote": true,
+   "jobUrl": "https://jobs.ashbyhq.com/deeter-analytics/a93aae94-6025-4977-a5c0-657874c6a230",
+   "location": "US - Remote",
+   "publishedAt": "2026-08-25T14:17:28.756+00:00",
+   "secondaryLocations": [],
+   "shouldDisplayCompensationOnJobPostings": false,
+   "team": "Research",
+   "title": "Junior Quantitative Researcher",
+   "workplaceType": "Remote"
+  }
+ ]
+}
