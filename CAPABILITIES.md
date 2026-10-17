@@ -211,12 +211,12 @@ Each is measured, with its date and source. `data` is the public data branch.
 
 | What | Value | Measured | Source |
 |---|---|---|---|
-| Production runs | 58, from 2026-09-17 to 2026-10-15, a span of 27.5 days; every scheduled run since has happened | 2026-10-15 | Run logs on `data`; the public Actions API |
-| Fetch reliability | 0 retries and no run near the request ceiling across all 58 runs. 5 failed requests, all in one run, 2026-10-14T03:47Z: Manatal answered 403 five times in a row, and the run's one circuit breaker left six Workable boards unread; since 2026-10-15 each platform has its own breaker | 2026-10-15 | Same |
-| Requests per run | Median 98 against a ceiling of 500, at most 102, since all five platforms ran, 2026-10-08 evening; 77 of them Manatal's, asked twenty postings a page since 2026-10-15, which halves its walk. Before Manatal, over the first 30 runs: median 36 (2026-10-01) | 2026-10-15 | Same |
-| Postings read per run | 1,330 to 1,841 since 2026-10-08 evening, with Manatal and Workable. 803 to 1,420 over the first 30 runs, to 2026-10-01 | 2026-10-15 | Run logs |
-| Postings fetched in total | 71,668 across 58 runs, repeats included | 2026-10-15 | Run logs |
-| Distinct employer-board postings stored | 2,402 | 2026-10-15 | `seen.json` on `data` |
+| Production runs | 63, from 2026-09-17 to 2026-10-17, a span of 30.1 days; every scheduled run since has happened | 2026-10-17 | Run logs on `data`; the public Actions API |
+| Fetch reliability | 0 retries and no run near the request ceiling across all 63 runs, to 2026-10-17. 5 failed requests, all in one run, 2026-10-14T03:47Z: Manatal answered 403 five times in a row, and the run's one circuit breaker left six Workable boards unread; since 2026-10-15 each platform has its own breaker | 2026-10-17 | Same |
+| Requests per run | 63 or 64 against a ceiling of 500 in the four runs from 2026-10-15 evening, 42 of them Manatal's at twenty postings a page; 87 on 2026-10-17 evening, SmartRecruiters' first, with a detail for each of its 20 postings. Median 98, at most 102, from 2026-10-08 evening to 10-15, when Manatal cost 77 at ten a page. Before Manatal, over the first 30 runs: median 36 (2026-10-01) | 2026-10-17 | Same |
+| Postings read per run | 1,724 to 1,793 in the five runs from 2026-10-15 evening, SmartRecruiters' 20 in the last. 1,330 to 1,841 from 2026-10-08 evening, with Manatal and Workable. 803 to 1,420 over the first 30 runs, to 2026-10-01 | 2026-10-17 | Run logs |
+| Postings fetched in total | 80,407 across 63 runs, repeats included | 2026-10-17 | Run logs |
+| Distinct employer-board postings stored | 2,464 | 2026-10-17 | `seen.json` on `data` |
 | **Freshness (Measure A)** | ADR-0015's two weeks after go-live, 2026-09-24T03:27Z to 10-08T03:27Z: 140 admitted postings reached the display a **median 7.3 hours** after publication, **90th percentile 22.0 hours**, maximum 53.2. The targets are 24 and 72 hours. Himalayas 137 of the 140, on its morning poll until 2026-10-04; Greenhouse 1, Lever 2. Over every posting seen in the window, admitted or not, 1,725: median 9.8 hours, 90th percentile 21.4. First appearance is taken as first sight: no run in the window failed to write the display. Postings published before their board's first run are excluded, 26 admitted ones; none was dateless. Earlier, to 2026-09-30, first sight only: median 5.4, 90th percentile 10.5, over 114 postings | 2026-10-15 | The filtered and seen layers on `data` and in the private repository, and the run logs |
 | Selectivity | Of 1,720 postings read, 16 kept: 1,612 dropped on title, 59 on seniority, 16 on location, 12 on experience, 4 on age, 1 on a right to work. Of everything first seen in the week from 2026-10-08 evening, 1,416 postings, 36 were admitted, 92% dropped on title | 2026-10-15, morning run, and the week before it | Run log; the raw layers through the current rules |
 | Deduplication | 1,720 postings grouped into 1,128; the largest group, one role posted 180 times, once per city, became one row | 2026-10-15 | Run log |
@@ -228,15 +228,15 @@ Each is measured, with its date and source. `data` is the public data branch.
 | Himalayas completeness | Of the 420 postings a week-long read of the search held, published before the morning walk, the pipeline had stored all 420 | 2026-09-30 | A 26-page snapshot against the private seen store |
 | Location rule, its owed check | Exactly 74 of the saved 91 Himalayas postings dropped and 17 admitted, as the record predicted nine days before the rule was built | 2026-09-30 | ADR-0041's Confirmation, on `raw_responses/` |
 | Full postings saved privately | 824 postings in one 9.8 MB file, read back and matched by content hash | 2026-09-26 | Run log |
-| Airtable usage | 421 of October's 1,000 calls by 2026-10-15's morning, 362 production and 43 test, plus that run's own; `Jobs` holds 153 rows; since the read-back of 2026-10-07 a projection costs 3 calls, two to read `Jobs` and one to send what differs | 2026-10-15 | Run log |
+| Airtable usage | The pipeline's own: 461 of October's calls by the run of 2026-10-17T16:12Z, 418 production and 43 test, against its own ceiling of 900 since 2026-10-16 and the workspace's 1,000, which the chats' connector calls share; the workspace's meter read 647 on 2026-10-17 and is not live. `Jobs` holds 155 rows; since the read-back of 2026-10-07 a projection costs 3 calls, two to read `Jobs` and one to send what differs | 2026-10-17 | Run log |
 | Display intake | About one new display row a day under the current rules, so by arithmetic, not measurement, the display settles near thirty rows, and the cheaper delta projection is not yet needed. *(Overtaken 2026-10-04: the week to then measured about 7.5 new rows a day, and `Jobs` held 149 rows on 2026-10-14; the read-back projection was built on 2026-10-07 instead, ADR-0060)* | 2026-09-29 and 09-30 | Run logs, against ADR-0056's trigger of 100 |
 | Recurring cost | None | 2026-09-27 | Free plans only |
 | Feasibility research | 16 ATS platforms probed; 1,646 postings across the first 11 boards | 2026-09-11 to 09-16 | Spike logs |
-| Code | 29 source files, 7,978 lines; 35 test files, 12,555 lines; 9 tool files, 1,923 lines | 2026-10-15 | `git ls-files`, `wc` |
-| Tests | 893, passing on Python 3.11 and 3.12 | 2026-10-15 | `unittest` |
-| Mutations | 533 recorded across 50 files. Since 2026-10-01 the suite fails when a code change leaves any of them unable to run, which two commits had done to 10, unnoticed. A survivor is closed by a new test, or, where the mutation changes nothing, replaced and recorded as such | 2026-10-15 | `tools/mutations/`, run by `tools/mutate.py`; results in the session logs |
-| Decision records | 60 (seven superseded), plus the rules for amending them. 177 dated Changes rows across 52 records | 2026-10-15 | `docs/decisions/` |
-| History | 170 commits on `main`, the first on 2026-09-01 UTC; 29 session logs; one audit report in `logs/audit/` | 2026-10-15 | `git log`, `logs/` |
+| Code | 31 source files, 8,837 lines; 36 test files, 13,726 lines; 9 tool files, 2,009 lines | 2026-10-17 | `git ls-files`, `wc` |
+| Tests | 957, passing on Python 3.11 and 3.12 | 2026-10-17 | `unittest` |
+| Mutations | 582 recorded across 58 files. Since 2026-10-01 the suite fails when a code change leaves any of them unable to run, which two commits had done to 10, unnoticed. A survivor is closed by a new test, or, where the mutation changes nothing, replaced and recorded as such. Since 2026-10-17 each suite under the harness has twenty minutes, and one stopped there is reported timed out, never caught | 2026-10-17 | `tools/mutations/`, run by `tools/mutate.py`; results in the session logs |
+| Decision records | 61 (eight superseded), plus the rules for amending them. 188 dated Changes rows across 52 records, counted as rows under each record's Changes heading | 2026-10-17 | `docs/decisions/` |
+| History | 187 commits on `main` with this session's record, the first on 2026-09-01 UTC; 30 session logs; one audit report in `logs/audit/` | 2026-10-17 | `git log`, `logs/` |
 
 ---
 
@@ -288,6 +288,8 @@ Each is measured, with its date and source. `data` is the public data branch.
 | 2026-10-07 | The operator's answers built: the display read back so only what differs is sent; a posting with no date shown last; Manatal's nine boards polled, the first platform added by measured yield; on-site work read as Pakistani postings write it; a `Health` table for every contract finding and run failure; the clearing tool's calls counted |
 | 2026-10-08 | Workable's six boards added, the first wave's second platform; the cassette tool made to sanitise a response's envelope |
 | 2026-10-15 | Brief 11: Measure A met over its first two weeks; each platform given its own circuit breaker after Manatal's refusals stopped Workable's boards for a run; Manatal read twenty postings a page; a description opening the role to graduates anywhere asks no minimum |
+| 2026-10-16 | Brief 12: the Airtable allowance measured, the pipeline's own ceiling set at 900 of the workspace's 1,000; ADR-0062's flow built, `applied`, `gone`, `Reason` and a row number; Himalayas' morning walk reads to the age limit; stored rows' facts re-read when the code that derives them changes |
+| 2026-10-17 | Brief 13: the Senior change built and switched off for 2026-11-01, the level rule as a list of the levels that drop, Workable's level read, the description's four fields and a flag for a posting with none; SmartRecruiters' two boards added, each description asked once; the mutation harness given a time limit after two stalls |
 
 ---
 

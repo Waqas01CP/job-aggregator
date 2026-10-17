@@ -48,7 +48,7 @@ must be added here with its owner before the suite passes.
 run to be incapable of touching production state. Each has its own secret,
 and a test ID equal to a production one is refused.
 
-## `Jobs` and `Jobs test`, sixteen fields and four to come
+## `Jobs` and `Jobs test`, twenty fields
 
 `Title` is the primary field. Airtable requires one and it cannot be removed,
 only renamed.
@@ -67,21 +67,23 @@ only renamed.
 | Identity | single line text | pipeline | The pipeline's identity. What ADR-0035's upsert matches on |
 | Family | single line text | pipeline | The role family of the matched term, ADR-0038. Created 2026-09-24 |
 | Closed | date | pipeline | The date the pipeline first saw the posting closed, ADR-0050; empty while open. The sweep writes it and nothing else touches it. Created 2026-09-25 |
-| Years asked | number, integer | pipeline | Brief 13: the largest number of years the description asks, from the row's stored facts, never its words (ADR-0011); empty when it asks none, or when a line opens the role to graduates. **Not yet made**: see below the table |
-| Required in | single line text | pipeline | The places the description requires a right to work, citizenship or residence in, as the configuration names them: one requirement's places joined by commas, requirements by semicolons; empty when none. **Not yet made** |
-| On site | checkbox | pipeline | The description says on site or hybrid and offers no remote option. **Not yet made** |
-| No description | checkbox | pipeline | The posting carried no description text, so no description rule could judge it: once Senior leaves the seniority words on 2026-11-01, a Senior posting with none passes on its title alone, and this flags it. **Not yet made** |
+| Years asked | number, integer | pipeline | Brief 13: the largest number of years the description asks, from the row's stored facts, never its words (ADR-0011); empty when it asks none, or when a line opens the role to graduates. **Made 2026-10-17, not yet sent**: see below the table |
+| Required in | single line text | pipeline | The places the description requires a right to work, citizenship or residence in, as the configuration names them: one requirement's places joined by commas, requirements by semicolons; empty when none. **Not yet sent** |
+| On site | checkbox | pipeline | The description says on site or hybrid and offers no remote option. **Not yet sent** |
+| No description | checkbox | pipeline | The posting carried no description text, so no description rule could judge it: once Senior leaves the seniority words on 2026-11-01, a Senior posting with none passes on its title alone, and this flags it. **Not yet sent** |
 | Status | single select | operator | The operator's classification. See the choices below |
 | Reason | single select | operator | ADR-0062, 2026-10-16: his reason, set with `Status`, so it no longer waits for a copy. Its choices are those of `Choice reason` and `Pipeline reason` together. The sweep writes it into a new rejection copy's reason field when the field offers it, fills an empty one, and keeps it in every store record beside the copy's own |
 | No. | autonumber | Airtable | ADR-0062: a number Airtable assigns, so a row keeps a number he can quote. No client writes it, and the projection, the read-back, the sweep and the clearing tool each read only the fields they name, so none reads or compares it but the sweep, which copies it into `accepted` as `Jobs No.` |
 | Classified at | last modified time, watching `Status` alone | Airtable | When the classification was last set or changed, a clear included. The clock `Jobs` retires classified rows on |
 
-**The description's four are not yet made.** The projection sends them,
-and the read-back names them, only while `description_fields_shown` is on in
-`config/sweep.json`, since a read or write naming a field the table lacks
-fails the call. The operator makes them in `Jobs` and `Jobs test`, then a
-commit turns the switch on: from 2026-11-01 by Brief 13, when the month has
-room for the one re-send of every row they cost, about 16 calls at 150 rows.
+**The description's four are made and not yet sent.** The projection
+sends them, and the read-back names them, only while
+`description_fields_shown` is on in `config/sweep.json`, since a read or
+write naming a field the table lacks fails the call. The seat made them in
+`Jobs` and `Jobs test` on 2026-10-17 at about 19:55Z, on the operator's
+word, ahead of the switch; a commit turns it on from 2026-11-01 by Brief 13,
+when the month has room for the one re-send of every row they cost, about
+16 calls at 150 rows.
 Nothing recurs after that, because the values are the same each run, with one
 trap the comparison handles: **Airtable omits a checkbox that is false**, so
 the read-back reads false and empty as the same value, or every row would be
@@ -251,3 +253,5 @@ as the example for an IANA identifier; Airtable's API rejects `"UTC"` with a
 | 2026-09-25 | Rebuilt for ADR-0050: eight tables, fourteen fields on `Jobs`, `Family` and `Closed` added, an Owner column for every field, the `Status` choices as renamed, and the stale "not yet built" passages removed | ADR-0050 superseded ADR-0046 and adds `Closed`; Brief 7 asked for `Closed` to be recorded here. The Owner column makes ADR-0035's ownership a property a test reads (ADR-0049), so a field added later must declare its owner. `Closed` was created on both tables through the connector and read back |
 | 2026-10-07 | `Order date` is empty for a posting with no publication date | The operator's rule that no job is skipped for lacking a date and none is shown as newer than it may be; Airtable sorts blanks last in a latest-first sort, by its support documentation. Manatal is the first source with no date |
 | 2026-10-07 | `Health` and `Health test` added, six pipeline-owned fields | ADR-0059 requires every contract finding and every failure to reach Airtable; the operator chose one table for both, "general health", if the cost is low |
+| 2026-10-16 | `Reason` and `No.` added to `Jobs`, `Jobs No.` to `accepted` and `accepted test`, `gone` and `applied` among the statuses, made by the seat through the connector on the operator's word | ADR-0062 |
+| 2026-10-17 | `Years asked`, `Required in`, `On site` and `No description` added to `Jobs` and `Jobs test`, made by the seat on the operator's word and not sent until a commit turns `description_fields_shown` on, from 2026-11-01 | Brief 13, the Senior change's build |
