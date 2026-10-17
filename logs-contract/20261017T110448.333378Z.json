@@ -1,0 +1,55 @@
+{
+ "run_at": "2026-10-17T11:04:48.333378Z",
+ "platforms": {
+  "greenhouse": {
+   "board": "greenhouse:veeamsoftware",
+   "postings": 216,
+   "changes": [],
+   "status": "unchanged"
+  },
+  "lever": {
+   "board": "lever:smart-working-solutions",
+   "postings": 21,
+   "changes": [],
+   "status": "unchanged"
+  },
+  "himalayas": {
+   "board": "himalayas:pakistan",
+   "postings": 20,
+   "changes": [],
+   "status": "unchanged"
+  },
+  "manatal": {
+   "board": "manatal:abacus-consulting-3",
+   "postings": 20,
+   "changes": [],
+   "status": "unchanged"
+  },
+  "workable": {
+   "board": "workable:igate-technologies",
+   "postings": 21,
+   "changes": [
+    {
+     "field": "experience",
+     "in": "posting",
+     "was": "not in the stored fingerprint",
+     "now": {
+      "present": "all",
+      "null": "never",
+      "types": [
+       "string"
+      ]
+     },
+     "ours": "2026-10-17T08:04:49Z: The adapter now reads experience, the level Workable states, for the level rule as a list of the levels that drop, the Senior change's build in Brief 13, so the check fingerprints one more field. Nothing changed at Workable."
+    }
+   ],
+   "status": "re-baselined"
+  },
+  "smartrecruiters": {
+   "board": "smartrecruiters:OneScreen",
+   "postings": 10,
+   "status": "baseline"
+  }
+ },
+ "test_mode": false
+}

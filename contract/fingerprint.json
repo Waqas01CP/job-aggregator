@@ -482,6 +482,13 @@
     "null": "never",
     "types": []
    },
+   "experience": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
    "description": {
     "present": "all",
     "null": "never",
@@ -490,6 +497,211 @@
     ]
    }
   },
-  "since": "2026-10-08T13:54:11.420005Z"
+  "since": "2026-10-17T11:04:48.333378Z"
+ },
+ "smartrecruiters": {
+  "response": {
+   "content": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "array"
+    ]
+   },
+   "totalFound": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "number"
+    ]
+   },
+   "offset": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "number"
+    ]
+   }
+  },
+  "posting": {
+   "id": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "name": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "releasedDate": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "company": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "object"
+    ]
+   },
+   "company.identifier": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "company.name": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "location": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "object"
+    ]
+   },
+   "location.fullLocation": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "location.city": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "location.country": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "location.remote": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "boolean"
+    ]
+   },
+   "location.hybrid": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "boolean"
+    ]
+   },
+   "experienceLevel": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "object"
+    ]
+   },
+   "experienceLevel.label": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   }
+  },
+  "detail": {
+   "postingUrl": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "jobAd": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "object"
+    ]
+   },
+   "jobAd.sections": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "object"
+    ]
+   },
+   "jobAd.sections.companyDescription": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "object"
+    ]
+   },
+   "jobAd.sections.companyDescription.text": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "jobAd.sections.jobDescription": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "object"
+    ]
+   },
+   "jobAd.sections.jobDescription.text": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "jobAd.sections.qualifications": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "object"
+    ]
+   },
+   "jobAd.sections.qualifications.text": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "jobAd.sections.additionalInformation": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "object"
+    ]
+   },
+   "jobAd.sections.additionalInformation.text": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   }
+  },
+  "since": "2026-10-17T11:04:48.333378Z"
  }
 }
