@@ -56,6 +56,18 @@ PIPELINE_FIELDS = ("Title", "Employer", "Location", "Link", "Published",
                    "First seen", "Order date", "Board", "Matched term",
                    "Identity", "Family")
 IDENTITY_FIELD = "Identity"
+# Brief 13's four, the pipeline's own, sent only while `description_fields_
+# shown` is on in config/sweep.json: the largest number of years the
+# description asks, the places it requires a right to work in, whether it
+# says on site with no remote option, and whether the posting carried no
+# description at all.
+DESCRIPTION_FIELDS = ("Years asked", "Required in", "On site", "No description")
+
+
+def pipeline_fields(described=False):
+    """The fields the projection owns in `Jobs`: ADR-0035's ten and
+    ADR-0038's Family, and the description's four when they are shown."""
+    return PIPELINE_FIELDS + (DESCRIPTION_FIELDS if described else ())
 
 # ADR-0004 and ADR-0035: ten records a call.
 BATCH_SIZE = 10

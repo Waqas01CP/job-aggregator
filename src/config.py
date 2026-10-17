@@ -197,6 +197,10 @@ class SweepConfig:
     # ADR-0062: each rejection table's reason choices, mirroring the base, so
     # `Reason` is written into a copy only when the field offers it.
     reason_choices: dict = field(default_factory=dict)
+    # Brief 13: whether the projection sends the description's values to
+    # `Jobs` (airtable.DESCRIPTION_FIELDS). Off until the operator has made
+    # the fields and the month has room for the one re-send of every row.
+    description_fields_shown: bool = False
 
 
 # The tables whose reason field the sweep may fill from `Reason`.
@@ -258,7 +262,11 @@ def load_sweep_config(path=None):
             for v in choices.values()):
         raise ConfigError("sweep config: reason_choices must give each of %s a non-empty list "
                           "of choices" % ", ".join(REASON_TABLES))
-    return SweepConfig(monthly_call_ceiling=ceiling,
+    shown = doc.get("description_fields_shown")
+    if not isinstance(shown, bool):
+        raise ConfigError("sweep config: description_fields_shown must be true or false, "
+                          "got %r" % (shown,))
+    return SweepConfig(monthly_call_ceiling=ceiling, description_fields_shown=shown,
                        reason_choices={t: tuple(v) for t, v in choices.items()},
                        closed_after_polled_runs=runs,
                        retire_after_days=whole("retire_after_days", 1),

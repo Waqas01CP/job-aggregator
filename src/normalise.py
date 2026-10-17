@@ -42,7 +42,7 @@ FIELDS = (
     "first_seen", "ordering_date", "ordering_date_source",
     "url", "url_provenance",
     "stated_experience", "expires_at", "stated_levels", "places", "workplace",
-    "required_places", "described_workplace",
+    "required_places", "described_workplace", "described",
 )
 
 
@@ -96,6 +96,14 @@ class Row:
     workplace: str = None
     required_places: list = None
     described_workplace: str = None
+    # Whether the posting carried description text: False when it carried
+    # none, so no description rule could read it and every one keeps it.
+    # None on rows stored before 2026-10-17 that no re-read has reached.
+    # Brief 13: once Senior leaves the seniority words, a Senior posting
+    # with no description passes on its title alone, and the display flags
+    # it rather than hiding it. Named for the fact, never the text: no row
+    # field is named for the description (ADR-0011's shape guard).
+    described: bool = None
 
     def as_record(self):
         """The canonical dict. Key order is fixed by FIELDS so two runs that
@@ -251,6 +259,7 @@ def normalise(postings, board, now, seen=None):
             workplace=getattr(p, "workplace", None),
             required_places=_required_places(facts),
             described_workplace="on site" if facts and facts.on_site else None,
+            described=facts is not None,
         )
         rows.append(row)
     return rows

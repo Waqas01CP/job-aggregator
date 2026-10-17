@@ -32,8 +32,8 @@
   {
     "label": "fields_for emits Status",
     "path": "src/projection.py",
-    "find": "    return {name: values[name] for name in PIPELINE_FIELDS}",
-    "replace": "    return dict({name: values[name] for name in PIPELINE_FIELDS}, Status=None)"
+    "find": "    return {name: values[name] for name in pipeline_fields(described)}",
+    "replace": "    return dict({name: values[name] for name in pipeline_fields(described)}, Status=None)"
   },
   {
     "label": "Status added to the constant",

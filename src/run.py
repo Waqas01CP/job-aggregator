@@ -58,8 +58,8 @@ from .sweep import Sweep, older_than
 from .adapters import greenhouse, himalayas, lever, manatal, workable
 from . import health
 from .airtable import (BASE_ENV, CALL_LOG_KEYS, HEALTH_LOG_KEY, HEALTH_TABLE_ENV,
-                       HEALTH_TEST_TABLE_ENV, PIPELINE_FIELDS, RUN_LOG_KEY, TABLE_ENV,
-                       TEST_TABLE_ENV, TOKEN_ENV, AirtableClient, month_to_date)
+                       HEALTH_TEST_TABLE_ENV, RUN_LOG_KEY, TABLE_ENV, TEST_TABLE_ENV,
+                       TOKEN_ENV, AirtableClient, month_to_date, pipeline_fields)
 from .contract import LOG_DIR as CONTRACT_LOG_DIR
 from .backfill import backfill
 from .config import ConfigError, is_publishable, load_boards, load_sweep_config
@@ -180,11 +180,20 @@ def monthly_ceiling():
     return load_sweep_config().monthly_call_ceiling
 
 
+def description_fields_shown():
+    """Whether the projection sends the description's four fields, from
+    `config/sweep.json` (Brief 13). The read-back names them, and the writer
+    may carry them, only while it is on: a call naming a field the table
+    lacks fails."""
+    return load_sweep_config().description_fields_shown
+
+
 def make_airtable_client(test_mode, used_this_month):
     """The one place the run builds its Airtable client. Tests replace it with
     a fake transport, so no unit test can reach a live base."""
     return AirtableClient.from_env(test_mode, used_this_month=used_this_month,
-                                   monthly_ceiling=monthly_ceiling())
+                                   monthly_ceiling=monthly_ceiling(),
+                                   fields=pipeline_fields(description_fields_shown()))
 
 
 def make_private_store(test_mode):
@@ -370,13 +379,14 @@ def project_display(run, no_commit, test_mode, restore_failure=None, retired=Non
     stages = {}
     client = reader = None
     try:
+        described = description_fields_shown()
         if no_commit:
             stages["mode"] = "dry run: a no-commit run reaches no base and no private store"
             records = projection.plan(projection.load_rows(run.paths), now_iso, run.matcher,
                                       projection.identities_in(
                                           projection.public_store_texts(run.paths)
                                           + projection.private_store_texts(run.paths)), stages,
-                                      retired=retired)
+                                      retired=retired, described=described)
             return stages, {"calls_used": 0, "rows_sent": 0, "failure": None,
                             "would_send": len(records)}, None
 
@@ -385,12 +395,12 @@ def project_display(run, no_commit, test_mode, restore_failure=None, retired=Non
         # reads (the operator's decision of 2026-10-07); then the writer,
         # whose monthly guard counts the read's calls as spent.
         reader = make_sweep_client(test_mode, sum(by_branch.values()))
-        shown = reader.list_records(JOBS, PIPELINE_FIELDS)
+        shown = reader.list_records(JOBS, pipeline_fields(described))
         client = make_airtable_client(test_mode, sum(by_branch.values()) + reader.calls_used)
         projection.project(run.paths, now_iso, run.matcher, client,
                            projection.private_store_texts(run.paths), stages,
                            public_only=bool(restore_failure), retired=retired,
-                           displayed=lambda: shown)
+                           displayed=lambda: shown, described=described)
         return stages, with_reads(dict(client.counters(), failure=None,
                                        month_to_date_by_branch=by_branch), reader), None
     except Exception as e:
@@ -995,6 +1005,9 @@ class Run:
                 "fetched": sum(l["fetched"] for l in self.board_logs),
                 "new": len(new_rows),
                 "kept": len(kept_rows),
+                # Brief 13: admitted with no description, so no description
+                # rule could judge them; the display flags each one.
+                "kept_without_description": sum(1 for r in kept_rows if r.described is False),
                 "written_raw": raw_written,
                 "written_filtered": filtered_written,
                 "backfilled": backfilled["written_public"] + backfilled["written_local"],
@@ -1038,9 +1051,10 @@ def summarise(run_log):
                         drops or "no drops",
                         "  [%s]" % b["detail"] if b["detail"] else ""))
     t = run_log["totals"]
-    lines.append("  totals: fetched %d, new %d, kept %d, raw %s, filtered %d (%d of them local only)"
-                 % (t["fetched"], t["new"], t["kept"], t["written_raw"],
-                    t["written_filtered"], t["written_filtered_local"]))
+    lines.append("  totals: fetched %d, new %d, kept %d (%d with no description), raw %s, "
+                 "filtered %d (%d of them local only)"
+                 % (t["fetched"], t["new"], t["kept"], t.get("kept_without_description", 0),
+                    t["written_raw"], t["written_filtered"], t["written_filtered_local"]))
     # Its own line, never folded into the filtered count. A run writing 0 of
     # its own while the backfill writes 8 is a broken write path, and one
     # combined number would read as a healthy run.

@@ -54,6 +54,9 @@ class FakeBase:
         self.now = now or T0
         self.calls = []
         self.fail = None
+        # Field names the base does not have. Airtable answers a read or a
+        # write naming one with 422 UNKNOWN_FIELD_NAME, and so does this.
+        self.lacks = set()
         self._ids = itertools.count(1)
 
     # ---------------------------------------------------------- test helpers
@@ -84,6 +87,13 @@ class FakeBase:
             answer = self.fail(call)
             if answer is not None:
                 return answer
+        pairs = list(params.items()) if isinstance(params, dict) else list(params or [])
+        named = {v for k, v in pairs if k == "fields[]"}
+        named |= {n for r in (json or {}).get("records", []) for n in (r.get("fields") or {})}
+        unknown = sorted(named & self.lacks)
+        if unknown:
+            return Response(422, {"error": {"type": "UNKNOWN_FIELD_NAME",
+                                            "message": "Unknown field name: %r" % unknown[0]}})
         if method in ("POST", "PATCH") and len((json or {}).get("records", [])) > MAX_RECORDS:
             return Response(422, {"error": "more than %d records" % MAX_RECORDS})
         handler = {"GET": self._list, "POST": self._create, "PATCH": self._patch,

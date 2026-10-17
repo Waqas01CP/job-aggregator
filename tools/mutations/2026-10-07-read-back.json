@@ -2,8 +2,8 @@
   {
     "label": "the run projects without reading Jobs back",
     "path": "src/run.py",
-    "find": "                           displayed=lambda: shown)",
-    "replace": "                           displayed=None)"
+    "find": "                           displayed=lambda: shown, described=described)",
+    "replace": "                           displayed=None, described=described)"
   },
   {
     "label": "a row the display shows otherwise is not sent",
@@ -32,14 +32,14 @@
   {
     "label": "an empty field and an omitted one disagree",
     "path": "src/projection.py",
-    "find": "    if value is None or value == \"\":",
-    "replace": "    if value is None:"
+    "find": "    if value is None or value == \"\" or value is False:",
+    "replace": "    if value is None or value is False:"
   },
   {
     "label": "the operator's fields are compared too",
     "path": "src/projection.py",
-    "find": "               for name in PIPELINE_FIELDS)",
-    "replace": "               for name in set(PIPELINE_FIELDS) | set(record) | set(shown))"
+    "find": "               for name in pipeline_fields(\"No description\" in record))",
+    "replace": "               for name in set(pipeline_fields(\"No description\" in record)) | set(record) | set(shown))"
   },
   {
     "label": "the read of Jobs is not counted in the month",

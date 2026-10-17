@@ -45,7 +45,7 @@ from .normalise import dumps, loads, normalise
 # The facts a row derives from its posting, and nothing else: its identity,
 # title and dates are what it was first seen as, and are never re-read.
 DERIVED = ("stated_experience", "stated_levels", "places", "workplace", "required_places",
-           "described_workplace")
+           "described_workplace", "described")
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # The code and configuration the derived facts come from.

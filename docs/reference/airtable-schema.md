@@ -48,7 +48,7 @@ must be added here with its owner before the suite passes.
 run to be incapable of touching production state. Each has its own secret,
 and a test ID equal to a production one is refused.
 
-## `Jobs` and `Jobs test`, sixteen fields
+## `Jobs` and `Jobs test`, sixteen fields and four to come
 
 `Title` is the primary field. Airtable requires one and it cannot be removed,
 only renamed.
@@ -67,10 +67,25 @@ only renamed.
 | Identity | single line text | pipeline | The pipeline's identity. What ADR-0035's upsert matches on |
 | Family | single line text | pipeline | The role family of the matched term, ADR-0038. Created 2026-09-24 |
 | Closed | date | pipeline | The date the pipeline first saw the posting closed, ADR-0050; empty while open. The sweep writes it and nothing else touches it. Created 2026-09-25 |
+| Years asked | number, integer | pipeline | Brief 13: the largest number of years the description asks, from the row's stored facts, never its words (ADR-0011); empty when it asks none, or when a line opens the role to graduates. **Not yet made**: see below the table |
+| Required in | single line text | pipeline | The places the description requires a right to work, citizenship or residence in, as the configuration names them: one requirement's places joined by commas, requirements by semicolons; empty when none. **Not yet made** |
+| On site | checkbox | pipeline | The description says on site or hybrid and offers no remote option. **Not yet made** |
+| No description | checkbox | pipeline | The posting carried no description text, so no description rule could judge it: once Senior leaves the seniority words on 2026-11-01, a Senior posting with none passes on its title alone, and this flags it. **Not yet made** |
 | Status | single select | operator | The operator's classification. See the choices below |
 | Reason | single select | operator | ADR-0062, 2026-10-16: his reason, set with `Status`, so it no longer waits for a copy. Its choices are those of `Choice reason` and `Pipeline reason` together. The sweep writes it into a new rejection copy's reason field when the field offers it, fills an empty one, and keeps it in every store record beside the copy's own |
 | No. | autonumber | Airtable | ADR-0062: a number Airtable assigns, so a row keeps a number he can quote. No client writes it, and the projection, the read-back, the sweep and the clearing tool each read only the fields they name, so none reads or compares it but the sweep, which copies it into `accepted` as `Jobs No.` |
 | Classified at | last modified time, watching `Status` alone | Airtable | When the classification was last set or changed, a clear included. The clock `Jobs` retires classified rows on |
+
+**The description's four are not yet made.** The projection sends them,
+and the read-back names them, only while `description_fields_shown` is on in
+`config/sweep.json`, since a read or write naming a field the table lacks
+fails the call. The operator makes them in `Jobs` and `Jobs test`, then a
+commit turns the switch on: from 2026-11-01 by Brief 13, when the month has
+room for the one re-send of every row they cost, about 16 calls at 150 rows.
+Nothing recurs after that, because the values are the same each run, with one
+trap the comparison handles: **Airtable omits a checkbox that is false**, so
+the read-back reads false and empty as the same value, or every row would be
+sent again on every run.
 
 `Classified at` was created on 2026-09-20 on both tables and verified by
 reading the schema back: its `referencedFieldIds` holds the `Status` field and

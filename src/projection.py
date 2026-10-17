@@ -35,7 +35,7 @@ looks like a bug:
 from datetime import datetime, timezone
 
 from . import facts, storage
-from .airtable import PIPELINE_FIELDS
+from .airtable import PIPELINE_FIELDS, pipeline_fields
 from .config import is_publishable
 from .dedupe import group
 from .filters import apply_chain
@@ -176,9 +176,11 @@ def airtable_datetime(value):
     return "%s.%03dZ" % (dt.strftime("%Y-%m-%dT%H:%M:%S"), dt.microsecond // 1000)
 
 
-def fields_for(g, matcher):
+def fields_for(g, matcher, described=False):
     """The pipeline-owned fields for one display group: ADR-0035's ten and
-    ADR-0038's `Family`, the family of the term shown, never of the title.
+    ADR-0038's `Family`, the family of the term shown, never of the title;
+    with `described`, the description's four (Brief 13), from the facts the
+    row stores, never its words (ADR-0011).
 
     **Title and Matched term both come from `title_normalised`.** It is what
     the chain's title rule matches on, so the term shown is the term that
@@ -211,11 +213,15 @@ def fields_for(g, matcher):
         "Matched term": term,
         "Identity": rep.identity,
         "Family": matcher.family_of(term),
+        "Years asked": max(rep.stated_experience) if rep.stated_experience else None,
+        "Required in": "; ".join(rep.required_places) if rep.required_places else None,
+        "On site": rep.described_workplace == "on site",
+        "No description": rep.described is False,
     }
-    return {name: values[name] for name in PIPELINE_FIELDS}
+    return {name: values[name] for name in pipeline_fields(described)}
 
 
-def plan(rows, now_iso, matcher, stored, stages=None, retired=None):
+def plan(rows, now_iso, matcher, stored, stages=None, retired=None, described=False):
     """Stages 2 to 4. Returns the records to send; fills `stages`.
 
     `retired(group)` says whether a group closed more than ADR-0050's
@@ -236,7 +242,7 @@ def plan(rows, now_iso, matcher, stored, stages=None, retired=None):
         still_open = [g for g in send if not retired(g)]
         stages["groups_retired_closed"] = len(send) - len(still_open)
         send = still_open
-    records = [fields_for(g, matcher) for g in send]
+    records = [fields_for(g, matcher, described) for g in send]
     stages["rows_to_send"] = len(records)
     return records
 
@@ -247,8 +253,14 @@ DATE_FIELDS = ("Published", "First seen", "Order date")
 def shown_value(name, value):
     """A pipeline field's value as two sides can agree on it: empty as None,
     whatever Airtable omits or returns blank; a date to the millisecond; text
-    without the whitespace Airtable may trim."""
-    if value is None or value == "":
+    without the whitespace Airtable may trim.
+
+    **A checkbox that is false is empty.** Airtable omits it from a read, so
+    `On site` and `No description` sent as false would never match what is
+    shown, and every row would be sent again on every run, about 16 calls a
+    run at 150 rows. `is False`, never `== False`, which a `Years asked` of 0
+    would also meet."""
+    if value is None or value == "" or value is False:
         return None
     if name in DATE_FIELDS:
         try:
@@ -259,9 +271,10 @@ def shown_value(name, value):
 
 
 def unchanged(record, shown):
-    """Whether `Jobs` already shows every pipeline field of `record` as sent."""
+    """Whether `Jobs` already shows every pipeline field of `record` as sent:
+    the description's four too when the record carries them."""
     return all(shown_value(name, record.get(name)) == shown_value(name, shown.get(name))
-               for name in PIPELINE_FIELDS)
+               for name in pipeline_fields("No description" in record))
 
 
 def what_differs(records, displayed, stages):
@@ -305,7 +318,7 @@ def what_differs(records, displayed, stages):
 
 
 def project(paths, now_iso, matcher, client, private_texts, stages, public_only=False,
-            retired=None, displayed=None):
+            retired=None, displayed=None, described=False):
     """All five stages. `private_texts` are the private repository's copies
     of the same stores, from private_store_texts. `stages` is filled as each
     stage completes, so a failure part way still leaves a count of how far it
@@ -325,7 +338,7 @@ def project(paths, now_iso, matcher, client, private_texts, stages, public_only=
         rows, private_texts = kept, []
     stored = identities_in(public_store_texts(paths) + list(private_texts))
     stages["stored_identities"] = len(stored)
-    records = plan(rows, now_iso, matcher, stored, stages, retired=retired)
+    records = plan(rows, now_iso, matcher, stored, stages, retired=retired, described=described)
     if displayed is not None:
         records = what_differs(records, displayed(), stages)
     client.upsert(records)

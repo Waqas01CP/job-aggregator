@@ -1,0 +1,50 @@
+[
+  {
+    "label": "a posting with no description is not flagged",
+    "path": "src/normalise.py",
+    "find": "            described=facts is not None,",
+    "replace": "            described=None,"
+  },
+  {
+    "label": "the re-read leaves out whether there was a description",
+    "path": "src/facts.py",
+    "find": "           \"described_workplace\", \"described\")",
+    "replace": "           \"described_workplace\")"
+  },
+  {
+    "label": "the description fields are sent while off",
+    "path": "src/projection.py",
+    "find": "    return {name: values[name] for name in pipeline_fields(described)}",
+    "replace": "    return {name: values[name] for name in pipeline_fields(True)}"
+  },
+  {
+    "label": "the read-back names the description fields while off",
+    "path": "src/run.py",
+    "find": "        shown = reader.list_records(JOBS, pipeline_fields(described))\n",
+    "replace": "        shown = reader.list_records(JOBS, pipeline_fields(True))\n"
+  },
+  {
+    "label": "the writer may carry the description fields while off",
+    "path": "src/run.py",
+    "find": "                                   fields=pipeline_fields(description_fields_shown()))",
+    "replace": "                                   fields=pipeline_fields(True))"
+  },
+  {
+    "label": "a false checkbox differs from an empty one",
+    "path": "src/projection.py",
+    "find": "    if value is None or value == \"\" or value is False:",
+    "replace": "    if value is None or value == \"\":"
+  },
+  {
+    "label": "a Years asked of 0 reads as empty",
+    "path": "src/projection.py",
+    "find": "    if value is None or value == \"\" or value is False:",
+    "replace": "    if value is None or value == \"\" or value == False:"
+  },
+  {
+    "label": "the run log counts no admission without a description",
+    "path": "src/run.py",
+    "find": "                \"kept_without_description\": sum(1 for r in kept_rows if r.described is False),",
+    "replace": "                \"kept_without_description\": 0,"
+  }
+]

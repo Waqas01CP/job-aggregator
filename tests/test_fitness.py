@@ -25,7 +25,7 @@ sys.path.insert(0, ROOT)
 
 from src import storage
 from src.adapters import greenhouse, himalayas, lever
-from src.airtable import PIPELINE_FIELDS
+from src.airtable import PIPELINE_FIELDS, pipeline_fields
 from src.airtable_sweep import (CLASSIFICATION_TABLES, COPY_FIELDS, JOBS, JOBS_NUMBER_FIELD,
                                 TOOL_WRITES, TRANSCRIBED, WRITES)
 from src.config import Board
@@ -139,7 +139,7 @@ class TestFitnessFunctions(unittest.TestCase):
         write is his. Mutation: "the sweep may write Status"."""
         jobs = owners("## `Jobs` and `Jobs test`", ("Field", "Type", "Owner", "Holds"))
         self.assertTrue(set(jobs.values()) <= {"pipeline", "operator", "Airtable"}, jobs)
-        written = set(PIPELINE_FIELDS) | set(WRITES[JOBS])
+        written = set(pipeline_fields(True)) | set(WRITES[JOBS])
         self.assertEqual(written, {f for f, o in jobs.items() if o == "pipeline"})
         self.assertIn("Status", jobs)
         self.assertEqual(jobs["Status"], "operator")

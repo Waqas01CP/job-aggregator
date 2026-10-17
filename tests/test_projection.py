@@ -574,5 +574,52 @@ class TestTheSkipOnARealGroup(unittest.TestCase):
         self.assertIn(biggest.representative.identity, unskipped)
 
 
+class TestTheDescriptionFields(unittest.TestCase):
+    """Brief 13: the description's four, from the facts a row stores."""
+
+    def group_of(self, **facts):
+        from dataclasses import replace
+        from src.dedupe import group
+        [g] = group([replace(make_row(1), **facts)])
+        return g
+
+    def test_off_the_record_holds_the_pipelines_eleven_and_on_the_four_more(self):
+        """Mutation: "the description fields are sent while off"."""
+        from src.airtable import DESCRIPTION_FIELDS
+        g = self.group_of()
+        self.assertEqual(list(projection.fields_for(g, MATCHER)), list(PIPELINE_FIELDS))
+        self.assertEqual(list(projection.fields_for(g, MATCHER, described=True)),
+                         list(PIPELINE_FIELDS) + list(DESCRIPTION_FIELDS))
+
+    def test_each_value_comes_from_the_rows_facts(self):
+        g = self.group_of(stated_experience=[2, 3], required_places=["us, canada", "uk"],
+                          described_workplace="on site", described=True)
+        record = projection.fields_for(g, MATCHER, described=True)
+        self.assertEqual((record["Years asked"], record["Required in"], record["On site"],
+                          record["No description"]), (3, "us, canada; uk", True, False))
+        record = projection.fields_for(self.group_of(described=False), MATCHER, True)
+        self.assertEqual((record["Years asked"], record["Required in"], record["On site"],
+                          record["No description"]), (None, None, False, True))
+
+    def test_a_false_checkbox_is_the_omitted_one(self):
+        """Airtable omits a checkbox that is false, so a row sent with both
+        flags false reads back without them and must count as unchanged, or
+        every row is sent again on every run. Mutation: "a false checkbox
+        differs from an empty one"."""
+        record = projection.fields_for(self.group_of(described=True), MATCHER, True)
+        shown = {k: v for k, v in record.items() if v not in (None, "", False)}
+        self.assertTrue(projection.unchanged(record, shown))
+        self.assertFalse(projection.unchanged(dict(record, **{"On site": True}), shown))
+
+    def test_a_years_asked_of_nought_is_not_empty(self):
+        """A description asking 0 years shows 0, which an omitted field does
+        not. Mutation: "a Years asked of 0 reads as empty"."""
+        record = projection.fields_for(self.group_of(stated_experience=[0]), MATCHER, True)
+        self.assertEqual(record["Years asked"], 0)
+        shown = {k: v for k, v in record.items() if v not in (None, "", False)}
+        self.assertTrue(projection.unchanged(record, dict(shown, **{"Years asked": 0})))
+        self.assertFalse(projection.unchanged(record, shown))
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

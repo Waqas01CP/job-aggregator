@@ -116,6 +116,24 @@ class TestTheReread(Harness):
         self.assertEqual(drops[0]["rule"], "location")
         self.assertIn("PH", drops[0]["reason"])
 
+    def test_whether_a_posting_carried_a_description_is_a_derived_fact(self):
+        """Brief 13: set at first sight and carried by the re-read, so a
+        stored row learns it too. Mutations: "a posting with no description
+        is not flagged", "the re-read leaves out whether there was a
+        description"."""
+        described = lever_posting(description="<p>Build agents with our team.</p>")
+        self.assertIs(stored_row().described, False)
+        self.assertIs(stored_row(described).described, True)
+        before = stored_row(described=None)
+        records, _ = facts.reread([saved(lever_posting())], [SPREETAIL],
+                                  {"lever:f9f0": FIRST_SEEN}, ADAPTERS)
+        self.assertIs(records["lever:f9f0"]["described"], False)
+        [row] = facts.apply([before], records)
+        self.assertIs(row.described, False)
+        records, _ = facts.reread([saved(described)], [SPREETAIL],
+                                  {"lever:f9f0": FIRST_SEEN}, ADAPTERS)
+        self.assertIs(records["lever:f9f0"]["described"], True)
+
     def test_a_posting_whose_board_is_gone_or_unparseable_keeps_its_stored_facts(self):
         gone = Board(platform="lever", slug="closed-board")
         records, counts = facts.reread([saved(lever_posting(), board=gone),

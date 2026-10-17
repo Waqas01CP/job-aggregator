@@ -1012,6 +1012,61 @@ class TestMain(unittest.TestCase):
         self.assertIn("escalate=true", read_text(os.environ["GITHUB_OUTPUT"]))
         self.assertEqual(self.private_branches(), [])
 
+    def jobs_fields_read(self):
+        named = set()
+        for c in self.base.calls:
+            if c["method"] == "GET" and c["table"] == "tblJOBSFAKE000001":
+                params = c["params"]
+                pairs = list(params.items()) if isinstance(params, dict) else list(params or [])
+                named |= {v for k, v in pairs if k == "fields[]"}
+        return named
+
+    def test_the_description_fields_wait_for_their_switch(self):
+        """Brief 13: shipped off, the read-back names none of the
+        description's four and the projection sends none, so a base that
+        lacks them, as the operator's does until he makes them, answers
+        every call. Mutations: "the read-back names the description fields
+        while off", "the description fields are sent while off"."""
+        from src.airtable import DESCRIPTION_FIELDS, PIPELINE_FIELDS
+        from src.config import load_sweep_config
+        self.assertFalse(load_sweep_config().description_fields_shown)
+        self.base.lacks = set(DESCRIPTION_FIELDS)
+        self.assertEqual(self.main()[0], EXIT_OK)
+        self.assertIsNone(self.last_run_log()["airtable"]["failure"])
+        [record] = self.airtable[-1].sent
+        self.assertEqual(list(record), list(PIPELINE_FIELDS))
+        self.assertFalse(self.jobs_fields_read() & set(DESCRIPTION_FIELDS))
+
+    def test_switched_on_the_read_back_names_them_and_the_record_carries_them(self):
+        """The posting here carries no description, so its flag is set. A
+        base that lacks the fields refuses the read and the projection
+        fails, which is why the switch waits for the operator to make them."""
+        from src.airtable import DESCRIPTION_FIELDS, pipeline_fields
+        real = run_module.description_fields_shown
+        run_module.description_fields_shown = lambda: True
+        self.addCleanup(setattr, run_module, "description_fields_shown", real)
+        self.assertEqual(self.main()[0], EXIT_OK)
+        [record] = self.airtable[-1].sent
+        self.assertEqual(list(record), list(pipeline_fields(True)))
+        self.assertIs(record["No description"], True)
+        self.assertLessEqual(set(DESCRIPTION_FIELDS), self.jobs_fields_read())
+        self.base.lacks = set(DESCRIPTION_FIELDS)
+        self.assertEqual(self.main()[0], EXIT_STOPPED_RESUMABLE)
+        self.assertIsNotNone(self.last_run_log()["airtable"]["failure"])
+
+    def test_the_run_log_counts_admissions_with_no_description(self):
+        """Brief 13: the default posting carries no description and is
+        counted; one that carries some is not. Mutation: "the run log counts
+        no admission without a description"."""
+        self.assertEqual(self.main()[0], EXIT_OK)
+        totals = self.last_run_log()["totals"]
+        self.assertEqual((totals["kept"], totals["kept_without_description"]), (1, 1))
+        self.payload = gh_payload(["AI Engineer"], start=1)
+        self.payload["jobs"][0]["content"] = "&lt;p&gt;Build agents with our team.&lt;/p&gt;"
+        self.assertEqual(self.main()[0], EXIT_OK)
+        totals = self.last_run_log()["totals"]
+        self.assertEqual((totals["kept"], totals["kept_without_description"]), (1, 0))
+
     def test_aggregator_rows_are_withheld_when_the_private_store_cannot_be_read(self):
         """D9: a run whose restore failed may still hold aggregator rows on
         this machine. They are withheld and counted, never projected against
@@ -1372,6 +1427,30 @@ class TestTheCeiling(unittest.TestCase):
                     os.environ[k] = v
         self.assertEqual([c.monthly_ceiling for c in clients], [900, 900, 900])
 
+    def test_the_writer_holds_the_description_fields_only_when_they_are_shown(self):
+        """The real factory, under fake secrets. The projection's writer
+        refuses a record whose fields are not exactly its own, so off it
+        must hold the pipeline's eleven and on the fifteen. Read from the
+        client, not by an upsert, which a mutation could let reach the
+        network. Mutation: "the writer may carry the description fields
+        while off"."""
+        from src.airtable import PIPELINE_FIELDS, pipeline_fields
+        real_airtable, shown = self.real[5], run_module.description_fields_shown
+        saved = {k: os.environ.get(k) for k in self.SECRETS}
+        os.environ.update(self.SECRETS)
+        try:
+            off = real_airtable(False, 0)
+            run_module.description_fields_shown = lambda: True
+            on = real_airtable(False, 0)
+        finally:
+            run_module.description_fields_shown = shown
+            for k, v in saved.items():
+                if v is None:
+                    os.environ.pop(k, None)
+                else:
+                    os.environ[k] = v
+        self.assertEqual((off._fields, on._fields), (PIPELINE_FIELDS, pipeline_fields(True)))
+
     def test_a_ceiling_above_the_allowance_is_refused(self):
         """A ceiling past Airtable's 1,000 would guard nothing. Mutation: "a
         ceiling above the allowance is accepted"."""
@@ -1388,6 +1467,24 @@ class TestTheCeiling(unittest.TestCase):
                         load_sweep_config(path)
                 else:
                     self.assertEqual(load_sweep_config(path).monthly_call_ceiling, ceiling)
+
+    def test_the_description_switch_is_true_or_false_and_ships_off(self):
+        """Brief 13: off until the operator has made the four fields; a value
+        that is not true or false is refused rather than read as either."""
+        from src.config import SWEEP_PATH, ConfigError, load_sweep_config
+        self.assertIs(load_sweep_config().description_fields_shown, False)
+        with open(SWEEP_PATH, encoding="utf-8") as f:
+            doc = json.load(f)
+        path = os.path.join(self.dir, "sweep.json")
+        for value in ("false", None, 0):
+            with self.subTest(value=value):
+                with open(path, "w", encoding="utf-8") as f:
+                    json.dump(dict(doc, description_fields_shown=value), f)
+                with self.assertRaises(ConfigError):
+                    load_sweep_config(path)
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(dict(doc, description_fields_shown=True), f)
+        self.assertIs(load_sweep_config(path).description_fields_shown, True)
 
     def test_at_the_ceiling_the_display_stops_and_the_fetch_is_stored(self):
         """Every Airtable call refused, the month standing at the ceiling:
