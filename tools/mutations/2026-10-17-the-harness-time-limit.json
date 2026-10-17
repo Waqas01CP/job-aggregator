@@ -1,0 +1,14 @@
+[
+  {
+    "label": "the harness waits on a suite without limit",
+    "path": "tools/mutate.py",
+    "find": "            stdout, stderr = p.communicate(timeout=timeout)",
+    "replace": "            stdout, stderr = p.communicate()"
+  },
+  {
+    "label": "a timed-out suite counts as caught",
+    "path": "tools/mutate.py",
+    "find": "    return not passed and not timed_out, failing, tail if timed_out else None",
+    "replace": "    return not passed, failing, tail if timed_out else None"
+  }
+]

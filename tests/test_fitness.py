@@ -399,6 +399,45 @@ class TestTheMutationsOnFile(unittest.TestCase):
                           for p in mutate.problems_in(json.load(f), ROOT, exempt)]
         self.assertEqual(found, [])
 
+    def test_a_suite_that_hangs_is_stopped_and_never_counted_as_caught(self):
+        """2026-10-17: a suite under one mutation sat idle for over twenty
+        minutes and the harness waited without limit. A stand-in suite that
+        sleeps is stopped at its limit, with what it started, and reported
+        as timed out and failed, never passed. Mutation: "the harness waits
+        on a suite without limit"."""
+        import time
+        real = mutate.SUITE
+        mutate.SUITE = [sys.executable, "-c", "import time; time.sleep(30)"]
+        try:
+            started = time.monotonic()
+            passed, _, failing, timed_out = mutate.run_suite(timeout=2)
+            took = time.monotonic() - started
+        finally:
+            mutate.SUITE = real
+        self.assertEqual((passed, failing, timed_out), (False, [], True))
+        self.assertLess(took, 20)
+
+    def test_a_mutation_whose_suite_timed_out_is_not_caught(self):
+        """A suite stopped at its limit failed no named test: the mutation
+        is reported timed out, with the suite's last lines, and its file is
+        restored. Run on a file of its own, never one in the repository.
+        Mutation: "a timed-out suite counts as caught"."""
+        import tempfile
+        folder = tempfile.mkdtemp()
+        path = os.path.join(folder, "target.py")
+        with open(path, "w", encoding="utf-8") as f:
+            f.write("A = 1\n")
+        real = mutate.run_suite
+        mutate.run_suite = lambda applied=None: (False, "test_x ... ", [], True)
+        try:
+            caught, failing, hung = mutate.apply_one(
+                {"label": "x", "path": path, "find": "A = 1", "replace": "A = 2"})
+        finally:
+            mutate.run_suite = real
+        with open(path, encoding="utf-8") as f:
+            restored = f.read()
+        self.assertEqual((caught, failing, hung, restored), (False, [], "test_x ... ", "A = 1\n"))
+
     def test_the_check_can_fail(self):
         """The cases built to defeat it: a find matching nothing, a find
         matching twice, and the same stale find exempt. Mutation: "a find

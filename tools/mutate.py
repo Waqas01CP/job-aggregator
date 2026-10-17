@@ -32,6 +32,14 @@ Guards, each against a failure that has already happened once:
 - Refs are compared before and after each mutation. The mutation that
   reinstates `_git(cwd=REPO_ROOT)` as a default argument commits a stray
   branch to this repository by design; it is reported, never deleted here.
+- Each suite has a time limit, and a suite that reaches it is stopped with
+  everything it started and reported as timed out, never as caught. On
+  2026-10-17 a suite under one mutation sat idle for over twenty minutes, no
+  CPU and no child process, and the harness, which waited without limit,
+  held a 57-mutation batch with it; the same suite run again finished in
+  163 seconds. The suite runs verbose, so the tail of a timed-out run names
+  the test that was running, and with its input closed, so no test can wait
+  on one.
 
 Exit 0 when every mutation was caught, 1 otherwise.
 """
@@ -46,8 +54,11 @@ import tempfile
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-SUITE = [sys.executable, "-m", "unittest", "discover", "-s", "tests", "-t", "."]
+SUITE = [sys.executable, "-m", "unittest", "discover", "-s", "tests", "-t", ".", "-v"]
 KEYS = {"label", "path", "find", "replace"}
+# The whole suite takes three to five minutes on the operator's laptop at
+# below-normal priority; four times that has stopped, not slowed.
+SUITE_TIMEOUT = 20 * 60
 
 
 # Names the file a mutation is applied to, for the suite's run. The suite
@@ -57,26 +68,48 @@ KEYS = {"label", "path", "find", "replace"}
 APPLIED_ENV = "MUTATION_APPLIED"
 
 
-def run_suite(applied=None):
-    """(passed, tail, failing). The tail lets a failing baseline be read
-    without rerunning; `failing` names the tests that failed or errored, so
-    `--why` can show that a mutation was caught by the test meant to catch it
-    rather than by an unrelated crash. `applied` is the path of the file a
-    mutation has changed, or None for the baseline and the final run."""
+def kill_tree(process):
+    """The suite and everything it started. On Windows the interpreter a
+    venv names is a launcher that starts the real one as its child, so
+    killing the launcher alone would leave the suite running, holding the
+    output pipes open."""
+    if os.name == "nt":
+        subprocess.run(["taskkill", "/T", "/F", "/PID", str(process.pid)],
+                       capture_output=True)
+    else:
+        process.kill()
+
+
+def run_suite(applied=None, timeout=SUITE_TIMEOUT):
+    """(passed, tail, failing, timed_out). The tail lets a failing baseline
+    be read without rerunning, and names the running test when the suite
+    timed out; `failing` names the tests that failed or errored, so `--why`
+    can show that a mutation was caught by the test meant to catch it rather
+    than by an unrelated crash. `applied` is the path of the file a mutation
+    has changed, or None for the baseline and the final run."""
     cache = tempfile.mkdtemp(prefix="mutate-pyc-")
     env = dict(os.environ, PYTHONPYCACHEPREFIX=cache)
     env.pop(APPLIED_ENV, None)
     if applied:
         env[APPLIED_ENV] = applied
+    timed_out = False
     try:
-        p = subprocess.run(SUITE, cwd=REPO_ROOT, env=env, capture_output=True,
-                           text=True, encoding="utf-8", errors="replace")
+        p = subprocess.Popen(SUITE, cwd=REPO_ROOT, env=env, stdin=subprocess.DEVNULL,
+                             stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                             text=True, encoding="utf-8", errors="replace")
+        try:
+            stdout, stderr = p.communicate(timeout=timeout)
+        except subprocess.TimeoutExpired:
+            timed_out = True
+            kill_tree(p)
+            stdout, stderr = p.communicate()
     finally:
         shutil.rmtree(cache, ignore_errors=True)
-    output = (p.stdout + p.stderr).strip().splitlines()
+    output = ((stdout or "") + (stderr or "")).strip().splitlines()
     failing = sorted({line.split(" ", 1)[1] for line in output
                       if line.startswith(("FAIL: ", "ERROR: "))})
-    return p.returncode == 0, "\n".join(output[-6:]), failing
+    return (p.returncode == 0 and not timed_out, "\n".join(output[-6:]), failing,
+            timed_out)
 
 
 def refs():
@@ -134,18 +167,20 @@ def load(path, only=None):
 
 
 def apply_one(m):
-    """Mutate, run, restore. Returns (caught, failing test names)."""
+    """Mutate, run, restore. Returns (caught, failing test names, the
+    tail when the suite timed out or None). A suite that timed out caught
+    nothing anyone can name."""
     target = REPO_ROOT / m["path"]
     original = target.read_bytes()
     mutated = original.decode("utf-8").replace(m["find"], m["replace"], 1).encode("utf-8")
     try:
         target.write_bytes(mutated)
-        passed, _, failing = run_suite(applied=m["path"])
+        passed, tail, failing, timed_out = run_suite(applied=m["path"])
     finally:
         target.write_bytes(original)
     if target.read_bytes() != original:
         raise SystemExit("RESTORE FAILED for %s. Stop and repair it by hand." % m["path"])
-    return not passed, failing
+    return not passed and not timed_out, failing, tail if timed_out else None
 
 
 def main(argv=None):
@@ -159,38 +194,47 @@ def main(argv=None):
     mutations = load(args.file, args.only)
     originals = {m["path"]: (REPO_ROOT / m["path"]).read_bytes() for m in mutations}
 
-    passed, tail, _ = run_suite()
+    passed, tail, _, timed_out = run_suite()
     if not passed:
-        print("baseline suite fails, so no mutation result would mean anything:\n" + tail)
+        print("baseline suite %s, so no mutation result would mean anything:\n%s"
+              % ("timed out" if timed_out else "fails", tail))
         return 1
     print("baseline: suite passes. %d mutation(s) from %s" % (len(mutations), args.file))
 
     before = refs()
     results = []
     for m in mutations:
-        caught, failing = apply_one(m)
+        caught, failing, hung = apply_one(m)
         stray = sorted(refs() - before)
-        results.append((m["label"], caught, stray))
-        print("  %-9s %s%s" % ("caught" if caught else "SURVIVED", m["label"],
-                               "   STRAY REF: %s" % ", ".join(stray) if stray else ""))
+        results.append((m["label"], caught, stray, hung is not None))
+        print("  %-9s %s%s" % ("caught" if caught else "TIMED OUT" if hung is not None
+                               else "SURVIVED", m["label"],
+                               "   STRAY REF: %s" % ", ".join(stray) if stray else ""),
+              flush=True)
+        if hung is not None:
+            print("              the suite ran past %d seconds and was stopped; its last "
+                  "lines:\n%s" % (SUITE_TIMEOUT, hung), flush=True)
         if args.why:
             for name in failing:
-                print("              by %s" % name)
+                print("              by %s" % name, flush=True)
         before |= set(stray)
 
     for path, data in originals.items():
         if (REPO_ROOT / path).read_bytes() != data:
             print("RESTORE CHECK FAILED: %s differs from its original" % path)
             return 1
-    passed, tail, _ = run_suite()
+    passed, tail, _, timed_out = run_suite()
     if not passed:
-        print("the suite fails after restoring every file:\n" + tail)
+        print("the suite %s after restoring every file:\n%s"
+              % ("timed out" if timed_out else "fails", tail))
         return 1
 
     survivors = [r for r in results if not r[1]]
+    hung = [r for r in survivors if r[3]]
     strays = sorted({s for r in results for s in r[2]})
-    print("\n%d applied, %d caught, %d survived. Files restored, suite passes again."
-          % (len(results), len(results) - len(survivors), len(survivors)))
+    print("\n%d applied, %d caught, %d survived, %d timed out. Files restored, suite "
+          "passes again." % (len(results), len(results) - len(survivors),
+                             len(survivors) - len(hung), len(hung)))
     if strays:
         print("Stray refs created in this repository: %s. Inspect and delete them."
               % ", ".join(strays))
