@@ -587,15 +587,16 @@ class TestTheSourcesOwnPlace(unittest.TestCase):
 
 
 class TestTheLevelRule(unittest.TestCase):
-    """The operator's decision of 2026-10-02: where a source states a level,
-    keep the levels he takes, his option A. The levels come from
-    configuration, never from this file's literals, so the test cannot drift
-    from what he decided."""
+    """The operator's decision of 2026-10-02, option A, and his rule of
+    2026-10-10 for every source: every level from the start of a career up
+    to mid is kept, whatever a source calls it, and only the levels above
+    drop. The levels that drop come from configuration, never from this
+    file's literals, so the test cannot drift from what he decided."""
 
     def setUp(self):
         from src.filters import ELIGIBILITY
-        self.taken = list(ELIGIBILITY.level_names)
-        self.assertTrue(self.taken, "no admitted levels configured")
+        self.dropping = list(ELIGIBILITY.level_names)
+        self.assertTrue(self.dropping, "no dropping levels configured")
 
     def stated(self, *levels):
         r = row()
@@ -603,37 +604,49 @@ class TestTheLevelRule(unittest.TestCase):
         kept, drops = apply_chain([r], NOW_ISO, matcher=MATCHER)
         return bool(kept), (drops[0] if drops else None)
 
-    def test_a_level_he_takes_is_kept(self):
-        for level in self.taken:
+    def test_every_level_up_to_mid_is_kept_whatever_the_source_calls_it(self):
+        """Himalayas' two, Workable's three and SmartRecruiters' internship,
+        as each source spells them."""
+        for level in ("Entry-level", "Mid-level", "Entry level", "Associate",
+                      "Mid-Senior level", "Internship"):
             with self.subTest(level=level):
                 self.assertEqual(self.stated(level), (True, None))
 
     def test_a_level_above_is_dropped_and_named(self):
         """Mutation: "the level rule keeps every posting"."""
-        kept, drop = self.stated("Senior")
-        self.assertFalse(kept)
-        self.assertEqual(drop["rule"], "level")
-        self.assertIn("Senior", drop["reason"])
-        for level in self.taken:
-            self.assertIn(level, drop["reason"])
+        for level in self.dropping:
+            with self.subTest(level=level):
+                kept, drop = self.stated(level)
+                self.assertFalse(kept)
+                self.assertEqual(drop["rule"], "level")
+                self.assertIn(level, drop["reason"])
 
     def test_a_posting_open_to_a_level_he_takes_is_kept_whatever_else_it_states(self):
         """Option A: "Mid-level/Senior" is open to a mid-level candidate.
-        Mutation: "a posting must state only levels he takes"."""
-        self.assertEqual(self.stated(self.taken[-1], "Senior"), (True, None))
-        self.assertFalse(self.stated("Senior", "Executive")[0])
+        Mutation: "a posting is dropped when any level it states drops"."""
+        self.assertEqual(self.stated("Mid-level", self.dropping[0]), (True, None))
+        self.assertFalse(self.stated(*self.dropping[:2])[0])
+
+    def test_a_value_naming_no_level_is_kept(self):
+        """Workable's "Not Applicable", or a level a source adds later: the
+        rule names the levels above, so a value it does not know can only
+        let a posting through. Mutation: "only the levels named up to mid are
+        kept"."""
+        for value in ("Not Applicable", "Graduate"):
+            with self.subTest(value=value):
+                self.assertEqual(self.stated(value), (True, None))
 
     def test_a_posting_that_states_no_level_is_kept(self):
-        """Every employer board, and every row stored before the rule.
-        Mutation: "a posting with no stated level is dropped"."""
+        """Every employer board but Workable, and every row stored before the
+        rule. Mutation: "a posting with no stated level is dropped"."""
         self.assertEqual(self.stated(), (True, None))
 
     def test_the_comparison_ignores_case_and_spacing(self):
-        self.assertTrue(self.stated(" %s " % self.taken[0].upper())[0])
+        self.assertFalse(self.stated(" %s " % self.dropping[0].upper())[0])
 
     def test_the_title_rule_still_runs_first(self):
         r = row(title="Senior AI Engineer")
-        r.stated_levels = [self.taken[0]]
+        r.stated_levels = ["Mid-level"]
         _, drops = apply_chain([r], NOW_ISO, matcher=MATCHER)
         self.assertEqual(drops[0]["rule"], "seniority")
 
@@ -643,7 +656,7 @@ class TestTheLevelRule(unittest.TestCase):
         from src.filters import ELIGIBILITY_PATH, load_eligibility
         with open(ELIGIBILITY_PATH, encoding="utf-8") as f:
             config = json.load(f)
-        config["stated_levels_admitted"] = []
+        config["stated_levels_dropped"] = []
         path = os.path.join(tempfile.mkdtemp(), "e.json")
         with open(path, "w", encoding="utf-8") as f:
             json.dump(config, f)

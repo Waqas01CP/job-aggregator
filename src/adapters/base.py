@@ -44,7 +44,8 @@ class Posting:
     location: str = None
     expires_at: str = None      # ISO date or None; read where the platform has one
     # The level the source states, verbatim, where it states one: Himalayas'
-    # `seniority`. No employer board gives one (docs/reference/platform-fields.md).
+    # `seniority`, and Workable's `experience` since 2026-10-17. Greenhouse,
+    # Lever and Manatal read none (docs/reference/platform-fields.md).
     levels: tuple = None
     # Where the posting is, as the source structures it: a place string per
     # office, a country name, or an ISO 3166 alpha-2 code. The location rule

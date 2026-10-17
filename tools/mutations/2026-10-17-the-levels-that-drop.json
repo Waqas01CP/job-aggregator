@@ -1,0 +1,14 @@
+[
+  {
+    "label": "only the levels named up to mid are kept",
+    "path": "src/filters.py",
+    "find": "    if not all(fold(s) in eligibility.levels_dropped for s in stated):\n        return Verdict(True)\n    return Verdict(False, \"level\",",
+    "replace": "    if any(fold(s) in (\"entry-level\", \"mid-level\") for s in stated):\n        return Verdict(True)\n    return Verdict(False, \"level\","
+  },
+  {
+    "label": "the Workable adapter reads no level",
+    "path": "src/adapters/workable.py",
+    "find": "            levels=(level,) if level else None,",
+    "replace": "            levels=None,"
+  }
+]

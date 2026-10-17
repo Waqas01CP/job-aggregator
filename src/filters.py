@@ -259,7 +259,7 @@ class Eligibility:
     remote: tuple = ()
     home_cities: tuple = ()
     home_country_names: tuple = ()
-    levels_admitted: tuple = ()
+    levels_dropped: tuple = ()
     level_names: tuple = ()
     home_country_codes: tuple = ()
     max_years_experience: int = None
@@ -292,17 +292,17 @@ def load_eligibility(path=None):
     if (not isinstance(codes, list) or not codes
             or not all(isinstance(c, str) and re.fullmatch(r"[A-Z]{2}", c) for c in codes)):
         raise FilterError("home_country_codes must be a non-empty list of ISO 3166 alpha-2 codes")
-    levels = raw.get("stated_levels_admitted")
+    levels = raw.get("stated_levels_dropped")
     if not isinstance(levels, list) or not levels or not all(isinstance(v, str) and v.strip()
                                                              for v in levels):
-        raise FilterError("stated_levels_admitted must be a non-empty list of levels")
+        raise FilterError("stated_levels_dropped must be a non-empty list of levels")
     years = raw.get("max_years_experience")
     if not isinstance(years, int) or isinstance(years, bool) or years < 0:
         raise FilterError("max_years_experience must be a whole number of years, 0 or more")
     return Eligibility(max_age_days=days,
                        home_cities=tuple(p for p in lists["home"] if p.pattern not in country),
                        home_country_names=names["home_country"],
-                       levels_admitted=tuple(fold(v) for v in levels),
+                       levels_dropped=tuple(fold(v) for v in levels),
                        level_names=tuple(levels), home_country_codes=tuple(codes),
                        max_years_experience=years, **lists)
 
@@ -519,10 +519,13 @@ def rule_level(row, eligibility, **kw):
     takes roles up to mid level: "keep till mid", and the levels themselves
     are configuration (ADR-0031).
 
-    **Kept when any level it states is one he takes**, his option A: a role
-    labelled both mid and senior is open to a mid-level candidate, and "i do
-    not want to miss any". **A posting that states no level is kept**, which
-    covers every employer board, and every row stored before this rule.
+    **Dropped only when every level it states is one that drops**, the list
+    in configuration since 2026-10-17, which before then was the levels he
+    takes: his option A, so a role labelled both mid and senior is open to a
+    mid-level candidate, and "i do not want to miss any". **A posting that
+    states no level, or a value naming none, is kept**: his rule of
+    2026-10-10 for every source keeps every level up to mid whatever the
+    source calls it, so only the levels above are named.
 
     The title rule still runs: a title saying "Senior" is dropped there,
     whatever level the source states. The level is not the job type:
@@ -530,12 +533,12 @@ def rule_level(row, eligibility, **kw):
     his decision of the same day. Measured on the 809 Himalayas postings
     saved by then: the chain kept 67, and this rule takes 33 of them."""
     stated = [s for s in (getattr(row, "stated_levels", None) or []) if str(s).strip()]
-    if not stated or not eligibility.levels_admitted:
+    if not stated or not eligibility.levels_dropped:
         return Verdict(True)
-    if any(fold(s) in eligibility.levels_admitted for s in stated):
+    if not all(fold(s) in eligibility.levels_dropped for s in stated):
         return Verdict(True)
-    return Verdict(False, "level", "the source states its level as %s, none of them %s"
-                   % (" and ".join(stated), " or ".join(eligibility.level_names)))
+    return Verdict(False, "level", "the source states its level as %s, each of them one that "
+                   "drops: %s" % (" and ".join(stated), ", ".join(eligibility.level_names)))
 
 
 def rule_location(row, eligibility, **kw):

@@ -44,14 +44,16 @@ category names a provider defines. The measurement script is in
 
 **No source gives years of experience as a field.** A number of years
 appears only inside the description text, which the pipeline reads for it
-since 2026-10-02 (below, "Decided"). **One source states a level:
-Himalayas, on every posting**, which the level rule reads since the same day.
+since 2026-10-02 (below, "Decided"). **Two sources state a level:
+Himalayas, on every posting**, which the level rule reads since the same day,
+**and Workable, on some**, read since 2026-10-17.
 
 | Source | A stated level | Years as a field | Description states a number of years |
 |---|---|---|---|
 | Greenhouse | None standard. One board's custom `metadata` carries "Workday P Level", a grade code, on 269 postings | No | 435 of 823, 53% |
 | Lever | `categories.level` exists in Lever's schema and filters, and neither board sets it: 0 of 63 | No | 42 of 63, 67% |
 | Himalayas | `seniority`, 100%: Entry-level, Mid-level, Senior, Manager, Director, Executive, one or more | No | 406 of 809, 50% |
+| Workable | `experience`, one value where present: 20 of the 47 postings saved by 2026-10-16, Entry level 8, Mid-Senior level 6, Associate 4, Director 2 | No | not counted |
 
 "States a number of years" counts descriptions with a phrase like "3 years",
 "3+ years" or "3-5 yrs". It also matches "10 years in business", so it is an
@@ -285,7 +287,7 @@ pipeline receives:
 | `telecommuting` | boolean | 100% | yes | true on 22 of 78; a remote role |
 | `workplace_type` | string | 0% | yes, where present | documented by the spec, returned on none |
 | `description` | string | 100% | yes | HTML, for the description rules |
-| `experience` | string | 50.0% | no | a stated level, "Entry level", "Mid-Senior level", "Associate", "Director"; whether the level rule reads it is the operator's |
+| `experience` | string | 50.0% | **yes**, since 2026-10-17 | **the stated level**, "Entry level", "Mid-Senior level", "Associate", "Director", read by the level rule |
 | `industry`, `employment_type`, `education`, `department`, `function`, `code` | string | 74.4%, 70.5%, 62.8%, 34.6%, 21.8%, 0% | no | |
 
 The account's `name` sits beside `jobs` and is the employer; its `description`, the account's own prose, is not read.
@@ -346,7 +348,14 @@ means and what happens when it is absent.
 - **Himalayas `seniority` is read.** The level rule keeps a posting when any
   level it states is Entry-level or Mid-level, the operator's option A
   (`config/eligibility.json`). Over the 809 saved postings it takes the kept
-  count from 67 to 34.
+  count from 67 to 34. *(2026-10-17: the configuration names the levels that
+  drop instead, Senior, Manager, Director and Executive, and a posting is
+  dropped only when every level it states is one of them; on Himalayas' six
+  the verdicts are the same. Workable's `experience` is read the same way, so
+  its Entry level, Associate and Mid-Senior level are kept and Director
+  drops: over its 47 stored postings no verdict changes, every one already
+  dropped by the title or seniority rule. Senior leaves the list on
+  2026-11-01, Brief 13.)*
 - **Job type is not filtered, on any source.** Interns, contract, part-time,
   temporary and volunteer roles are all kept: the operator, "volunteer might
   be a good opportunity and can become a stepping stone".
@@ -545,6 +554,7 @@ what happens when it is absent, and each of these deserves that separately.
 
 | Date | Change | Reason |
 |---|---|---|
+| 2026-10-17 | Workable's `experience` marked read, its counts over the 47 saved postings added to the experience table, and the level rule's turn to a list of the levels that drop noted under "Decided" | The Senior change's build, Brief 13 item 3 |
 | 2026-10-08 | Workable's section added: its documented endpoint and the redirect it answers with, every field counted over 78 postings, the spec's two link fields found reversed | Its adapter is built, ADR-0059's second platform by its rule |
 | 2026-10-07 | Manatal's section added: the career site's endpoint, every field counted over 393 postings, no date and no workplace field, unstable pages | Its adapter is built, ADR-0059's first platform by measured yield, on the endpoint the operator accepted that day |
 | 2026-10-02, night | The description is read, on the operator's answers: the fields each adapter now reads are marked, the "Open" description item moved to "Decided" with its measured effect, and security clearance added as open. Himalayas `seniority`, read since the evening's level rule, was still marked unread in two tables and in the experience section: corrected | His thresholds arrived; the seniority rows were stale since `d5dda62`, the implementing seat's miss |

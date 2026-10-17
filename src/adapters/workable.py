@@ -31,8 +31,10 @@ Fields, measured over 78 postings on six boards on 2026-10-04:
 remote role is read from `telecommuting` and an on-site one only from what
 the description says. Read anyway, so the day it arrives it is used.
 `experience` states a level on some postings ("Entry level", "Mid-Senior
-level"); whether the level rule reads it is the operator's, and until he
-says, it is not read, as no employer board's level is.
+level", "Director"), and is read as the level the source states since
+2026-10-17 (Brief 13, the Senior change's build): the level rule drops only
+the levels configured above mid, so "Mid-Senior level" and "Associate" are
+kept, his rule of 2026-10-10 for every source.
 """
 
 from datetime import datetime, timezone
@@ -50,7 +52,7 @@ CONSUMED_RESPONSE = ("jobs", "name")
 POSTINGS_AT = "jobs"
 CONSUMED = ("shortcode", "title", "url", PUBLISHED_FIELD, "city", "state", "country",
             "locations", "locations.countryCode", "telecommuting", "workplace_type",
-            "description")
+            "experience", "description")
 
 
 def url_for(board):
@@ -112,6 +114,7 @@ def parse(payload, board):
         parts = [str(entry.get(k) or "").strip() for k in ("city", "state", "country")]
         codes = tuple(str(loc.get("countryCode")).strip() for loc in entry.get("locations") or []
                       if isinstance(loc, dict) and str(loc.get("countryCode") or "").strip())
+        level = str(entry.get("experience") or "").strip()
         result.postings.append(Posting(
             external_id=external_id,
             title=title,
@@ -127,6 +130,7 @@ def parse(payload, board):
             location=", ".join(p for p in parts if p) or None,
             places=codes or None,
             workplace=_workplace(entry),
+            levels=(level,) if level else None,
             description=(entry.get("description"),),
             raw=entry,
         ))

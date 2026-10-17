@@ -44,6 +44,12 @@
       "at": "2026-10-03T09:46:55Z",
       "cause": "The adapter now reads description, for the experience, authorisation and on-site rules the operator decided on 2026-10-02, so the check fingerprints one more field. Nothing changed at Himalayas.",
       "fields": ["posting.description"]
+    },
+    {
+      "platform": "workable",
+      "at": "2026-10-17T08:04:49Z",
+      "cause": "The adapter now reads experience, the level Workable states, for the level rule as a list of the levels that drop, the Senior change's build in Brief 13, so the check fingerprints one more field. Nothing changed at Workable.",
+      "fields": ["posting.experience"]
     }
   ]
 }

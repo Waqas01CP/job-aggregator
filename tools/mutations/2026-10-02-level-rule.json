@@ -2,20 +2,20 @@
   {
     "label": "the level rule keeps every posting",
     "path": "src/filters.py",
-    "find": "    if any(fold(s) in eligibility.levels_admitted for s in stated):\n        return Verdict(True)\n    return Verdict(False, \"level\",",
+    "find": "    if not all(fold(s) in eligibility.levels_dropped for s in stated):\n        return Verdict(True)\n    return Verdict(False, \"level\",",
     "replace": "    if True:\n        return Verdict(True)\n    return Verdict(False, \"level\","
   },
   {
-    "label": "a posting must state only levels he takes",
+    "label": "a posting is dropped when any level it states drops",
     "path": "src/filters.py",
-    "find": "    if any(fold(s) in eligibility.levels_admitted for s in stated):",
-    "replace": "    if all(fold(s) in eligibility.levels_admitted for s in stated):"
+    "find": "    if not all(fold(s) in eligibility.levels_dropped for s in stated):",
+    "replace": "    if not any(fold(s) in eligibility.levels_dropped for s in stated):"
   },
   {
     "label": "a posting with no stated level is dropped",
     "path": "src/filters.py",
-    "find": "    if not stated or not eligibility.levels_admitted:\n        return Verdict(True)",
-    "replace": "    if not eligibility.levels_admitted:\n        return Verdict(True)"
+    "find": "    if not stated or not eligibility.levels_dropped:\n        return Verdict(True)",
+    "replace": "    if not eligibility.levels_dropped:\n        return Verdict(True)"
   },
   {
     "label": "the adapter reads no level",

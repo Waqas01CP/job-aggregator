@@ -555,7 +555,8 @@ class TestTheDeliberateRebaseline(unittest.TestCase):
         """Each entry's time is when its change was committed to `main`, read
         from git on 2026-10-03, so none can excuse a check that ran before
         its change existed. Mutation: "an entry is timed by its day"."""
-        commits = {("himalayas", "posting.description"): "2026-10-03T09:46:55Z",
+        commits = {("workable", "posting.experience"): "2026-10-17T08:04:49Z",
+                   ("himalayas", "posting.description"): "2026-10-03T09:46:55Z",
                    ("greenhouse", "posting.content"): "2026-10-03T09:46:55Z",
                    ("lever", "posting.description"): "2026-10-03T09:46:55Z",
                    ("greenhouse", "posting.offices"): "2026-10-02T20:36:10Z",
@@ -585,7 +586,7 @@ class TestTheDeliberateRebaseline(unittest.TestCase):
         entry of the day says each was ours, naming nothing else. Mutation:
         "an adapter declares a field it never reads" adds one without its
         entry."""
-        from src.adapters import greenhouse, himalayas, lever
+        from src.adapters import greenhouse, himalayas, lever, workable
         added = {"2026-10-02": {himalayas: {"seniority"},
                                 greenhouse: {"offices", "offices.location", "metadata",
                                              "metadata.name", "metadata.value"},
@@ -593,7 +594,8 @@ class TestTheDeliberateRebaseline(unittest.TestCase):
                  "2026-10-03": {himalayas: {"description"},
                                 greenhouse: {"content"},
                                 lever: {"description", "lists", "lists.text", "lists.content",
-                                        "additional"}}}
+                                        "additional"}},
+                 "2026-10-17": {workable: {"experience"}}}
         for date, by_adapter in added.items():
             on_file = {}
             for e in contract.load_rebaselines():

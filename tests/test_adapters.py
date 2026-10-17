@@ -400,6 +400,23 @@ class TestWorkable(unittest.TestCase):
         self.assertEqual(p.description, ("<p>x</p>",))
         self.assertEqual(p.raw, entry)
 
+    def test_the_stated_level_is_read_from_experience(self):
+        """Brief 13, the Senior change's build: `experience` is the level the
+        source states, verbatim; empty or absent is no level, which the
+        level rule keeps. The cassette's board states Director twice and
+        Mid-Senior level three times. Mutation: "the Workable adapter reads
+        no level"."""
+        postings = workable.parse(self.payload, WK_BOARD).postings
+        counts = {}
+        for p in postings:
+            counts[p.levels] = counts.get(p.levels, 0) + 1
+        self.assertEqual(counts, {("Director",): 2, ("Mid-Senior level",): 3, None: 10})
+        entry = dict(self.payload["jobs"][0], experience="  Entry level ")
+        self.assertEqual(workable.parse({"jobs": [entry]}, WK_BOARD).postings[0].levels,
+                         ("Entry level",))
+        entry.pop("experience")
+        self.assertIsNone(workable.parse({"jobs": [entry]}, WK_BOARD).postings[0].levels)
+
     def test_wrong_envelope_raises(self):
         with self.assertRaises(AdapterError):
             workable.parse({"results": []}, WK_BOARD)
