@@ -173,6 +173,10 @@ CONFIRMATIONS = {
             "test_filters.TestTheLocationRule.test_a_drop_names_the_field_and_the_home_country_from_configuration",
             "test_preference_audit.TestTheShippedTree.test_no_module_hard_codes_a_preference",
             "test_preference_audit.TestTheAuditCanFail.test_a_country_in_code_is_a_violation"]},
+        "On Hacker News, a post on site or hybrid in a place the rule cannot name must be "
+        "dropped, and the same post remote must be kept.": {
+            "unbuilt": "Hacker News is not yet built; its adapter and this exception come "
+                       "with Brief 16, item 2"},
     },
     "0058": {
         "No derived value may be anything but a number, a configured place name or a flag.": {
@@ -269,6 +273,21 @@ CONFIRMATIONS = {
             "test_run.TestMain.test_a_failure_reaches_the_health_table_once"]},
     },
 }
+
+# ADR-0063 supersedes ADR-0059 (2026-10-18): its four leads word for word, held
+# by the same tests, and three new ones, unbuilt until Brief 16 builds them.
+# ADR-0059's own entries stay, since every record from ADR-0050 on is read.
+CONFIRMATIONS["0063"] = dict(CONFIRMATIONS["0059"], **{
+    "Every run log must name the commit that ran it.": {
+        "unbuilt": "the run log's commit field comes with Brief 16, item 5"},
+    "A source built while the allowance cannot carry its rows must be seen fetching and "
+    "storing, and sending nothing to Airtable.": {
+        "unbuilt": "the hold comes with Hacker News, Brief 16, item 2"},
+    "Every second-wave posting must be seen linking to its source's own page and naming "
+    "its source.": {
+        "unbuilt": "no second-wave source is built yet; Hacker News is the first, Brief 16, "
+                   "item 2"},
+})
 
 # ADR-0062 consolidates ADR-0050 (2026-10-16): its eleven leads word for word,
 # held by the same tests, and six new ones, held since its build (Brief 13,
