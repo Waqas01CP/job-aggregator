@@ -211,6 +211,34 @@
       "employer_alias": "Deeter Analytics",
       "normalisations": [],
       "note": "Registry Part 12. Ashby, through its public job board API (ADR-0059's first wave, fourth, the operator's go of 2026-10-17). The slug is the job board's name, as its job pages spell it. Ashby's postings carry no company field, so the alias is the employer. ADR-0026."
+    },
+    {
+      "platform": "ashby",
+      "slug": "livekit",
+      "employer_alias": "LiveKit",
+      "normalisations": [],
+      "note": "Not in the operator's registry: found through the second wave, linked from Hacker News' Who is hiring thread of October 2026, and read once on 2026-10-18 (the seat's report on Brief 15: 27 postings, 2 kept read fresh). Added on the operator's word of 2026-10-18, '4. add them' (ADR-0063, Brief 16 item 3). Ashby's postings carry no company field, so the alias is the employer. ADR-0026."
+    },
+    {
+      "platform": "ashby",
+      "slug": "clickhouse",
+      "employer_alias": "ClickHouse",
+      "normalisations": [],
+      "note": "Not in the operator's registry: found through the second wave, linked from Hacker News' Who is hiring thread of October 2026, and read once on 2026-10-18 (the seat's report on Brief 15: 198 postings, 1 kept read fresh). Added on the operator's word of 2026-10-18, '4. add them' (ADR-0063, Brief 16 item 3). Ashby's postings carry no company field, so the alias is the employer. ADR-0026."
+    },
+    {
+      "platform": "ashby",
+      "slug": "mastra",
+      "employer_alias": "Mastra",
+      "normalisations": [],
+      "note": "Not in the operator's registry: found through the second wave, linked from Hacker News' Who is hiring thread of October 2026, and read once on 2026-10-18 (the seat's report on Brief 15: 2 postings, 1 kept read fresh). Added on the operator's word of 2026-10-18, '4. add them' (ADR-0063, Brief 16 item 3). Ashby's postings carry no company field, so the alias is the employer. ADR-0026."
+    },
+    {
+      "platform": "lever",
+      "slug": "postera",
+      "employer_alias": "PostEra",
+      "normalisations": [],
+      "note": "Not in the operator's registry: found through the second wave, linked from a Hacker News job story of 2026-10-13, and read once on 2026-10-18 (the seat's report on Brief 15: 2 postings, 1 kept). Added on the operator's word of 2026-10-18, '4. add them' (ADR-0063, Brief 16 item 3). Lever returns no employer field, so the alias is the employer. ADR-0026."
     }
   ]
 }

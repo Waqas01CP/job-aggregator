@@ -36,6 +36,10 @@ REGISTRY_SMARTRECRUITERS = {"OneScreen", "SeekaTechnology"}
 # Parts 3 and 12, each job board's name as its job pages spell it. Built
 # 2026-10-17.
 REGISTRY_ASHBY = {"Overjet", "deeter-analytics"}
+# Not in the registry: found through the second wave and added on the
+# operator's word of 2026-10-18 (ADR-0063, Brief 16 item 3).
+DISCOVERED = {("ashby", "livekit"), ("ashby", "clickhouse"), ("ashby", "mastra"),
+              ("lever", "postera")}
 
 
 def write_config(boards):
@@ -52,16 +56,17 @@ class TestRealConfig(unittest.TestCase):
     def setUp(self):
         self.boards = load_boards()
 
-    def test_thirty_ats_boards_plus_the_conditional_aggregator(self):
+    def test_thirty_four_ats_boards_plus_the_conditional_aggregator(self):
         """ADR-0009 fixed the slice at eleven employer boards; ADR-0059's
         Manatal adds nine, on 2026-10-07, Workable six, on 2026-10-08,
-        SmartRecruiters two, on 2026-10-17, and Ashby two, on 2026-10-17.
+        SmartRecruiters two, on 2026-10-17, and Ashby two, on 2026-10-17; and
+        four found through the second wave, on 2026-10-18.
         Himalayas is the conditional
         aggregator from ADR-0019, not an employer board, so it is counted
         separately."""
         ats = [b for b in self.boards if b.source_class == "ats"]
         aggregators = [b for b in self.boards if b.source_class == "aggregator"]
-        self.assertEqual(len(ats), 30)
+        self.assertEqual(len(ats), 34)
         # The search endpoint filtered to the operator's country, since
         # 2026-09-26: the slug is the country.
         self.assertEqual([b.slug for b in aggregators], ["pakistan"])
@@ -71,7 +76,7 @@ class TestRealConfig(unittest.TestCase):
         gh = {b.slug for b in self.boards if b.platform == "greenhouse"}
         lv = {b.slug for b in self.boards if b.platform == "lever"}
         self.assertEqual(gh, REGISTRY_GREENHOUSE)
-        self.assertEqual(lv, REGISTRY_LEVER)
+        self.assertEqual(lv, REGISTRY_LEVER | {s for p, s in DISCOVERED if p == "lever"})
         self.assertEqual({b.slug for b in self.boards if b.platform == "manatal"},
                          REGISTRY_MANATAL)
         self.assertEqual({b.slug for b in self.boards if b.platform == "workable"},
@@ -79,7 +84,7 @@ class TestRealConfig(unittest.TestCase):
         self.assertEqual({b.slug for b in self.boards if b.platform == "smartrecruiters"},
                          REGISTRY_SMARTRECRUITERS)
         self.assertEqual({b.slug for b in self.boards if b.platform == "ashby"},
-                         REGISTRY_ASHBY)
+                         REGISTRY_ASHBY | {s for p, s in DISCOVERED if p == "ashby"})
 
     def test_only_speechify_is_normalised(self):
         """ADR-0027: a normalisation is applied only where it was measured."""
