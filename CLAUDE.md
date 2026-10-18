@@ -157,7 +157,7 @@ operator's decisions, 2026-09-24 and 2026-09-25.
 
 **A run that reaches the pipeline's own monthly Airtable ceiling exits 2 the
 same way**: 900 calls, `monthly_call_ceiling` in `config/sweep.json`
-(ADR-0062). No call reaches the base, the projection and the sweep fail, the
+(ADR-0062). No call past it reaches the base, the projection and the sweep fail, the
 fetch is committed, and the third such run in a row is marked failed. The
 display catches up when the month resets.
 
@@ -165,7 +165,7 @@ display catches up when the month resets.
 ran, and any findings are in its log. 2: a platform's check failed; every
 other platform is still checked, the log is committed and pushed, and a last
 step marks the run failed. 1: the check itself crashed, before any platform
-or at its commit, so no log is written and the failure shows only as a
+or at its commit, so no log is committed and the failure shows only as a
 failed run.
 
 **Log per board every run, including zero.** A board returning nothing for a
@@ -314,9 +314,12 @@ If the hook blocks you, read the reason. Do not bypass it with `--no-verify`.
 
 The latest brief to each other seat is kept in `briefs/`, one file per seat:
 today `briefs/architecture.md` and `briefs/audit.md`, and a seat added later
-gets its own. `briefs/implementing.md` is this seat's own: the handoff that
-initializes its next session, written at session close. The operator's
-decision, 2026-09-25. Each file's life has three steps:
+gets its own. `briefs/implementing.md` is this seat's own, in two parts
+(the operator's decision, 2026-10-18). Above a line: the handoff that
+initializes its next session or a new chat, rewritten at session close (the
+operator's decision, 2026-09-25). Below it: the architecture chat's latest
+brief to this seat, exactly as he relays it. A new brief replaces only the
+part below the line. Each file's life has three steps:
 
 1. **Unexecuted:** the box on its first line is empty, and each addendum is
    appended to the same file.
