@@ -1,0 +1,47 @@
+{
+ "run_at": "2026-10-18T11:36:10.198948Z",
+ "platforms": {
+  "greenhouse": {
+   "board": "greenhouse:veeamsoftware",
+   "postings": 216,
+   "changes": [],
+   "status": "unchanged"
+  },
+  "lever": {
+   "board": "lever:smart-working-solutions",
+   "postings": 21,
+   "changes": [],
+   "status": "unchanged"
+  },
+  "himalayas": {
+   "board": "himalayas:pakistan",
+   "postings": 20,
+   "changes": [],
+   "status": "unchanged"
+  },
+  "manatal": {
+   "board": "manatal:abacus-consulting-3",
+   "postings": 20,
+   "changes": [],
+   "status": "unchanged"
+  },
+  "workable": {
+   "board": "workable:igate-technologies",
+   "postings": 21,
+   "changes": [],
+   "status": "unchanged"
+  },
+  "smartrecruiters": {
+   "board": "smartrecruiters:OneScreen",
+   "postings": 10,
+   "changes": [],
+   "status": "unchanged"
+  },
+  "ashby": {
+   "board": "ashby:Overjet",
+   "postings": 30,
+   "status": "baseline"
+  }
+ },
+ "test_mode": false
+}

@@ -703,5 +703,124 @@
    }
   },
   "since": "2026-10-17T11:04:48.333378Z"
+ },
+ "ashby": {
+  "response": {
+   "jobs": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "array"
+    ]
+   }
+  },
+  "posting": {
+   "id": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "title": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "jobUrl": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "publishedAt": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "location": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "address": {
+    "present": "all",
+    "null": "some",
+    "types": [
+     "object"
+    ]
+   },
+   "address.postalAddress": {
+    "present": "some",
+    "null": "never",
+    "types": [
+     "object"
+    ]
+   },
+   "address.postalAddress.addressCountry": {
+    "present": "some",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "secondaryLocations": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "array"
+    ]
+   },
+   "secondaryLocations.location": {
+    "present": "some",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "secondaryLocations.address": {
+    "present": "some",
+    "null": "some",
+    "types": [
+     "object"
+    ]
+   },
+   "secondaryLocations.address.postalAddress": {
+    "present": "some",
+    "null": "never",
+    "types": [
+     "object"
+    ]
+   },
+   "secondaryLocations.address.postalAddress.addressCountry": {
+    "present": "some",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "workplaceType": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "descriptionHtml": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   }
+  },
+  "since": "2026-10-18T11:36:10.198948Z"
  }
 }
