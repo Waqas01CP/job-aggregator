@@ -78,15 +78,25 @@ import traceback
 from datetime import datetime, timezone
 
 from . import envfile, storage
-from .adapters import (ashby, greenhouse, hackernews, himalayas, hnjobs, lever, manatal,
-                       smartrecruiters, workable)
+from .adapters import (ashby, greenhouse, hackernews, himalayas, hnjobs, jobicy, lever,
+                       manatal, smartrecruiters, workable)
 from .config import REPO_ROOT, ConfigError, load_boards
 from .http_client import HttpClient, HttpError
 from .normalise import dumps, iso, loads
 
-PLATFORMS = {"greenhouse": greenhouse, "lever": lever, "himalayas": himalayas, "manatal": manatal,
-             "workable": workable, "smartrecruiters": smartrecruiters, "ashby": ashby,
-             "hackernews": hackernews, "hnjobs": hnjobs}
+# One platform a line, so adding one moves no other's line.
+PLATFORMS = {
+    "greenhouse": greenhouse,
+    "lever": lever,
+    "himalayas": himalayas,
+    "manatal": manatal,
+    "workable": workable,
+    "smartrecruiters": smartrecruiters,
+    "ashby": ashby,
+    "hackernews": hackernews,
+    "hnjobs": hnjobs,
+    "jobicy": jobicy,
+}
 
 FINGERPRINT_FILE = "contract/fingerprint.json"
 REBASELINES_PATH = os.path.join(REPO_ROOT, "config", "contract_rebaselines.json")

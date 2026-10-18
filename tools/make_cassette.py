@@ -33,7 +33,7 @@ DESCRIPTION_FIELDS = frozenset({
     "salaryDescription", "salaryDescriptionPlain", "benefits",
     "key_responsibilities", "skills_knowledge_expertise", "publicDescription",
     "Job_Description", "descriptionHtml", "companyLogo", "hybridDescription",
-    "story_text", "comment_text", "_highlightResult",
+    "story_text", "comment_text", "_highlightResult", "jobExcerpt", "friendlyNotice",
 })
 
 # SmartRecruiters' job ad, 2026-10-17: four named sections under

@@ -69,10 +69,12 @@ class TestRealConfig(unittest.TestCase):
         self.assertEqual(len(ats), 34)
         # The search endpoint filtered to the operator's country, since
         # 2026-09-26: the slug is the country.
-        self.assertEqual([b.slug for b in aggregators], ["pakistan", "whoishiring", "jobstories"])
+        self.assertEqual([b.slug for b in aggregators],
+                         ["pakistan", "whoishiring", "jobstories", "jobicy-remote"])
         # Hacker News, ADR-0063's second wave, is an aggregator too: its rows
         # keep to the private store (src/config.py, AGGREGATOR_PLATFORMS).
-        self.assertEqual([b.platform for b in aggregators], ["himalayas", "hackernews", "hnjobs"])
+        self.assertEqual([b.platform for b in aggregators],
+                         ["himalayas", "hackernews", "hnjobs", "jobicy"])
 
     def test_slugs_match_the_registry(self):
         gh = {b.slug for b in self.boards if b.platform == "greenhouse"}
@@ -111,7 +113,7 @@ class TestRealConfig(unittest.TestCase):
         """ADR-0020 stores one file per source, so source names the file."""
         self.assertEqual({b.source for b in self.boards},
                          {"greenhouse", "lever", "himalayas", "manatal", "workable",
-                          "smartrecruiters", "ashby", "hackernews", "hnjobs"})
+                          "smartrecruiters", "ashby", "hackernews", "hnjobs", "jobicy"})
 
     def test_source_class_separates_employer_boards_from_aggregators(self):
         """ADR-0020 routes raw storage by source class: employer rows to the

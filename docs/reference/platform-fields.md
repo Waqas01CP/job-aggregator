@@ -378,6 +378,28 @@ Measured 2026-10-18 over October 2026's thread (266 posts, `[VERIFIED]`) and the
 
 **What the chain keeps, read fresh:** 8 of the thread's 266 and 2 of the 13 stories. The thread lost 170 to the title rule, 51 to seniority, 33 to location (16 naming only places closed to him, 17 on site or hybrid in a place the rule cannot name), 2 to experience and 2 to authorisation. One post reads both ways, "Remote but Boston based only", and is kept, its remote word read as a remote option.
 
+## Jobicy
+
+ADR-0063's second wave, after Hacker News, built 2026-10-18. `jobicy.com/api/v2/remote-jobs`, Jobicy's public Jobs API, keyless, 1 to 200 a request, newest first, the last 7 days with a 3-hour delay, paged by `nextCursor` while `hasMore`. Read back to what is stored, about one page of 200 a run; a first walk read the week in 5 requests on 2026-10-18. An aggregator: its terms forbid redistribution, so its rows keep to the private store. Its terms, read 2026-10-18: "Polling a few times per day is normally sufficient and must not exceed once per hour"; "Do not present Jobicy listings as your own original job postings or remove source attribution". The employer's own application link costs $0.01 a posting with a key, which the scope floor excludes.
+
+Measured over the 833 postings of 2026-10-12 to 10-18 `[VERIFIED]`:
+
+| Field | Type | Present | Read | Notes |
+|---|---|---|---|---|
+| `id` | number | 100% | yes | the identity |
+| `jobTitle` | string | 100% | yes | the title, its HTML entities read |
+| `url` | string | 100% | yes | the posting's page on Jobicy, which names the source |
+| `pubDate` | string | 100% | yes | ISO with an offset |
+| `companyName` | string | 100% | yes | the employer |
+| `jobGeo` | string | 100% | yes | the place: a country, several, a region or "Anywhere" |
+| `jobLevel` | string | 100% | yes | the stated level: Senior 314, Director 304, Midweight 30, "Entry-Level, Junior" 15; "Any", 170, states none |
+| `jobDescription` | string | 100% | **yes** | HTML; stripped from every cassette |
+| `jobExcerpt`, `companyLogo` | string | 100% | no | stripped from every cassette |
+| `jobType`, `jobIndustry` | list | 100% | no | the job type is not filtered on any source |
+| `salaryMin`, `salaryMax`, `salaryCurrency`, `salaryPeriod` | | some | no | |
+
+**Every posting is remote** by the feed's own scope; the workplace is read as remote. **What the chain keeps, read fresh:** 2 of 833. The title rule drops 719, seniority 75, the level rule 19, location 11, authorisation 4 and experience 3.
+
 ## What each API accepts
 
 From each provider's own documentation, read 2026-10-02 `[outside this
@@ -641,6 +663,7 @@ what happens when it is absent, and each of these deserves that separately.
 
 | Date | Change | Reason |
 |---|---|---|
+| 2026-10-18 | Jobicy's section added: its paged feed, every field counted over 833 postings, its terms, what the chain keeps read fresh | Its adapter is built, ADR-0063's second wave |
 | 2026-10-18 | Hacker News' section added: the Who is hiring thread found then read, its post's first line as title, employer, place and workplace, and the job stories; what the chain keeps read fresh | Its adapters are built, ADR-0063's second wave, first |
 | 2026-10-17 | Ashby's section added: its one endpoint, every field counted over 33 postings, `publishedAt`'s first value kept by the store, the secondary locations read as places of their own; Ashby added to the experience table as stating no level | Its adapter is built, ADR-0059's fourth platform, the operator's go of 2026-10-17 |
 | 2026-10-17 | SmartRecruiters' section added: its list and detail endpoints, every field counted over 20 postings and two details, `releasedDate` trusted on the operator's decision, `experienceLevel` read as the stated level | Its adapter is built, ADR-0059's third platform |

@@ -62,7 +62,7 @@
   {
     "label": "SmartRecruiters' boards are configured and not polled",
     "path": "src/run.py",
-    "find": "            \"manatal\": manatal, \"workable\": workable, \"smartrecruiters\": smartrecruiters,\n            \"ashby\": ashby, \"hackernews\": hackernews, \"hnjobs\": hnjobs}",
-    "replace": "            \"manatal\": manatal, \"workable\": workable,\n            \"ashby\": ashby, \"hackernews\": hackernews, \"hnjobs\": hnjobs}"
+    "find": "    \"smartrecruiters\": smartrecruiters,\n",
+    "replace": ""
   }
 ]

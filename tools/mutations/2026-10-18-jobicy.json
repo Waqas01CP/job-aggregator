@@ -1,0 +1,44 @@
+[
+  {
+    "label": "the Jobicy walk stops after the first page",
+    "path": "src/adapters/jobicy.py",
+    "find": "    if not isinstance(payload, dict) or not payload.get(\"hasMore\"):\n        return None",
+    "replace": "    if True:\n        return None"
+  },
+  {
+    "label": "Jobicy's walk stops on one old posting",
+    "path": "src/adapters/jobicy.py",
+    "find": "    return bool(dated) and all(d <= high_water for d in dated)",
+    "replace": "    return bool(dated) and any(d <= high_water for d in dated)"
+  },
+  {
+    "label": "Jobicy's Any is read as a level",
+    "path": "src/adapters/jobicy.py",
+    "find": "            levels=(level,) if level and level.lower() != NO_LEVEL else None,",
+    "replace": "            levels=(level,) if level else None,"
+  },
+  {
+    "label": "a Jobicy posting is shown without its source",
+    "path": "src/adapters/jobicy.py",
+    "find": "            url=url,",
+    "replace": "            url=\"https://example.invalid/\" + external_id,"
+  },
+  {
+    "label": "Jobicy's rows reach the public branch",
+    "path": "src/config.py",
+    "find": "AGGREGATOR_PLATFORMS = frozenset({\"himalayas\", \"hackernews\", \"hnjobs\", \"jobicy\"})",
+    "replace": "AGGREGATOR_PLATFORMS = frozenset({\"himalayas\", \"hackernews\", \"hnjobs\"})"
+  },
+  {
+    "label": "Jobicy's boards are configured and not polled",
+    "path": "src/run.py",
+    "find": "    \"jobicy\": jobicy,\n",
+    "replace": ""
+  },
+  {
+    "label": "Hacker News' boards are configured and not polled",
+    "path": "src/run.py",
+    "find": "    \"hackernews\": hackernews,\n",
+    "replace": ""
+  }
+]

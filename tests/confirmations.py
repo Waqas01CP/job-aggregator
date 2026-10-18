@@ -292,7 +292,8 @@ CONFIRMATIONS["0063"] = dict(CONFIRMATIONS["0059"], **{
     "Every second-wave posting must be seen linking to its source's own page and naming "
     "its source.": {"tests": [
         "test_adapters.TestHackerNews.test_the_link_is_the_posts_own_page_on_hacker_news",
-        "test_adapters.TestHnJobs.test_the_link_is_the_storys_own_page_and_no_text_is_none"]},
+        "test_adapters.TestHnJobs.test_the_link_is_the_storys_own_page_and_no_text_is_none",
+        "test_adapters.TestJobicy.test_the_link_is_jobicys_own_page_and_jobicy_the_source"]},
 })
 
 # ADR-0062 consolidates ADR-0050 (2026-10-16): its eleven leads word for word,

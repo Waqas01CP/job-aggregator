@@ -1,0 +1,646 @@
+{
+ "apiVersion": "2.2.19",
+ "appliedFilters": {
+  "count": 100
+ },
+ "documentationUrl": "https://jobi.cy/apidocs",
+ "friendlyNotice": "STRIPPED",
+ "hasMore": true,
+ "jobCount": 100,
+ "jobs": [
+  {
+   "companyLogo": "STRIPPED",
+   "companyName": "Welo Global",
+   "id": 155709,
+   "jobDescription": "STRIPPED",
+   "jobExcerpt": "STRIPPED",
+   "jobGeo": "Anywhere",
+   "jobIndustry": [
+    "Content & Editorial"
+   ],
+   "jobLevel": "Any",
+   "jobSlug": "155709-hebrew-freelance-translator-copy-editor-product-marketing-ui-content",
+   "jobTitle": "Hebrew Freelance Translator & Copy Editor (Product, Marketing & UI Content)",
+   "jobType": [
+    "Contract"
+   ],
+   "pubDate": "2026-10-18T08:58:23+00:00",
+   "url": "https://jobicy.com/jobs/155709-hebrew-freelance-translator-copy-editor-product-marketing-ui-content"
+  },
+  {
+   "companyLogo": "STRIPPED",
+   "companyName": "Welo Global",
+   "id": 155708,
+   "jobDescription": "STRIPPED",
+   "jobExcerpt": "STRIPPED",
+   "jobGeo": "Anywhere",
+   "jobIndustry": [
+    "Content & Editorial"
+   ],
+   "jobLevel": "Any",
+   "jobSlug": "155708-english-to-burmese-myanmar-linguist-copy-editor-for-product-marketing-ui-content",
+   "jobTitle": "English to Burmese (Myanmar) Linguist & Copy Editor for Product, Marketing & UI Content",
+   "jobType": [
+    "Contract"
+   ],
+   "pubDate": "2026-10-18T08:58:22+00:00",
+   "url": "https://jobicy.com/jobs/155708-english-to-burmese-myanmar-linguist-copy-editor-for-product-marketing-ui-content"
+  },
+  {
+   "companyLogo": "STRIPPED",
+   "companyName": "Affirm",
+   "id": 155707,
+   "jobDescription": "STRIPPED",
+   "jobExcerpt": "STRIPPED",
+   "jobGeo": "Canada",
+   "jobIndustry": [
+    "Content & Editorial"
+   ],
+   "jobLevel": "Midweight",
+   "jobSlug": "155707-copywriter-ii",
+   "jobTitle": "Copywriter II",
+   "jobType": [
+    "Full-Time"
+   ],
+   "pubDate": "2026-10-18T08:58:22+00:00",
+   "salaryCurrency": "CAD",
+   "salaryMax": 100000,
+   "salaryMin": 80000,
+   "salaryPeriod": "yearly",
+   "url": "https://jobicy.com/jobs/155707-copywriter-ii"
+  },
+  {
+   "companyLogo": "STRIPPED",
+   "companyName": "Canonical",
+   "id": 155703,
+   "jobDescription": "STRIPPED",
+   "jobExcerpt": "STRIPPED",
+   "jobGeo": "Anywhere",
+   "jobIndustry": [
+    "Customer Support & Success"
+   ],
+   "jobLevel": "Any",
+   "jobSlug": "155703-enterprise-customer-success-manager-9",
+   "jobTitle": "Enterprise Customer Success Manager",
+   "jobType": [
+    "Full-Time"
+   ],
+   "pubDate": "2026-10-18T07:23:20+00:00",
+   "url": "https://jobicy.com/jobs/155703-enterprise-customer-success-manager-9"
+  },
+  {
+   "companyLogo": "STRIPPED",
+   "companyName": "Canonical",
+   "id": 155706,
+   "jobDescription": "STRIPPED",
+   "jobExcerpt": "STRIPPED",
+   "jobGeo": "EMEA",
+   "jobIndustry": [
+    "Customer Support & Success"
+   ],
+   "jobLevel": "Any",
+   "jobSlug": "155706-enterprise-customer-success-manager-french-speaker",
+   "jobTitle": "Enterprise Customer Success Manager (French speaker)",
+   "jobType": [
+    "Full-Time"
+   ],
+   "pubDate": "2026-10-18T07:23:16+00:00",
+   "url": "https://jobicy.com/jobs/155706-enterprise-customer-success-manager-french-speaker"
+  },
+  {
+   "companyLogo": "STRIPPED",
+   "companyName": "Elation Health",
+   "id": 155705,
+   "jobDescription": "STRIPPED",
+   "jobExcerpt": "STRIPPED",
+   "jobGeo": "Canada",
+   "jobIndustry": [
+    "Technical Support"
+   ],
+   "jobLevel": "Senior",
+   "jobSlug": "155705-manager-customer-support",
+   "jobTitle": "Manager, Customer Support",
+   "jobType": [
+    "Full-Time"
+   ],
+   "pubDate": "2026-10-18T07:23:16+00:00",
+   "salaryCurrency": "CAD",
+   "salaryMax": 140000,
+   "salaryMin": 110000,
+   "salaryPeriod": "yearly",
+   "url": "https://jobicy.com/jobs/155705-manager-customer-support"
+  },
+  {
+   "companyLogo": "STRIPPED",
+   "companyName": "SmithRx",
+   "id": 155702,
+   "jobDescription": "STRIPPED",
+   "jobExcerpt": "STRIPPED",
+   "jobGeo": "USA",
+   "jobIndustry": [
+    "Customer Support & Success"
+   ],
+   "jobLevel": "Any",
+   "jobSlug": "155702-multichannel-member-support-specialist",
+   "jobTitle": "Multichannel Member Support Specialist",
+   "jobType": [
+    "Full-Time"
+   ],
+   "pubDate": "2026-10-18T07:23:16+00:00",
+   "salaryCurrency": "USD",
+   "salaryMax": 22,
+   "salaryMin": 22,
+   "salaryPeriod": "hourly",
+   "url": "https://jobicy.com/jobs/155702-multichannel-member-support-specialist"
+  },
+  {
+   "companyLogo": "STRIPPED",
+   "companyName": "6sense",
+   "id": 155698,
+   "jobDescription": "STRIPPED",
+   "jobExcerpt": "STRIPPED",
+   "jobGeo": "USA",
+   "jobIndustry": [
+    "Technical Support"
+   ],
+   "jobLevel": "Director",
+   "jobSlug": "155698-it-support-specialist-3",
+   "jobTitle": "IT Support Specialist",
+   "jobType": [
+    "Full-Time"
+   ],
+   "pubDate": "2026-10-18T07:23:16+00:00",
+   "salaryCurrency": "USD",
+   "salaryMax": 103913,
+   "salaryMin": 73577,
+   "salaryPeriod": "yearly",
+   "url": "https://jobicy.com/jobs/155698-it-support-specialist-3"
+  },
+  {
+   "companyLogo": "STRIPPED",
+   "companyName": "Elation Health",
+   "id": 155697,
+   "jobDescription": "STRIPPED",
+   "jobExcerpt": "STRIPPED",
+   "jobGeo": "USA",
+   "jobIndustry": [
+    "Customer Support & Success"
+   ],
+   "jobLevel": "Any",
+   "jobSlug": "155697-customer-success-manager-small-group",
+   "jobTitle": "Customer Success Manager, Small Group",
+   "jobType": [
+    "Full-Time"
+   ],
+   "pubDate": "2026-10-18T07:23:16+00:00",
+   "salaryCurrency": "USD",
+   "salaryMax": 105000000,
+   "salaryMin": 80000,
+   "salaryPeriod": "yearly",
+   "url": "https://jobicy.com/jobs/155697-customer-success-manager-small-group"
+  },
+  {
+   "companyLogo": "STRIPPED",
+   "companyName": "PerfectServe",
+   "id": 155701,
+   "jobDescription": "STRIPPED",
+   "jobExcerpt": "STRIPPED",
+   "jobGeo": "USA",
+   "jobIndustry": [
+    "Technical Support"
+   ],
+   "jobLevel": "Any",
+   "jobSlug": "155701-technical-support-specialist-tier-1-us-remote",
+   "jobTitle": "Technical Support Specialist - Tier 1 - US Remote",
+   "jobType": [
+    "Full-Time"
+   ],
+   "pubDate": "2026-10-18T07:23:15+00:00",
+   "salaryCurrency": "USD",
+   "salaryMax": 19,
+   "salaryMin": 19,
+   "salaryPeriod": "hourly",
+   "url": "https://jobicy.com/jobs/155701-technical-support-specialist-tier-1-us-remote"
+  },
+  {
+   "companyLogo": "STRIPPED",
+   "companyName": "SmithRx",
+   "id": 155699,
+   "jobDescription": "STRIPPED",
+   "jobExcerpt": "STRIPPED",
+   "jobGeo": "USA",
+   "jobIndustry": [
+    "Customer Support & Success"
+   ],
+   "jobLevel": "Any",
+   "jobSlug": "155699-member-support-specialist-phone-chat-email",
+   "jobTitle": "Member Support Specialist (Phone, Chat, Email)",
+   "jobType": [
+    "Full-Time"
+   ],
+   "pubDate": "2026-10-18T07:23:14+00:00",
+   "salaryCurrency": "USD",
+   "salaryMax": 22,
+   "salaryMin": 22,
+   "salaryPeriod": "hourly",
+   "url": "https://jobicy.com/jobs/155699-member-support-specialist-phone-chat-email"
+  },
+  {
+   "companyLogo": "STRIPPED",
+   "companyName": "Grafana Labs",
+   "id": 155696,
+   "jobDescription": "STRIPPED",
+   "jobExcerpt": "STRIPPED",
+   "jobGeo": "Sweden",
+   "jobIndustry": [
+    "Sales"
+   ],
+   "jobLevel": "Director",
+   "jobSlug": "155696-enterprise-account-executive-growth-remote-sweden",
+   "jobTitle": "Enterprise Account Executive, Growth | Remote | Sweden",
+   "jobType": [
+    "Full-Time"
+   ],
+   "pubDate": "2026-10-18T07:17:43+00:00",
+   "salaryCurrency": "SEK",
+   "salaryMax": 2546000,
+   "salaryMin": 2016000,
+   "salaryPeriod": "yearly",
+   "url": "https://jobicy.com/jobs/155696-enterprise-account-executive-growth-remote-sweden"
+  },
+  {
+   "companyLogo": "STRIPPED",
+   "companyName": "Welo Global",
+   "id": 155695,
+   "jobDescription": "STRIPPED",
+   "jobExcerpt": "STRIPPED",
+   "jobGeo": "Poland",
+   "jobIndustry": [
+    "QA & Testing"
+   ],
+   "jobLevel": "Any",
+   "jobSlug": "155695-ads-quality-rater-jezyk-polski-polska",
+   "jobTitle": "Ads Quality Rater – Język polski (Polska)",
+   "jobType": [
+    "Contract"
+   ],
+   "pubDate": "2026-10-18T07:17:42+00:00",
+   "url": "https://jobicy.com/jobs/155695-ads-quality-rater-jezyk-polski-polska"
+  },
+  {
+   "companyLogo": "STRIPPED",
+   "companyName": "TRM Labs",
+   "id": 155694,
+   "jobDescription": "STRIPPED",
+   "jobExcerpt": "STRIPPED",
+   "jobGeo": "EMEA",
+   "jobIndustry": [
+    "HR & Recruiting"
+   ],
+   "jobLevel": "Director",
+   "jobSlug": "155694-senior-international-sales-recruiter-uk-emea",
+   "jobTitle": "Senior International Sales Recruiter, UK/EMEA",
+   "jobType": [
+    "Full-Time"
+   ],
+   "pubDate": "2026-10-18T07:17:42+00:00",
+   "salaryCurrency": "USD",
+   "salaryMax": 172000,
+   "salaryMin": 153000,
+   "salaryPeriod": "yearly",
+   "url": "https://jobicy.com/jobs/155694-senior-international-sales-recruiter-uk-emea"
+  },
+  {
+   "companyLogo": "STRIPPED",
+   "companyName": "Grafana Labs",
+   "id": 155690,
+   "jobDescription": "STRIPPED",
+   "jobExcerpt": "STRIPPED",
+   "jobGeo": "Sweden",
+   "jobIndustry": [
+    "Sales"
+   ],
+   "jobLevel": "Director",
+   "jobSlug": "155690-enterprise-account-executive-acquisition-remote-sweden",
+   "jobTitle": "Enterprise Account Executive, Acquisition | Remote | Sweden",
+   "jobType": [
+    "Full-Time"
+   ],
+   "pubDate": "2026-10-18T07:17:42+00:00",
+   "salaryCurrency": "SEK",
+   "salaryMax": 2546000,
+   "salaryMin": 2016000,
+   "salaryPeriod": "yearly",
+   "url": "https://jobicy.com/jobs/155690-enterprise-account-executive-acquisition-remote-sweden"
+  },
+  {
+   "companyLogo": "STRIPPED",
+   "companyName": "TRM Labs",
+   "id": 155688,
+   "jobDescription": "STRIPPED",
+   "jobExcerpt": "STRIPPED",
+   "jobGeo": "UAE",
+   "jobIndustry": [
+    "Sales"
+   ],
+   "jobLevel": "Director",
+   "jobSlug": "155688-account-director-emea-crypto",
+   "jobTitle": "Account Director, EMEA (Crypto)",
+   "jobType": [
+    "Full-Time"
+   ],
+   "pubDate": "2026-10-18T07:17:42+00:00",
+   "url": "https://jobicy.com/jobs/155688-account-director-emea-crypto"
+  },
+  {
+   "companyLogo": "STRIPPED",
+   "companyName": "Grafana Labs",
+   "id": 155693,
+   "jobDescription": "STRIPPED",
+   "jobExcerpt": "STRIPPED",
+   "jobGeo": "Spain",
+   "jobIndustry": [
+    "Sales"
+   ],
+   "jobLevel": "Director",
+   "jobSlug": "155693-enterprise-account-executive-growth-meta-remote-spain",
+   "jobTitle": "Enterprise Account Executive, Growth - META | Remote | Spain",
+   "jobType": [
+    "Full-Time"
+   ],
+   "pubDate": "2026-10-18T07:17:41+00:00",
+   "salaryCurrency": "EUR",
+   "salaryMax": 211250,
+   "salaryMin": 170000,
+   "salaryPeriod": "yearly",
+   "url": "https://jobicy.com/jobs/155693-enterprise-account-executive-growth-meta-remote-spain"
+  },
+  {
+   "companyLogo": "STRIPPED",
+   "companyName": "TRM Labs",
+   "id": 155691,
+   "jobDescription": "STRIPPED",
+   "jobExcerpt": "STRIPPED",
+   "jobGeo": "EMEA",
+   "jobIndustry": [
+    "Customer Support & Success"
+   ],
+   "jobLevel": "Senior",
+   "jobSlug": "155691-deployment-strategist-eastern-europe",
+   "jobTitle": "Deployment Strategist, Eastern Europe",
+   "jobType": [
+    "Full-Time"
+   ],
+   "pubDate": "2026-10-18T07:17:41+00:00",
+   "url": "https://jobicy.com/jobs/155691-deployment-strategist-eastern-europe"
+  },
+  {
+   "companyLogo": "STRIPPED",
+   "companyName": "Welo Global",
+   "id": 155692,
+   "jobDescription": "STRIPPED",
+   "jobExcerpt": "STRIPPED",
+   "jobGeo": "Austria",
+   "jobIndustry": [
+    "QA & Testing"
+   ],
+   "jobLevel": "Any",
+   "jobSlug": "155692-ads-quality-rater-german-austria",
+   "jobTitle": "Ads Quality Rater – German (Austria)",
+   "jobType": [
+    "Contract"
+   ],
+   "pubDate": "2026-10-18T07:17:40+00:00",
+   "url": "https://jobicy.com/jobs/155692-ads-quality-rater-german-austria"
+  },
+  {
+   "companyLogo": "STRIPPED",
+   "companyName": "Teramind",
+   "id": 155687,
+   "jobDescription": "STRIPPED",
+   "jobExcerpt": "STRIPPED",
+   "jobGeo": "Argentina,  Canada,  Mexico,  Poland",
+   "jobIndustry": [
+    "Legal & Compliance"
+   ],
+   "jobLevel": "Senior",
+   "jobSlug": "155687-law-clerk-counsel",
+   "jobTitle": "Law Clerk/Counsel",
+   "jobType": [
+    "Full-Time"
+   ],
+   "pubDate": "2026-10-18T07:17:40+00:00",
+   "url": "https://jobicy.com/jobs/155687-law-clerk-counsel"
+  },
+  {
+   "companyLogo": "STRIPPED",
+   "companyName": "Welo Global",
+   "id": 155689,
+   "jobDescription": "STRIPPED",
+   "jobExcerpt": "STRIPPED",
+   "jobGeo": "Slovenia",
+   "jobIndustry": [
+    "QA & Testing"
+   ],
+   "jobLevel": "Any",
+   "jobSlug": "155689-ads-quality-rater-slovenian-slovenia",
+   "jobTitle": "Ads Quality Rater - Slovenian (Slovenia)",
+   "jobType": [
+    "Contract"
+   ],
+   "pubDate": "2026-10-18T07:17:39+00:00",
+   "salaryCurrency": "USD",
+   "salaryMax": 9,
+   "salaryMin": 9,
+   "salaryPeriod": "hourly",
+   "url": "https://jobicy.com/jobs/155689-ads-quality-rater-slovenian-slovenia"
+  },
+  {
+   "companyLogo": "STRIPPED",
+   "companyName": "Precision Medicine Group",
+   "id": 155686,
+   "jobDescription": "STRIPPED",
+   "jobExcerpt": "STRIPPED",
+   "jobGeo": "Hungary,  Poland,  Romania,  Serbia,  Slovakia,  Spain,  UK",
+   "jobIndustry": [
+    "Healthcare & Medical"
+   ],
+   "jobLevel": "Senior",
+   "jobSlug": "155686-feasibility-manager",
+   "jobTitle": "Feasibility Manager",
+   "jobType": [
+    "Full-Time"
+   ],
+   "pubDate": "2026-10-18T07:05:53+00:00",
+   "url": "https://jobicy.com/jobs/155686-feasibility-manager"
+  },
+  {
+   "companyLogo": "STRIPPED",
+   "companyName": "Cribl",
+   "id": 155685,
+   "jobDescription": "STRIPPED",
+   "jobExcerpt": "STRIPPED",
+   "jobGeo": "UK",
+   "jobIndustry": [
+    "Customer Support & Success"
+   ],
+   "jobLevel": "Senior",
+   "jobSlug": "155685-senior-customer-success-engineer-2",
+   "jobTitle": "Senior Customer Success Engineer",
+   "jobType": [
+    "Full-Time"
+   ],
+   "pubDate": "2026-10-18T07:05:53+00:00",
+   "salaryCurrency": "GBP",
+   "salaryMax": 95000,
+   "salaryMin": 80400,
+   "salaryPeriod": "yearly",
+   "url": "https://jobicy.com/jobs/155685-senior-customer-success-engineer-2"
+  },
+  {
+   "companyLogo": "STRIPPED",
+   "companyName": "Cribl",
+   "id": 155679,
+   "jobDescription": "STRIPPED",
+   "jobExcerpt": "STRIPPED",
+   "jobGeo": "Germany,  Netherlands,  Spain,  UK",
+   "jobIndustry": [
+    "Sales"
+   ],
+   "jobLevel": "Director",
+   "jobSlug": "155679-product-sales-specialist-emea",
+   "jobTitle": "Product Sales Specialist, EMEA",
+   "jobType": [
+    "Full-Time"
+   ],
+   "pubDate": "2026-10-18T07:05:52+00:00",
+   "url": "https://jobicy.com/jobs/155679-product-sales-specialist-emea"
+  },
+  {
+   "companyLogo": "STRIPPED",
+   "companyName": "Cribl",
+   "id": 155684,
+   "jobDescription": "STRIPPED",
+   "jobExcerpt": "STRIPPED",
+   "jobGeo": "UK",
+   "jobIndustry": [
+    "Sales"
+   ],
+   "jobLevel": "Any",
+   "jobSlug": "155684-sales-engineer-uk-2",
+   "jobTitle": "Sales Engineer, UK",
+   "jobType": [
+    "Full-Time"
+   ],
+   "pubDate": "2026-10-18T07:05:51+00:00",
+   "salaryCurrency": "GBP",
+   "salaryMax": 127000,
+   "salaryMin": 95000,
+   "salaryPeriod": "yearly",
+   "url": "https://jobicy.com/jobs/155684-sales-engineer-uk-2"
+  },
+  {
+   "companyLogo": "STRIPPED",
+   "companyName": "Precision Medicine Group",
+   "id": 155683,
+   "jobDescription": "STRIPPED",
+   "jobExcerpt": "STRIPPED",
+   "jobGeo": "Netherlands",
+   "jobIndustry": [
+    "Healthcare & Medical"
+   ],
+   "jobLevel": "Senior",
+   "jobSlug": "155683-clinical-research-associate-ii",
+   "jobTitle": "Clinical Research Associate II",
+   "jobType": [
+    "Full-Time"
+   ],
+   "pubDate": "2026-10-18T07:05:51+00:00",
+   "url": "https://jobicy.com/jobs/155683-clinical-research-associate-ii"
+  },
+  {
+   "companyLogo": "STRIPPED",
+   "companyName": "Cribl",
+   "id": 155682,
+   "jobDescription": "STRIPPED",
+   "jobExcerpt": "STRIPPED",
+   "jobGeo": "UK",
+   "jobIndustry": [
+    "Sales"
+   ],
+   "jobLevel": "Director",
+   "jobSlug": "155682-regional-sales-manager-united-kingdom-public-sector",
+   "jobTitle": "Regional Sales Manager, United Kingdom (Public Sector)",
+   "jobType": [
+    "Full-Time"
+   ],
+   "pubDate": "2026-10-18T07:05:51+00:00",
+   "url": "https://jobicy.com/jobs/155682-regional-sales-manager-united-kingdom-public-sector"
+  },
+  {
+   "companyLogo": "STRIPPED",
+   "companyName": "Precision Medicine Group",
+   "id": 155681,
+   "jobDescription": "STRIPPED",
+   "jobExcerpt": "STRIPPED",
+   "jobGeo": "France",
+   "jobIndustry": [
+    "Healthcare & Medical"
+   ],
+   "jobLevel": "Senior",
+   "jobSlug": "155681-clinical-research-associate-i-clinical-research-associate-ii",
+   "jobTitle": "Clinical Research Associate I/ Clinical Research Associate II",
+   "jobType": [
+    "Full-Time"
+   ],
+   "pubDate": "2026-10-18T07:05:51+00:00",
+   "url": "https://jobicy.com/jobs/155681-clinical-research-associate-i-clinical-research-associate-ii"
+  },
+  {
+   "companyLogo": "STRIPPED",
+   "companyName": "Kaseya",
+   "id": 155677,
+   "jobDescription": "STRIPPED",
+   "jobExcerpt": "STRIPPED",
+   "jobGeo": "Ireland",
+   "jobIndustry": [
+    "Finance & Accounting"
+   ],
+   "jobLevel": "Any",
+   "jobSlug": "155677-collections-specialist-12-month-contract",
+   "jobTitle": "Collections Specialist 12 Month Contract",
+   "jobType": [
+    "Contract"
+   ],
+   "pubDate": "2026-10-18T07:05:50+00:00",
+   "url": "https://jobicy.com/jobs/155677-collections-specialist-12-month-contract"
+  },
+  {
+   "companyLogo": "STRIPPED",
+   "companyName": "Housecall Pro",
+   "id": 155678,
+   "jobDescription": "STRIPPED",
+   "jobExcerpt": "STRIPPED",
+   "jobGeo": "Poland",
+   "jobIndustry": [
+    "Software Engineering"
+   ],
+   "jobLevel": "Senior",
+   "jobSlug": "155678-software-engineer-ii-poland",
+   "jobTitle": "Software Engineer II - Poland",
+   "jobType": [
+    "Contract"
+   ],
+   "pubDate": "2026-10-18T07:05:49+00:00",
+   "salaryCurrency": "USD",
+   "salaryMax": 6600,
+   "salaryMin": 5300,
+   "salaryPeriod": "monthly",
+   "url": "https://jobicy.com/jobs/155678-software-engineer-ii-poland"
+  }
+ ],
+ "lastUpdate": "2026-10-18T08:58:23+00:00",
+ "nextCursor": "AgAAAABq1N9eAAAAAGrUQfYAAAAAAAJXjZGStyjVOt7ULMvdFdHp_0xjGsH--7hP_G6cSgT0AUpIk1Qw44TYVzawjuT1HMT6k_2vLf_0UHcU_jcZ-1TYuuQ",
+ "statusCode": 200,
+ "success": true
+}

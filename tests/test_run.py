@@ -339,6 +339,28 @@ class TestHackerNewsInTheRun(RunHarness):
                                   "greenhouse:careem": "ok"})
 
 
+class TestJobicyInTheRun(RunHarness):
+    """Jobicy, after Hacker News: its feed walked newest first by its
+    cursor, page after page, its rows in the private layer."""
+
+    JB = Board(platform="jobicy", slug="jobicy-remote")
+
+    def test_the_walk_follows_the_cursor_to_the_end_and_stores_privately(self):
+        """Mutation: "Jobicy's rows reach the public branch"."""
+        from tests.test_adapters import cassette
+        first = cassette("jobicy-remote.json")
+        second = dict(first, jobs=first["jobs"][:5], hasMore=False, nextCursor=None)
+        first = dict(first, jobs=first["jobs"][5:])
+        routes = {"cursor=": second, "remote-jobs?count=200": first}
+        client = client_for(routes)
+        log = Run([self.JB], client, now=NOW, matcher=MATCHER).execute()
+        self.assertEqual(len(client._session.calls), 2)
+        [entry] = log["boards"]
+        self.assertEqual((entry["status"], entry["fetched"], entry["pages"]), ("ok", 30, 2))
+        self.assertEqual(log["source_class"], {"jobicy": "aggregator"})
+        self.assertTrue(os.path.exists(storage.raw_path("jobicy", False, "aggregator")))
+
+
 class TestTheRunLogsCommit(RunHarness):
     """ADR-0063: every run log names the commit that ran it, so a dropped
     posting's reason can be recomputed under the rules of its day."""

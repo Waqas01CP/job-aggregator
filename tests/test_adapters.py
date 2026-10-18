@@ -14,8 +14,8 @@ from datetime import datetime, timezone
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from src.adapters import (ashby, greenhouse, hackernews, hnjobs, lever, manatal, smartrecruiters,
-                          workable)
+from src.adapters import (ashby, greenhouse, hackernews, hnjobs, jobicy, lever, manatal,
+                          smartrecruiters, workable)
 from src.adapters.base import AdapterError, Posting
 from src.config import Board
 
@@ -787,6 +787,64 @@ class TestHnJobs(unittest.TestCase):
                if p.title.startswith("Coris")]
         self.assertEqual(p.url, "https://news.ycombinator.com/item?id=%s" % p.external_id)
         self.assertEqual((p.source, p.description, p.employer), ("hnjobs", (), "Coris"))
+
+
+JB_BOARD = Board(platform="jobicy", slug="jobicy-remote")
+
+
+class TestJobicy(unittest.TestCase):
+    """Jobicy's public Jobs API. Cassette: the first 30 of its first page of
+    2026-10-18, sanitised."""
+
+    def setUp(self):
+        self.payload = cassette("jobicy-remote.json")
+
+    def entry(self, **extra):
+        return dict(self.payload["jobs"][0], **extra)
+
+    def one(self, entry):
+        return jobicy.parse({"jobs": [entry]}, JB_BOARD).postings[0]
+
+    def test_parses_every_posting(self):
+        result = jobicy.parse(self.payload, JB_BOARD)
+        self.assertEqual((len(result.postings), result.problems), (30, []))
+        with self.assertRaises(AdapterError):
+            jobicy.parse({"hits": []}, JB_BOARD)
+
+    def test_the_feed_is_read_page_by_page_by_its_cursor(self):
+        """Mutation: "the Jobicy walk stops after the first page"."""
+        self.assertEqual(jobicy.url_for(JB_BOARD),
+                         "https://jobicy.com/api/v2/remote-jobs?count=200")
+        self.assertEqual(jobicy.url_for(JB_BOARD, "a/b+c"),
+                         "https://jobicy.com/api/v2/remote-jobs?count=200&cursor=a%2Fb%2Bc")
+        self.assertEqual(jobicy.next_cursor(self.payload), self.payload["nextCursor"])
+        self.assertIsNone(jobicy.next_cursor(dict(self.payload, hasMore=False)))
+
+    def test_the_walk_stops_on_a_page_wholly_at_or_before_the_mark(self):
+        """The whole page, never one posting. Mutation: "Jobicy's walk stops
+        on one old posting"."""
+        newest = max(j["pubDate"] for j in self.payload["jobs"])
+        oldest = min(j["pubDate"] for j in self.payload["jobs"])
+        as_z = lambda value: value.replace("+00:00", "Z")  # noqa: E731
+        self.assertTrue(jobicy.stop_after(self.payload, as_z(newest)))
+        self.assertFalse(jobicy.stop_after(self.payload, as_z(oldest)))
+        self.assertFalse(jobicy.stop_after(self.payload, None))
+
+    def test_any_states_no_level_and_every_posting_is_remote(self):
+        """Mutation: "Jobicy's Any is read as a level"."""
+        self.assertIsNone(self.one(self.entry(jobLevel="Any")).levels)
+        self.assertEqual(self.one(self.entry(jobLevel="Senior")).levels, ("Senior",))
+        p = self.one(self.entry(jobGeo="Germany,  Netherlands", jobTitle="A &amp; B"))
+        self.assertEqual((p.location, p.workplace, p.title), ("Germany, Netherlands", "remote", "A & B"))
+
+    def test_the_link_is_jobicys_own_page_and_jobicy_the_source(self):
+        """ADR-0063 and Jobicy's terms: no listing shown as one's own or
+        stripped of its attribution. Mutation: "a Jobicy posting is shown
+        without its source"."""
+        p = self.one(self.entry())
+        self.assertTrue(p.url.startswith("https://jobicy.com/jobs/"))
+        self.assertEqual((p.source, p.board_id, p.url_provenance),
+                         ("jobicy", "jobicy:jobicy-remote", "payload"))
 
 
 class TestPostingInvariants(unittest.TestCase):

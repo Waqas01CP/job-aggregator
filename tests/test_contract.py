@@ -37,7 +37,8 @@ SR = Board(platform="smartrecruiters", slug="OneScreen", employer_alias="OneScre
 AB = Board(platform="ashby", slug="Overjet", employer_alias="Overjet")
 HN = Board(platform="hackernews", slug="whoishiring")
 HNJ = Board(platform="hnjobs", slug="jobstories")
-BOARDS = [GH, LV, HIM, MN, WK, SR, AB, HN, HNJ]
+JB = Board(platform="jobicy", slug="jobicy-remote")
+BOARDS = [GH, LV, HIM, MN, WK, SR, AB, HN, HNJ, JB]
 # The requests a check makes: one a platform, one more for each whose
 # description is a request of its own, and one more for each found by a
 # first request, Hacker News' thread.
@@ -84,7 +85,8 @@ def responses():
             "job-board/Overjet": cassette("ashby-overjet.json"),
             "tags=story,author_whoishiring": cassette("hackernews-whoishiring-stories.json"),
             "items/49922569": cassette("hackernews-whoishiring.json"),
-            "tags=job": cassette("hnjobs-job.json")}
+            "tags=job": cassette("hnjobs-job.json"),
+            "jobicy.com/api/v2/remote-jobs": cassette("jobicy-remote.json")}
 
 
 def client(routes, max_attempts=1, budget=contract.PER_PLATFORM_BUDGET):
@@ -143,9 +145,9 @@ class TestConsumedFields(unittest.TestCase):
     that is read, and the check would watch the wrong thing."""
 
     def test_each_adapter_declares_exactly_what_it_reads(self):
-        from src.adapters import ashby, hackernews, hnjobs, smartrecruiters
+        from src.adapters import ashby, hackernews, hnjobs, jobicy, smartrecruiters
         for module in (greenhouse, lever, himalayas, smartrecruiters, ashby, hackernews,
-                       hnjobs):
+                       hnjobs, jobicy):
             with self.subTest(adapter=module.PLATFORM):
                 declared = {path.split(".")[-1]
                             for path in module.CONSUMED + module.CONSUMED_RESPONSE

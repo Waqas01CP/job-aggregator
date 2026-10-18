@@ -38,8 +38,8 @@
   {
     "label": "Manatal's boards are configured and not polled",
     "path": "src/run.py",
-    "find": "            \"manatal\": manatal, \"workable\": workable, \"smartrecruiters\": smartrecruiters,\n            \"ashby\": ashby, \"hackernews\": hackernews, \"hnjobs\": hnjobs}",
-    "replace": "            \"workable\": workable, \"smartrecruiters\": smartrecruiters,\n            \"ashby\": ashby, \"hackernews\": hackernews, \"hnjobs\": hnjobs}"
+    "find": "    \"manatal\": manatal,\n",
+    "replace": ""
   },
   {
     "label": "a Manatal posting's own organisation is ignored for the alias",

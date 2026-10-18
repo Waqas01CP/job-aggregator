@@ -55,8 +55,8 @@ from . import clearing, envfile, facts, private_store, projection, storage
 from .airtable_sweep import JOBS, SweepClient, TABLE_SECRETS
 from .closure import Closure, covered as walk_covered
 from .sweep import Sweep, older_than
-from .adapters import (ashby, greenhouse, hackernews, himalayas, hnjobs, lever, manatal,
-                       smartrecruiters, workable)
+from .adapters import (ashby, greenhouse, hackernews, himalayas, hnjobs, jobicy, lever,
+                       manatal, smartrecruiters, workable)
 from . import health
 from .airtable import (BASE_ENV, CALL_LOG_KEYS, HEALTH_LOG_KEY, HEALTH_TABLE_ENV,
                        HEALTH_TEST_TABLE_ENV, RUN_LOG_KEY, TABLE_ENV, TEST_TABLE_ENV,
@@ -75,9 +75,19 @@ EXIT_OK = 0
 EXIT_CANNOT_START = 1
 EXIT_STOPPED_RESUMABLE = 2
 
-ADAPTERS = {"greenhouse": greenhouse, "lever": lever, "himalayas": himalayas,
-            "manatal": manatal, "workable": workable, "smartrecruiters": smartrecruiters,
-            "ashby": ashby, "hackernews": hackernews, "hnjobs": hnjobs}
+# One platform a line, so adding one moves no other's line.
+ADAPTERS = {
+    "greenhouse": greenhouse,
+    "lever": lever,
+    "himalayas": himalayas,
+    "manatal": manatal,
+    "workable": workable,
+    "smartrecruiters": smartrecruiters,
+    "ashby": ashby,
+    "hackernews": hackernews,
+    "hnjobs": hnjobs,
+    "jobicy": jobicy,
+}
 
 # A paginated feed is read until it reaches postings already stored, or
 # postings too old for the age rule to admit. The cap is a runaway guard on top
