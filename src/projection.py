@@ -317,8 +317,19 @@ def what_differs(records, displayed, stages):
     return new + changed
 
 
+def held_back(rows, held, stages):
+    """ADR-0063: the rows of sources held from the display, left out of what
+    is sent and counted. Fetched and stored as any source is; only `Jobs`
+    waits, until the month's allowance has room for them."""
+    if not held:
+        return rows
+    kept = [r for r in rows if r.source not in held]
+    stages["rows_held_from_display"] = len(rows) - len(kept)
+    return kept
+
+
 def project(paths, now_iso, matcher, client, private_texts, stages, public_only=False,
-            retired=None, displayed=None, described=False):
+            retired=None, displayed=None, described=False, held=()):
     """All five stages. `private_texts` are the private repository's copies
     of the same stores, from private_store_texts. `stages` is filled as each
     stage completes, so a failure part way still leaves a count of how far it
@@ -331,7 +342,7 @@ def project(paths, now_iso, matcher, client, private_texts, stages, public_only=
     decision of 2026-09-24, D9: the public rows always update. The aggregator
     rows are withheld, because the private stores that would keep a retired
     one out are unknown, and they are counted so the withholding shows."""
-    rows = load_rows(paths)
+    rows = held_back(load_rows(paths), held, stages)
     if public_only:
         kept = [r for r in rows if is_publishable(r.source)]
         stages["aggregator_rows_withheld"] = len(rows) - len(kept)

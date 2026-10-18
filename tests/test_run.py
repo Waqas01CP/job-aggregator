@@ -300,6 +300,45 @@ class TestSmartRecruitersDetails(RunHarness):
         self.assertEqual(rows[0]["url_provenance"], "constructed")
 
 
+class TestHackerNewsInTheRun(RunHarness):
+    """ADR-0063's second wave, first: the month's thread found by a first
+    request and read by a second, its posts judged at first sight and stored
+    in the private layer, an aggregator's."""
+
+    HN = Board(platform="hackernews", slug="whoishiring")
+
+    def routes(self):
+        from tests.test_adapters import cassette
+        return {"search_by_date?tags=story,author_whoishiring":
+                cassette("hackernews-whoishiring-stories.json"),
+                "items/49922569": cassette("hackernews-whoishiring.json")}
+
+    def test_the_thread_is_found_then_read_and_stored_privately(self):
+        """Mutations: "the run never follows to the thread", "Hacker News'
+        rows reach the public branch"."""
+        client = client_for(self.routes())
+        log = Run([self.HN], client, now=NOW, matcher=MATCHER).execute()
+        self.assertEqual(len(client._session.calls), 2)
+        self.assertIn("items/49922569", client._session.calls[1])
+        [entry] = log["boards"]
+        self.assertEqual((entry["status"], entry["fetched"], entry["parse_problems"]),
+                         ("ok", 40, 0))
+        self.assertEqual(log["source_class"], {"hackernews": "aggregator"})
+        self.assertTrue(os.path.exists(storage.raw_path("hackernews", False, "aggregator")))
+        self.assertFalse(os.path.exists(storage.raw_path("hackernews", False, "ats")))
+
+    def test_no_thread_found_fails_the_board_and_no_other(self):
+        routes = self.routes()
+        stories = routes["search_by_date?tags=story,author_whoishiring"]
+        routes["search_by_date?tags=story,author_whoishiring"] = dict(
+            stories, hits=[h for h in stories["hits"] if "hired" in h["title"]])
+        routes["careem"] = gh_payload(["AI Engineer"])
+        log = Run([self.HN, GH], client_for(routes), now=NOW, matcher=MATCHER).execute()
+        status = {b["board"]: b["status"] for b in log["boards"]}
+        self.assertEqual(status, {"hackernews:whoishiring": "unparseable",
+                                  "greenhouse:careem": "ok"})
+
+
 class TestTheRunLogsCommit(RunHarness):
     """ADR-0063: every run log names the commit that ran it, so a dropped
     posting's reason can be recomputed under the rules of its day."""
@@ -1614,6 +1653,26 @@ class TestTheCeiling(unittest.TestCase):
                         load_sweep_config(path)
                 else:
                     self.assertEqual(load_sweep_config(path).monthly_call_ceiling, ceiling)
+
+    def test_the_sources_held_name_sources_this_build_adapts_and_ship_empty(self):
+        """ADR-0063: held only when the month's projection says so, which on
+        2026-10-18 it did not. A name the build does not adapt would hold
+        nothing and is refused."""
+        from src.config import SWEEP_PATH, ConfigError, load_sweep_config
+        self.assertEqual(load_sweep_config().held_from_display, ())
+        with open(SWEEP_PATH, encoding="utf-8") as f:
+            doc = json.load(f)
+        path = os.path.join(self.dir, "sweep.json")
+        for value, ok in ((["hackernews"], True), (["hacker news"], False), ("hackernews", False),
+                          ([1], False)):
+            with self.subTest(value=value):
+                with open(path, "w", encoding="utf-8") as f:
+                    json.dump(dict(doc, sources_held_from_display=value), f)
+                if ok:
+                    self.assertEqual(load_sweep_config(path).held_from_display, tuple(value))
+                else:
+                    with self.assertRaises(ConfigError):
+                        load_sweep_config(path)
 
     def test_the_description_switch_is_true_or_false_and_ships_off(self):
         """Brief 13: off until the operator has made the four fields; a value

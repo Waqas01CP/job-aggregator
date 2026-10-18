@@ -239,6 +239,18 @@
       "employer_alias": "PostEra",
       "normalisations": [],
       "note": "Not in the operator's registry: found through the second wave, linked from a Hacker News job story of 2026-10-13, and read once on 2026-10-18 (the seat's report on Brief 15: 2 postings, 1 kept). Added on the operator's word of 2026-10-18, '4. add them' (ADR-0063, Brief 16 item 3). Lever returns no employer field, so the alias is the employer. ADR-0026."
+    },
+    {
+      "platform": "hackernews",
+      "slug": "whoishiring",
+      "normalisations": [],
+      "note": "ADR-0063's second wave, first: the monthly 'Ask HN: Who is hiring?' thread, found each run among the stories of the account this slug names and read whole through Algolia's Hacker News API, two requests a run. An aggregator, so its rows keep to the private store. The employer is read from each post's first line."
+    },
+    {
+      "platform": "hnjobs",
+      "slug": "jobstories",
+      "normalisations": [],
+      "note": "ADR-0063's second wave, with the thread: Hacker News' job stories, Y Combinator companies' posts, the newest hundred of Algolia's job tag, one request a run. An aggregator, so its rows keep to the private store. The employer is read from the story's title."
     }
   ]
 }

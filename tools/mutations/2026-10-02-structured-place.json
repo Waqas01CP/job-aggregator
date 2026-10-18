@@ -20,8 +20,8 @@
   {
     "label": "the stated workplace is ignored",
     "path": "src/filters.py",
-    "find": "    worked = _workplace_words(getattr(row, \"workplace\", None), eligibility)",
-    "replace": "    worked = \"\""
+    "find": "        return _header_place(text, parts, row, eligibility)\n    worked = _workplace_words(getattr(row, \"workplace\", None), eligibility)",
+    "replace": "        return _header_place(text, parts, row, eligibility)\n    worked = \"\""
   },
   {
     "label": "the adapter reads no office",

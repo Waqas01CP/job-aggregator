@@ -35,11 +35,15 @@ MN = Board(platform="manatal", slug="premiernx", employer_alias="Premier NX")
 WK = Board(platform="workable", slug="igate-technologies", employer_alias="iGATE Technology")
 SR = Board(platform="smartrecruiters", slug="OneScreen", employer_alias="OneScreen")
 AB = Board(platform="ashby", slug="Overjet", employer_alias="Overjet")
-BOARDS = [GH, LV, HIM, MN, WK, SR, AB]
-# The requests a check makes: one a platform, and one more for each whose
-# description is a request of its own.
+HN = Board(platform="hackernews", slug="whoishiring")
+HNJ = Board(platform="hnjobs", slug="jobstories")
+BOARDS = [GH, LV, HIM, MN, WK, SR, AB, HN, HNJ]
+# The requests a check makes: one a platform, one more for each whose
+# description is a request of its own, and one more for each found by a
+# first request, Hacker News' thread.
 REQUESTS = len(contract.PLATFORMS) + sum(1 for a in contract.PLATFORMS.values()
-                                         if getattr(a, "DETAIL", False))
+                                         if getattr(a, "DETAIL", False)
+                                         or getattr(a, "follow", None))
 
 
 class FakeResponse:
@@ -77,7 +81,10 @@ def responses():
             "workable.com/api/accounts": cassette("workable-igate-technologies.json"),
             "OneScreen/postings?limit": cassette("smartrecruiters-onescreen.json"),
             "OneScreen/postings/": cassette("smartrecruiters-onescreen-detail.json"),
-            "job-board/Overjet": cassette("ashby-overjet.json")}
+            "job-board/Overjet": cassette("ashby-overjet.json"),
+            "tags=story,author_whoishiring": cassette("hackernews-whoishiring-stories.json"),
+            "items/49922569": cassette("hackernews-whoishiring.json"),
+            "tags=job": cassette("hnjobs-job.json")}
 
 
 def client(routes, max_attempts=1, budget=contract.PER_PLATFORM_BUDGET):
@@ -136,12 +143,14 @@ class TestConsumedFields(unittest.TestCase):
     that is read, and the check would watch the wrong thing."""
 
     def test_each_adapter_declares_exactly_what_it_reads(self):
-        from src.adapters import ashby, smartrecruiters
-        for module in (greenhouse, lever, himalayas, smartrecruiters, ashby):
+        from src.adapters import ashby, hackernews, hnjobs, smartrecruiters
+        for module in (greenhouse, lever, himalayas, smartrecruiters, ashby, hackernews,
+                       hnjobs):
             with self.subTest(adapter=module.PLATFORM):
                 declared = {path.split(".")[-1]
                             for path in module.CONSUMED + module.CONSUMED_RESPONSE
-                            + getattr(module, "CONSUMED_DETAIL", ())}
+                            + getattr(module, "CONSUMED_DETAIL", ())
+                            + getattr(module, "CONSUMED_LOCATOR", ())}
                 self.assertEqual(reads_of(module), declared)
 
     def test_smartrecruiters_declares_real_paths_in_its_list_and_its_detail(self):
@@ -293,14 +302,38 @@ class TestShape(unittest.TestCase):
             elif isinstance(node, list):
                 for item in node:
                     walk(item, where)
-        from tools.make_cassette import sections_with_text
+        from tools.make_cassette import posts_with_text, sections_with_text
         for name in sorted(os.listdir(root)):
             if name.endswith(".json"):
                 with open(os.path.join(root, name), encoding="utf-8") as f:
                     doc = json.load(f)
                 walk(doc, name)
                 found += ["%s: section %s" % (name, s) for s in sections_with_text(doc)]
+                found += ["%s: post %s" % (name, i) for i in posts_with_text(doc)]
         self.assertEqual(found, [])
+
+    def test_the_cassette_tool_keeps_a_posts_first_line_and_nothing_more(self):
+        """Hacker News: a post is one `text`, its first line a header read
+        as a title, the rest its description; replies, authors, the search's
+        highlights and its author tags name people or repeat the text.
+        Mutation: "the cassette tool keeps a post's description"."""
+        from tools.make_cassette import PLACEHOLDER, posts_with_text, sanitise
+        thread = {"type": "story", "story_id": 1, "text": "Please state the location.",
+                  "author": "whoishiring", "children": [
+                      {"type": "comment", "story_id": 1, "id": 2, "author": "someone",
+                       "text": "Acme | Engineer | jo@acme.io\nWe build.<p>Apply here.",
+                       "children": [{"type": "comment", "story_id": 1, "text": "a reply"}]}]}
+        self.assertEqual(posts_with_text(thread), [2])
+        out = sanitise(thread)
+        [post] = out["children"]
+        self.assertEqual(post["text"], "Acme | Engineer | %s<p>%s" % (PLACEHOLDER, PLACEHOLDER))
+        self.assertEqual((post["author"], post["children"], out["text"], out["author"]),
+                         (PLACEHOLDER, [], PLACEHOLDER, PLACEHOLDER))
+        self.assertEqual(posts_with_text(out), [])
+        hit = sanitise({"title": "X Is Hiring", "_highlightResult": {"title": {"value": "X"}},
+                        "_tags": ["story", "author_someone"], "story_text": "prose"})
+        self.assertEqual((hit["_highlightResult"], hit["_tags"], hit["story_text"]),
+                         (PLACEHOLDER, ["story", PLACEHOLDER], PLACEHOLDER))
 
     def test_the_cassette_tool_sanitises_the_envelope_too(self):
         """Mutation: "the cassette tool leaves the envelope as it came"."""
@@ -401,7 +434,17 @@ class TestCheck(unittest.TestCase):
         c = client(responses())
         contract.check(BOARDS, c, {}, NOW)
         self.assertEqual(len(c.session.calls), REQUESTS)
-        self.assertEqual(REQUESTS, len(contract.PLATFORMS) + 1)
+        self.assertEqual(REQUESTS, len(contract.PLATFORMS) + 2)
+
+    def test_hacker_news_is_checked_on_the_thread_the_run_reads(self):
+        """The thread is found by a first request, as the run finds it, and
+        its posts are fingerprinted. Mutation: "the contract check never
+        follows to the thread"."""
+        c = client(responses())
+        fp, log = contract.check(BOARDS, c, {}, NOW)
+        self.assertEqual(log["platforms"]["hackernews"]["postings"], 40)
+        self.assertIn("text", fp["hackernews"]["posting"])
+        self.assertTrue(any("items/49922569" in u for u in c.session.calls))
 
     def test_the_detail_is_fingerprinted_and_a_change_in_it_is_named(self):
         """SmartRecruiters' description is on the detail, so its shape is

@@ -44,7 +44,7 @@
   {
     "label": "Ashby's boards are configured and not polled",
     "path": "src/run.py",
-    "find": "            \"manatal\": manatal, \"workable\": workable, \"smartrecruiters\": smartrecruiters,\n            \"ashby\": ashby}",
-    "replace": "            \"manatal\": manatal, \"workable\": workable, \"smartrecruiters\": smartrecruiters}"
+    "find": "            \"manatal\": manatal, \"workable\": workable, \"smartrecruiters\": smartrecruiters,\n            \"ashby\": ashby, \"hackernews\": hackernews, \"hnjobs\": hnjobs}",
+    "replace": "            \"manatal\": manatal, \"workable\": workable, \"smartrecruiters\": smartrecruiters,\n            \"hackernews\": hackernews, \"hnjobs\": hnjobs}"
   }
 ]

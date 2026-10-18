@@ -78,13 +78,15 @@ import traceback
 from datetime import datetime, timezone
 
 from . import envfile, storage
-from .adapters import ashby, greenhouse, himalayas, lever, manatal, smartrecruiters, workable
+from .adapters import (ashby, greenhouse, hackernews, himalayas, hnjobs, lever, manatal,
+                       smartrecruiters, workable)
 from .config import REPO_ROOT, ConfigError, load_boards
 from .http_client import HttpClient, HttpError
 from .normalise import dumps, iso, loads
 
 PLATFORMS = {"greenhouse": greenhouse, "lever": lever, "himalayas": himalayas, "manatal": manatal,
-             "workable": workable, "smartrecruiters": smartrecruiters, "ashby": ashby}
+             "workable": workable, "smartrecruiters": smartrecruiters, "ashby": ashby,
+             "hackernews": hackernews, "hnjobs": hnjobs}
 
 FINGERPRINT_FILE = "contract/fingerprint.json"
 REBASELINES_PATH = os.path.join(REPO_ROOT, "config", "contract_rebaselines.json")
@@ -321,6 +323,12 @@ def check_one(platform, adapter, board, client, stored, entry, now, rebaselines)
     None when the board could not be answered and the old one stands."""
     try:
         payload = client.get_json(adapter.url_for(board), board.source)
+        # Hacker News' thread is found by a first request, as the run finds
+        # it, and the check fingerprints what the run parses.
+        follow = getattr(adapter, "follow", None)
+        found = follow(board, payload) if follow else None
+        if found:
+            payload = client.get_json(found, board.source)
     except HttpError as e:
         entry.update(status="unreachable", detail=str(e))
         return None

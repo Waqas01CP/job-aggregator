@@ -55,7 +55,8 @@ from . import clearing, envfile, facts, private_store, projection, storage
 from .airtable_sweep import JOBS, SweepClient, TABLE_SECRETS
 from .closure import Closure, covered as walk_covered
 from .sweep import Sweep, older_than
-from .adapters import ashby, greenhouse, himalayas, lever, manatal, smartrecruiters, workable
+from .adapters import (ashby, greenhouse, hackernews, himalayas, hnjobs, lever, manatal,
+                       smartrecruiters, workable)
 from . import health
 from .airtable import (BASE_ENV, CALL_LOG_KEYS, HEALTH_LOG_KEY, HEALTH_TABLE_ENV,
                        HEALTH_TEST_TABLE_ENV, RUN_LOG_KEY, TABLE_ENV, TEST_TABLE_ENV,
@@ -76,7 +77,7 @@ EXIT_STOPPED_RESUMABLE = 2
 
 ADAPTERS = {"greenhouse": greenhouse, "lever": lever, "himalayas": himalayas,
             "manatal": manatal, "workable": workable, "smartrecruiters": smartrecruiters,
-            "ashby": ashby}
+            "ashby": ashby, "hackernews": hackernews, "hnjobs": hnjobs}
 
 # A paginated feed is read until it reaches postings already stored, or
 # postings too old for the age rule to admit. The cap is a runaway guard on top
@@ -381,9 +382,12 @@ def project_display(run, no_commit, test_mode, restore_failure=None, retired=Non
     client = reader = None
     try:
         described = description_fields_shown()
+        held = load_sweep_config().held_from_display
         if no_commit:
             stages["mode"] = "dry run: a no-commit run reaches no base and no private store"
-            records = projection.plan(projection.load_rows(run.paths), now_iso, run.matcher,
+            records = projection.plan(projection.held_back(projection.load_rows(run.paths), held,
+                                                           stages),
+                                      now_iso, run.matcher,
                                       projection.identities_in(
                                           projection.public_store_texts(run.paths)
                                           + projection.private_store_texts(run.paths)), stages,
@@ -401,7 +405,7 @@ def project_display(run, no_commit, test_mode, restore_failure=None, retired=Non
         projection.project(run.paths, now_iso, run.matcher, client,
                            projection.private_store_texts(run.paths), stages,
                            public_only=bool(restore_failure), retired=retired,
-                           displayed=lambda: shown, described=described)
+                           displayed=lambda: shown, described=described, held=held)
         return stages, with_reads(dict(client.counters(), failure=None,
                                        month_to_date_by_branch=by_branch), reader), None
     except Exception as e:
@@ -715,6 +719,12 @@ class Run:
                 payload = self._fetch_pages(adapter, board, log)
             else:
                 payload = self.client.get_json(adapter.url_for(board), board.source)
+                # A feed found through a first request, Hacker News' month's
+                # thread: the adapter names the second, which is what it parses.
+                follow = getattr(adapter, "follow", None)
+                found = follow(board, payload) if follow else None
+                if found:
+                    payload = self.client.get_json(found, board.source)
             if getattr(adapter, "DETAIL", False):
                 self._fetch_details(adapter, board, payload, seen_first_seen, log)
         except (BudgetExhausted, CircuitOpen) as stop:

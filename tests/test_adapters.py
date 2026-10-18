@@ -14,7 +14,8 @@ from datetime import datetime, timezone
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from src.adapters import ashby, greenhouse, lever, manatal, smartrecruiters, workable
+from src.adapters import (ashby, greenhouse, hackernews, hnjobs, lever, manatal, smartrecruiters,
+                          workable)
 from src.adapters.base import AdapterError, Posting
 from src.config import Board
 
@@ -646,6 +647,146 @@ class TestAshby(unittest.TestCase):
         for payload in ({"content": []}, [], {"jobs": None}):
             with self.subTest(payload=payload), self.assertRaises(AdapterError):
                 ashby.parse(payload, AB_BOARD)
+
+
+HN_BOARD = Board(platform="hackernews", slug="whoishiring")
+HNJ_BOARD = Board(platform="hnjobs", slug="jobstories")
+
+
+def hn_post(header, rest="<p>STRIPPED", **extra):
+    """A Who is hiring post shaped as Algolia gives it."""
+    return dict({"id": 49900001, "type": "comment", "story_id": 49922569,
+                 "created_at": "2026-10-05T12:00:00.000Z", "text": header + rest,
+                 "author": "STRIPPED", "children": []}, **extra)
+
+
+class TestHackerNews(unittest.TestCase):
+    """Hacker News' Who is hiring thread. Cassettes: October 2026's first 40
+    posts, each its first line only, and the stories that find it, read
+    2026-10-18 and sanitised."""
+
+    def setUp(self):
+        self.thread = cassette("hackernews-whoishiring.json")
+        self.stories = cassette("hackernews-whoishiring-stories.json")
+
+    def one(self, header, **extra):
+        thread = dict(self.thread, children=[hn_post(header, **extra)])
+        return hackernews.parse(thread, HN_BOARD).postings[0]
+
+    def test_the_newest_who_is_hiring_thread_is_followed(self):
+        """The account posts "Who wants to be hired?" beside it. Mutation:
+        "the thread followed is not the newest"."""
+        self.assertEqual(hackernews.url_for(HN_BOARD),
+                         "https://hn.algolia.com/api/v1/search_by_date?tags=story,"
+                         "author_whoishiring&hitsPerPage=10")
+        self.assertEqual(hackernews.follow(HN_BOARD, self.stories),
+                         "https://hn.algolia.com/api/v1/items/49922569")
+        wanted = dict(self.stories, hits=[h for h in self.stories["hits"]
+                                          if "hired" in h["title"]])
+        self.assertIsNone(hackernews.follow(HN_BOARD, wanted))
+
+    def test_parses_every_post_and_refuses_anything_but_the_thread(self):
+        result = hackernews.parse(self.thread, HN_BOARD)
+        self.assertEqual((len(result.postings), result.problems), (40, []))
+        for payload in (self.stories, {"title": "Ask HN: Who wants to be hired?", "children": []},
+                        []):
+            with self.subTest(payload=type(payload).__name__), self.assertRaises(AdapterError):
+                hackernews.parse(payload, HN_BOARD)
+
+    def test_a_saved_post_is_read_again(self):
+        """The re-read wraps a saved post with no thread around it (ADR-0040's
+        and ADR-0058's re-read). Mutation: "a saved Hacker News post cannot
+        be re-read"."""
+        from src import facts
+        post = hn_post("Acme | AI Engineer | Lahore | ONSITE", id=49900002)
+        post.pop("children")
+        texts = [json.dumps([{"identity": "hackernews:49900002", "board_id": HN_BOARD.board_id,
+                              "fetched_at": "2026-10-18T03:19:48.000000Z", "posting": post}])]
+        records, counts = facts.reread(texts, [HN_BOARD], {}, {"hackernews": hackernews})
+        self.assertEqual((counts["read"], counts["unparseable"]), (1, 0))
+        self.assertEqual(records["hackernews:49900002"]["workplace"], "on site")
+
+    def test_the_first_line_is_the_title_and_ends_at_a_break(self):
+        """Fastly's post ran its header into its description with a bare
+        newline. Mutation: "the first line runs on past a line break"."""
+        p = self.one("Acme | AI Engineer | Remote", rest="\nWe build things.<p>More")
+        self.assertEqual(p.title, "Acme | AI Engineer | Remote")
+        p = self.one("<i>Acme | AI Engineer</i>", rest="<br>We build.")
+        self.assertEqual(p.title, "Acme | AI Engineer")
+        long = self.one("Acme | " + "x" * 300)
+        self.assertEqual(len(long.title), hackernews.TITLE_LIMIT)
+
+    def test_the_employer_is_the_first_part_without_its_address(self):
+        p = self.one('Smarkets (<a href="https:&#x2F;&#x2F;www.smarkets.com">'
+                     'https:&#x2F;&#x2F;www.smarkets.com</a>) | Engineer | London, UK')
+        self.assertEqual((p.employer, p.employer_provenance), ("Smarkets", "payload"))
+        p = self.one("Ambito (ambito.io) – Founding AI Engineer")
+        self.assertEqual(p.employer, "Ambito (ambito.io)")
+
+    def test_the_place_is_the_line_after_the_company(self):
+        p = self.one("Acme | AI Engineer | San Francisco, CA | ONSITE | $200k")
+        self.assertEqual(p.location, "AI Engineer | San Francisco, CA | ONSITE | $200k")
+        self.assertIsNone(p.places)
+
+    def test_the_workplace_is_read_from_the_line_and_remote_wins(self):
+        """A remote option makes it remote; "no remote" is not one.
+        Mutation: "a post saying both on site and remote reads on site"."""
+        for header, want in (("Acme | Engineer | ONSITE", "on site"),
+                             ("Acme | Engineer | In-person, NYC", "on site"),
+                             ("Acme | Engineer | NYC (Hybrid)", "hybrid"),
+                             ("Acme | Engineer | ONSITE or REMOTE", "remote"),
+                             ("Acme | Engineer | Onsite, no remote", "on site"),
+                             ("Acme | Engineer | NYC", None)):
+            with self.subTest(header=header):
+                self.assertEqual(self.one(header).workplace, want)
+
+    def test_the_link_is_the_posts_own_page_on_hacker_news(self):
+        """ADR-0063: a second-wave posting links to its source's own page.
+        Mutation: "a Hacker News post links nowhere of its own"."""
+        p = self.one("Acme | Engineer | Remote", id=49912345)
+        self.assertEqual((p.url, p.url_provenance, p.source),
+                         ("https://news.ycombinator.com/item?id=49912345", "constructed",
+                          "hackernews"))
+
+    def test_a_deleted_post_is_passed_over_and_replies_are_not_kept(self):
+        thread = dict(self.thread, children=[
+            hn_post("", rest="", text=None, author=None),
+            hn_post("Acme | Engineer | Remote", children=[{"id": 2, "text": "a reply"}])])
+        result = hackernews.parse(thread, HN_BOARD)
+        self.assertEqual((len(result.postings), result.problems), (1, []))
+        self.assertNotIn("children", result.postings[0].raw)
+        self.assertEqual(result.postings[0].published_at,
+                         datetime(2026, 10, 5, 12, 0, tzinfo=timezone.utc))
+
+
+class TestHnJobs(unittest.TestCase):
+    """Hacker News' job stories. Cassette: the 13 of the 30 days to
+    2026-10-17, read 2026-10-18 and sanitised."""
+
+    def setUp(self):
+        self.payload = cassette("hnjobs-job.json")
+
+    def test_parses_every_story(self):
+        self.assertEqual(hnjobs.url_for(HNJ_BOARD),
+                         "https://hn.algolia.com/api/v1/search_by_date?tags=job&hitsPerPage=100")
+        result = hnjobs.parse(self.payload, HNJ_BOARD)
+        self.assertEqual((len(result.postings), result.problems), (13, []))
+        with self.assertRaises(AdapterError):
+            hnjobs.parse({"children": []}, HNJ_BOARD)
+
+    def test_the_employer_is_the_title_before_its_batch(self):
+        for title, want in (("Coris (YC S22) Is Hiring Back End Engineer", "Coris"),
+                            ("Flexport Is Hiring a Biz Ops Leader in Office of CEO", "Flexport"),
+                            ("Launch HN: a product, not a job", None)):
+            with self.subTest(title=title):
+                self.assertEqual(hnjobs.employer_of(title), want)
+
+    def test_the_link_is_the_storys_own_page_and_no_text_is_none(self):
+        """ADR-0063. Mutation: "a job story links to the employer's page"."""
+        [p] = [p for p in hnjobs.parse(self.payload, HNJ_BOARD).postings
+               if p.title.startswith("Coris")]
+        self.assertEqual(p.url, "https://news.ycombinator.com/item?id=%s" % p.external_id)
+        self.assertEqual((p.source, p.description, p.employer), ("hnjobs", (), "Coris"))
 
 
 class TestPostingInvariants(unittest.TestCase):

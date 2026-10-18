@@ -83,6 +83,34 @@ class Harness(unittest.TestCase):
         return client, stages
 
 
+class TestHeldSources(Harness):
+    """ADR-0063: a source built while the month's allowance cannot carry its
+    rows is fetched and stored as any source is, and nothing of it is sent
+    to Airtable until the hold is lifted."""
+
+    def rows(self):
+        return ([make_row(1, employer="Acme")],
+                [make_row(2, employer="Beta", title="ML Engineer", source="hackernews")])
+
+    def test_a_held_sources_rows_are_counted_and_none_is_sent(self):
+        """Mutation: "a held source's rows are sent"."""
+        public, private = self.rows()
+        self.write_filtered(public, local=private)
+        client, stages = FakeClient(), {}
+        projection.project(self.paths, NOW, MATCHER, client, [], stages, held=("hackernews",))
+        self.assertEqual([r["Identity"] for r in client.sent], ["greenhouse:1"])
+        self.assertEqual(stages["rows_held_from_display"], 1)
+        self.assertEqual(projection.held_back(public + private, ("hackernews",), {}), public)
+
+    def test_with_nothing_held_every_source_is_sent(self):
+        public, private = self.rows()
+        self.write_filtered(public, local=private)
+        client, stages = self.project()
+        self.assertEqual(sorted(r["Identity"] for r in client.sent),
+                         ["greenhouse:1", "hackernews:2"])
+        self.assertNotIn("rows_held_from_display", stages)
+
+
 class TestStages(Harness):
     def test_each_stage_is_counted(self):
         """The display, the chain and the store differ in count by design, so

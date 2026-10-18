@@ -353,6 +353,31 @@ The account's `name` sits beside `jobs` and is the employer; its `description`, 
 
 **What today's rules make of the 33**, through the real chain on 2026-10-17: none is kept. The title rule drops 32 and the seniority rule 1 ("Staff Software Engineer", in Lahore). Five list Pakistan among their places. Brief 10 measured 0 of 25 on 2026-10-04.
 
+## Hacker News
+
+ADR-0063's second wave, first, built 2026-10-18. Two feeds through Algolia's Hacker News API, keyless, no limit stated (research 0005), each an aggregator whose rows keep to the private store:
+
+- **The monthly "Ask HN: Who is hiring?" thread**, `hackernews`, two requests a run. `search_by_date?tags=story,author_whoishiring` finds the account's newest stories, of which the newest titled "Ask HN: Who is hiring?" is followed, since the account posts "Who wants to be hired?" beside it. `items/{id}` then gives the thread as one tree, each top-level comment a post under `children`.
+- **The job stories**, `hnjobs`, one request a run: `search_by_date?tags=job`, the newest hundred under `hits`, Y Combinator companies' posts.
+
+Measured 2026-10-18 over October 2026's thread (266 posts, `[VERIFIED]`) and the 13 job stories of the 30 days to 10-17:
+
+| Field | Feed | Present | Read | Notes |
+|---|---|---|---|---|
+| `id`, `objectID` | thread, stories | 100% | yes | the identity |
+| `text` | thread | 266 of 266, none deleted | **yes** | one HTML body. Its **first line**, to the first `<p>`, `<br>` or line break, is the header: the title, up to 200 characters, and the employer, place and workplace below. The whole is the description. Fastly's post ran its header into its prose with a bare line break |
+| the header's first part | thread | where the line has a vertical bar | yes | the employer, any address in it taken out; else the line before its first dash |
+| the header's later parts | thread | | yes | the location, still split at each vertical bar. The location rule leaves out what no place rule can name (company, role, pay), and closes an on-site or hybrid post in a place it cannot name (ADR-0057, `header_place_sources`) |
+| the header's words | thread | remote 139, on site 60, hybrid 36, none 31 | yes | the workplace: remote wherever "remote" is said and not denied, else hybrid, else on site |
+| `title` | stories | 100% | yes | "Coris (YC S22) Is Hiring Back End Engineer"; the employer is what comes before its batch or "is hiring" |
+| `created_at` | both | 100% | yes | when posted, ISO with Z |
+| `story_text` | stories | none of 13 | yes | the description where present; absent, the posting carried none |
+| `url` | stories | 100% | no | the employer's page. The link is the post's or story's own page on Hacker News, which names the source (ADR-0063) |
+| `author` | both | 100% | no | a person's account, stripped from every cassette |
+| `children` of a post | thread | | no | replies, other people's comments, never part of the posting |
+
+**What the chain keeps, read fresh:** 8 of the thread's 266 and 2 of the 13 stories. The thread lost 170 to the title rule, 51 to seniority, 33 to location (16 naming only places closed to him, 17 on site or hybrid in a place the rule cannot name), 2 to experience and 2 to authorisation. One post reads both ways, "Remote but Boston based only", and is kept, its remote word read as a remote option.
+
 ## What each API accepts
 
 From each provider's own documentation, read 2026-10-02 `[outside this
@@ -616,6 +641,7 @@ what happens when it is absent, and each of these deserves that separately.
 
 | Date | Change | Reason |
 |---|---|---|
+| 2026-10-18 | Hacker News' section added: the Who is hiring thread found then read, its post's first line as title, employer, place and workplace, and the job stories; what the chain keeps read fresh | Its adapters are built, ADR-0063's second wave, first |
 | 2026-10-17 | Ashby's section added: its one endpoint, every field counted over 33 postings, `publishedAt`'s first value kept by the store, the secondary locations read as places of their own; Ashby added to the experience table as stating no level | Its adapter is built, ADR-0059's fourth platform, the operator's go of 2026-10-17 |
 | 2026-10-17 | SmartRecruiters' section added: its list and detail endpoints, every field counted over 20 postings and two details, `releasedDate` trusted on the operator's decision, `experienceLevel` read as the stated level | Its adapter is built, ADR-0059's third platform |
 | 2026-10-17 | Workable's `experience` marked read, its counts over the 47 saved postings added to the experience table, and the level rule's turn to a list of the levels that drop noted under "Decided" | The Senior change's build, Brief 13 item 3 |

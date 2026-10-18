@@ -263,6 +263,9 @@ class Eligibility:
     level_names: tuple = ()
     home_country_codes: tuple = ()
     max_years_experience: int = None
+    # Sources whose place is free text in a post's first line, Hacker News'
+    # (ADR-0057's row of 2026-10-18); see rule_location.
+    header_place_sources: tuple = ()
 
 
 def _words(terms):
@@ -299,7 +302,10 @@ def load_eligibility(path=None):
     years = raw.get("max_years_experience")
     if not isinstance(years, int) or isinstance(years, bool) or years < 0:
         raise FilterError("max_years_experience must be a whole number of years, 0 or more")
-    return Eligibility(max_age_days=days,
+    header = raw.get("header_place_sources", [])
+    if not isinstance(header, list) or not all(isinstance(v, str) and v.strip() for v in header):
+        raise FilterError("header_place_sources must be a list of sources")
+    return Eligibility(max_age_days=days, header_place_sources=tuple(header),
                        home_cities=tuple(p for p in lists["home"] if p.pattern not in country),
                        home_country_names=names["home_country"],
                        levels_dropped=tuple(fold(v) for v in levels),
@@ -557,6 +563,8 @@ def rule_location(row, eligibility, **kw):
     if not text or not str(text).strip():
         return Verdict(True)
     parts = [p for p in _PARTS.split(str(text)) if p.strip()]
+    if getattr(row, "source", None) in eligibility.header_place_sources:
+        return _header_place(text, parts, row, eligibility)
     worked = _workplace_words(getattr(row, "workplace", None), eligibility)
     verdicts = [classify_place(_with_workplace(p, worked, eligibility), eligibility)
                 for p in parts]
@@ -594,6 +602,40 @@ def rule_location(row, eligibility, **kw):
                            "knows, and the source places the posting outside %s: %s"
                            % (" or ".join(eligibility.home_country_names),
                               "; ".join(places)[:120]))
+    return Verdict(True)
+
+
+def _header_place(text, parts, row, eligibility):
+    """A place read from a post's first line, Hacker News' (ADR-0057's row
+    of 2026-10-18, his "1. a.").
+
+    **The line's parts no place rule can name are left out.** They are its
+    company, role and pay, not places; read as places the rule cannot name,
+    they would keep every post. What is left is judged as any location is:
+    dropped only when every part is closed, a stated workplace beside it.
+
+    **With nothing left, a post on site or hybrid with no remote option is
+    closed**, the exception to keeping a place the rule cannot name, for
+    these sources alone: of October's 27 kept read fresh, 16 were on site in
+    cities the rule cannot place. A post that says nothing of where it is
+    worked, or offers a remote option, is kept, as an unnamed place is
+    elsewhere. A part naming Pakistan is named, so Karachi is kept and any
+    other Pakistani city on site is closed, as before."""
+    named = [p for p in parts if classify_place(p, eligibility) != "unclear"]
+    worked = _workplace_words(getattr(row, "workplace", None), eligibility)
+    if named:
+        verdicts = [classify_place(_with_workplace(p, worked, eligibility), eligibility)
+                    for p in named]
+        if all(v == "closed" for v in verdicts):
+            return Verdict(False, "location", "the post's first line names only places closed "
+                           "to the operator, none of them %s or a remote role open to it: %r"
+                           % (" or ".join(eligibility.home_country_names),
+                              "; ".join(named)[:120]))
+        return Verdict(True)
+    if worked:
+        return Verdict(False, "location", "the post's first line says it is worked %s, with no "
+                       "remote option, in a place the rule cannot name, which closes it on this "
+                       "source: %r" % (worked, str(text)[:120]))
     return Verdict(True)
 
 

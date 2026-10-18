@@ -22,9 +22,10 @@ DEFAULT_PATH = os.path.join(REPO_ROOT, "config", "boards.json")
 # Platforms this build adapts. ADR-0009 fixed the slice at the first two;
 # Manatal is ADR-0059's first, by measured yield, on 2026-10-07; Workable
 # second, on 2026-10-08; SmartRecruiters third, on 2026-10-17; Ashby fourth,
-# on 2026-10-17.
+# on 2026-10-17. Hacker News' thread and job stories, ADR-0063's second wave,
+# on 2026-10-18.
 PLATFORMS = frozenset({"greenhouse", "lever", "himalayas", "manatal", "workable",
-                       "smartrecruiters", "ashby"})
+                       "smartrecruiters", "ashby", "hackernews", "hnjobs"})
 
 # Every normalisation that may be named by a board entry. A name outside this
 # set is a typo, and a typo that silently did nothing would be invisible: the
@@ -34,8 +35,11 @@ NORMALISATIONS = frozenset({"strip_location_suffix"})
 # ADR-0019 source classes. ADR-0020 routes raw storage by this: employer ATS
 # rows go to the public data branch, aggregator rows stay local and are never
 # committed, because two feeds prohibit redistribution and a branch inherits
-# its repository's visibility.
-AGGREGATOR_PLATFORMS = frozenset({"himalayas"})
+# its repository's visibility. Hacker News is one too, the seat's statement
+# under ADR-0063 (Brief 16, item 2): its posts are written by many employers'
+# people on a site that is not theirs, and nothing in its terms grants
+# republishing them, so its rows keep to the private store with Himalayas'.
+AGGREGATOR_PLATFORMS = frozenset({"himalayas", "hackernews", "hnjobs"})
 
 # Sources whose rows may reach the public data branch. Named rather than
 # derived as "not an aggregator", so a source this build does not know, such
@@ -203,6 +207,9 @@ class SweepConfig:
     # `Jobs` (airtable.DESCRIPTION_FIELDS). Off until the operator has made
     # the fields and the month has room for the one re-send of every row.
     description_fields_shown: bool = False
+    # ADR-0063: sources fetched and stored but not sent to `Jobs` while the
+    # month's allowance cannot carry their rows.
+    held_from_display: tuple = ()
 
 
 # The tables whose reason field the sweep may fill from `Reason`.
@@ -268,7 +275,12 @@ def load_sweep_config(path=None):
     if not isinstance(shown, bool):
         raise ConfigError("sweep config: description_fields_shown must be true or false, "
                           "got %r" % (shown,))
+    held = doc.get("sources_held_from_display", [])
+    if not isinstance(held, list) or not all(isinstance(s, str) and s in PLATFORMS for s in held):
+        raise ConfigError("sweep config: sources_held_from_display must be a list of sources "
+                          "this build adapts, got %r" % (held,))
     return SweepConfig(monthly_call_ceiling=ceiling, description_fields_shown=shown,
+                       held_from_display=tuple(held),
                        reason_choices={t: tuple(v) for t, v in choices.items()},
                        closed_after_polled_runs=runs,
                        retire_after_days=whole("retire_after_days", 1),

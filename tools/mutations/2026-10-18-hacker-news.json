@@ -1,0 +1,86 @@
+[
+  {
+    "label": "the thread followed is not the newest",
+    "path": "src/adapters/hackernews.py",
+    "find": "    newest = max(threads, key=lambda h: h.get(\"created_at_i\") or 0)",
+    "replace": "    newest = min(threads, key=lambda h: h.get(\"created_at_i\") or 0)"
+  },
+  {
+    "label": "the first line runs on past a line break",
+    "path": "src/adapters/hackernews.py",
+    "find": "_PARAGRAPH = re.compile(r\"(?i)<p>|<br\\s*/?>|\\n\")",
+    "replace": "_PARAGRAPH = re.compile(r\"(?i)<p>\")"
+  },
+  {
+    "label": "a post saying both on site and remote reads on site",
+    "path": "src/adapters/hackernews.py",
+    "find": "    if _REMOTE.search(header) and not _NOT_REMOTE.search(header):\n        return \"remote\"\n    if _HYBRID.search(header):",
+    "replace": "    if _HYBRID.search(header):"
+  },
+  {
+    "label": "a Hacker News post links nowhere of its own",
+    "path": "src/adapters/hackernews.py",
+    "find": "            url=PAGE % external_id,",
+    "replace": "            url=\"https://example.invalid/\" + external_id,"
+  },
+  {
+    "label": "a job story links to the employer's page",
+    "path": "src/adapters/hnjobs.py",
+    "find": "            url=PAGE % external_id,",
+    "replace": "            url=entry.get(\"url\") or PAGE % external_id,"
+  },
+  {
+    "label": "the header place rule keeps an unnamed place on site",
+    "path": "src/filters.py",
+    "find": "    if worked:\n        return Verdict(False, \"location\", \"the post's first line says",
+    "replace": "    if False:\n        return Verdict(False, \"location\", \"the post's first line says"
+  },
+  {
+    "label": "the header place rule reads the line's every part",
+    "path": "src/filters.py",
+    "find": "    named = [p for p in parts if classify_place(p, eligibility) != \"unclear\"]",
+    "replace": "    named = list(parts)"
+  },
+  {
+    "label": "the header place rule applies to every source",
+    "path": "src/filters.py",
+    "find": "    if getattr(row, \"source\", None) in eligibility.header_place_sources:",
+    "replace": "    if True:"
+  },
+  {
+    "label": "the run never follows to the thread",
+    "path": "src/run.py",
+    "find": "                if found:\n                    payload = self.client.get_json(found, board.source)",
+    "replace": "                if False:\n                    payload = self.client.get_json(found, board.source)"
+  },
+  {
+    "label": "the contract check never follows to the thread",
+    "path": "src/contract.py",
+    "find": "        if found:\n            payload = client.get_json(found, board.source)",
+    "replace": "        if False:\n            payload = client.get_json(found, board.source)"
+  },
+  {
+    "label": "Hacker News' rows reach the public branch",
+    "path": "src/config.py",
+    "find": "AGGREGATOR_PLATFORMS = frozenset({\"himalayas\", \"hackernews\", \"hnjobs\"})",
+    "replace": "AGGREGATOR_PLATFORMS = frozenset({\"himalayas\"})"
+  },
+  {
+    "label": "a held source's rows are sent",
+    "path": "src/projection.py",
+    "find": "    kept = [r for r in rows if r.source not in held]",
+    "replace": "    kept = list(rows)"
+  },
+  {
+    "label": "the cassette tool keeps a post's description",
+    "path": "tools/make_cassette.py",
+    "find": "    return EMAIL.sub(PLACEHOLDER, first) + \"<p>\" + PLACEHOLDER",
+    "replace": "    return text"
+  },
+  {
+    "label": "a saved Hacker News post cannot be re-read",
+    "path": "src/adapters/hackernews.py",
+    "find": "            or (title is not None and not THREAD_TITLE.match(str(title)))):",
+    "replace": "            or not THREAD_TITLE.match(str(title or \"\"))):"
+  }
+]

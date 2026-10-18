@@ -134,6 +134,65 @@ class TestTitleMatching(unittest.TestCase):
         self.assertIn("machine learning", kept[0][1])
 
 
+class TestTheHeaderPlace(unittest.TestCase):
+    """ADR-0057's row of 2026-10-18, his "1. a.": on Hacker News, whose place
+    is free text in a post's first line, the line's parts no place rule can
+    name are left out, and a post on site or hybrid with no remote option in
+    a place the rule cannot name is closed. For that source alone."""
+
+    def hn(self, header):
+        from src.adapters import hackernews
+        from tests.test_adapters import HN_BOARD, cassette, hn_post
+        thread = dict(cassette("hackernews-whoishiring.json"), children=[hn_post(header)])
+        [p] = hackernews.parse(thread, HN_BOARD).postings
+        kept, drops = apply_chain(normalise([p], HN_BOARD, NOW), NOW_ISO, matcher=MATCHER)
+        return bool(kept), (drops[0] if drops else None)
+
+    def test_on_site_in_a_place_it_cannot_name_drops_and_the_same_remote_is_kept(self):
+        """ADR-0057's Confirmation, both ways. Mutations: "the header place
+        rule keeps an unnamed place on site", "the header place rule reads
+        the line's every part"."""
+        for workplace, want in (("ONSITE", False), ("Hybrid", False), ("REMOTE", True),
+                                ("ONSITE or REMOTE", True)):
+            with self.subTest(workplace=workplace):
+                kept, drop = self.hn("Acme | AI Engineer | San Francisco, CA | %s" % workplace)
+                self.assertEqual(kept, want)
+                if not kept:
+                    self.assertEqual(drop["rule"], "location")
+
+    def test_a_post_saying_nothing_of_where_it_is_worked_is_kept(self):
+        self.assertEqual(self.hn("Acme | AI Engineer | San Francisco, CA")[0], True)
+
+    def test_a_pakistani_place_is_judged_as_before(self):
+        self.assertTrue(self.hn("Acme | AI Engineer | Karachi | ONSITE")[0])
+        self.assertFalse(self.hn("Acme | AI Engineer | Lahore | ONSITE")[0])
+
+    def test_a_named_place_closed_to_him_drops_whatever_the_line_also_says(self):
+        """A region-limited remote is a named place, closed, which the
+        company, role and pay beside it can no longer keep."""
+        kept, drop = self.hn("Acme | AI Engineer | Remote (US only) | $200k")
+        self.assertEqual((kept, drop["rule"]), (False, "location"))
+        self.assertTrue(self.hn("Acme | AI Engineer | REMOTE (Worldwide)")[0])
+
+    def test_the_exception_is_hacker_news_alone(self):
+        """The same place and workplace from a board with a structured
+        country keeps the place it cannot name, as D13 always has. Mutation:
+        "the header place rule applies to every source"."""
+        from src.filters import ELIGIBILITY, rule_location
+        r = row(location="San Francisco, CA")
+        r.workplace = "on site"
+        self.assertTrue(rule_location(r, ELIGIBILITY).keep)
+        r.source = "hackernews"
+        self.assertFalse(rule_location(r, ELIGIBILITY).keep)
+
+    def test_the_configuration_names_the_sources_and_refuses_anything_else(self):
+        from src.filters import ELIGIBILITY, load_eligibility
+        self.assertEqual(ELIGIBILITY.header_place_sources, ("hackernews", "hnjobs"))
+        for value in ("hackernews", [""], [3]):
+            with self.subTest(value=value), self.assertRaises(FilterError):
+                load_eligibility(_config_with(header_place_sources=value))
+
+
 class TestTheLocationRule(unittest.TestCase):
     """D13, the operator's decision of 2026-09-26: no posting he is not
     eligible for, and none missed that he is. The brief's named cases of the

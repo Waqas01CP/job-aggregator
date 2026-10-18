@@ -2,8 +2,8 @@
   {
     "label": "the run projects without reading Jobs back",
     "path": "src/run.py",
-    "find": "                           displayed=lambda: shown, described=described)",
-    "replace": "                           displayed=None, described=described)"
+    "find": "                           displayed=lambda: shown, described=described, held=held)",
+    "replace": "                           displayed=None, described=described, held=held)"
   },
   {
     "label": "a row the display shows otherwise is not sent",

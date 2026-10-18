@@ -174,9 +174,10 @@ CONFIRMATIONS = {
             "test_preference_audit.TestTheShippedTree.test_no_module_hard_codes_a_preference",
             "test_preference_audit.TestTheAuditCanFail.test_a_country_in_code_is_a_violation"]},
         "On Hacker News, a post on site or hybrid in a place the rule cannot name must be "
-        "dropped, and the same post remote must be kept.": {
-            "unbuilt": "Hacker News is not yet built; its adapter and this exception come "
-                       "with Brief 16, item 2"},
+        "dropped, and the same post remote must be kept.": {"tests": [
+            "test_filters.TestTheHeaderPlace."
+            "test_on_site_in_a_place_it_cannot_name_drops_and_the_same_remote_is_kept",
+            "test_filters.TestTheHeaderPlace.test_the_exception_is_hacker_news_alone"]},
     },
     "0058": {
         "No derived value may be anything but a number, a configured place name or a flag.": {
@@ -283,12 +284,15 @@ CONFIRMATIONS["0063"] = dict(CONFIRMATIONS["0059"], **{
         "test_run.TestTheRunLogsCommit.test_elsewhere_it_is_the_checkouts_own",
         "test_contract.TestCheck.test_the_check_names_the_commit_that_ran_it"]},
     "A source built while the allowance cannot carry its rows must be seen fetching and "
-    "storing, and sending nothing to Airtable.": {
-        "unbuilt": "the hold comes with Hacker News, Brief 16, item 2"},
+    "storing, and sending nothing to Airtable.": {"tests": [
+        "test_projection.TestHeldSources.test_a_held_sources_rows_are_counted_and_none_is_sent",
+        "test_run.TestHackerNewsInTheRun.test_the_thread_is_found_then_read_and_stored_privately",
+        "test_run.TestTheCeiling."
+        "test_the_sources_held_name_sources_this_build_adapts_and_ship_empty"]},
     "Every second-wave posting must be seen linking to its source's own page and naming "
-    "its source.": {
-        "unbuilt": "no second-wave source is built yet; Hacker News is the first, Brief 16, "
-                   "item 2"},
+    "its source.": {"tests": [
+        "test_adapters.TestHackerNews.test_the_link_is_the_posts_own_page_on_hacker_news",
+        "test_adapters.TestHnJobs.test_the_link_is_the_storys_own_page_and_no_text_is_none"]},
 })
 
 # ADR-0062 consolidates ADR-0050 (2026-10-16): its eleven leads word for word,

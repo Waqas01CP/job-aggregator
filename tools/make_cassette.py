@@ -33,14 +33,34 @@ DESCRIPTION_FIELDS = frozenset({
     "salaryDescription", "salaryDescriptionPlain", "benefits",
     "key_responsibilities", "skills_knowledge_expertise", "publicDescription",
     "Job_Description", "descriptionHtml", "companyLogo", "hybridDescription",
+    "story_text", "comment_text", "_highlightResult",
 })
 
 # SmartRecruiters' job ad, 2026-10-17: four named sections under
 # `jobAd.sections`, each `{title, text}`. `text` cannot join the list above,
 # since it is Lever's title, so a section's text is stripped by where it sits.
 SECTIONS = "sections"
-# Fields that name a person, stripped whole: SmartRecruiters' `creator`.
-PEOPLE_FIELDS = frozenset({"creator"})
+# Fields that name a person, stripped whole: SmartRecruiters' `creator`, and
+# Hacker News' `author`, the account that posted.
+PEOPLE_FIELDS = frozenset({"creator", "author"})
+
+# Hacker News, 2026-10-18: a post is one `text` of HTML, its first line a
+# header, company, role and place, read as a title is read, and the rest the
+# description. The first line is kept, any address in it replaced, and the
+# rest stripped; its replies are other people's comments and go whole. `text`
+# cannot join the field list, since it is Lever's title, so a post is known
+# by its `type`.
+HN_POST = "comment"
+# The first line ends at a paragraph or a line break, as the adapter reads it.
+PARAGRAPH = re.compile(r"(?i)<p>|<br\s*/?>|\n")
+# Algolia's search highlights, and its tags, one of which names the poster.
+HIGHLIGHTS = "_highlightResult"
+TAGS = "_tags"
+
+
+def first_line_only(text):
+    first = PARAGRAPH.split(text or "", maxsplit=1)[0]
+    return EMAIL.sub(PLACEHOLDER, first) + "<p>" + PLACEHOLDER
 
 # The fields the adapters actually read. --keep-only-read-fields trims to these,
 # for the one cassette that needs every posting rather than every field.
@@ -73,12 +93,25 @@ def sanitise(node):
         if ("value_type" in node and node.get("value") not in (None, True, False)
                 and str(node.get("name") or "").strip().lower() not in KEPT_METADATA):
             node = dict(node, value=PLACEHOLDER)
+        if node.get("type") in (HN_POST, "story") and "story_id" in node:
+            # A Hacker News post or its thread: the post keeps its first
+            # line, the thread its title only, and neither its replies.
+            node = dict(node, text=(first_line_only(node["text"]) if node.get("type") == HN_POST
+                                    and isinstance(node.get("text"), str) else
+                                    PLACEHOLDER if node.get("text") else node.get("text")))
+            if node.get("type") == HN_POST:
+                node["children"] = []
         out = {}
         for key, value in node.items():
             if key in DESCRIPTION_FIELDS and isinstance(value, str):
                 out[key] = PLACEHOLDER
-            elif key in PEOPLE_FIELDS:
+            elif key in PEOPLE_FIELDS or key == HIGHLIGHTS:
+                # Algolia's highlights repeat every field, the text and the
+                # author included, as an object, which the field list above
+                # never meets, so they go whole.
                 out[key] = PLACEHOLDER
+            elif key == TAGS and isinstance(value, list):
+                out[key] = [PLACEHOLDER if str(t).startswith("author_") else t for t in value]
             elif key == SECTIONS and isinstance(value, dict):
                 out[key] = {name: dict(section, text=PLACEHOLDER)
                             if isinstance(section, dict) and "text" in section
@@ -109,6 +142,12 @@ def postings_of(doc):
         return doc, None
     if isinstance(doc, dict) and isinstance(doc.get("jobs"), list):
         return doc["jobs"], "jobs"
+    # Hacker News, through Algolia: a thread's posts under `children`, a
+    # search's stories under `hits`.
+    if isinstance(doc, dict) and isinstance(doc.get("children"), list):
+        return doc["children"], "children"
+    if isinstance(doc, dict) and isinstance(doc.get("hits"), list):
+        return doc["hits"], "hits"
     # Manatal's career site pages twenty postings under `results`, beside
     # `count`, `next` and `previous`, which the envelope keeps.
     if isinstance(doc, dict) and isinstance(doc.get("results"), list):
@@ -174,7 +213,28 @@ def main():
     if sections_with_text(out_doc):
         print("REFUSING: a job ad section still carries text")
         return 1
+    if posts_with_text(out_doc):
+        print("REFUSING: a Hacker News post still carries more than its first line")
+        return 1
     return 0
+
+
+def posts_with_text(node):
+    """Every Hacker News post that carries more than its first line, or
+    replies."""
+    found = []
+    if isinstance(node, dict):
+        if node.get("type") == HN_POST and "story_id" in node:
+            text = node.get("text")
+            rest = PARAGRAPH.split(text, maxsplit=1)[1:] if isinstance(text, str) else []
+            if (rest and rest[0] != PLACEHOLDER) or node.get("children"):
+                found.append(node.get("id"))
+        for value in node.values():
+            found += posts_with_text(value)
+    elif isinstance(node, list):
+        for item in node:
+            found += posts_with_text(item)
+    return found
 
 
 def sections_with_text(node):
