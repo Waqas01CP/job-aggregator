@@ -32,17 +32,17 @@ Records are written at the moment a decision concludes. A record's factual error
 | 0016 | Title-only matching against a versioned title pool | Accepted, one clause reversed by 0021, one built by 0051, its deferred rule built by 0058 |
 | 0017 | Sanitised cassettes as adapter test fixtures | Accepted |
 | 0018 | Scheduled contract check against live boards | Accepted, clause reversed by 0036; each platform checked on its own |
-| 0019 | Add aggregator feeds as a second source class | Accepted, clauses reversed by 0026 and 0039; its removal condition tested against 0053; its order for the remaining aggregators replaced by 0059 |
+| 0019 | Add aggregator feeds as a second source class | Accepted, clauses reversed by 0026 and 0039; its removal condition tested against 0053; its order for the remaining aggregators replaced by 0059, now 0063 |
 | 0020 | Route raw storage by source class | Accepted, one clause reversed by 0047 |
 | 0021 | Allowlist-only title matching, with normalisation | Accepted, clause reversed by 0032 |
 | 0022 | Document authority order | Accepted |
-| 0023 | Context artifact set and onboarding order | Accepted, artifact set extended, its open end state decided by 0059 |
+| 0023 | Context artifact set and onboarding order | Accepted, artifact set extended, its open end state decided by 0059, now 0063 |
 | 0024 | Session log format | Accepted |
 | 0025 | Auto Memory is not authoritative | Accepted |
 | 0026 | Employer provenance where a payload does not carry it | Accepted |
 | 0027 | Deduplication key normalisation, configured per source | Accepted |
 | 0028 | Per-run fetch budget, and detail fetched once per posting | Accepted; one circuit breaker per platform |
-| 0029 | Adapter order after the slice, and Dover dropped | Accepted, adapter order replaced by 0059; Manatal and Workable built |
+| 0029 | Adapter order after the slice, and Dover dropped | Accepted, adapter order replaced by 0059, now 0063; Manatal and Workable built |
 | 0030 | A rule change backfills the filtered layer | Accepted |
 | 0031 | Personal preferences are configuration, not code | Accepted |
 | 0032 | The seniority rule | Accepted, extended to a source's stated level; Senior no longer drops, by title or level |
@@ -57,7 +57,7 @@ Records are written at the moment a decision concludes. A record's factual error
 | 0041 | Location admits unless a source excludes | Superseded by 0057 |
 | 0042 | *reserved for ADR-RULES, deliberately unused* | n/a |
 | 0043 | Three outcome stores, now six | Accepted, extended by 0050, 0051, 0055 and 0062 |
-| 0044 | The priority star, on named attributes only | Accepted, deferred to version 2 by 0059 |
+| 0044 | The priority star, on named attributes only | Accepted, deferred to version 2 by 0059, now 0063 |
 | 0045 | The classification flow | Superseded by 0046 |
 | 0046 | Classification by status, and the fifteen-day retention | Superseded by 0050 |
 | 0047 | Aggregator data lives in private destinations | Accepted, reverses one clause of 0020, extended by 0051 |
@@ -70,12 +70,13 @@ Records are written at the moment a decision concludes. A record's factual error
 | 0054 | A scheduled run happens, or it is not silently gone | Accepted |
 | 0055 | The display is cleared by a clock, and by hand | Accepted, built |
 | 0056 | The projection sends the whole layer, and the delta design that will replace it | Superseded by 0060 |
-| 0057 | A posting is shown only if he can take it, and none he can take is lost | Accepted, supersedes 0041 |
+| 0057 | A posting is shown only if he can take it, and none he can take is lost | Accepted, supersedes 0041; on Hacker News an on-site post in a place it cannot name is closed |
 | 0058 | The description is read once, at fetch, and only what is derived is kept | Accepted |
-| 0059 | Version 1 is the system working for him, on the sources worth having | Accepted; Manatal, Workable, SmartRecruiters and Ashby built in its order |
+| 0059 | Version 1 is the system working for him, on the sources worth having | Superseded by 0063 |
 | 0060 | The projection sends only what differs from `Jobs` | Accepted, supersedes 0056 |
 | 0061 | The contract check reports per source, in its log and in Airtable | Accepted, supersedes 0036 |
 | 0062 | The classification flow, with gone, applied and a reason in `Jobs` | Accepted, supersedes 0050 |
+| 0063 | Version 1, its test for done set, and the second wave by who reads the application | Accepted, supersedes 0059 |
 | RULES | How records are resolved, amended and retired | Accepted |
 
 ## Pending
