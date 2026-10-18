@@ -72,7 +72,7 @@ Records are written at the moment a decision concludes. A record's factual error
 | 0056 | The projection sends the whole layer, and the delta design that will replace it | Superseded by 0060 |
 | 0057 | A posting is shown only if he can take it, and none he can take is lost | Accepted, supersedes 0041 |
 | 0058 | The description is read once, at fetch, and only what is derived is kept | Accepted |
-| 0059 | Version 1 is the system working for him, on the sources worth having | Accepted; Manatal, Workable and SmartRecruiters built in its order |
+| 0059 | Version 1 is the system working for him, on the sources worth having | Accepted; Manatal, Workable, SmartRecruiters and Ashby built in its order |
 | 0060 | The projection sends only what differs from `Jobs` | Accepted, supersedes 0056 |
 | 0061 | The contract check reports per source, in its log and in Airtable | Accepted, supersedes 0036 |
 | 0062 | The classification flow, with gone, applied and a reason in `Jobs` | Accepted, supersedes 0050 |
