@@ -131,14 +131,15 @@ run that could not start and a run that fetched but could not store the
 result, and the run's own output says which. Run 35179218050 was the second
 kind and was reported as the first. **A failed projection to Airtable exits
 2, not 1**: the fetch is committed, the run log records the failure, and the
-next run re-projects the whole layer. Exit 1 would stop the push and lose the
+next run compares the whole layer with `Jobs` and sends what differs
+(ADR-0060). Exit 1 would stop the push and lose the
 fetch for a display failure. The operator's decision, 2026-09-23, in
 ADR-0034's Changes. **So does a private store that cannot be restored or
 written** (ADR-0047), with the public fetch committed: the operator's
 decision, 2026-09-24. When the restore failed, the aggregator boards are
 not polled and the aggregator rows are withheld from the display, but **the
 public rows always update**: the operator's decision, D9. Both are in
-ADR-0047's Changes. **So does a sweep that fails** (ADR-0050), with the
+ADR-0047's Changes. **So does a sweep that fails** (ADR-0050, now ADR-0062), with the
 fetch committed and nothing deleted on a write not yet read back: the
 operator approved it on 2026-09-25, the seat's decision 6 in the Brief 7
 report. **So does a clearing tool that refused or failed** (ADR-0055), with
@@ -153,6 +154,19 @@ look healthy and marking it can never cost data: at once for a
 private-store failure, which needs fixing and does not clear on its own
 (D9), and on the third in a row for a projection or sweep failure (D1). The
 operator's decisions, 2026-09-24 and 2026-09-25.
+
+**A run that reaches the pipeline's own monthly Airtable ceiling exits 2 the
+same way**: 900 calls, `monthly_call_ceiling` in `config/sweep.json`
+(ADR-0062). No call reaches the base, the projection and the sweep fail, the
+fetch is committed, and the third such run in a row is marked failed. The
+display catches up when the month resets.
+
+**The contract check keeps the same three codes** (ADR-0061). 0: the check
+ran, and any findings are in its log. 2: a platform's check failed; every
+other platform is still checked, the log is committed and pushed, and a last
+step marks the run failed. 1: the check itself crashed, before any platform
+or at its commit, so no log is written and the failure shows only as a
+failed run.
 
 **Log per board every run, including zero.** A board returning nothing for a
 week is a broken adapter. Without a zero logged it looks like a quiet market.
@@ -239,8 +253,9 @@ deactivate                             leave it
 .venv/Scripts/python -m src.run --test-mode --no-commit     one run, alternate
                                                             files, no commit
 .venv/Scripts/python -m src.contract --test-mode --no-commit
-                                       one contract check (ADR-0018), three
-                                       requests, no commit
+                                       one contract check (ADR-0018), one
+                                       request a platform and two for
+                                       SmartRecruiters (ADR-0061), no commit
 
 python tools/generate_map.py           regenerate MAP.md
 python tools/generate_map.py --check   report whether MAP.md is current
