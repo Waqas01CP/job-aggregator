@@ -62,8 +62,8 @@
   {
     "label": "Hacker News' rows reach the public branch",
     "path": "src/config.py",
-    "find": "AGGREGATOR_PLATFORMS = frozenset({\"himalayas\", \"hackernews\", \"hnjobs\", \"jobicy\"})",
-    "replace": "AGGREGATOR_PLATFORMS = frozenset({\"himalayas\", \"jobicy\"})"
+    "find": "    \"hackernews\",\n",
+    "replace": ""
   },
   {
     "label": "a held source's rows are sent",

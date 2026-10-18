@@ -56,7 +56,7 @@ from .airtable_sweep import JOBS, SweepClient, TABLE_SECRETS
 from .closure import Closure, covered as walk_covered
 from .sweep import Sweep, older_than
 from .adapters import (ashby, greenhouse, hackernews, himalayas, hnjobs, jobicy, lever,
-                       manatal, smartrecruiters, workable)
+                       manatal, remoteok, smartrecruiters, workable)
 from . import health
 from .airtable import (BASE_ENV, CALL_LOG_KEYS, HEALTH_LOG_KEY, HEALTH_TABLE_ENV,
                        HEALTH_TEST_TABLE_ENV, RUN_LOG_KEY, TABLE_ENV, TEST_TABLE_ENV,
@@ -87,6 +87,7 @@ ADAPTERS = {
     "hackernews": hackernews,
     "hnjobs": hnjobs,
     "jobicy": jobicy,
+    "remoteok": remoteok,
 }
 
 # A paginated feed is read until it reaches postings already stored, or

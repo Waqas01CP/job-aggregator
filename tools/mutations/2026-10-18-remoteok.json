@@ -1,0 +1,32 @@
+[
+  {
+    "label": "the legal notice is read as a posting",
+    "path": "src/adapters/remoteok.py",
+    "find": "        if entry.get(NOTICE) is not None:",
+    "replace": "        if False:"
+  },
+  {
+    "label": "an empty RemoteOK location is read as a place",
+    "path": "src/adapters/remoteok.py",
+    "find": "            location=_text(entry.get(\"location\")) or None,",
+    "replace": "            location=_text(entry.get(\"location\")),"
+  },
+  {
+    "label": "a RemoteOK posting is shown without its source",
+    "path": "src/adapters/remoteok.py",
+    "find": "            url=url,",
+    "replace": "            url=\"https://example.invalid/\" + external_id,"
+  },
+  {
+    "label": "RemoteOK's rows reach the public branch",
+    "path": "src/config.py",
+    "find": "    \"remoteok\",\n",
+    "replace": ""
+  },
+  {
+    "label": "RemoteOK's boards are configured and not polled",
+    "path": "src/run.py",
+    "find": "    \"remoteok\": remoteok,\n",
+    "replace": ""
+  }
+]

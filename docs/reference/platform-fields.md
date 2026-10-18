@@ -400,6 +400,26 @@ Measured over the 833 postings of 2026-10-12 to 10-18 `[VERIFIED]`:
 
 **Every posting is remote** by the feed's own scope; the workplace is read as remote. **What the chain keeps, read fresh:** 2 of 833. The title rule drops 719, seniority 75, the level rule 19, location 11, authorisation 4 and experience 3.
 
+## RemoteOK
+
+ADR-0063's second wave, after Jobicy, built 2026-10-18. `remoteok.com/api`, keyless, one request a run: a top-level array, its first element Remote OK's terms (`legal`, `last_updated`), then its newest postings, 99 on 2026-10-18, from 2026-08-12 to 10-17. The terms: "Please link back (with follow, and without nofollow!) to the URL on Remote OK and mention Remote OK as a source ... If you do not we'll have to suspend API access." Each row links to its Remote OK page and names it as its board. An aggregator, so its rows keep to the private store.
+
+Measured over the 99 `[VERIFIED]`:
+
+| Field | Type | Present | Read | Notes |
+|---|---|---|---|---|
+| `id` | string | 100% | yes | the identity |
+| `position` | string | 100% | yes | the title |
+| `url` | string | 100% | yes | the posting's page on Remote OK, which names the source |
+| `date` | string | 100% | yes | ISO with an offset; `epoch` is the same instant |
+| `company` | string | 100% | yes | the employer |
+| `location` | string | 52 of 99 | yes | empty on 47, which says nothing; "Remote" 9 |
+| `description` | string | 100% | **yes** | HTML; stripped from every cassette |
+| `apply_url` | string | 100% | no | Remote OK's own redirect on all 99, not followed |
+| `tags`, `salary_min`, `salary_max`, `verified`, `slug`, logos | | | no | |
+
+**Every posting is remote** by the feed's own scope. **What the chain keeps, read fresh:** 6 of the 99; 7 on November's rules.
+
 ## What each API accepts
 
 From each provider's own documentation, read 2026-10-02 `[outside this
@@ -663,6 +683,7 @@ what happens when it is absent, and each of these deserves that separately.
 
 | Date | Change | Reason |
 |---|---|---|
+| 2026-10-18 | RemoteOK's section added: its one array, its terms, every field counted over 99 postings, what the chain keeps read fresh | Its adapter is built, ADR-0063's second wave |
 | 2026-10-18 | Jobicy's section added: its paged feed, every field counted over 833 postings, its terms, what the chain keeps read fresh | Its adapter is built, ADR-0063's second wave |
 | 2026-10-18 | Hacker News' section added: the Who is hiring thread found then read, its post's first line as title, employer, place and workplace, and the job stories; what the chain keeps read fresh | Its adapters are built, ADR-0063's second wave, first |
 | 2026-10-17 | Ashby's section added: its one endpoint, every field counted over 33 postings, `publishedAt`'s first value kept by the store, the secondary locations read as places of their own; Ashby added to the experience table as stating no level | Its adapter is built, ADR-0059's fourth platform, the operator's go of 2026-10-17 |

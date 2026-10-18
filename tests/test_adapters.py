@@ -15,7 +15,7 @@ from datetime import datetime, timezone
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.adapters import (ashby, greenhouse, hackernews, hnjobs, jobicy, lever, manatal,
-                          smartrecruiters, workable)
+                          remoteok, smartrecruiters, workable)
 from src.adapters.base import AdapterError, Posting
 from src.config import Board
 
@@ -845,6 +845,44 @@ class TestJobicy(unittest.TestCase):
         self.assertTrue(p.url.startswith("https://jobicy.com/jobs/"))
         self.assertEqual((p.source, p.board_id, p.url_provenance),
                          ("jobicy", "jobicy:jobicy-remote", "payload"))
+
+
+RO_BOARD = Board(platform="remoteok", slug="remoteok-feed")
+
+
+class TestRemoteOK(unittest.TestCase):
+    """Remote OK's API. Cassette: its legal notice and 29 postings of
+    2026-10-18, sanitised."""
+
+    def setUp(self):
+        self.payload = cassette("remoteok-feed.json")
+
+    def one(self, **extra):
+        return remoteok.parse([dict(self.payload[1], **extra)], RO_BOARD).postings[0]
+
+    def test_the_notice_is_passed_over_and_every_posting_parsed(self):
+        """Its first element is its terms. Mutation: "the legal notice is
+        read as a posting"."""
+        self.assertIn("legal", self.payload[0])
+        result = remoteok.parse(self.payload, RO_BOARD)
+        self.assertEqual((len(result.postings), result.problems), (29, []))
+        self.assertEqual(remoteok.url_for(RO_BOARD), "https://remoteok.com/api")
+        with self.assertRaises(AdapterError):
+            remoteok.parse({"jobs": []}, RO_BOARD)
+
+    def test_an_empty_place_says_nothing_and_every_posting_is_remote(self):
+        """Mutation: "an empty RemoteOK location is read as a place"."""
+        self.assertEqual((self.one(location="").location, self.one(location="").workplace),
+                         (None, "remote"))
+        self.assertEqual(self.one(location="Brazil").location, "Brazil")
+
+    def test_the_link_is_its_remote_ok_page_and_remote_ok_the_source(self):
+        """ADR-0063 and Remote OK's terms: its link and its name with every
+        row. Mutation: "a RemoteOK posting is shown without its source"."""
+        p = self.one()
+        self.assertTrue(p.url.lower().startswith("https://remoteok.com/remote-jobs/"))
+        self.assertEqual((p.source, p.board_id, p.url_provenance),
+                         ("remoteok", "remoteok:remoteok-feed", "payload"))
 
 
 class TestPostingInvariants(unittest.TestCase):

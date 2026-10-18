@@ -26,8 +26,8 @@
   {
     "label": "Jobicy's rows reach the public branch",
     "path": "src/config.py",
-    "find": "AGGREGATOR_PLATFORMS = frozenset({\"himalayas\", \"hackernews\", \"hnjobs\", \"jobicy\"})",
-    "replace": "AGGREGATOR_PLATFORMS = frozenset({\"himalayas\", \"hackernews\", \"hnjobs\"})"
+    "find": "    \"jobicy\",\n",
+    "replace": ""
   },
   {
     "label": "Jobicy's boards are configured and not polled",

@@ -257,6 +257,12 @@
       "slug": "jobicy-remote",
       "normalisations": [],
       "note": "ADR-0063's second wave, after Hacker News: Jobicy's public Jobs API, its whole feed, 200 a page newest first, read back to what is stored, about one page a run. Its terms: no more than one pass an hour, attribution kept, no listing shown as one's own; each row links to Jobicy's page and names it as its board. An aggregator, so its rows keep to the private store. The slug is a label; the feed has no account."
+    },
+    {
+      "platform": "remoteok",
+      "slug": "remoteok-feed",
+      "normalisations": [],
+      "note": "ADR-0063's second wave, after Jobicy: Remote OK's API, its newest postings in one request a run, about 99 over two months. Its terms: link back to the posting on Remote OK and name it as the source, or access is suspended; each row links to its Remote OK page and names it as its board. An aggregator, so its rows keep to the private store. The slug is a label; the feed has no account."
     }
   ]
 }

@@ -361,6 +361,23 @@ class TestJobicyInTheRun(RunHarness):
         self.assertTrue(os.path.exists(storage.raw_path("jobicy", False, "aggregator")))
 
 
+class TestRemoteOKInTheRun(RunHarness):
+    """RemoteOK, after Jobicy: one request, its notice passed over, its rows
+    in the private layer."""
+
+    def test_one_request_and_its_rows_stored_privately(self):
+        """Mutation: "RemoteOK's rows reach the public branch"."""
+        from tests.test_adapters import cassette
+        client = client_for({"remoteok.com/api": cassette("remoteok-feed.json")})
+        board = Board(platform="remoteok", slug="remoteok-feed")
+        log = Run([board], client, now=NOW, matcher=MATCHER).execute()
+        [entry] = log["boards"]
+        self.assertEqual((len(client._session.calls), entry["fetched"], entry["parse_problems"]),
+                         (1, 29, 0))
+        self.assertEqual(log["source_class"], {"remoteok": "aggregator"})
+        self.assertTrue(os.path.exists(storage.raw_path("remoteok", False, "aggregator")))
+
+
 class TestTheRunLogsCommit(RunHarness):
     """ADR-0063: every run log names the commit that ran it, so a dropped
     posting's reason can be recomputed under the rules of its day."""
