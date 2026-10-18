@@ -1031,6 +1031,9 @@ class Run:
 
         run_log = {
             "run_at": iso(self.now),
+            # ADR-0063: the code that ran, so a drop can be recomputed under
+            # the rules of its day.
+            "commit": storage.code_commit(),
             "test_mode": self.test_mode,
             "boards": sorted(self.board_logs, key=lambda l: l["board"]),
             "totals": {

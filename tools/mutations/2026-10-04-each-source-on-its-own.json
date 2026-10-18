@@ -2,8 +2,8 @@
   {
     "label": "one client is shared by every platform's check",
     "path": "src/contract.py",
-    "find": "    updated = dict(stored)\n    log = {\"run_at\": iso(now), \"platforms\": {}}\n",
-    "replace": "    updated = dict(stored)\n    log = {\"run_at\": iso(now), \"platforms\": {}}\n    shared = new_client()\n    new_client = lambda: shared  # noqa: E731\n"
+    "find": "    updated = dict(stored)\n    log = {\"run_at\": iso(now), \"commit\": storage.code_commit(), \"platforms\": {}}\n",
+    "replace": "    updated = dict(stored)\n    log = {\"run_at\": iso(now), \"commit\": storage.code_commit(), \"platforms\": {}}\n    shared = new_client()\n    new_client = lambda: shared  # noqa: E731\n"
   },
   {
     "label": "an exception in one platform's check ends the whole check",

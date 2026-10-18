@@ -300,6 +300,33 @@ class TestSmartRecruitersDetails(RunHarness):
         self.assertEqual(rows[0]["url_provenance"], "constructed")
 
 
+class TestTheRunLogsCommit(RunHarness):
+    """ADR-0063: every run log names the commit that ran it, so a dropped
+    posting's reason can be recomputed under the rules of its day."""
+
+    def run_log(self):
+        client = client_for({"careem": gh_payload(["AI Engineer"])})
+        return Run([GH], client, now=NOW, matcher=MATCHER).execute()
+
+    def test_on_the_workflow_it_is_the_workflows_commit(self):
+        """Mutations: "the run log names no commit", "GITHUB_SHA is not
+        read"."""
+        from unittest import mock
+        with mock.patch.dict(os.environ, {"GITHUB_SHA": "A" * 40}):
+            self.assertEqual(self.run_log()["commit"], "a" * 40)
+
+    def test_elsewhere_it_is_the_checkouts_own(self):
+        """A value that is not a commit is not trusted: the checkout's HEAD
+        is read instead, here this repository's."""
+        from unittest import mock
+        head = subprocess.run(["git", "rev-parse", "HEAD"], cwd=storage.CODE_ROOT,
+                              capture_output=True, text=True).stdout.strip()
+        for value in ("", "not-a-sha"):
+            with self.subTest(value=value), mock.patch.dict(os.environ, {"GITHUB_SHA": value}):
+                self.assertEqual(self.run_log()["commit"], head)
+                self.assertEqual(len(head), 40)
+
+
 class TestAshbyRepublish(RunHarness):
     """ADR-0052's row of 2026-10-09: Ashby's `publishedAt` is the last
     publication, so a republish of the same posting moves it, and the first

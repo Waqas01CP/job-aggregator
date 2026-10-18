@@ -295,7 +295,7 @@ def check(boards, new_client, stored, now, rebaselines=()):
     fingerprint and is logged as such, and so does one whose check raised.
     `new_client` makes the client for one platform, called once each."""
     updated = dict(stored)
-    log = {"run_at": iso(now), "platforms": {}}
+    log = {"run_at": iso(now), "commit": storage.code_commit(), "platforms": {}}
     for platform, adapter in PLATFORMS.items():
         board = first_board(boards, platform)
         if board is None:

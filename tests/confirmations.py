@@ -278,8 +278,10 @@ CONFIRMATIONS = {
 # by the same tests, and three new ones, unbuilt until Brief 16 builds them.
 # ADR-0059's own entries stay, since every record from ADR-0050 on is read.
 CONFIRMATIONS["0063"] = dict(CONFIRMATIONS["0059"], **{
-    "Every run log must name the commit that ran it.": {
-        "unbuilt": "the run log's commit field comes with Brief 16, item 5"},
+    "Every run log must name the commit that ran it.": {"tests": [
+        "test_run.TestTheRunLogsCommit.test_on_the_workflow_it_is_the_workflows_commit",
+        "test_run.TestTheRunLogsCommit.test_elsewhere_it_is_the_checkouts_own",
+        "test_contract.TestCheck.test_the_check_names_the_commit_that_ran_it"]},
     "A source built while the allowance cannot carry its rows must be seen fetching and "
     "storing, and sending nothing to Airtable.": {
         "unbuilt": "the hold comes with Hacker News, Brief 16, item 2"},

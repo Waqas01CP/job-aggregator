@@ -1,0 +1,20 @@
+[
+  {
+    "label": "the run log names no commit",
+    "path": "src/run.py",
+    "find": "            \"commit\": storage.code_commit(),",
+    "replace": "            \"commit\": None,"
+  },
+  {
+    "label": "GITHUB_SHA is not read",
+    "path": "src/storage.py",
+    "find": "    sha = os.environ.get(\"GITHUB_SHA\", \"\").strip().lower()",
+    "replace": "    sha = \"\""
+  },
+  {
+    "label": "the contract check's log names no commit",
+    "path": "src/contract.py",
+    "find": "    log = {\"run_at\": iso(now), \"commit\": storage.code_commit(), \"platforms\": {}}",
+    "replace": "    log = {\"run_at\": iso(now), \"commit\": None, \"platforms\": {}}"
+  }
+]

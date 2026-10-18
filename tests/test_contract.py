@@ -347,6 +347,14 @@ class TestCheck(unittest.TestCase):
         self.assertEqual({p: e["status"] for p, e in log["platforms"].items()},
                          dict.fromkeys(contract.PLATFORMS, "unchanged"))
 
+    def test_the_check_names_the_commit_that_ran_it(self):
+        """ADR-0063: every run log names its commit. Mutation: "the
+        contract check's log names no commit"."""
+        from unittest import mock
+        with mock.patch.dict(os.environ, {"GITHUB_SHA": "c" * 40}):
+            _, log = contract.check(BOARDS, client(responses()), {}, NOW)
+        self.assertEqual(log["commit"], "c" * 40)
+
     def test_a_field_removed_from_the_stored_fingerprint_is_named(self):
         """ADR-0018's Confirmation, offline: hand-edit a stored fingerprint to
         remove a field and the check must name it."""

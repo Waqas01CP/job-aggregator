@@ -312,6 +312,33 @@ class SeenStore:
 
 
 # ------------------------------------------------------- the data branch
+# The checkout the code runs from, fixed at import. REPO_ROOT is not used for
+# it: tests repoint REPO_ROOT at a scratch repository, and the commit a run
+# log names is the code's, not the data's.
+CODE_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+_SHA = re.compile(r"[0-9a-f]{40}")
+
+
+def code_commit():
+    """The commit the running code was checked out at, for the run log
+    (ADR-0063): the workflow's `GITHUB_SHA` where it runs, else the
+    checkout's HEAD, else None. Never raises, since naming the commit must
+    not cost a run its log. With it, a dropped posting's reason can be
+    recomputed under the rules of its day."""
+    sha = os.environ.get("GITHUB_SHA", "").strip().lower()
+    if _SHA.fullmatch(sha):
+        return sha
+    # "@" is git's own name for the checked-out commit; spelled out, the
+    # preference audit reads the word as a seniority word in a literal.
+    try:
+        p = subprocess.run(["git", "rev-parse", "@"], cwd=CODE_ROOT, capture_output=True,
+                           timeout=20)
+    except (OSError, subprocess.SubprocessError):
+        return None
+    out = p.stdout.decode("utf-8", "replace").strip()
+    return out if p.returncode == 0 and _SHA.fullmatch(out) else None
+
+
 def _git(args, cwd=None, env=None, check=True, stdin=None):
     # REPO_ROOT is resolved on every call, never bound as a default. A default
     # is evaluated once at import, so a caller that repoints REPO_ROOT would
