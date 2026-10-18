@@ -1,0 +1,752 @@
+{
+ "run_at": "2026-10-18T03:19:48.448202Z",
+ "test_mode": false,
+ "boards": [
+  {
+   "board": "ashby:Overjet",
+   "fetched": 30,
+   "parse_problems": 0,
+   "new": 30,
+   "kept": 0,
+   "drops": {
+    "title": 29,
+    "seniority": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2025-09-08T21:06:38.959000Z"
+  },
+  {
+   "board": "ashby:deeter-analytics",
+   "fetched": 3,
+   "parse_problems": 0,
+   "new": 3,
+   "kept": 0,
+   "drops": {
+    "title": 3
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-02-18T20:20:18.483000Z"
+  },
+  {
+   "board": "greenhouse:banyancanopygroup",
+   "fetched": 8,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 8
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-05-14T09:16:38Z"
+  },
+  {
+   "board": "greenhouse:brkz",
+   "fetched": 23,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 21,
+    "seniority": 2
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2025-04-20T12:44:09Z"
+  },
+  {
+   "board": "greenhouse:careem",
+   "fetched": 14,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 11,
+    "seniority": 2,
+    "age": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2023-11-02T16:13:14Z"
+  },
+  {
+   "board": "greenhouse:coderoad",
+   "fetched": 25,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "experience": 2,
+    "location": 1,
+    "title": 15,
+    "seniority": 7
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-01-26T00:58:51Z"
+  },
+  {
+   "board": "greenhouse:globalli",
+   "fetched": 13,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 12,
+    "seniority": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-05-15T16:36:36Z"
+  },
+  {
+   "board": "greenhouse:gomotive",
+   "fetched": 153,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 147,
+    "experience": 1,
+    "seniority": 5
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2021-08-12T21:46:45Z"
+  },
+  {
+   "board": "greenhouse:joblogic",
+   "fetched": 26,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 2,
+   "drops": {
+    "age": 3,
+    "location": 1,
+    "title": 19,
+    "seniority": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-06-26T10:54:09Z"
+  },
+  {
+   "board": "greenhouse:speechify",
+   "fetched": 492,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 492
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2021-03-12T21:28:31Z"
+  },
+  {
+   "board": "greenhouse:veeamsoftware",
+   "fetched": 216,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 188,
+    "location": 10,
+    "experience": 1,
+    "seniority": 17
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2025-01-15T17:33:52Z"
+  },
+  {
+   "board": "himalayas:pakistan",
+   "fetched": 580,
+   "parse_problems": 0,
+   "new": 109,
+   "kept": 33,
+   "drops": {
+    "title": 496,
+    "seniority": 33,
+    "experience": 3,
+    "level": 15
+   },
+   "status": "ok",
+   "detail": null,
+   "pages": 29,
+   "walk": {
+    "stopped_by": "mark",
+    "mark": "2026-10-11T03:19:47.448202Z"
+   },
+   "capped": false,
+   "agreement": {
+    "browse_read": 20,
+    "returned_by_search": 0,
+    "rule_excludes": 20,
+    "newly_waiting": 0,
+    "returned_since": 0,
+    "disagreements": 0,
+    "still_waiting": 0,
+    "gave_up": 0
+   },
+   "oldest_published": "2026-10-10T18:50:52Z"
+  },
+  {
+   "board": "lever:smart-working-solutions",
+   "fetched": 21,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 11,
+    "seniority": 7,
+    "authorisation": 1,
+    "location": 1,
+    "experience": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-07-03T10:32:20.479000Z"
+  },
+  {
+   "board": "lever:spreetail",
+   "fetched": 38,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 36,
+    "seniority": 2
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2025-09-23T21:08:41.072000Z"
+  },
+  {
+   "board": "manatal:abacus-consulting-3",
+   "fetched": 168,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 6,
+   "drops": {
+    "title": 156,
+    "experience": 2,
+    "seniority": 4
+   },
+   "status": "ok",
+   "detail": null,
+   "pages": 9,
+   "walk": {
+    "stopped_by": "end",
+    "mark": "2026-10-11T03:19:47.448202Z"
+   },
+   "capped": false,
+   "oldest_published": null
+  },
+  {
+   "board": "manatal:ahdus-technology-2",
+   "fetched": 27,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 1,
+   "drops": {
+    "location": 2,
+    "title": 17,
+    "seniority": 7
+   },
+   "status": "ok",
+   "detail": null,
+   "pages": 2,
+   "walk": {
+    "stopped_by": "end",
+    "mark": "2026-10-11T03:19:47.448202Z"
+   },
+   "capped": false,
+   "oldest_published": null
+  },
+  {
+   "board": "manatal:codedistrict",
+   "fetched": 6,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 6
+   },
+   "status": "ok",
+   "detail": null,
+   "pages": 1,
+   "walk": {
+    "stopped_by": "end",
+    "mark": "2026-10-11T03:19:47.448202Z"
+   },
+   "capped": false,
+   "oldest_published": null
+  },
+  {
+   "board": "manatal:gigalabs-private-ltd",
+   "fetched": 1,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "experience": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "pages": 1,
+   "walk": {
+    "stopped_by": "end",
+    "mark": "2026-10-11T03:19:47.448202Z"
+   },
+   "capped": false,
+   "oldest_published": null
+  },
+  {
+   "board": "manatal:hazen-technologies",
+   "fetched": 0,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {},
+   "status": "ok",
+   "detail": null,
+   "pages": 1,
+   "walk": {
+    "stopped_by": "end",
+    "mark": "2026-10-11T03:19:47.448202Z"
+   },
+   "capped": false,
+   "oldest_published": null
+  },
+  {
+   "board": "manatal:itc-worldwide-info",
+   "fetched": 337,
+   "parse_problems": 0,
+   "new": 1,
+   "kept": 1,
+   "drops": {
+    "title": 332,
+    "experience": 4
+   },
+   "status": "ok",
+   "detail": null,
+   "pages": 24,
+   "walk": {
+    "stopped_by": "end",
+    "mark": "2026-10-11T03:19:47.448202Z"
+   },
+   "capped": false,
+   "oldest_published": null
+  },
+  {
+   "board": "manatal:premiernx",
+   "fetched": 33,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 32,
+    "location": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "pages": 2,
+   "walk": {
+    "stopped_by": "end",
+    "mark": "2026-10-11T03:19:47.448202Z"
+   },
+   "capped": false,
+   "oldest_published": null
+  },
+  {
+   "board": "manatal:spursol",
+   "fetched": 7,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 5,
+    "seniority": 2
+   },
+   "status": "ok",
+   "detail": null,
+   "pages": 1,
+   "walk": {
+    "stopped_by": "end",
+    "mark": "2026-10-11T03:19:47.448202Z"
+   },
+   "capped": false,
+   "oldest_published": null
+  },
+  {
+   "board": "manatal:wadic-2",
+   "fetched": 9,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 9
+   },
+   "status": "ok",
+   "detail": null,
+   "pages": 1,
+   "walk": {
+    "stopped_by": "end",
+    "mark": "2026-10-11T03:19:47.448202Z"
+   },
+   "capped": false,
+   "oldest_published": null
+  },
+  {
+   "board": "smartrecruiters:OneScreen",
+   "fetched": 10,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 9,
+    "level": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "pages": 1,
+   "walk": {
+    "stopped_by": "end",
+    "mark": "2026-10-11T03:19:47.448202Z"
+   },
+   "capped": false,
+   "details": 0,
+   "details_failed": 0,
+   "oldest_published": "2023-08-16T09:16:41.896000Z"
+  },
+  {
+   "board": "smartrecruiters:SeekaTechnology",
+   "fetched": 10,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 7,
+    "age": 1,
+    "location": 2
+   },
+   "status": "ok",
+   "detail": null,
+   "pages": 1,
+   "walk": {
+    "stopped_by": "end",
+    "mark": "2026-10-11T03:19:47.448202Z"
+   },
+   "capped": false,
+   "details": 0,
+   "details_failed": 0,
+   "oldest_published": "2025-05-27T07:34:47.230000Z"
+  },
+  {
+   "board": "workable:creative-chaos",
+   "fetched": 0,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {},
+   "status": "ok",
+   "detail": null,
+   "oldest_published": null
+  },
+  {
+   "board": "workable:igate-technologies",
+   "fetched": 21,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 20,
+    "seniority": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2025-03-19T00:00:00Z"
+  },
+  {
+   "board": "workable:inbox-business-technologies",
+   "fetched": 9,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 9
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-08-25T00:00:00Z"
+  },
+  {
+   "board": "workable:petra-brands",
+   "fetched": 21,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 21
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-08-10T00:00:00Z"
+  },
+  {
+   "board": "workable:staunch",
+   "fetched": 3,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 1,
+    "seniority": 2
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-09-21T00:00:00Z"
+  },
+  {
+   "board": "workable:thingtrax",
+   "fetched": 3,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 3
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-01-20T00:00:00Z"
+  }
+ ],
+ "totals": {
+  "fetched": 2307,
+  "new": 143,
+  "kept": 43,
+  "kept_without_description": 1,
+  "written_raw": {
+   "ashby": 33,
+   "himalayas": 109,
+   "manatal": 1
+  },
+  "written_filtered": 2,
+  "backfilled": 0,
+  "backfilled_public": 0,
+  "backfilled_local": 0,
+  "written_filtered_local": 2,
+  "drops": {
+   "expiry": 0,
+   "annotation_vendor": 0,
+   "title": 2115,
+   "seniority": 94,
+   "level": 16,
+   "experience": 15,
+   "authorisation": 1,
+   "location": 18,
+   "age": 5
+  },
+  "dedupe": {
+   "postings": 2307,
+   "groups": 1708,
+   "collapsed": 599,
+   "largest_group": 185
+  }
+ },
+ "requests": {
+  "requests_used": 93,
+  "budget": 500,
+  "budget_remaining": 407,
+  "by_source": {
+   "greenhouse": 9,
+   "lever": 2,
+   "himalayas": 30,
+   "manatal": 42,
+   "workable": 6,
+   "smartrecruiters": 2,
+   "ashby": 2
+  },
+  "retries": 0,
+  "failures": 0,
+  "refused": 0,
+  "circuit_open": false,
+  "circuits_open": []
+ },
+ "stopped": null,
+ "source_class": {
+  "greenhouse": "ats",
+  "lever": "ats",
+  "himalayas": "aggregator",
+  "manatal": "ats",
+  "workable": "ats",
+  "smartrecruiters": "ats",
+  "ashby": "ats"
+ },
+ "facts": {
+  "fingerprint": "25c3dc7dc5f97cdf",
+  "reread": true,
+  "failure": null,
+  "files": 39,
+  "read": 4993,
+  "unknown_board": 0,
+  "unparseable": 0
+ },
+ "private_store": {
+  "branch": "data",
+  "restored": 10,
+  "pushed": true,
+  "failure": null,
+  "full": {
+   "pending": 143,
+   "saved": 143,
+   "file": "full/20261018T031948.448202Z.json",
+   "verified": true,
+   "failure": null,
+   "bytes": 1171352
+  },
+  "files": 10,
+  "outcomes_pushed": false
+ },
+ "projection": {
+  "stored_identities": 34,
+  "rows_read": 563,
+  "rows_admitted": 134,
+  "groups": 130,
+  "groups_skipped_by_store": 14,
+  "groups_retired_closed": 0,
+  "rows_to_send": 116,
+  "rows_in_base": 155,
+  "rows_unchanged": 114,
+  "rows_new": 2,
+  "rows_changed": 0,
+  "rows_sent": 2
+ },
+ "airtable": {
+  "calls_used": 3,
+  "rows_sent": 2,
+  "monthly_ceiling": 900,
+  "month_to_date_before_run": 461,
+  "month_remaining": 436,
+  "retries": 0,
+  "failures": 0,
+  "refused": 0,
+  "circuit_open": false,
+  "failure": null,
+  "month_to_date_by_branch": {
+   "data": 418,
+   "data-test": 43
+  },
+  "read_calls": 2
+ },
+ "sweep": {
+  "copied": {},
+  "stale_copies_deleted": {},
+  "deleted_from_jobs": 5,
+  "copies_deleted": {
+   "accepted": 5
+  },
+  "closed_marked": 0,
+  "closed_cleared": 0,
+  "waiting_for_the_store": 0,
+  "held_private_unavailable": 0,
+  "not_in_the_stored_layers": 0,
+  "kept_after_a_clear": 2,
+  "aged_out": 0,
+  "gone_recorded": 0,
+  "transcribed": {},
+  "removals": [
+   {
+    "identity": "<aggregator row>",
+    "table": "accepted",
+    "reason": "the operator marked Delete",
+    "action": "deleted"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "accepted",
+    "reason": "the operator marked Delete",
+    "action": "deleted"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "accepted",
+    "reason": "the operator marked Delete",
+    "action": "deleted"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "accepted",
+    "reason": "the operator marked Delete",
+    "action": "deleted"
+   },
+   {
+    "identity": "greenhouse:5250951007",
+    "table": "accepted",
+    "reason": "the operator marked Delete",
+    "action": "deleted"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "jobs",
+    "reason": "its accepted copy was deleted",
+    "action": "deleted"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "jobs",
+    "reason": "its accepted copy was deleted",
+    "action": "deleted"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "jobs",
+    "reason": "its accepted copy was deleted",
+    "action": "deleted"
+   },
+   {
+    "identity": "<aggregator row>",
+    "table": "jobs",
+    "reason": "its accepted copy was deleted",
+    "action": "deleted"
+   },
+   {
+    "identity": "greenhouse:5250951007",
+    "table": "jobs",
+    "reason": "its accepted copy was deleted",
+    "action": "deleted"
+   }
+  ],
+  "problems": [],
+  "daily": true,
+  "jobs_rows": 157,
+  "tables_read": true,
+  "stored_written": {},
+  "calls_used": 7,
+  "retries": 0,
+  "failures": 0,
+  "refused": 0,
+  "circuit_open": false,
+  "failure": null
+ },
+ "health": {
+  "calls_used": 0,
+  "sent": [],
+  "failure": null,
+  "pending": 0,
+  "rows_sent": 0
+ },
+ "budget": {
+  "month_to_date": 471,
+  "allowance": 900,
+  "share": 0.523,
+  "warning": null
+ },
+ "attention": {
+  "failed_in_a_row": 0,
+  "escalate": false
+ }
+}

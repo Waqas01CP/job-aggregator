@@ -1,5 +1,5 @@
 {
- "fingerprint": "d39368f63adc566a",
+ "fingerprint": "25c3dc7dc5f97cdf",
  "records": [
   {
    "identity": "greenhouse:4004980004",
@@ -31038,6 +31038,317 @@
    "stated_levels": null,
    "places": [
     "United States"
+   ],
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "smartrecruiters:743999924896913",
+   "source": "smartrecruiters",
+   "stated_experience": null,
+   "stated_levels": [
+    "Mid-Senior Level"
+   ],
+   "places": [
+    "PK"
+   ],
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "smartrecruiters:744000003939158",
+   "source": "smartrecruiters",
+   "stated_experience": null,
+   "stated_levels": [
+    "Entry Level"
+   ],
+   "places": [
+    "PK"
+   ],
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "smartrecruiters:744000015213792",
+   "source": "smartrecruiters",
+   "stated_experience": null,
+   "stated_levels": [
+    "Entry Level"
+   ],
+   "places": [
+    "PK"
+   ],
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "smartrecruiters:744000058141205",
+   "source": "smartrecruiters",
+   "stated_experience": null,
+   "stated_levels": [
+    "Entry Level"
+   ],
+   "places": [
+    "PK"
+   ],
+   "workplace": "remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "smartrecruiters:744000061577491",
+   "source": "smartrecruiters",
+   "stated_experience": [
+    2
+   ],
+   "stated_levels": [
+    "Mid-Senior Level"
+   ],
+   "places": [
+    "ID"
+   ],
+   "workplace": "remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "smartrecruiters:744000062151525",
+   "source": "smartrecruiters",
+   "stated_experience": null,
+   "stated_levels": [
+    "Mid-Senior Level"
+   ],
+   "places": [
+    "PK"
+   ],
+   "workplace": "remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "smartrecruiters:744000063614655",
+   "source": "smartrecruiters",
+   "stated_experience": null,
+   "stated_levels": [
+    "Internship"
+   ],
+   "places": [
+    "MY"
+   ],
+   "workplace": "remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "smartrecruiters:744000063648206",
+   "source": "smartrecruiters",
+   "stated_experience": null,
+   "stated_levels": [
+    "Internship"
+   ],
+   "places": [
+    "MY"
+   ],
+   "workplace": "remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "smartrecruiters:744000088287036",
+   "source": "smartrecruiters",
+   "stated_experience": null,
+   "stated_levels": [
+    "Internship"
+   ],
+   "places": [
+    "MY"
+   ],
+   "workplace": "remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "smartrecruiters:744000094288379",
+   "source": "smartrecruiters",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": [
+    "Entry Level"
+   ],
+   "places": [
+    "PK"
+   ],
+   "workplace": "remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "smartrecruiters:744000115272321",
+   "source": "smartrecruiters",
+   "stated_experience": null,
+   "stated_levels": [
+    "Executive"
+   ],
+   "places": [
+    "PK"
+   ],
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "smartrecruiters:744000125248224",
+   "source": "smartrecruiters",
+   "stated_experience": [
+    5,
+    4
+   ],
+   "stated_levels": [
+    "Mid-Senior Level"
+   ],
+   "places": [
+    "PK"
+   ],
+   "workplace": "remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "smartrecruiters:744000125781539",
+   "source": "smartrecruiters",
+   "stated_experience": [
+    1
+   ],
+   "stated_levels": [
+    "Internship"
+   ],
+   "places": [
+    "PK"
+   ],
+   "workplace": "remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "smartrecruiters:744000125952509",
+   "source": "smartrecruiters",
+   "stated_experience": null,
+   "stated_levels": [
+    "Internship"
+   ],
+   "places": [
+    "MY"
+   ],
+   "workplace": "remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "smartrecruiters:744000126183660",
+   "source": "smartrecruiters",
+   "stated_experience": null,
+   "stated_levels": [
+    "Internship"
+   ],
+   "places": [
+    "MY"
+   ],
+   "workplace": "hybrid",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "smartrecruiters:744000133687159",
+   "source": "smartrecruiters",
+   "stated_experience": null,
+   "stated_levels": [
+    "Entry Level"
+   ],
+   "places": [
+    "PK"
+   ],
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": "on site",
+   "described": true
+  },
+  {
+   "identity": "smartrecruiters:744000139128879",
+   "source": "smartrecruiters",
+   "stated_experience": [
+    1
+   ],
+   "stated_levels": [
+    "Entry Level"
+   ],
+   "places": [
+    "PK"
+   ],
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": "on site",
+   "described": true
+  },
+  {
+   "identity": "smartrecruiters:744000139131871",
+   "source": "smartrecruiters",
+   "stated_experience": null,
+   "stated_levels": [
+    "Entry Level"
+   ],
+   "places": [
+    "PK"
+   ],
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": "on site",
+   "described": true
+  },
+  {
+   "identity": "smartrecruiters:744000143229669",
+   "source": "smartrecruiters",
+   "stated_experience": null,
+   "stated_levels": [
+    "Entry Level"
+   ],
+   "places": [
+    "PK"
+   ],
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": "on site",
+   "described": true
+  },
+  {
+   "identity": "smartrecruiters:744000153018507",
+   "source": "smartrecruiters",
+   "stated_experience": null,
+   "stated_levels": [
+    "Entry Level"
+   ],
+   "places": [
+    "PK"
    ],
    "workplace": null,
    "required_places": null,
