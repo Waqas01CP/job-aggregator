@@ -91,8 +91,12 @@ class TestTheFingerprint(Harness):
         self.assertNotEqual(facts.fingerprint(root, sources), first)
 
     def test_the_shipped_sources_are_the_reader_the_adapters_and_the_eligibility(self):
+        """And the role words `Who reads` is read by, from 2026-10-19, so a
+        change to them re-reads every saved posting. Mutation: "a change to
+        the role words re-reads nothing"."""
         self.assertEqual(facts.SOURCES, ("src/description.py", "src/normalise.py",
-                                         "src/adapters/*.py", "config/eligibility.json"))
+                                         "src/adapters/*.py", "config/eligibility.json",
+                                         "config/who_reads.json"))
 
 
 class TestTheReread(Harness):
@@ -133,6 +137,18 @@ class TestTheReread(Harness):
         records, _ = facts.reread([saved(described)], [SPREETAIL],
                                   {"lever:f9f0": FIRST_SEEN}, ADAPTERS)
         self.assertIs(records["lever:f9f0"]["described"], True)
+
+    def test_who_reads_is_a_derived_fact_so_a_stored_row_learns_it(self):
+        """ADR-0058's fourth derived value, 2026-10-19: every row saved before
+        it was built learns it from the re-read, which is how `Jobs` shows it
+        at once. Mutation: "the re-read leaves out who reads"."""
+        written = lever_posting(description="<p>I'm the CTO and I read every application.</p>")
+        self.assertIsNone(stored_row(written, who_reads=None).who_reads)
+        records, _ = facts.reread([saved(written)], [SPREETAIL],
+                                  {"lever:f9f0": FIRST_SEEN}, ADAPTERS)
+        self.assertEqual(records["lever:f9f0"]["who_reads"], "founder")
+        [row] = facts.apply([stored_row(written, who_reads=None)], records)
+        self.assertEqual(row.who_reads, "founder")
 
     def test_a_posting_whose_board_is_gone_or_unparseable_keeps_its_stored_facts(self):
         gone = Board(platform="lever", slug="closed-board")

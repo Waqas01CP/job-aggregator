@@ -2,8 +2,8 @@
   {
     "label": "Family is not sent",
     "path": "src/airtable.py",
-    "find": "\"Identity\", \"Family\")",
-    "replace": "\"Identity\")"
+    "find": "\"Identity\", \"Family\", \"Who reads\")",
+    "replace": "\"Identity\", \"Who reads\")"
   },
   {
     "label": "Family is always empty",

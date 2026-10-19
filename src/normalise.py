@@ -42,7 +42,7 @@ FIELDS = (
     "first_seen", "ordering_date", "ordering_date_source",
     "url", "url_provenance",
     "stated_experience", "expires_at", "stated_levels", "places", "workplace",
-    "required_places", "described_workplace", "described",
+    "required_places", "described_workplace", "described", "who_reads",
 )
 
 
@@ -105,6 +105,11 @@ class Row:
     # it rather than hiding it. Named for the fact, never the text: no row
     # field is named for the description (ADR-0011's shape guard).
     described: bool = None
+    # Who the description says reads the application: a label of
+    # description.WHO_READS, never a word of the posting (ADR-0058's fourth
+    # derived value, 2026-10-19). None where it says nothing of it, and on
+    # rows stored before then that no re-read has reached.
+    who_reads: str = None
 
     def as_record(self):
         """The canonical dict. Key order is fixed by FIELDS so two runs that
@@ -265,6 +270,7 @@ def normalise(postings, board, now, seen=None):
             # not read is not the same as none.
             described=(None if getattr(p, "description", None) is None
                        else facts is not None),
+            who_reads=facts.who_reads if facts else None,
         )
         rows.append(row)
     return rows

@@ -48,7 +48,7 @@ must be added here with its owner before the suite passes.
 run to be incapable of touching production state. Each has its own secret,
 and a test ID equal to a production one is refused.
 
-## `Jobs` and `Jobs test`, twenty fields
+## `Jobs` and `Jobs test`, twenty-one fields
 
 `Title` is the primary field. Airtable requires one and it cannot be removed,
 only renamed.
@@ -66,6 +66,7 @@ only renamed.
 | Matched term | single line text | pipeline | The pool term that admitted the row, per ADR-0021 |
 | Identity | single line text | pipeline | The pipeline's identity. What ADR-0035's upsert matches on |
 | Family | single line text | pipeline | The role family of the matched term, ADR-0038. Created 2026-09-24 |
+| Who reads | single line text | pipeline | ADR-0058's fourth derived value, 2026-10-19: who the description says reads the application, one of founder, engineer, agency, recruiter or a named person, the first of those it gives grounds for; empty when it says none. A label only, never a name, an address or any word of the posting. Sent at once, not with the description's four. **Made by the operator by hand**, at no API cost, before the commit that sends it is pushed: a read or write naming a field the table lacks fails the call |
 | Closed | date | pipeline | The date the pipeline first saw the posting closed, ADR-0050; empty while open. The sweep writes it and nothing else touches it. Created 2026-09-25 |
 | Years asked | number, integer | pipeline | Brief 13: the largest number of years the description asks, from the row's stored facts, never its words (ADR-0011); empty when it asks none, or when a line opens the role to graduates. **Made 2026-10-17, not yet sent**: see below the table |
 | Required in | single line text | pipeline | The places the description requires a right to work, citizenship or residence in, as the configuration names them: one requirement's places joined by commas, requirements by semicolons; empty when none. **Not yet sent** |
@@ -240,6 +241,7 @@ as the example for an IANA identifier; Airtable's API rejects `"UTC"` with a
 
 | Date | Change | Reason |
 |---|---|---|
+| 2026-10-19 | `Who reads` added to `Jobs` and `Jobs test`, single line text, pipeline-owned, sent by the projection from the next run after the operator makes it | The operator's decision of 2026-10-19, in ADR-0058's and ADR-0035's Changes; Brief 17, item 4. Made by hand rather than through the connector, whose schema writes are not shown to count against the month's allowance or not |
 | 2026-09-30 | `Delete`'s row annotated: it has two writers, both the operator's, him in the browser and his clearing tool acting for him; no pipeline writer sends it *(this row added 2026-10-01: the annotation was made in Brief 8's commit without one, the fourth audit's F19)* | ADR-0055: the tool sets `Delete` on the rows he clears from `accepted`, so the row's "the pipeline reads it and never writes it" needed its scope, or ADR-0035's ownership check would read the tool as a violation |
 | 2026-09-26 | `Delete` on `accepted` and `accepted test`, created through the connector and read back; the copy rules restated | The operator's D12, answering the audit of 2026-09-25's F1: a status change or a clear no longer removes an `accepted` copy, a superseded rejection copy is saved before it goes, and an `accepted` copy leaves Airtable only on his `Delete`, saved first. The descriptions in the base were rewritten the same day (F8) |
 | 2026-09-23 | `Title` carries the normalised title | The operator's decision, answering the implementing seat's question after the first test-mode projection. A display row is a group whose Location lists every city, so a raw title naming one city misled; the raw title is kept in the store. Annotated in the table above rather than rewritten |

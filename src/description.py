@@ -11,16 +11,20 @@ was switched on, and each guard exists because a measured sentence needed
 it. The log of 2026-10-02, its night section, has the counts.
 
 **Only derived values leave this module.** The text is read and forgotten: a
-row carries the years, the places a requirement names, and an on-site flag,
-never a phrase of the description, so nothing an employer wrote reaches the
-public branch beyond its metadata (ADR-0011; the text itself is kept only on
-the private full branch, ADR-0051).
+row carries the years, the places a requirement names, an on-site flag, and
+since 2026-10-19 a label from a closed list saying who reads the
+application, never a phrase of the description, so nothing an employer wrote
+reaches the public branch beyond its metadata (ADR-0011; the text itself is
+kept only on the private full branch, ADR-0051).
 
 The thresholds, and which places are closed to him, are not here. They are
-the operator's configuration (ADR-0031), applied by the filter chain.
+the operator's configuration (ADR-0031), applied by the filter chain. Who
+reads the application decides nothing: it is shown, and drops no posting.
 """
 
 import html
+import json
+import os
 import re
 from dataclasses import dataclass
 
@@ -36,10 +40,12 @@ class Facts:
     """What one description says. `years` holds each figure's lower bound, a
     range by its low end ("3 to 5 years" is 3); `requirements` the place each
     requirement names, as written; `on_site` whether it says the role is
-    worked on site with no remote option."""
+    worked on site with no remote option; `who_reads` a label of
+    WHO_READS, or None."""
     years: tuple = ()
     requirements: tuple = ()
     on_site: bool = False
+    who_reads: str = None
 
 
 def lines_of(*parts):
@@ -267,6 +273,148 @@ def says_on_site(lines):
     return not any(_REMOTE_OPTION.search(_NOT_REMOTE.sub(" ", line)) for line in lines)
 
 
+# ------------------------------------------------------------- who reads
+# ADR-0058's fourth derived value, the operator's decision of 2026-10-19:
+# "i should know the founder ones separate as targeting those might yield
+# much better results". The closed list of labels, in the order one wins
+# over another when a posting says more than one: the person writing in
+# the first person reads the application, a founder above all, so a founder
+# writing that a recruiter screens first is still a founder's posting; an
+# agency writing for a client stands between him and the employer, whoever
+# else it names; the employer's recruiter, named in its process, reads it
+# next; and a person to write to, whose role it does not say, last. Never a
+# name, an address or any word of the posting (ADR-0011).
+WHO_READS = ("founder", "engineer", "agency", "recruiter", "a named person")
+
+# The roles a writer in the first person names, from configuration: ADR-0031's
+# audit reads several of them, "chief", "head", "lead", as seniority words,
+# which no module may hard-code.
+WHO_READS_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                              "config", "who_reads.json")
+
+
+class WhoReadsConfigError(Exception):
+    pass
+
+
+def load_roles(path=None):
+    """{"founder_roles": pattern, "engineer_roles": pattern}: each role whole,
+    its words separated by any space, a plural s allowed, longest first."""
+    with open(path or WHO_READS_PATH, encoding="utf-8") as f:
+        raw = json.load(f)
+    roles = {}
+    for key in ("founder_roles", "engineer_roles"):
+        value = raw.get(key)
+        if not isinstance(value, list) or not value or not all(isinstance(v, str) and v.strip()
+                                                               for v in value):
+            raise WhoReadsConfigError("%s must be a non-empty list of roles" % key)
+        roles[key] = "(?:%s)" % "|".join(
+            r"\s+".join(re.escape(word) for word in role.split()) + "s?"
+            for role in sorted(value, key=len, reverse=True))
+    return roles
+
+
+_ROLES = load_roles()
+# "I'm" with its apostrophe: "Im" begins a German sentence on Himalayas.
+_FIRST_PERSON = r"\b(?:i['’]m|i\s+am)\b"
+# Between "I'm" and the role: a name, the company's, an article, a word or
+# two; never a verb of hiring or feeling, which makes the role another's, as
+# in "I'm looking for a product engineer" and "I'm excited that our CTO".
+_GAP = (r"(?:(?!\b(?:looking|hiring|seeking|searching|recruiting|need|want|excited|happy|glad"
+        r"|thrilled|proud|work|working|join|joining|our|their|your|with|for|to|not)\b)[^.\n])"
+        r"{0,40}?")
+_FOUNDER = re.compile(_FIRST_PERSON + _GAP + r"\b" + _ROLES["founder_roles"] + r"\b", re.I)
+_ENGINEER = re.compile(_FIRST_PERSON + _GAP + r"\b" + _ROLES["engineer_roles"] + r"\b", re.I)
+# The client as the employer an agency writes for, or the role placed with
+# it. Not a firm's clients in general, a client's challenges, nor a team or
+# list named for clients: "our Client Success team", "client-facing
+# consultants" and "our client roster" were measured.
+_A_CLIENT = (r"our\s+client\b(?![’']s\b)(?![-‐])(?!\s+(?:services|success|advisors?|relations"
+             r"|experience|support|facing|management|partners?|teams?|roster|base"
+             r"|portfolio|list|accounts?|delivery|onboarding|care|solutions?)\b)")
+_AGENCY = re.compile(r"\bon\s+behalf\s+of\s+(?:our|a|an)\s+client\b"
+                     r"|\b(?:about|for|with|at|to\s+support)\s+" + _A_CLIENT
+                     + r"|(?:^|[.:!?]\s*)" + _A_CLIENT
+                     + r"|\bour\s+client\s*(?:,|\bis\b|\bcompany\b|[(:]|\s[–-])", re.I)
+# The employer's recruiter or talent team in its process: a call, screen or
+# interview with one, one who will review or reach out, or the writer saying
+# they are one. Brief 15's pattern, any mention, counted recruiter roles
+# being hired, warnings about people posing as recruiters, a recruiting
+# tool and "a small, high-talent team"; these are not read.
+_SCREENER = (r"(?:recruiters?|recruiting\s+team|talent\s+(?:acquisition|partner|team)"
+             r"(?:\s+(?:team|partner|specialist|member))?)")
+_RECRUITER = re.compile(
+    r"\b(?:recruiter|talent\s+acquisition)\s+(?:screen(?:ing)?|call|interview|chat|conversation"
+    r"|phone\s+screen)\b"
+    r"|\b(?:call|conversation|chat|interview|screen(?:ing)?|meeting|intro(?:duction)?)\s+"
+    r"(?:call\s+)?with\s+(?:a\s+|an\s+|our\s+|the\s+|your\s+)?(?:\w+\s+)?" + _SCREENER + r"\b"
+    r"|\b(?:our|a|the)\s+" + _SCREENER + r"\s+(?:will|would|may)\s+(?:\w+\s+){0,3}?"
+    r"(?:review|assess|reach|contact|call|screen|guide|be\s+in\s+touch|get\s+in\s+touch)"
+    r"|" + _FIRST_PERSON + r"\s+(?:the|a|your)\s+(?:\w+\s+)?recruiter\b", re.I)
+_CONTACT_ME = re.compile(r"\b(?:email|e-mail|ping|message|dm|reach\s+out\s+to|contact"
+                         r"|write\s+to)\s+me\b", re.I)
+# An address, or one written around a bracketed "at" as Hacker News posters
+# write them; never a plain " at ", which prose is full of.
+_ADDRESS = re.compile(r"([A-Za-z0-9._%+-]+)(?:@|\s*[\[\(]at[\]\)]\s*)"
+                      r"([A-Za-z0-9.-]+\.[A-Za-z]{2,})")
+# Addresses that are no way to apply, and placeholders, as measured: for
+# privacy, accommodation (misspelt too), accessibility, an advocate, help,
+# benefits, and "jsmith" in a warning about scams.
+_NOT_TO_APPLY = re.compile(r"privacy|accommodat|accomodat|accessib|advocat|assist|^ask|legal|dpo"
+                           r"|^ada$|eeo|gdpr|security|abuse|no-?reply|support|help|benefits"
+                           r"|compliance|disabilit|belonging|diversity|inclusion|interview"
+                           r"|^(?:my)?hr$|^(?:j\.?smith|j\.?doe|john\.?doe|jane\.?doe"
+                           r"|first\.?(?:name|last)|your\.?name|name|example)$", re.I)
+_FOUNDER_MAILBOX = re.compile(r"^(?:co-?founders?|founders?|ceo|cto)$", re.I)
+# A mailbox for a role or a team, which names no one. So is one named for
+# the company itself, the domain's own name before the "@".
+_ROLE_MAILBOX = re.compile(r"jobs?|careers?|hiring|hire|recruit|talent|apply|applications?"
+                           r"|resumes?|^cv$|^work$|^team$|^hello$|^hi$|^info$|^contact$"
+                           r"|^people$|^join|^engineering$|^eng$|^dev$|^tech$|^admin$|^office$"
+                           r"|^mail$|opportunit|positions", re.I)
+
+
+def _who_says(lines):
+    """Every label of WHO_READS the description gives grounds for."""
+    said = set()
+    for line in lines:
+        if _FOUNDER.search(line):
+            said.add("founder")
+        if _ENGINEER.search(line):
+            said.add("engineer")
+        if _AGENCY.search(line):
+            said.add("agency")
+        if _RECRUITER.search(line):
+            said.add("recruiter")
+        if _CONTACT_ME.search(line):
+            said.add("a named person")
+        for m in _ADDRESS.finditer(line):
+            local = m.group(1)
+            if _NOT_TO_APPLY.search(local):
+                continue
+            if _FOUNDER_MAILBOX.match(local):
+                said.add("founder")
+            elif not (_ROLE_MAILBOX.search(local)
+                      or local.lower() == m.group(2).split(".")[0].lower()):
+                said.add("a named person")
+    return said
+
+
+def who_reads(lines):
+    """Who the description says reads the application: one label of
+    WHO_READS, the first in its order the description gives grounds for,
+    or None when it says nothing of it.
+
+    **Measured before it was shown**, over every description saved by
+    2026-10-19, 5,750 of them, and over the three feeds saved none yet on
+    their reads of 2026-10-18 (the log of 2026-10-19 has the counts by
+    source). It speaks on 281 of the saved ones: 128 recruiter, 86 agency,
+    48 a named person, 12 founder, 7 engineer. Every guard exists because a
+    measured line needed it."""
+    said = _who_says(lines)
+    return next((label for label in WHO_READS if label in said), None)
+
+
 def read(parts):
     """The facts one description states, from its parts as the platform
     returned them, HTML or text. None when there is no text to read."""
@@ -274,4 +422,4 @@ def read(parts):
     if not lines:
         return None
     return Facts(years=years_asked(lines), requirements=requirements_named(lines),
-                 on_site=says_on_site(lines))
+                 on_site=says_on_site(lines), who_reads=who_reads(lines))

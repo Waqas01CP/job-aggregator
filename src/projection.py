@@ -27,9 +27,10 @@ looks like a bug:
    operator's tool stays out, and one a rule dropped comes back when that
    rule admits it again, as ADR-0040 requires. Until 2026-09-30 the store was
    not read at all, and a retired closed row came straight back.
-5. **Send** the pipeline-owned fields, ADR-0035's ten and ADR-0038's `Family`,
-   through the Airtable client: the groups `Jobs` lacks, and the ones whose
-   fields it shows otherwise.
+5. **Send** the pipeline-owned fields, ADR-0035's ten, ADR-0038's `Family` and
+   `Who reads` (ADR-0058's fourth derived value), through the Airtable
+   client: the groups `Jobs` lacks, and the ones whose fields it shows
+   otherwise.
 """
 
 from datetime import datetime, timezone
@@ -177,9 +178,9 @@ def airtable_datetime(value):
 
 
 def fields_for(g, matcher, described=False):
-    """The pipeline-owned fields for one display group: ADR-0035's ten and
-    ADR-0038's `Family`, the family of the term shown, never of the title;
-    with `described`, the description's four (Brief 13), from the facts the
+    """The pipeline-owned fields for one display group: ADR-0035's ten,
+    ADR-0038's `Family`, the family of the term shown, never of the title,
+    and `Who reads`, a label, never a word of the posting; with `described`, the description's four (Brief 13), from the facts the
     row stores, never its words (ADR-0011).
 
     **Title and Matched term both come from `title_normalised`.** It is what
@@ -213,6 +214,9 @@ def fields_for(g, matcher, described=False):
         "Matched term": term,
         "Identity": rep.identity,
         "Family": matcher.family_of(term),
+        # The representative's, as every other field is: a group is one
+        # posting seen more than once.
+        "Who reads": rep.who_reads,
         "Years asked": max(rep.stated_experience) if rep.stated_experience else None,
         "Required in": "; ".join(rep.required_places) if rep.required_places else None,
         "On site": rep.described_workplace == "on site",

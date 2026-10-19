@@ -25,11 +25,11 @@ from tests.eligibility import rules_aside
 
 MATCHER = TitleMatcher()
 NOW = "2026-09-23T12:00:00.000000Z"
-# The pipeline-owned fields by hand, in the base's order: ADR-0035's ten, and
-# ADR-0038's Family. A test compares against this, never against the constant
-# under test.
+# The pipeline-owned fields by hand, in the base's order: ADR-0035's ten,
+# ADR-0038's Family and `Who reads`. A test compares against this, never
+# against the constant under test.
 OWNED_IN_ORDER = ["Title", "Employer", "Location", "Link", "Published", "First seen",
-                  "Order date", "Board", "Matched term", "Identity", "Family"]
+                  "Order date", "Board", "Matched term", "Identity", "Family", "Who reads"]
 
 
 class FakeClient:
@@ -656,13 +656,26 @@ class TestTheDescriptionFields(unittest.TestCase):
         [g] = group([replace(make_row(1), **facts)])
         return g
 
-    def test_off_the_record_holds_the_pipelines_eleven_and_on_the_four_more(self):
+    def test_off_the_record_holds_the_pipelines_twelve_and_on_the_four_more(self):
         """Mutation: "the description fields are sent while off"."""
         from src.airtable import DESCRIPTION_FIELDS
         g = self.group_of()
         self.assertEqual(list(projection.fields_for(g, MATCHER)), list(PIPELINE_FIELDS))
         self.assertEqual(list(projection.fields_for(g, MATCHER, described=True)),
                          list(PIPELINE_FIELDS) + list(DESCRIPTION_FIELDS))
+
+    def test_who_reads_is_sent_now_whatever_the_four_are(self):
+        """The operator's decision of 2026-10-19: shown now, not with the
+        description's four on 2026-11-01. A row it says nothing of sends an
+        empty field, which the read-back takes as unchanged, so the re-send
+        is the labelled rows alone. Mutation: "Who reads is not sent"."""
+        for described in (False, True):
+            record = projection.fields_for(self.group_of(who_reads="founder"), MATCHER, described)
+            self.assertEqual(record["Who reads"], "founder")
+        record = projection.fields_for(self.group_of(), MATCHER)
+        self.assertIsNone(record["Who reads"])
+        self.assertTrue(projection.unchanged(record, {k: v for k, v in record.items()
+                                                      if v is not None}))
 
     def test_each_value_comes_from_the_rows_facts(self):
         g = self.group_of(stated_experience=[2, 3], required_places=["us, canada", "uk"],

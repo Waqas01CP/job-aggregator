@@ -332,8 +332,128 @@ class TestTheRowKeepsNoWords(unittest.TestCase):
         self.assertIsNone(row.required_places)
 
     def test_the_fields_are_part_of_the_canonical_record(self):
-        for name in ("stated_experience", "required_places", "described_workplace"):
+        for name in ("stated_experience", "required_places", "described_workplace", "who_reads"):
             self.assertIn(name, FIELDS)
+
+    def test_who_reads_keeps_the_label_and_never_the_name_or_the_address(self):
+        """ADR-0058's first Confirmation clause, annotated 2026-10-19: a label
+        from a closed list, never a name, an address or any word of the
+        posting. Mutation: "Who reads keeps the words it read". Mutation:
+        "normalise drops who reads"."""
+        entry = {"guid": "https://x.test/h", "title": "AI Engineer",
+                 "applicationLink": "https://x.test/h", "pubDate": 1789141813,
+                 "description": "<p>Questions? Email me at thokar.sam@acme.test</p>"}
+        row = self.row_from("himalayas", entry)
+        self.assertEqual(row.who_reads, "a named person")
+        record = str(row.as_record())
+        for word in ("thokar", "Thokar", "acme.test", "Questions"):
+            self.assertNotIn(word, record)
+
+
+def who(*lines):
+    return description.who_reads(description.lines_of(*lines))
+
+
+class TestWhoReads(unittest.TestCase):
+    """ADR-0058's fourth derived value, the operator's decision of
+    2026-10-19: who the description says reads the application. Each case
+    is shaped like a line measured over every saved description on
+    2026-10-19, and each "nothing" case like one a guard was added for."""
+
+    def test_the_labels_are_the_closed_list_in_their_order(self):
+        """By hand, never from the constant under test."""
+        self.assertEqual(description.WHO_READS,
+                         ("founder", "engineer", "agency", "recruiter", "a named person"))
+
+    def test_each_label_on_the_line_that_gives_it(self):
+        """Mutation: "a founder writing is not read". Mutation: "an engineer
+        writing is not read". Mutation: "the employer's recruiter is not
+        read". Mutation: "an agency writing for a client is not read".
+        Mutation: "a person's own address is not read"."""
+        for line, label in (
+                ("I'm the CTO and I read every application myself.", "founder"),
+                ("Hi, I'm Dana Rivers, co-founder and CEO of Acme.", "founder"),
+                ("I'm a repeat founder building tools for analysts.", "founder"),
+                ("Questions go to founders@acme.test.", "founder"),
+                ("I'm the hiring manager and read each one.", "engineer"),
+                ("I'm Sam, Acme's Head of Engineering.", "engineer"),
+                ("Our client, a payments company in Berlin, is hiring.", "agency"),
+                ("On behalf of our client, a logistics firm, we seek a developer.", "agency"),
+                ("The engineer will work remotely, allocated at our client.", "agency"),
+                ("Step one: a 30 minute intro call with our recruiter.", "recruiter"),
+                ("Recruiter Screen (30 minutes)", "recruiter"),
+                ("Our Talent Acquisition team will be in touch.", "recruiter"),
+                ("I'm the recruiter for this role and will answer here.", "recruiter"),
+                ("Email me at dana@acme.test with your GitHub.", "a named person"),
+                ("Apply: dana.rivers@acme.test", "a named person"),
+                ("Reach out to me at dana [at] acme.test", "a named person")):
+            with self.subTest(line=line):
+                self.assertEqual(who(line), label)
+
+    def test_what_names_no_reader_gives_nothing(self):
+        """Each shaped like a line the first measurement read wrongly.
+        Mutation: "a hiring verb before the role is read as the writer's".
+        Mutation: "a role mailbox is read as a person". Mutation: "the
+        company's own mailbox is read as a person". Mutation: "a team named
+        for clients is read as an agency"."""
+        for line in ("I'm looking for a product engineer to own our systems.",
+                     "I'm excited to share that our CTO will lead the team.",
+                     "We are hiring a CTO.",
+                     "Im Produktbereich der Engineers wächst das Team.",
+                     "We solve our client's hardest problems.",
+                     "Our Client Success team supports every account.",
+                     "You will work with our client-facing consultants.",
+                     "Our client roster includes several banks.",
+                     "We are hiring a Senior Technical Recruiter to join our talent team.",
+                     "Operate with autonomy in a small, high-talent team.",
+                     "Beware of people posing as our Talent Acquisition team.",
+                     "Agency and third party recruiter notice: we accept no resumes.",
+                     "Send your CV to jobs@acme.test",
+                     "Write to acme@acme.test for details.",
+                     "Questions about privacy go to privacy@acme.test.",
+                     "We will never email you from jsmith@mail.test.",
+                     "For accommodations write to accomodations@acme.test."):
+            with self.subTest(line=line):
+                self.assertIsNone(who(line))
+
+    def test_a_posting_saying_several_things_is_labelled_by_the_first_in_order(self):
+        """The writer reads it, a founder above all; an agency stands between
+        him and the employer; the employer's recruiter next; a person whose
+        role is not said last. Mutation: "a recruiter outranks a founder"."""
+        founder = "I'm the CTO and I read every application."
+        recruiter = "First, a call with our recruiter."
+        agency = "Our client, a fintech, is hiring."
+        named = "Questions? Email me at dana@acme.test."
+        self.assertEqual(who(recruiter, founder), "founder")
+        self.assertEqual(who(agency, recruiter), "agency")
+        self.assertEqual(who(named, recruiter), "recruiter")
+        self.assertEqual(who("I'm the hiring manager.", agency), "engineer")
+        self.assertEqual(who(founder, named), "founder")
+
+    def test_a_description_with_no_text_says_nothing_of_it(self):
+        self.assertIsNone(description.read([]))
+        self.assertIsNone(description.read(["<p>We build tools.</p>"]).who_reads)
+
+    def test_the_first_person_roles_are_configuration(self):
+        """ADR-0031: "chief", "head" and "lead" are seniority words, which no
+        module may hard-code, so the roles a writer names are read from
+        `config/who_reads.json`. A role there is matched whole, any space
+        between its words, a plural s allowed. Mutation: "the founder roles
+        are not read from configuration"."""
+        import json
+        import tempfile
+        with tempfile.TemporaryDirectory() as d:
+            path = os.path.join(d, "who_reads.json")
+            with open(path, "w", encoding="utf-8") as f:
+                json.dump({"founder_roles": ["managing partner"], "engineer_roles": ["builder"]}, f)
+            roles = description.load_roles(path)
+            self.assertRegex("our managing  partners", roles["founder_roles"])
+            self.assertNotRegex("our managing", roles["founder_roles"])
+            with open(path, "w", encoding="utf-8") as f:
+                json.dump({"founder_roles": [], "engineer_roles": ["builder"]}, f)
+            with self.assertRaises(description.WhoReadsConfigError):
+                description.load_roles(path)
+        self.assertEqual(description._ROLES, description.load_roles())
 
 
 if __name__ == "__main__":

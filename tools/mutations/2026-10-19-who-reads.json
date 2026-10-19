@@ -1,0 +1,98 @@
+[
+  {
+    "label": "a founder writing is not read",
+    "path": "src/description.py",
+    "find": "        if _FOUNDER.search(line):\n            said.add(\"founder\")",
+    "replace": "        if False:\n            said.add(\"founder\")"
+  },
+  {
+    "label": "an engineer writing is not read",
+    "path": "src/description.py",
+    "find": "        if _ENGINEER.search(line):\n            said.add(\"engineer\")",
+    "replace": "        if False:\n            said.add(\"engineer\")"
+  },
+  {
+    "label": "an agency writing for a client is not read",
+    "path": "src/description.py",
+    "find": "        if _AGENCY.search(line):\n            said.add(\"agency\")",
+    "replace": "        if False:\n            said.add(\"agency\")"
+  },
+  {
+    "label": "the employer's recruiter is not read",
+    "path": "src/description.py",
+    "find": "        if _RECRUITER.search(line):\n            said.add(\"recruiter\")",
+    "replace": "        if False:\n            said.add(\"recruiter\")"
+  },
+  {
+    "label": "a person's own address is not read",
+    "path": "src/description.py",
+    "find": "            elif not (_ROLE_MAILBOX.search(local)",
+    "replace": "            elif False and not (_ROLE_MAILBOX.search(local)"
+  },
+  {
+    "label": "a role mailbox is read as a person",
+    "path": "src/description.py",
+    "find": "            elif not (_ROLE_MAILBOX.search(local)",
+    "replace": "            elif not (False"
+  },
+  {
+    "label": "the company's own mailbox is read as a person",
+    "path": "src/description.py",
+    "find": "                      or local.lower() == m.group(2).split(\".\")[0].lower()):",
+    "replace": "                      or False):"
+  },
+  {
+    "label": "a hiring verb before the role is read as the writer's",
+    "path": "src/description.py",
+    "find": "        r\"|thrilled|proud|work|working|join|joining|our|their|your|with|for|to|not)\\b)[^.\\n])\"",
+    "replace": "        r\"|thrilled|proud|work|working|join|joining|our|their|your|with|for|to|not)\\b)|[^.\\n])\""
+  },
+  {
+    "label": "a team named for clients is read as an agency",
+    "path": "src/description.py",
+    "find": "(?![-‐])(?!\\s+(?:services|success|advisors?|relations",
+    "replace": "(?!\\s+(?:services|advisors?|relations"
+  },
+  {
+    "label": "Who reads keeps the words it read",
+    "path": "src/description.py",
+    "find": "    return next((label for label in WHO_READS if label in said), None)",
+    "replace": "    return \" \".join(lines) or None"
+  },
+  {
+    "label": "a recruiter outranks a founder",
+    "path": "src/description.py",
+    "find": "WHO_READS = (\"founder\", \"engineer\", \"agency\", \"recruiter\", \"a named person\")",
+    "replace": "WHO_READS = (\"recruiter\", \"founder\", \"engineer\", \"agency\", \"a named person\")"
+  },
+  {
+    "label": "the founder roles are not read from configuration",
+    "path": "src/description.py",
+    "find": "_FOUNDER = re.compile(_FIRST_PERSON + _GAP + r\"\\b\" + _ROLES[\"founder_roles\"]",
+    "replace": "_FOUNDER = re.compile(_FIRST_PERSON + _GAP + r\"\\b\" + \"(?:founders?)\""
+  },
+  {
+    "label": "normalise drops who reads",
+    "path": "src/normalise.py",
+    "find": "            who_reads=facts.who_reads if facts else None,",
+    "replace": "            who_reads=None,"
+  },
+  {
+    "label": "the re-read leaves out who reads",
+    "path": "src/facts.py",
+    "find": "           \"described_workplace\", \"described\", \"who_reads\")",
+    "replace": "           \"described_workplace\", \"described\")"
+  },
+  {
+    "label": "a change to the role words re-reads nothing",
+    "path": "src/facts.py",
+    "find": "           \"config/eligibility.json\", \"config/who_reads.json\")",
+    "replace": "           \"config/eligibility.json\")"
+  },
+  {
+    "label": "Who reads is not sent",
+    "path": "src/projection.py",
+    "find": "        \"Who reads\": rep.who_reads,",
+    "replace": "        \"Who reads\": None,"
+  }
+]

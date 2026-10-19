@@ -1,0 +1,8 @@
+{
+  "note": "ADR-0058's fourth derived value, the operator's decision of 2026-10-19: who the description says reads the application, shown in Jobs as Who reads. These are the roles a person writing in the first person names ('I'm the CTO', 'I'm the hiring manager') that make a posting a founder's or an engineer's. Configuration, not code, because ADR-0031's audit reads several of these words as seniority words, which no module may hard-code. Each role is matched whole, its words separated by any space, a plural s allowed. The labels themselves, and the patterns for an agency, a recruiter and a named person, are in src/description.py. A change here re-reads every saved posting (src/facts.py).",
+  "founder_roles": ["founder", "co-founder", "co founder", "cofounder", "ceo", "cto",
+                    "chief technology officer", "chief executive officer"],
+  "engineer_roles": ["engineer", "developer", "engineering manager", "hiring manager",
+                     "head of engineering", "vp engineering", "vp of engineering",
+                     "vp, engineering", "tech lead", "technical lead"]
+}

@@ -32,10 +32,10 @@ TEST_TABLE = "tblFAKETESTTAB001"
 
 # The pipeline-owned fields, written out by hand so a change to
 # PIPELINE_FIELDS has to change this too: ADR-0035's ten, and ADR-0038's Family,
-# classified pipeline-owned 2026-09-23. The set a mutation adding Status must
-# break.
+# classified pipeline-owned 2026-09-23, and `Who reads`, 2026-10-19. The set a
+# mutation adding Status must break.
 OWNED = {"Title", "Employer", "Location", "Link", "Published", "First seen",
-         "Order date", "Board", "Matched term", "Identity", "Family"}
+         "Order date", "Board", "Matched term", "Identity", "Family", "Who reads"}
 
 
 class FakeResponse:
@@ -97,7 +97,8 @@ def row(i):
             "Link": "https://example.test/%d" % i, "Published": "2026-09-20T10:00:00.000Z",
             "First seen": "2026-09-21T10:00:00.000Z", "Order date": "2026-09-20T10:00:00.000Z",
             "Board": "greenhouse:acme", "Matched term": "ai engineer",
-            "Identity": "greenhouse:%d" % i, "Family": "LLM and applied AI"}
+            "Identity": "greenhouse:%d" % i, "Family": "LLM and applied AI",
+            "Who reads": None}
 
 
 def rows(n):
@@ -134,7 +135,7 @@ class TestThePipelineOwnedFields(unittest.TestCase):
         self.assertEqual(c._session.calls, [])
 
     def test_a_record_missing_one_of_the_set_is_refused(self):
-        for name in ("Matched term", "Family"):
+        for name in ("Matched term", "Family", "Who reads"):
             with self.subTest(missing=name):
                 record = row(1)
                 del record[name]

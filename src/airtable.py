@@ -14,7 +14,8 @@ that read is made by the sweep's client in `src/airtable_sweep.py`, where
 every read lives, so this module still only writes.
 
 **It sends exactly the pipeline-owned fields**: ADR-0035's ten, and `Family`,
-classified pipeline-owned on 2026-09-23 and built 2026-09-24. An upsert
+classified pipeline-owned on 2026-09-23 and built 2026-09-24, and `Who reads`,
+classified on 2026-10-19 and built the same day. An upsert
 updates every field it is given, so a field outside the set would overwrite
 something that is not the pipeline's: `Status` above all, whose every write
 also restarts the fifteen-day clock on `Classified at`. A record carrying any
@@ -52,9 +53,12 @@ API_ROOT = "https://api.airtable.com/v0"
 # Status, Classified at and the classification tables' reason fields are the
 # operator's or Airtable's, and are never among them. Family is ADR-0038's
 # label, classified pipeline-owned in ADR-0035's 2026-09-23 Changes row.
+# `Who reads`, ADR-0058's fourth derived value, a label of
+# description.WHO_READS or empty, classified pipeline-owned on 2026-10-19 and
+# shown at once, the operator's decision; single line text.
 PIPELINE_FIELDS = ("Title", "Employer", "Location", "Link", "Published",
                    "First seen", "Order date", "Board", "Matched term",
-                   "Identity", "Family")
+                   "Identity", "Family", "Who reads")
 IDENTITY_FIELD = "Identity"
 # Brief 13's four, the pipeline's own, sent only while `description_fields_
 # shown` is on in config/sweep.json: the largest number of years the
@@ -65,8 +69,9 @@ DESCRIPTION_FIELDS = ("Years asked", "Required in", "On site", "No description")
 
 
 def pipeline_fields(described=False):
-    """The fields the projection owns in `Jobs`: ADR-0035's ten and
-    ADR-0038's Family, and the description's four when they are shown."""
+    """The fields the projection owns in `Jobs`: ADR-0035's ten,
+    ADR-0038's Family and `Who reads`, and the description's four when they
+    are shown."""
     return PIPELINE_FIELDS + (DESCRIPTION_FIELDS if described else ())
 
 # ADR-0004 and ADR-0035: ten records a call.

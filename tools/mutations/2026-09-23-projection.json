@@ -2,8 +2,8 @@
   {
     "label": "Status added to the sent set",
     "path": "src/airtable.py",
-    "find": "                   \"Identity\", \"Family\")",
-    "replace": "                   \"Identity\", \"Family\", \"Status\")"
+    "find": "                   \"Identity\", \"Family\", \"Who reads\")",
+    "replace": "                   \"Identity\", \"Family\", \"Who reads\", \"Status\")"
   },
   {
     "label": "test mode resolves to the production table",

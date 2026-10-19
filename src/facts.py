@@ -16,7 +16,8 @@ carries PH and drops. Of the 130 rows the Senior change's backfill would add,
 by identity: `facts.json` beside the public layers for employer-board rows,
 its twin in the private repository for aggregator rows (ADR-0020, ADR-0047).
 Each record holds the derived fields only, numbers, configured place names,
-flags and stated levels, what the public layer already carries (ADR-0058).
+flags, stated levels and since 2026-10-19 a label of who reads the
+application, what the public layer already carries (ADR-0058).
 Every loader that judges stored rows reads the overlay first. The overlay is
 a cache, rewritten whole at each re-read, never a record of anything.
 
@@ -45,12 +46,12 @@ from .normalise import dumps, loads, normalise
 # The facts a row derives from its posting, and nothing else: its identity,
 # title and dates are what it was first seen as, and are never re-read.
 DERIVED = ("stated_experience", "stated_levels", "places", "workplace", "required_places",
-           "described_workplace", "described")
+           "described_workplace", "described", "who_reads")
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # The code and configuration the derived facts come from.
 SOURCES = ("src/description.py", "src/normalise.py", "src/adapters/*.py",
-           "config/eligibility.json")
+           "config/eligibility.json", "config/who_reads.json")
 
 
 def fingerprint(root=REPO_ROOT, sources=SOURCES):

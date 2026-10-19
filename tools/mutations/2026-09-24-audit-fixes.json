@@ -38,8 +38,8 @@
   {
     "label": "Status added to the constant",
     "path": "src/airtable.py",
-    "find": "\"Identity\", \"Family\")\nIDENTITY_FIELD",
-    "replace": "\"Identity\", \"Family\", \"Status\")\nIDENTITY_FIELD"
+    "find": "\"Identity\", \"Family\", \"Who reads\")\nIDENTITY_FIELD",
+    "replace": "\"Identity\", \"Family\", \"Who reads\", \"Status\")\nIDENTITY_FIELD"
   },
   {
     "label": "the run's scrub misses the encoded token",

@@ -8,8 +8,8 @@
   {
     "label": "the re-read leaves out whether there was a description",
     "path": "src/facts.py",
-    "find": "           \"described_workplace\", \"described\")",
-    "replace": "           \"described_workplace\")"
+    "find": "           \"described_workplace\", \"described\", \"who_reads\")",
+    "replace": "           \"described_workplace\", \"who_reads\")"
   },
   {
     "label": "the description fields are sent while off",
