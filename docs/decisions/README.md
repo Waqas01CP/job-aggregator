@@ -48,7 +48,7 @@ Records are written at the moment a decision concludes. A record's factual error
 | 0032 | The seniority rule | Accepted, extended to a source's stated level; Senior no longer drops, by title or level |
 | 0033 | The data branch is the store, local files are working copies | Accepted |
 | 0034 | Airtable gets its own client | Accepted |
-| 0035 | The projection upserts on Identity | Accepted; derived values, a reason field and a fixed row number classified |
+| 0035 | The projection upserts on Identity | Accepted; derived values, a reason field, a fixed row number and who reads classified |
 | 0036 | The contract check reports through the run log | Superseded by 0061 |
 | 0037 | The filtered layer stores rows, the projection groups them | Accepted |
 | 0038 | Role families are views, not a ranking | Accepted |
@@ -71,12 +71,12 @@ Records are written at the moment a decision concludes. A record's factual error
 | 0055 | The display is cleared by a clock, and by hand | Accepted, built |
 | 0056 | The projection sends the whole layer, and the delta design that will replace it | Superseded by 0060 |
 | 0057 | A posting is shown only if he can take it, and none he can take is lost | Accepted, supersedes 0041; on Hacker News an on-site post in a place it cannot name is closed |
-| 0058 | The description is read once, at fetch, and only what is derived is kept | Accepted |
+| 0058 | The description is read once, at fetch, and only what is derived is kept | Accepted; a fourth derived value, who reads the application |
 | 0059 | Version 1 is the system working for him, on the sources worth having | Superseded by 0063 |
-| 0060 | The projection sends only what differs from `Jobs` | Accepted, supersedes 0056 |
+| 0060 | The projection sends only what differs from `Jobs` | Accepted, supersedes 0056; one read of `Jobs` shared with the sweep |
 | 0061 | The contract check reports per source, in its log and in Airtable | Accepted, supersedes 0036 |
-| 0062 | The classification flow, with gone, applied and a reason in `Jobs` | Accepted, supersedes 0050 |
-| 0063 | Version 1, its test for done set, and the second wave by who reads the application | Accepted, supersedes 0059 |
+| 0062 | The classification flow, with gone, applied and a reason in `Jobs` | Accepted, supersedes 0050; the rejection tables read only when needed |
+| 0063 | Version 1, its test for done set, and the second wave by who reads the application | Accepted, supersedes 0059; the second wave built, Breezy out on a conclusive read |
 | RULES | How records are resolved, amended and retired | Accepted |
 
 ## Pending

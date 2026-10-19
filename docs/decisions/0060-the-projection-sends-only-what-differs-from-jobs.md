@@ -111,3 +111,7 @@ Built by the implementing seat as commit `a3e387a`. ADR-0004 owns the allowance 
 The operator's decision, 2026-10-07 UTC, on the seat's proposal and after both designs' costs were put to him.
 
 ## Changes
+
+| Date | Change | Reason |
+|---|---|---|
+| 2026-10-19 | The read-back and the sweep share one read of `Jobs` a run, with the projection's own creates and updates merged in before the sweep acts: about 120 calls a month saved. The projection still decides from the read which rows to send, and removal stays the sweep's. Not built yet | The operator's decision, 2026-10-19 UTC, "2. yes", on the implementing seat's proposal in its report on Brief 16: each run read `Jobs` twice, about 2 calls each at about 155 rows. Its cost: a row he classifies in the seconds between the read and the sweep waits for the next run, and nothing is lost. He asked whether he could update it himself in GitHub. The chat's answer, given to him the same day: a run he starts by hand from GitHub's Actions page takes such a row, at a run's calls. The sweep's record is ADR-0062 |
