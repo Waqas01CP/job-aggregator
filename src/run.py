@@ -508,14 +508,26 @@ def make_sweep_client(test_mode, used_this_month):
                                 monthly_ceiling=monthly_ceiling())
 
 
-def previous_run_at(test_mode):
-    """When the previous run on this branch ran, or None. A copy-only sweep
-    reads the classification tables only if a status moved since."""
+# How far back the sweep looks for the last copy step that finished: a week
+# at two scheduled runs a day. None found, and it reads every table.
+COPY_STEP_LOGS = 14
+
+
+def last_copy_step_at(test_mode):
+    """When the last run on this branch whose sweep read every table, so ran
+    the copy step, and did not fail, ran; or None. The sweep reads the
+    rejection tables for the copy step only if a status moved since. The
+    previous run, whatever it did, was the mark until 2026-10-19: a copy
+    step that failed would have been taken as done."""
     try:
-        logs = storage.read_recent_run_logs(1, test_mode)
+        logs = storage.read_recent_run_logs(COPY_STEP_LOGS, test_mode)
     except Exception:
         return None
-    return logs[-1].get("run_at") if logs and isinstance(logs[-1], dict) else None
+    for log in reversed(logs):
+        sweep = log.get("sweep") if isinstance(log, dict) else None
+        if isinstance(sweep, dict) and sweep.get("tables_read") and not sweep.get("failure"):
+            return log.get("run_at")
+    return None
 
 
 # How many of this branch's recent run logs the clearing tool reads for the
@@ -585,8 +597,8 @@ def sweep_display(run, no_commit, test_mode, slot, private_ok, closure, config, 
     try:
         client = make_sweep_client(test_mode, used_before)
         report = Sweep(client, run.paths, run.now, run.matcher, closure, config,
-                       private_ok).run(daily, since=None if daily else previous_run_at(test_mode),
-                                       jobs=jobs)
+                       private_ok).run(daily, since=last_copy_step_at(test_mode), jobs=jobs,
+                                       by_hand=slot == "manual")
         report.update(client.counters())
         report["failure"] = None if closure_failure is None else (
             "the closure test could not be built, so only the copy ran: %s" % closure_failure)

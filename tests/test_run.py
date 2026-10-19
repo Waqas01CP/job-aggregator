@@ -1835,6 +1835,55 @@ class TestTheSweepInTheRun(unittest.TestCase):
         self.assertEqual((sweep["jobs_read_by"], sweep["jobs_rows"]), ("the sweep", 1))
         self.assertEqual(sweep["copied"], {"accepted": 1})
 
+    def slot_run(self, slot):
+        os.environ["RUN_SLOT"] = slot
+        try:
+            return self.main()
+        finally:
+            os.environ.pop("RUN_SLOT", None)
+
+    def test_a_second_morning_with_nothing_moved_skips_the_rejection_tables(self):
+        """ADR-0062's Changes, 2026-10-19: the run hands every sweep the last
+        copy step that finished, mornings included, so a morning with
+        nothing to do reads `Jobs` and `accepted` alone. Mutation: "the
+        morning's since is not passed"."""
+        self.slot_run("morning")
+        first = self.last_run_log()["sweep"]
+        self.assertEqual(first["rejection_tables_read_for"], ["no copy step that finished is known"])
+        self.fresh_machine()
+        self.base.calls.clear()
+        self.slot_run("morning")
+        second = self.last_run_log()["sweep"]
+        self.assertEqual((second["rejection_tables_read_for"], second["tables_read"]), ([], False))
+        self.assertEqual(sorted({c["table"] for c in self.base.calls}),
+                         ["tblCOPY0000000002", "tblJOBSFAKE000001"])
+
+    def test_a_run_started_by_hand_reads_every_table(self):
+        """Mutation: "a run started by hand reads only what a morning needs"."""
+        self.slot_run("morning")
+        self.fresh_machine()
+        self.slot_run("manual")
+        sweep = self.last_run_log()["sweep"]
+        self.assertEqual((sweep["rejection_tables_read_for"], sweep["tables_read"]),
+                         (["a run started by hand"], True))
+
+    def test_a_failed_sweep_is_never_the_last_copy_step(self):
+        """Its copy step may not have finished, so a status that moved before
+        it must still count as moved. Mutation: "a failed sweep counts as a
+        copy step"."""
+        real = storage.read_recent_run_logs
+        logs = [{"run_at": "a", "sweep": {"tables_read": True, "failure": None}},
+                {"run_at": "b", "sweep": {"tables_read": True, "failure": "HttpError: 503"}},
+                {"run_at": "c", "sweep": {"tables_read": False, "failure": None}},
+                {"run_at": "d"}]
+        storage.read_recent_run_logs = lambda count, test_mode: logs
+        try:
+            self.assertEqual(run_module.last_copy_step_at(False), "a")
+            logs[:] = logs[1:]
+            self.assertIsNone(run_module.last_copy_step_at(False))
+        finally:
+            storage.read_recent_run_logs = real
+
     def test_the_daily_steps_skip_the_evening_and_run_otherwise(self):
         for slot, daily in (("evening", False), ("morning", True), (None, True)):
             with self.subTest(slot=slot):

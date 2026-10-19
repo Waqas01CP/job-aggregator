@@ -90,12 +90,13 @@ class Harness(unittest.TestCase):
         return SweepClient("patFAKE.0000", "appFAKEBASE000001", TABLES, session=self.base,
                            min_interval=0, sleep=lambda s: None)
 
-    def sweep(self, daily=True, private_ok=True, since=None, now=NOW, config=CONFIG):
+    def sweep(self, daily=True, private_ok=True, since=None, now=NOW, config=CONFIG,
+              by_hand=False):
         closure = Closure(self.last_seen, self.logs, lambda b: b.startswith("himalayas"),
                           config.closed_after_polled_runs, now.isoformat().replace("+00:00", "Z"))
         client = self.client()
         report = Sweep(client, self.paths, now, MATCHER, closure, config,
-                       private_ok).run(daily, since=since)
+                       private_ok).run(daily, since=since, by_hand=by_hand)
         report["calls_used"] = client.calls_used
         return report
 
@@ -229,6 +230,156 @@ class TestStep1Copy(Harness):
         report = self.sweep(daily=False, since=stamp(NOW - timedelta(hours=12)))
         self.assertFalse(report["tables_read"])
         self.assertEqual(report["calls_used"], 1)
+
+
+class TestTheRejectionTablesWhenNeeded(Harness):
+    """ADR-0062's Changes, the operator's yes of 2026-10-19: a morning reads
+    the two rejection tables only when the copy step, step 2 or step 3 needs
+    them, and `accepted` every morning."""
+
+    SINCE = stamp(NOW - timedelta(hours=12))
+
+    def reads(self):
+        tables = {v: k for k, v in TABLES.items()}
+        return sorted(tables[c["table"]] for c in self.base.calls if c["method"] == "GET")
+
+    def quiet_morning(self):
+        """A rejected row and an accepted one, classified days ago and
+        unmoved since the last copy step, each with its copy."""
+        r1, r2 = make_row(1), make_row(2)
+        self.store_rows([r1, r2])
+        self.in_jobs(r1, status="rejected-not-a-fit", classified_days_ago=5)
+        self.in_jobs(r2, status="accepted", classified_days_ago=5)
+        self.base.seed(TABLES["rejected-not-a-fit"], {"Identity": "greenhouse:1"},
+                       created=NOW - timedelta(days=5))
+        self.base.seed(TABLES["accepted"], {"Identity": "greenhouse:2"},
+                       created=NOW - timedelta(days=5))
+
+    def test_a_quiet_morning_reads_jobs_and_accepted_alone_and_copies_nothing(self):
+        """The two calls a morning saved. Without the rejection tables the
+        copy step does not run, or the rejected row, its copy unread, would
+        get a second one. Mutation: "a morning reads the rejection tables
+        every day". Mutation: "step 1 runs without the rejection tables"."""
+        self.quiet_morning()
+        report = self.sweep(since=self.SINCE)
+        self.assertEqual(self.reads(), sorted([JOBS, "accepted"]))
+        self.assertEqual((report["rejection_tables_read_for"], report["tables_read"]), ([], False))
+        self.assertEqual(report["copied"], {})
+        self.assertEqual(len(self.copies("rejected-not-a-fit")), 1)
+        self.assertEqual([c for c in self.base.calls if c["method"] != "GET"], [])
+
+    def test_accepted_is_read_every_morning_for_delete(self):
+        """Mutation: "a morning skips the accepted table too"."""
+        r = make_row(1)
+        self.store_rows([r])
+        storage.write_atomic("%s/accepted.json" % self.paths["outcomes_dir"],
+                             dumps([{"identity": "greenhouse:1", "swept_at": stamp(NOW)}]))
+        self.base.seed(TABLES["accepted"], {"Identity": "greenhouse:1", "Delete": "yes"},
+                       created=NOW - timedelta(days=40))
+        self.sweep(since=self.SINCE)
+        self.assertEqual(len(self.store("removed_copies.json")), 1)
+        self.assertEqual(self.reads(), sorted([JOBS, "accepted"]))
+
+    def test_each_reason_reads_every_table(self):
+        """Mutation: "a rejected row at its fifteen days is not read for".
+        Mutation: "a rejection stored lately is not read for". Mutation: "a
+        run started by hand reads only what a morning needs". Mutation: "a
+        cleared status is not seen on a copy-only run", re-expressed. Mutation: "a superseded rejection
+        copy is not counted"."""
+        def moved(case):
+            [row] = [r for r in case.jobs() if r["Identity"] == "greenhouse:2"]
+            case.base.table(TABLES[JOBS])[row["_id"]]["fields"]["Classified at"] = stamp(
+                NOW - timedelta(hours=1))
+
+        def at_fifteen(case):
+            case.in_jobs(make_row(3), status="rejected-poor-filtering", classified_days_ago=15)
+
+        def stored(name, days, table=None):
+            def write(case):
+                record = {"identity": "greenhouse:9", "swept_at": stamp(NOW - timedelta(days=days))}
+                if table:
+                    record["table"] = table
+                storage.write_atomic("%s/%s" % (case.paths["outcomes_dir"], name), dumps([record]))
+            return write
+
+        cases = (
+            ("a status moved", moved, {}, "a status moved since the last copy step"),
+            ("at fifteen days", at_fifteen, {}, "a rejected row is at its fifteen days"),
+            ("a rejection stored", stored("rejected_not_a_fit.json", 2), {},
+             "a rejection was stored in the last 3 days"),
+            ("a superseded copy saved", stored("removed_copies.json", 1, "rejected-not-a-fit"),
+             {}, "a rejection was stored in the last 3 days"),
+            ("by hand", lambda case: None, {"by_hand": True}, "a run started by hand"),
+            ("no copy step known", lambda case: None, {"since": None},
+             "no copy step that finished is known"))
+        for name, arrange, kw, reason in cases:
+            with self.subTest(case=name):
+                self.setUp()
+                self.quiet_morning()
+                arrange(self)
+                report = self.sweep(**dict({"since": self.SINCE}, **kw))
+                self.assertIn(reason, report["rejection_tables_read_for"])
+                self.assertEqual(self.reads(), sorted([JOBS] + list(CLASSIFICATION_TABLES)))
+                self.assertTrue(report["tables_read"])
+                self.tearDown()
+
+    def test_what_is_not_a_reason_reads_nothing_more(self):
+        """A rejection stored four days ago, a superseded `accepted` copy,
+        and a rejected row a day short of fifteen: none is read for.
+        Mutation: "a superseded accepted copy is read for"."""
+        self.quiet_morning()
+        self.in_jobs(make_row(3), status="rejected-poor-filtering", classified_days_ago=14)
+        storage.write_atomic("%s/rejected_not_a_fit.json" % self.paths["outcomes_dir"],
+                             dumps([{"identity": "greenhouse:9",
+                                     "swept_at": stamp(NOW - timedelta(days=4))}]))
+        storage.write_atomic("%s/removed_copies.json" % self.paths["outcomes_dir"],
+                             dumps([{"identity": "greenhouse:8", "table": "accepted",
+                                     "swept_at": stamp(NOW)}]))
+        self.assertEqual(self.sweep(since=self.SINCE)["rejection_tables_read_for"], [])
+
+    def test_a_rejection_stored_at_no_readable_time_is_read_for(self):
+        """Read rather than missed. Mutation: "a rejection record without a
+        time is passed over"."""
+        self.quiet_morning()
+        storage.write_atomic("%s/rejected_poor_filtering.json" % self.paths["outcomes_dir"],
+                             dumps([{"identity": "greenhouse:9"}]))
+        self.assertEqual(self.sweep(since=self.SINCE)["rejection_tables_read_for"],
+                         ["a rejection was stored in the last 3 days"])
+
+    def test_step_2_stores_the_copys_reason_on_the_morning_it_needs_it(self):
+        """The chat's question of Brief 17: step 2 takes the copy's reason at
+        fifteen days from `Classified at` in `Jobs`, so that morning reads
+        the table; and the morning after, when the record is on origin, the
+        copy goes with its row."""
+        r = make_row(1)
+        self.store_rows([r])
+        self.in_jobs(r, status="rejected-not-a-fit", classified_days_ago=15)
+        self.base.seed(TABLES["rejected-not-a-fit"], {"Identity": "greenhouse:1",
+                                                      "Choice reason": "salary"},
+                       created=NOW - timedelta(days=15) + timedelta(hours=11))
+        self.sweep(since=self.SINCE)
+        [record] = self.store("rejected_not_a_fit.json")
+        self.assertEqual(record["reason"], "salary")
+        report = self.sweep(since=self.SINCE, now=NOW + timedelta(days=1))
+        self.assertEqual((self.jobs(), self.copies("rejected-not-a-fit")), ([], []))
+        self.assertEqual(report["copies_deleted"], {"rejected-not-a-fit": 1})
+
+    def test_an_unmoved_reason_reaches_its_copy_at_the_next_read(self):
+        """What "transcribed later" means: a `Reason` he adds in `Jobs`
+        without changing the status waits for the next read of the tables;
+        a run he starts by hand reads them, and fills the copy at once."""
+        r = make_row(1)
+        self.store_rows([r])
+        self.in_jobs(r, status="rejected-not-a-fit", classified_days_ago=5,
+                     extra={"Reason": "salary"})
+        self.base.seed(TABLES["rejected-not-a-fit"], {"Identity": "greenhouse:1"},
+                       created=NOW - timedelta(days=5))
+        config = replace(CONFIG, reason_choices={"rejected-not-a-fit": ("salary",)})
+        self.assertEqual(self.sweep(since=self.SINCE, config=config)["transcribed"], {})
+        report = self.sweep(since=self.SINCE, config=config, by_hand=True)
+        self.assertEqual(report["transcribed"], {"rejected-not-a-fit": 1})
+        self.assertEqual([c["Choice reason"] for c in self.copies("rejected-not-a-fit")],
+                         ["salary"])
 
 
 class TestStep2StoreVerifyDelete(Harness):

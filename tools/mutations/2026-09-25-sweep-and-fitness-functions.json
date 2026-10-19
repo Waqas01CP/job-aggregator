@@ -62,8 +62,8 @@
   {
     "label": "a cleared status is not seen on a copy-only run",
     "path": "src/sweep.py",
-    "find": "        read_tables = daily or since is None or bool(moved)",
-    "replace": "        read_tables = daily or since is None"
+    "find": "        elif any((r[\"fields\"].get(\"Classified at\") or \"\") > since for r in jobs):",
+    "replace": "        elif False:"
   },
   {
     "label": "runs that did not poll the board count",

@@ -1,0 +1,68 @@
+[
+  {
+    "label": "a morning reads the rejection tables every day",
+    "path": "src/sweep.py",
+    "find": "        read_rejections = bool(why)\n",
+    "replace": "        read_rejections = bool(why) or daily\n"
+  },
+  {
+    "label": "step 1 runs without the rejection tables",
+    "path": "src/sweep.py",
+    "find": "        if read_rejections:\n            # Never without them",
+    "replace": "        if True:\n            # Never without them"
+  },
+  {
+    "label": "a morning skips the accepted table too",
+    "path": "src/sweep.py",
+    "find": "            if read_rejections or (daily and t == \"accepted\"):",
+    "replace": "            if read_rejections:"
+  },
+  {
+    "label": "a rejected row at its fifteen days is not read for",
+    "path": "src/sweep.py",
+    "find": "            why.append(\"a rejected row is at its fifteen days\")",
+    "replace": "            pass"
+  },
+  {
+    "label": "a rejection stored lately is not read for",
+    "path": "src/sweep.py",
+    "find": "        if self.stores.rejection_stored_since(self.now - timedelta(days=REJECTION_STORED_DAYS)):",
+    "replace": "        if False:"
+  },
+  {
+    "label": "a run started by hand reads only what a morning needs",
+    "path": "src/sweep.py",
+    "find": "        if by_hand:\n            why.append(\"a run started by hand\")",
+    "replace": "        if False:\n            why.append(\"a run started by hand\")"
+  },
+  {
+    "label": "a superseded rejection copy is not counted",
+    "path": "src/sweep.py",
+    "find": "            self.rejections_stored_at += [r.get(\"swept_at\") for r in removed\n                                          if r.get(\"table\") in REJECTION_TABLES]",
+    "replace": "            pass"
+  },
+  {
+    "label": "a superseded accepted copy is read for",
+    "path": "src/sweep.py",
+    "find": "            self.rejections_stored_at += [r.get(\"swept_at\") for r in removed\n                                          if r.get(\"table\") in REJECTION_TABLES]",
+    "replace": "            self.rejections_stored_at += [r.get(\"swept_at\") for r in removed]"
+  },
+  {
+    "label": "a rejection record without a time is passed over",
+    "path": "src/sweep.py",
+    "find": "            except (TypeError, ValueError):\n                return True",
+    "replace": "            except (TypeError, ValueError):\n                continue"
+  },
+  {
+    "label": "the morning's since is not passed",
+    "path": "src/run.py",
+    "find": "                       private_ok).run(daily, since=last_copy_step_at(test_mode), jobs=jobs,",
+    "replace": "                       private_ok).run(daily, since=None if daily else last_copy_step_at(test_mode), jobs=jobs,"
+  },
+  {
+    "label": "a failed sweep counts as a copy step",
+    "path": "src/run.py",
+    "find": "        if isinstance(sweep, dict) and sweep.get(\"tables_read\") and not sweep.get(\"failure\"):",
+    "replace": "        if isinstance(sweep, dict) and sweep.get(\"tables_read\"):"
+  }
+]

@@ -49,8 +49,10 @@ restored from origin holds it, a day later, as for every other removal.
 so an absence can be reconstructed from the logs. An aggregator's identity is
 masked there, since the log is public, and named in its private store.
 
-Step 1 runs on every committing run. Steps 2 to 6 are daily: they run
-except on the evening slot.
+Step 1 runs on a committing run that reads the two rejection tables, which
+it does only when something needs them (`Sweep.rejection_reads`, since
+2026-10-19). Steps 2 to 6 are daily: they run except on the evening slot,
+and read `accepted` every morning.
 
 **Write, verify, then delete, and the verify reads what GitHub holds.** A
 store is durable only once the workflow has pushed it, after this run ends.
@@ -112,6 +114,11 @@ REMOVED_BY_OPERATOR = "operator"
 # copy whose row has left `Jobs` can still be stored from its own fields.
 READ_FIELDS = {t: ("Identity", OPERATOR_FIELD[t]) for t in REJECTION_TABLES}
 READ_FIELDS["accepted"] = COPY_FIELDS + (OPERATOR_FIELD["accepted"], DELETE_FIELD)
+# How many days after a rejection record or a superseded rejection copy is
+# stored a morning still reads the rejection tables for it. One would do:
+# the copy goes the morning after its record reaches origin. Three carry it
+# past two mornings that never ran.
+REJECTION_STORED_DAYS = 3
 
 
 def source_of(identity):
@@ -147,10 +154,16 @@ class Stores:
         # Classification records the operator's tool wrote, which let their
         # rows and copies leave before fifteen days.
         self.durable_by_operator = {}
+        # When each rejection record, and each superseded rejection copy,
+        # was stored: a copy may still wait in its table for a while after.
+        self.rejections_stored_at = []
+        rejection_stores = {STORE_FOR[t] for t in REJECTION_TABLES}
         for where, directory in self.dirs.items():
             for name in names:
                 path = "%s/%s" % (directory, name)
                 records = storage.read_records(path)
+                if name in rejection_stores:
+                    self.rejections_stored_at += [r.get("swept_at") for r in records]
                 self.durable[(where, name)] = {r.get("identity") for r in records}
                 self.durable_by_operator[(where, name)] = {
                     r.get("identity") for r in records
@@ -159,10 +172,23 @@ class Stores:
                     self.durable_removals[where] = {(r.get("identity"), r.get("reason"))
                                                     for r in records}
                     self.durable_latest[where] = latest_reasons(records)
-            self.durable_copies[where] = {
-                r.get("copy_id") for r in
-                storage.read_records("%s/%s" % (directory, REMOVED_COPIES_STORE))}
+            removed = storage.read_records("%s/%s" % (directory, REMOVED_COPIES_STORE))
+            self.durable_copies[where] = {r.get("copy_id") for r in removed}
+            self.rejections_stored_at += [r.get("swept_at") for r in removed
+                                          if r.get("table") in REJECTION_TABLES]
         self.written = {}
+
+    def rejection_stored_since(self, when):
+        """Whether origin's stores gained a rejection record, or a
+        superseded rejection copy's, at or after `when`. A record whose time
+        cannot be read counts, so the tables are read rather than missed."""
+        for value in self.rejections_stored_at:
+            try:
+                if parse_time(value) >= when:
+                    return True
+            except (TypeError, ValueError):
+                return True
+        return False
 
     def where(self, identity):
         """"public", "private", or None when the private store is unavailable."""
@@ -299,28 +325,35 @@ class Sweep:
                                         "reason": reason, "action": action})
 
     # ------------------------------------------------------------------ run
-    def run(self, daily, since=None, jobs=None):
-        """One sweep. `since` is when the previous copy step ran: a copy-only
-        run reads the classification tables only if a status moved after it.
-        `jobs` is `Jobs` as the projection read and then wrote it; without
-        it the sweep reads `Jobs` itself."""
+    def run(self, daily, since=None, jobs=None, by_hand=False):
+        """One sweep. `since` is when the last copy step that finished ran:
+        the rejection tables, and with them the copy step, are read only
+        when `rejection_reads` names a reason. `jobs` is `Jobs` as the
+        projection read and then wrote it; without it the sweep reads `Jobs`
+        itself. `by_hand`: a run he started from the Actions page."""
         self.report["daily"] = daily
         self.report["jobs_read_by"] = "the projection" if jobs is not None else "the sweep"
         if jobs is None:
             jobs = self.client.list_records(JOBS, JOBS_FIELDS)
         self.report["jobs_rows"] = len(jobs)
         in_jobs = {r["fields"].get("Identity"): r for r in jobs if r["fields"].get("Identity")}
-        # `Classified at` moves whenever `Status` does, a clear included, so
-        # it says which rows moved. Without a previous run to compare
-        # against, every row may have.
-        moved = [r for r in jobs if since is not None
-                 and (r["fields"].get("Classified at") or "") > since]
-        read_tables = daily or since is None or bool(moved)
-        self.report["tables_read"] = read_tables
+        why = self.rejection_reads(jobs, since, daily, by_hand)
+        self.report["rejection_tables_read_for"] = why
+        read_rejections = bool(why)
+        # The copy step's flag, as before: all three tables were read.
+        self.report["tables_read"] = read_rejections
         copies = {t: [] for t in CLASSIFICATION_TABLES}
-        if read_tables:
-            for t in CLASSIFICATION_TABLES:
+        for t in CLASSIFICATION_TABLES:
+            # `accepted` every morning, for `Delete` and a `Stage` of gone.
+            if read_rejections or (daily and t == "accepted"):
                 copies[t] = self.client.list_records(t, READ_FIELDS[t])
+        self.copy_index = {t: {} for t in CLASSIFICATION_TABLES}
+        for t in CLASSIFICATION_TABLES:
+            for c in copies[t]:
+                self.copy_index[t].setdefault(c["fields"].get("Identity"), []).append(c)
+        if read_rejections:
+            # Never without them: a rejected row would find no copy and get
+            # a second one.
             self.step1_copy(jobs, in_jobs, copies)
         if daily:
             self.daily(jobs, copies, in_jobs)
@@ -330,13 +363,56 @@ class Sweep:
         self.report["stored_written"] = dict(self.stores.written)
         return self.report
 
+    def rejection_reads(self, jobs, since, daily, by_hand):
+        """Why this sweep reads the two rejection tables, each reason named
+        in the run log; empty when nothing it does needs them.
+
+        **Read only when needed** (ADR-0062's Changes, the operator's yes of
+        2026-10-19): a morning read all three tables every day, two calls
+        of the three for tables most mornings did not need. They are needed:
+        - for the copy step, when a status moved since the last copy step
+          that finished (`Classified at` moves whenever `Status` does, a
+          clear included), when no such step is known, or when he started
+          the run by hand, which reads every table;
+        - on a morning, for step 2, when a row with a rejection status is at
+          its fifteen days: its store record takes the copy's reason. The
+          row stays in `Jobs` until the morning after, so that morning reads
+          them too, when step 3 deletes the copy;
+        - on a morning, for step 3 and for a superseded copy, for
+          REJECTION_STORED_DAYS after a rejection store or the removed-
+          copies store gained a rejection record: the copy waits for that
+          record to reach origin, and a copy made a run or more after its
+          row was classified reaches its fifteen days later than the row.
+
+        **What waits:** a `Reason` he adds in `Jobs` without changing the
+        status reaches an empty copy reason at the next read, not the next
+        morning. Nothing is lost: step 2 stores his `Reason` from `Jobs`
+        beside the copy's, and reads the tables that morning. A run started
+        by hand transcribes it at once.
+
+        Measured before the build over the 25 morning sweeps of 2026-09-25
+        to 10-19: 14 would have skipped both tables, about 35 calls a month
+        [VERIFIED, the run logs and stores of both data branches]."""
+        why = []
+        if by_hand:
+            why.append("a run started by hand")
+        if since is None:
+            why.append("no copy step that finished is known")
+        elif any((r["fields"].get("Classified at") or "") > since for r in jobs):
+            why.append("a status moved since the last copy step")
+        if not daily:
+            return why
+        days = self.config.retire_after_days
+        if any(TABLE_FOR_STATUS.get(r["fields"].get("Status")) in REJECTION_TABLES
+               and older_than(r["fields"].get("Classified at"), days, self.now) for r in jobs):
+            why.append("a rejected row is at its fifteen days")
+        if self.stores.rejection_stored_since(self.now - timedelta(days=REJECTION_STORED_DAYS)):
+            why.append("a rejection was stored in the last %d days" % REJECTION_STORED_DAYS)
+        return why
+
     # --------------------------------------------------------------- step 1
     def step1_copy(self, jobs, in_jobs, copies):
-        index = {t: {} for t in CLASSIFICATION_TABLES}
-        for t in CLASSIFICATION_TABLES:
-            for c in copies[t]:
-                index[t].setdefault(c["fields"].get("Identity"), []).append(c)
-        self.copy_index = index
+        index = self.copy_index
         create = {t: [] for t in CLASSIFICATION_TABLES}
         transcribe = {t: [] for t in CLASSIFICATION_TABLES}
         superseded = {t: [] for t in REJECTION_TABLES}
