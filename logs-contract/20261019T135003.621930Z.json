@@ -1,0 +1,74 @@
+{
+ "run_at": "2026-10-19T13:50:03.621930Z",
+ "commit": "19500efa1a131a1e6c9c9d2bd46d71bd079c7b94",
+ "platforms": {
+  "greenhouse": {
+   "board": "greenhouse:veeamsoftware",
+   "postings": 213,
+   "changes": [],
+   "status": "unchanged"
+  },
+  "lever": {
+   "board": "lever:smart-working-solutions",
+   "postings": 21,
+   "changes": [],
+   "status": "unchanged"
+  },
+  "himalayas": {
+   "board": "himalayas:pakistan",
+   "postings": 20,
+   "changes": [],
+   "status": "unchanged"
+  },
+  "manatal": {
+   "board": "manatal:abacus-consulting-3",
+   "postings": 20,
+   "changes": [],
+   "status": "unchanged"
+  },
+  "workable": {
+   "board": "workable:igate-technologies",
+   "postings": 22,
+   "changes": [],
+   "status": "unchanged"
+  },
+  "smartrecruiters": {
+   "board": "smartrecruiters:OneScreen",
+   "postings": 10,
+   "changes": [],
+   "status": "unchanged"
+  },
+  "ashby": {
+   "board": "ashby:Overjet",
+   "postings": 30,
+   "changes": [],
+   "status": "unchanged"
+  },
+  "hackernews": {
+   "board": "hackernews:whoishiring",
+   "postings": 266,
+   "status": "baseline"
+  },
+  "hnjobs": {
+   "board": "hnjobs:jobstories",
+   "postings": 100,
+   "status": "baseline"
+  },
+  "jobicy": {
+   "board": "jobicy:jobicy-remote",
+   "postings": 200,
+   "status": "baseline"
+  },
+  "remoteok": {
+   "board": "remoteok:remoteok-feed",
+   "postings": 100,
+   "status": "baseline"
+  },
+  "weworkremotely": {
+   "board": "weworkremotely:wwr-feed",
+   "postings": 91,
+   "status": "baseline"
+  }
+ },
+ "test_mode": false
+}

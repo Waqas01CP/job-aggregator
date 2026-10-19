@@ -822,5 +822,296 @@
    }
   },
   "since": "2026-10-18T11:36:10.198948Z"
+ },
+ "hackernews": {
+  "response": {
+   "children": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "array"
+    ]
+   },
+   "title": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   }
+  },
+  "posting": {
+   "id": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "number"
+    ]
+   },
+   "created_at": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "text": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   }
+  },
+  "since": "2026-10-19T13:50:03.621930Z"
+ },
+ "hnjobs": {
+  "response": {
+   "hits": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "array"
+    ]
+   }
+  },
+  "posting": {
+   "objectID": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "title": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "created_at": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "story_text": {
+    "present": "none",
+    "null": "never",
+    "types": []
+   }
+  },
+  "since": "2026-10-19T13:50:03.621930Z"
+ },
+ "jobicy": {
+  "response": {
+   "jobs": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "array"
+    ]
+   },
+   "nextCursor": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "hasMore": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "boolean"
+    ]
+   }
+  },
+  "posting": {
+   "id": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "number"
+    ]
+   },
+   "jobTitle": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "url": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "pubDate": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "companyName": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "jobGeo": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "jobLevel": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "jobDescription": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   }
+  },
+  "since": "2026-10-19T13:50:03.621930Z"
+ },
+ "remoteok": {
+  "response": {},
+  "posting": {
+   "id": {
+    "present": "some",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "position": {
+    "present": "some",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "url": {
+    "present": "some",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "date": {
+    "present": "some",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "company": {
+    "present": "some",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "location": {
+    "present": "some",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "description": {
+    "present": "some",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "legal": {
+    "present": "some",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   }
+  },
+  "since": "2026-10-19T13:50:03.621930Z"
+ },
+ "weworkremotely": {
+  "response": {
+   "items": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "array"
+    ]
+   }
+  },
+  "posting": {
+   "guid": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "title": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "link": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "pubDate": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "region": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "country": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "description": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   }
+  },
+  "since": "2026-10-19T13:50:03.621930Z"
  }
 }
