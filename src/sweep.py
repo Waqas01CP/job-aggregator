@@ -299,11 +299,15 @@ class Sweep:
                                         "reason": reason, "action": action})
 
     # ------------------------------------------------------------------ run
-    def run(self, daily, since=None):
+    def run(self, daily, since=None, jobs=None):
         """One sweep. `since` is when the previous copy step ran: a copy-only
-        run reads the classification tables only if a status moved after it."""
+        run reads the classification tables only if a status moved after it.
+        `jobs` is `Jobs` as the projection read and then wrote it; without
+        it the sweep reads `Jobs` itself."""
         self.report["daily"] = daily
-        jobs = self.client.list_records(JOBS, JOBS_FIELDS)
+        self.report["jobs_read_by"] = "the projection" if jobs is not None else "the sweep"
+        if jobs is None:
+            jobs = self.client.list_records(JOBS, JOBS_FIELDS)
         self.report["jobs_rows"] = len(jobs)
         in_jobs = {r["fields"].get("Identity"): r for r in jobs if r["fields"].get("Identity")}
         # `Classified at` moves whenever `Status` does, a clear included, so

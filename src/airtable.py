@@ -206,6 +206,10 @@ class AirtableClient(ResilientClient):
         self.used_before = used_this_month
         self.calls_used = 0
         self.rows_sent = 0
+        # Each record an upsert wrote, by its key: the record ID Airtable
+        # answered with and the fields sent. The run hands the sweep `Jobs`
+        # as this makes it, so one read serves both (ADR-0060's Changes).
+        self.written = {}
 
     @classmethod
     def from_env(cls, test_mode, environ=None, **kw):
@@ -350,7 +354,7 @@ class AirtableClient(ResilientClient):
                     "records": [{"fields": {name: fields[name] for name in self._fields}}
                                 for fields in batch]}
             payload = self._patch(body, target)
-            got = {(r.get("fields") or {}).get(self._key)
+            got = {(r.get("fields") or {}).get(self._key): r.get("id")
                    for r in payload.get("records") or []}
             sent = [fields[self._key] for fields in batch]
             unaccounted = [identity for identity in sent if identity not in got]
@@ -358,6 +362,8 @@ class AirtableClient(ResilientClient):
                 raise ResponseMismatch(
                     target, "%d of %d records sent are not in the response"
                     % (len(unaccounted), len(sent)), unaccounted)
+            for fields in batch:
+                self.written[fields[self._key]] = (got[fields[self._key]], dict(fields))
             self.rows_sent += len(batch)
             result["created"].extend(payload.get("createdRecords") or [])
             result["updated"].extend(payload.get("updatedRecords") or [])

@@ -20,7 +20,7 @@
   {
     "label": "a failed read is taken for an empty display",
     "path": "src/run.py",
-    "find": "        shown = reader.list_records(JOBS, pipeline_fields(described))\n",
-    "replace": "        try:\n            shown = reader.list_records(JOBS, pipeline_fields(described))\n        except Exception:\n            shown = []\n"
+    "find": "        shown = reader.list_records(JOBS, tuple(dict.fromkeys(pipeline_fields(described)\n                                                              + JOBS_FIELDS)))\n",
+    "replace": "        try:\n            shown = reader.list_records(JOBS, tuple(dict.fromkeys(pipeline_fields(described)\n                                                                  + JOBS_FIELDS)))\n        except Exception:\n            shown = []\n"
   }
 ]

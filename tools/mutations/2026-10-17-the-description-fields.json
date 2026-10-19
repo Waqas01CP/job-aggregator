@@ -20,8 +20,8 @@
   {
     "label": "the read-back names the description fields while off",
     "path": "src/run.py",
-    "find": "        shown = reader.list_records(JOBS, pipeline_fields(described))\n",
-    "replace": "        shown = reader.list_records(JOBS, pipeline_fields(True))\n"
+    "find": "        shown = reader.list_records(JOBS, tuple(dict.fromkeys(pipeline_fields(described)\n                                                              + JOBS_FIELDS)))\n",
+    "replace": "        shown = reader.list_records(JOBS, tuple(dict.fromkeys(pipeline_fields(True)\n                                                              + JOBS_FIELDS)))\n"
   },
   {
     "label": "the writer may carry the description fields while off",

@@ -273,6 +273,51 @@ class TestTheReadBack(Harness):
         self.assertFalse(projection.unchanged(dict(record, Employer="Acme"), shown))
 
 
+class TestJobsAsWritten(unittest.TestCase):
+    """ADR-0060's Changes, the operator's yes of 2026-10-19: one read of
+    `Jobs` a run, the projection's, with what its upsert wrote merged in
+    before the sweep acts on it."""
+
+    def read(self):
+        return [{"id": "recA", "fields": {"Identity": "greenhouse:1", "Title": "Old title",
+                                          "Status": "accepted", "Reason": "his"}},
+                {"id": "recB", "fields": {"Identity": "greenhouse:2", "Title": "Kept"}}]
+
+    def test_an_update_takes_the_fields_sent_and_keeps_his(self):
+        """Mutation: "the sweep is handed the read without the upsert"."""
+        written = {"greenhouse:1": ("recA", {"Identity": "greenhouse:1", "Title": "New title"})}
+        jobs = projection.as_written(self.read(), written)
+        self.assertEqual(jobs[0], {"id": "recA", "fields": {
+            "Identity": "greenhouse:1", "Title": "New title", "Status": "accepted",
+            "Reason": "his"}})
+        self.assertEqual(jobs[1], self.read()[1])
+
+    def test_a_created_record_is_added_with_its_id(self):
+        """Mutation: "a row the projection created is not swept"."""
+        written = {"greenhouse:3": ("recC", {"Identity": "greenhouse:3", "Title": "New"})}
+        jobs = projection.as_written(self.read(), written)
+        self.assertEqual([r["id"] for r in jobs], ["recA", "recB", "recC"])
+        self.assertEqual(jobs[2]["fields"], {"Identity": "greenhouse:3", "Title": "New"})
+
+    def test_what_cannot_be_trusted_is_none_so_the_sweep_reads(self):
+        """An identity read twice, a record written without an ID, or one
+        whose ID is not the one read: the sweep reads `Jobs` itself."""
+        twice = self.read() + [{"id": "recZ", "fields": {"Identity": "greenhouse:1"}}]
+        one = {"greenhouse:1": ("recA", {"Identity": "greenhouse:1"})}
+        self.assertIsNone(projection.as_written(twice, one))
+        self.assertIsNone(projection.as_written(
+            self.read(), {"greenhouse:3": (None, {"Identity": "greenhouse:3"})}))
+        self.assertIsNone(projection.as_written(
+            self.read(), {"greenhouse:1": ("recOTHER", {"Identity": "greenhouse:1"})}))
+
+    def test_nothing_written_is_the_read_itself_and_the_read_is_not_changed(self):
+        read = self.read()
+        self.assertEqual(projection.as_written(read, {}), self.read())
+        projection.as_written(read, {"greenhouse:1": ("recA", {"Identity": "greenhouse:1",
+                                                               "Title": "New"})})
+        self.assertEqual(read, self.read())
+
+
 class TestTheRowSent(Harness):
     def test_a_group_is_one_row_carrying_every_location_and_the_representatives_identity(self):
         """ADR-0037's Confirmation: every member's location in the displayed

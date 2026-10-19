@@ -317,6 +317,41 @@ def what_differs(records, displayed, stages):
     return new + changed
 
 
+def as_written(displayed, written):
+    """`Jobs` as a read after this run's upsert would give it: the read the
+    projection made before it, with every record the upsert wrote merged in,
+    its fields over the read's and a created one added.
+
+    **One read of `Jobs` a run** (ADR-0060's Changes, the operator's yes of
+    2026-10-19). The sweep read `Jobs` again after the projection, two calls
+    a run at about 155 rows, about 120 a month. A Status he sets in the
+    seconds between the read and the sweep is taken by the next run, or by
+    one he starts by hand from the Actions page.
+
+    None when the merge cannot be trusted, and the sweep then reads `Jobs`
+    itself, as before: an identity the read holds twice, which the upsert
+    refuses anyway, or a written record without the ID Airtable gave it."""
+    out, at = [], {}
+    for r in displayed:
+        fields = dict(r.get("fields") or {})
+        identity = fields.get("Identity")
+        if identity in written:
+            if identity in at:
+                return None
+            at[identity] = len(out)
+        out.append({"id": r.get("id"), "fields": fields})
+    for identity, (record_id, fields) in written.items():
+        if not record_id:
+            return None
+        if identity not in at:
+            out.append({"id": record_id, "fields": dict(fields)})
+        elif out[at[identity]]["id"] != record_id:
+            return None
+        else:
+            out[at[identity]]["fields"].update(fields)
+    return out
+
+
 def held_back(rows, held, stages):
     """ADR-0063: the rows of sources held from the display, left out of what
     is sent and counted. Fetched and stored as any source is; only `Jobs`

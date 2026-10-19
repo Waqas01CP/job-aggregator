@@ -1,0 +1,38 @@
+[
+  {
+    "label": "the upsert keeps no record IDs",
+    "path": "src/airtable.py",
+    "find": "                self.written[fields[self._key]] = (got[fields[self._key]], dict(fields))",
+    "replace": "                self.written[fields[self._key]] = (None, dict(fields))"
+  },
+  {
+    "label": "the sweep is handed the read without the upsert",
+    "path": "src/projection.py",
+    "find": "            out[at[identity]][\"fields\"].update(fields)",
+    "replace": "            pass"
+  },
+  {
+    "label": "a row the projection created is not swept",
+    "path": "src/projection.py",
+    "find": "            out.append({\"id\": record_id, \"fields\": dict(fields)})",
+    "replace": "            pass"
+  },
+  {
+    "label": "the sweep reads Jobs again",
+    "path": "src/sweep.py",
+    "find": "        if jobs is None:\n            jobs = self.client.list_records(JOBS, JOBS_FIELDS)",
+    "replace": "        if True:\n            jobs = self.client.list_records(JOBS, JOBS_FIELDS)"
+  },
+  {
+    "label": "the projection reads only its own fields",
+    "path": "src/run.py",
+    "find": "                                                              + JOBS_FIELDS)))",
+    "replace": "                                                              )))"
+  },
+  {
+    "label": "the run hands the sweep nothing",
+    "path": "src/run.py",
+    "find": "            jobs=jobs_written)",
+    "replace": "            jobs=None)"
+  }
+]

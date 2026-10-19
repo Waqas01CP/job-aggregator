@@ -1801,6 +1801,40 @@ class TestTheSweepInTheRun(unittest.TestCase):
         return self.base.seed("tblJOBSFAKE000001", fields,
                               classified_at=self.base.now - timedelta(days=days))
 
+    def jobs_reads(self):
+        return [c for c in self.base.calls
+                if c["method"] == "GET" and c["table"] == "tblJOBSFAKE000001"]
+
+    def test_jobs_is_read_once_and_the_sweep_acts_on_what_the_projection_wrote(self):
+        """ADR-0060's Changes, the operator's yes of 2026-10-19: the
+        projection's read serves the sweep, with the row it created merged
+        in, so `Jobs` is read once a run, not twice. Mutation: "the sweep
+        reads Jobs again". Mutation: "the run hands the sweep nothing".
+        Mutation: "the projection reads only its own fields", which leaves
+        the sweep no Status to copy."""
+        def writer(test_mode, used_this_month):
+            return AirtableClient("patFAKE.0000", "appFAKEBASE000001", "tblJOBSFAKE000001",
+                                  session=self.base, min_interval=0, sleep=lambda s: None,
+                                  used_this_month=used_this_month)
+        run_module.make_airtable_client = writer
+        self.jobs_row("greenhouse:9", "accepted", 1)
+        self.assertEqual(self.main()[0], EXIT_OK)
+        self.assertEqual(len(self.jobs_reads()), 1)
+        sweep = self.last_run_log()["sweep"]
+        self.assertEqual((sweep["jobs_read_by"], sweep["jobs_rows"]), ("the projection", 2))
+        self.assertEqual(sweep["copied"], {"accepted": 1})
+
+    def test_a_projection_that_failed_leaves_the_sweep_to_read_jobs_itself(self):
+        def broken(test_mode, used_this_month):
+            raise AirtableConfigError("empty or unset: AIRTABLE_TABLE_ID")
+        run_module.make_airtable_client = broken
+        self.jobs_row("greenhouse:9", "accepted", 1)
+        self.assertEqual(self.main()[0], EXIT_STOPPED_RESUMABLE)
+        self.assertEqual(len(self.jobs_reads()), 2)
+        sweep = self.last_run_log()["sweep"]
+        self.assertEqual((sweep["jobs_read_by"], sweep["jobs_rows"]), ("the sweep", 1))
+        self.assertEqual(sweep["copied"], {"accepted": 1})
+
     def test_the_daily_steps_skip_the_evening_and_run_otherwise(self):
         for slot, daily in (("evening", False), ("morning", True), (None, True)):
             with self.subTest(slot=slot):

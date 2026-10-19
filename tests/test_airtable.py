@@ -189,6 +189,18 @@ class TestRequestShape(unittest.TestCase):
         self.assertEqual(c.calls_used, 3)
         self.assertEqual(c.rows_sent, 23)
 
+    def test_each_record_written_is_kept_with_the_id_airtable_gave_it(self):
+        """ADR-0060's Changes, 2026-10-19: the run hands the sweep `Jobs` as
+        the projection wrote it, so it must know each record's ID and fields,
+        across every batch. Mutation: "the upsert keeps no record IDs"."""
+        c = client()
+        c.upsert(rows(12))
+        self.assertEqual(sorted(c.written), sorted("greenhouse:%d" % i for i in range(12)))
+        # echo numbers each batch's records from 0: the second batch's
+        # first record is rec...0 again, and its identity greenhouse:10.
+        self.assertEqual(c.written["greenhouse:10"], ("rec%014d" % 0, row(10)))
+        self.assertEqual(c.written["greenhouse:3"], ("rec%014d" % 3, row(3)))
+
     def test_an_empty_upsert_makes_no_call(self):
         """ADR-0060: a run in which nothing changed hands the writer nothing,
         and nothing must cost nothing. A call carrying no records would spend

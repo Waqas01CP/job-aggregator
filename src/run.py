@@ -54,7 +54,7 @@ from datetime import datetime, timedelta, timezone
 from . import clearing, envfile, facts, private_store, projection, storage
 from .airtable_sweep import JOBS, SweepClient, TABLE_SECRETS
 from .closure import Closure, covered as walk_covered
-from .sweep import Sweep, older_than
+from .sweep import JOBS_FIELDS, Sweep, older_than
 from .adapters import (ashby, greenhouse, hackernews, himalayas, hnjobs, jobicy, lever,
                        manatal, remoteok, smartrecruiters, weworkremotely, workable)
 from . import health
@@ -365,9 +365,15 @@ def retired_by(closure, config, now):
 def project_display(run, no_commit, test_mode, restore_failure=None, retired=None):
     """Project the filtered layer to `Jobs`, or to `Jobs test` in test mode.
 
-    Returns (projection stages, the airtable block, failure or None). Never
-    raises: a failed projection is recorded, the run still commits, and the
-    caller exits 2.
+    Returns (projection stages, the airtable block, failure or None, `Jobs`
+    as written or None). Never raises: a failed projection is recorded, the
+    run still commits, and the caller exits 2.
+
+    **One read of `Jobs` serves the sweep too** (ADR-0060's Changes, the
+    operator's yes of 2026-10-19): the read carries the sweep's fields as
+    well as the projection's, and what the upsert wrote is merged into it
+    (`projection.as_written`). A projection that failed hands the sweep
+    nothing, and the sweep reads `Jobs` itself.
 
     **A private store that could not be restored withholds only the
     aggregator rows.** The operator's decision of 2026-09-24, D9: the public
@@ -405,21 +411,24 @@ def project_display(run, no_commit, test_mode, restore_failure=None, retired=Non
                                           + projection.private_store_texts(run.paths)), stages,
                                       retired=retired, described=described)
             return stages, {"calls_used": 0, "rows_sent": 0, "failure": None,
-                            "would_send": len(records)}, None
+                            "would_send": len(records)}, None, None
 
         by_branch = month_so_far(now_iso, test_mode)
         # The display read back first, by the sweep's client, the one that
         # reads (the operator's decision of 2026-10-07); then the writer,
         # whose monthly guard counts the read's calls as spent.
         reader = make_sweep_client(test_mode, sum(by_branch.values()))
-        shown = reader.list_records(JOBS, pipeline_fields(described))
+        shown = reader.list_records(JOBS, tuple(dict.fromkeys(pipeline_fields(described)
+                                                              + JOBS_FIELDS)))
         client = make_airtable_client(test_mode, sum(by_branch.values()) + reader.calls_used)
         projection.project(run.paths, now_iso, run.matcher, client,
                            projection.private_store_texts(run.paths), stages,
                            public_only=bool(restore_failure), retired=retired,
                            displayed=lambda: shown, described=described, held=held)
+        written = getattr(client, "written", None)
+        jobs = None if written is None else projection.as_written(shown, written)
         return stages, with_reads(dict(client.counters(), failure=None,
-                                       month_to_date_by_branch=by_branch), reader), None
+                                       month_to_date_by_branch=by_branch), reader), None, jobs
     except Exception as e:
         failure = "%s: %s" % (type(e).__name__, e)
         for c in (client, reader):
@@ -429,7 +438,7 @@ def project_display(run, no_commit, test_mode, restore_failure=None, retired=Non
         block = dict(client.counters()) if client is not None else {"calls_used": 0,
                                                                     "rows_sent": 0}
         block["failure"] = failure
-        return stages, with_reads(block, reader), failure
+        return stages, with_reads(block, reader), failure, None
 
 
 # How far back the health step reads the branch's logs: more than its week
@@ -555,10 +564,13 @@ def clear_display(run, no_commit, test_mode, request, private_ok, used_before, c
 
 
 def sweep_display(run, no_commit, test_mode, slot, private_ok, closure, config, used_before,
-                  closure_failure=None):
+                  closure_failure=None, jobs=None):
     """ADR-0050's sweep. The copy step runs on every committing run; the
     daily steps run except on the evening slot. Never raises: a failure is
     recorded, the run still commits, and the caller exits 2.
+
+    `jobs` is `Jobs` as the projection read and wrote it; None, and the
+    sweep reads `Jobs` itself.
 
     **The copy needs no closure test.** When it could not be built the copy
     still runs and the daily steps do not, and the run fails as a sweep
@@ -573,7 +585,8 @@ def sweep_display(run, no_commit, test_mode, slot, private_ok, closure, config, 
     try:
         client = make_sweep_client(test_mode, used_before)
         report = Sweep(client, run.paths, run.now, run.matcher, closure, config,
-                       private_ok).run(daily, since=None if daily else previous_run_at(test_mode))
+                       private_ok).run(daily, since=None if daily else previous_run_at(test_mode),
+                                       jobs=jobs)
         report.update(client.counters())
         report["failure"] = None if closure_failure is None else (
             "the closure test could not be built, so only the copy ran: %s" % closure_failure)
@@ -1384,12 +1397,13 @@ def main(argv=None):
     except Exception as e:
         closure, retired = None, None
         run_log["closure_failure"] = redact_secrets("%s: %s" % (type(e).__name__, e))
-    run_log["projection"], run_log[RUN_LOG_KEY], projection_failure = \
+    run_log["projection"], run_log[RUN_LOG_KEY], projection_failure, jobs_written = \
         project_display(run, args.no_commit, test_mode, restore_failure, retired=retired)
 
-    # ADR-0050's sweep, after the projection so a row it just sent is read
-    # back with the rest. Its aggregator outcomes need the private store to
-    # have been restored and written this run.
+    # ADR-0050's sweep, after the projection, on `Jobs` as the projection
+    # read and then wrote it, so a row it just sent is swept with the rest.
+    # Its aggregator outcomes need the private store to have been restored
+    # and written this run.
     #
     # The month's calls: the projection's count when it reached the base,
     # read again otherwise. A count that cannot be read must never cost the
@@ -1415,7 +1429,8 @@ def main(argv=None):
             closure=closure, config=sweep_config,
             used_before=sum(by_branch.values())
             + int((run_log[RUN_LOG_KEY] or {}).get("calls_used") or 0),
-            closure_failure=run_log.get("closure_failure") if closure is None else None)
+            closure_failure=run_log.get("closure_failure") if closure is None else None,
+            jobs=jobs_written)
     sweep_failure = run_log["sweep"].get("failure")
     if clear_refused is not None:
         run_log["clearing"] = {"failure": "refused: %s" % clear_refused}
