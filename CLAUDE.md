@@ -254,8 +254,9 @@ deactivate                             leave it
                                                             files, no commit
 .venv/Scripts/python -m src.contract --test-mode --no-commit
                                        one contract check (ADR-0018), one
-                                       request a platform and two for
-                                       SmartRecruiters (ADR-0061), no commit
+                                       request a platform, two for
+                                       SmartRecruiters and for Hacker News'
+                                       thread (ADR-0061), no commit
 
 python tools/generate_map.py           regenerate MAP.md
 python tools/generate_map.py --check   report whether MAP.md is current
