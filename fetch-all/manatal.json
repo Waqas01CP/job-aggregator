@@ -20928,5 +20928,36 @@
   "required_places": null,
   "described_workplace": null,
   "described": true
+ },
+ {
+  "identity": "manatal:4504978",
+  "source": "manatal",
+  "board_id": "manatal:wadic-2",
+  "external_id": "4504978",
+  "employer": "Wadic",
+  "employer_provenance": "slug",
+  "title": "Social Media & Marketing Content ﻿Writer",
+  "title_normalised": "Social Media & Marketing Content ﻿Writer",
+  "location": "Lahore, Pakistan",
+  "published_at": null,
+  "published_field": null,
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-19T19:08:54.580479Z",
+  "ordering_date": "2026-10-19T19:08:54.580479Z",
+  "ordering_date_source": "first_seen",
+  "url": "https://www.careers-page.com/wadic-2/job/4R7R8X75",
+  "url_provenance": "constructed",
+  "stated_experience": [
+   1
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "Pakistan"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": "on site",
+  "described": true
  }
 ]

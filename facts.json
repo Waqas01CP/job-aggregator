@@ -1,6 +1,59 @@
 {
- "fingerprint": "8c11e8c039c0a84c",
+ "fingerprint": "def8c8688952a5b7",
  "records": [
+  {
+   "identity": "ashby:0087feaa-a275-427d-bf4a-14a508708687",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Hybrid",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:00d30b77-5f95-4ae3-be98-b1c8319bcdce",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:02e6d921-227f-4f72-b1b6-495e091297e6",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:03b2433e-6a7b-4f79-a75e-c7371365d527",
+   "source": "ashby",
+   "stated_experience": [
+    5,
+    1
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
   {
    "identity": "ashby:03cc6c8c-1608-45b4-a237-2191169e8db7",
    "source": "ashby",
@@ -12,6 +65,32 @@
     "United States"
    ],
    "workplace": "Hybrid",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:0463a198-fcf4-42c6-ac03-5d764cbde0f3",
+   "source": "ashby",
+   "stated_experience": [
+    7
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:05172cb0-47ec-44f9-9fe8-07d4896d10ad",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
    "required_places": null,
    "described_workplace": null,
    "described": true
@@ -32,6 +111,170 @@
    "described": true
   },
   {
+   "identity": "ashby:062acaf8-aa08-43dc-8230-ca2d2bf64293",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:0704bc37-49c1-4b0a-8624-7e2abbeaa54d",
+   "source": "ashby",
+   "stated_experience": [
+    6
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:086c4dd1-217d-48f8-9d62-e57542e16dbe",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:0953a313-d30b-4e41-8db7-d6f8a4f9a826",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": [
+    "Poland"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:095fdff6-c00e-4635-92a6-fa3ec99288d5",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:0a9ffa59-e779-4836-b475-1536c3f5ede2",
+   "source": "ashby",
+   "stated_experience": [
+    8
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:0b37e462-04ce-43c9-b5e1-1f65e279fc05",
+   "source": "ashby",
+   "stated_experience": [
+    8
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:0cd9db77-8c07-4e81-b872-a3db63e5f5e5",
+   "source": "ashby",
+   "stated_experience": [
+    6
+   ],
+   "stated_levels": null,
+   "places": [
+    "Mexico"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:0ce55391-93e3-4927-9cf2-3244756a7e2e",
+   "source": "ashby",
+   "stated_experience": [
+    4
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:0d26ad9b-ff73-49e3-80a0-5886b7bab172",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:0dc6da1f-6167-41af-901a-c9b43fc04a43",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:107da743-1253-4708-963a-b284c483cff8",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
    "identity": "ashby:10ee168e-ede1-4d38-81a4-e8a7de68387e",
    "source": "ashby",
    "stated_experience": [
@@ -42,6 +285,91 @@
     "United States"
    ],
    "workplace": "Hybrid",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:11642227-5e2f-493c-8473-865e893d1d84",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:118ccca5-be8b-46da-91f7-efeaa691a555",
+   "source": "ashby",
+   "stated_experience": [
+    3,
+    8
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:12eb05d0-98a6-46e2-a100-b637f534849c",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:1757f49e-7e19-4c45-85f7-e4637dff66fb",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "NAMER",
+    "APJ",
+    "EMEA"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:1965ac6c-c160-4476-95e0-84c82a926dc9",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:1c633f41-6c9f-46a2-87fa-25f846cd54ef",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
    "required_places": null,
    "described_workplace": null,
    "described": true
@@ -62,6 +390,134 @@
    "described": true
   },
   {
+   "identity": "ashby:20545015-18e8-4dc4-a779-0cc1d669c17c",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:21adb844-31c0-4a1f-b722-0f0240484ece",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:2344ae13-045c-4513-ad01-94189029c46e",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Hybrid",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:24aecf2b-0948-4fd0-94d2-1cb9875a59cd",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:24b1c807-d90d-4f1f-9049-ee29d769dcb7",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:24c7c129-0bb0-461e-9421-87c200b26e4b",
+   "source": "ashby",
+   "stated_experience": [
+    10
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:28c338d3-110b-477a-b9bb-98f736644603",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:298a4b50-3d69-41f4-98e0-1d8dcdb0ffa2",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "Mexico"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:2a0fa959-037e-44b7-b552-6b15d34e9ba9",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:2b51446f-f78f-41da-91f9-41d5207c5bd0",
+   "source": "ashby",
+   "stated_experience": [
+    7
+   ],
+   "stated_levels": null,
+   "places": [
+    "United Kingdom"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
    "identity": "ashby:2b55c1bb-34a8-416b-88a7-b5399a2a888e",
    "source": "ashby",
    "stated_experience": [
@@ -77,6 +533,119 @@
    "described": true
   },
   {
+   "identity": "ashby:2ce901c2-5f8f-412f-b150-0f1701093cde",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:2fdde21b-48de-419f-96e6-b0016c7133e1",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:31500bec-b690-4795-b4d6-0dce06a4c180",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Hybrid",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:33313f14-1a98-4cd1-8baa-edb818316e2b",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:346ed458-67af-42a3-9d2b-0c96a3128697",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:3504db6e-e54e-4066-ac66-7ce65b7b2274",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:36597a97-9da9-4371-b650-082643860b1c",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:368bda6e-28bf-43ff-b2ec-3e3a6ad66a8d",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:3b71c9a9-d3c9-4331-83e7-1a9007455b5e",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
    "identity": "ashby:3b74e8b2-0872-48a6-8995-663b944c89aa",
    "source": "ashby",
    "stated_experience": [
@@ -87,6 +656,17 @@
     "United States"
    ],
    "workplace": "Hybrid",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:3bdf2378-11ae-4406-aa8a-60c18bd2a386",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
    "required_places": null,
    "described_workplace": null,
    "described": true
@@ -112,6 +692,66 @@
    "stated_experience": null,
    "stated_levels": null,
    "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:447d74c7-22bd-47e4-ae67-db5035ca6592",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:4590946c-3e3c-4ce9-9d59-dbe41b0503b8",
+   "source": "ashby",
+   "stated_experience": [
+    7
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:463e2769-bb85-4429-96a3-3a175eb228cd",
+   "source": "ashby",
+   "stated_experience": [
+    6
+   ],
+   "stated_levels": null,
+   "places": [
+    "NAMER",
+    "APJ",
+    "United States",
+    "EMEA"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:47b6c7bc-5106-463a-8e45-d3bc3e8701c5",
+   "source": "ashby",
+   "stated_experience": [
+    6,
+    2
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
    "workplace": "Remote",
    "required_places": null,
    "described_workplace": null,
@@ -148,6 +788,124 @@
    "described": true
   },
   {
+   "identity": "ashby:49953f5a-271a-492f-a8be-50b8f028fbd7",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:4995d5fb-24e8-4981-af74-5a499361e5e4",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:4a653f45-fa03-4980-b366-60c10c6eae47",
+   "source": "ashby",
+   "stated_experience": [
+    8
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:4aad97a0-e313-4725-887c-053e6c18ec8a",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:4c4977fe-55eb-4605-be00-6ef9a9746ee1",
+   "source": "ashby",
+   "stated_experience": [
+    6,
+    3
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:4ca8a241-1f09-498a-b8cc-09c9bcce1fd3",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:4dc25e4c-6710-4b47-aedc-7caa260f043a",
+   "source": "ashby",
+   "stated_experience": [
+    4
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:4e679737-e479-4af5-bdd4-35ec5dfed0de",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:5012ea5c-05e5-4733-ab32-d1d2b979b716",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
    "identity": "ashby:50c2eb16-5800-4cbb-bd78-341c8af84c41",
    "source": "ashby",
    "stated_experience": [
@@ -157,6 +915,234 @@
    "places": [
     "Egypt",
     "Pakistan"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:5107c165-8312-4fa6-8411-443a528ccd2d",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:529000fe-c437-41d3-94a3-8548e61c31b8",
+   "source": "ashby",
+   "stated_experience": [
+    7
+   ],
+   "stated_levels": null,
+   "places": [
+    "Ireland"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:531a3fe8-556f-4b83-bee7-20374f67f980",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:5411c0b8-c16d-4e8f-a0d8-5b83fbde2b2e",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:54bbf446-8b59-419d-b52e-035ed06fa645",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:54d24ce1-3ebc-41d7-9792-5bd49fe3dc20",
+   "source": "ashby",
+   "stated_experience": [
+    10
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:569117f0-a377-4ddb-ab71-edce7e53216a",
+   "source": "ashby",
+   "stated_experience": [
+    6
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:56e89edd-e189-4afa-9b63-c3f339762ef0",
+   "source": "ashby",
+   "stated_experience": [
+    8
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:57c9aa0c-ffca-4759-9bfd-878ce7a7ea8e",
+   "source": "ashby",
+   "stated_experience": [
+    5,
+    2
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:586876a1-0847-4652-b799-1680eb2ef880",
+   "source": "ashby",
+   "stated_experience": [
+    8
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:58e30f20-26a9-4940-bd56-f2021d3ae91d",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:59713076-d2cb-4fce-95aa-eda32b611849",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:5d287e14-c3fe-4442-8924-bcff052e7244",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:5d4461df-f7b6-4f34-a084-5abfe069b2be",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "United Kingdom"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:5e8ba258-6b44-459e-a307-970a5e7db244",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:6173edaa-8a5c-4156-be07-7ccc0c5f23b6",
+   "source": "ashby",
+   "stated_experience": [
+    8
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:63297214-0e27-4ef6-a87e-d62311030897",
+   "source": "ashby",
+   "stated_experience": [
+    7
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
    ],
    "workplace": "Remote",
    "required_places": null,
@@ -179,6 +1165,141 @@
    "described": true
   },
   {
+   "identity": "ashby:66a6de8f-bf67-467e-91af-342b01ef1df0",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Hybrid",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:66affc05-7eb5-450e-94fd-01969c9318bf",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:66b11644-d1d7-4cbb-9351-194b81ad34aa",
+   "source": "ashby",
+   "stated_experience": [
+    10,
+    5
+   ],
+   "stated_levels": null,
+   "places": [
+    "European Union"
+   ],
+   "workplace": "Hybrid",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:67b2ca41-1db9-478d-9b7a-95bd9ebbe671",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:68a6a77c-f289-474f-987c-42bea4faca40",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:6ab89fdf-8331-4bb8-a746-059cee5eed7e",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:6c74387f-2330-4005-b711-f622925bc1f2",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:6c888bee-290a-4fbf-a5ed-a36860416a9f",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:6cac3b4d-1015-4578-81e9-14d270929518",
+   "source": "ashby",
+   "stated_experience": [
+    4
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:6e469104-0a1c-454e-848c-ce0f6eedcafe",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
    "identity": "ashby:6e4d0e8f-4415-4c8d-8ca1-32d246026fb9",
    "source": "ashby",
    "stated_experience": [
@@ -196,7 +1317,427 @@
    "described": true
   },
   {
+   "identity": "ashby:6f974c78-f9bc-405e-a4ab-4fc359d598d2",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:73b9f159-1493-40d1-a61c-555fd6faa76e",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:743a9f42-b624-4dc9-a9c6-da12ff14bc96",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:75561c67-9c76-4f45-b1a3-70848470bd1e",
+   "source": "ashby",
+   "stated_experience": [
+    7
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:78ab25a9-8bf0-417f-8c37-004029c0f094",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:7b0174fe-f124-4db2-923f-7028f39d6be9",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:7fa613e3-ed23-47b3-b6d3-6a73c9607be2",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:7fb1aca5-b7d2-463b-aac0-28b75cfbec7d",
+   "source": "ashby",
+   "stated_experience": [
+    7
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:7fcbe766-1b38-45da-9207-a82c17f86a90",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:8053823a-c5f3-4c00-9aae-15439f08cf6d",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Hybrid",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:8165f425-e57f-4d33-a584-38e5e9cb02bb",
+   "source": "ashby",
+   "stated_experience": [
+    6
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:81db5297-3b6b-4790-9cf3-544cf4238ef0",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:831dc884-fae9-408a-9dd7-35f5f4489b6a",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:83b78f4d-7577-4416-a83e-43c085d977b4",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:84b6515f-6afb-4503-b73c-3dcc1bc17cb4",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:84c812c4-2194-4a9d-a9f9-b68c3836eb4a",
+   "source": "ashby",
+   "stated_experience": [
+    6
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:863956bc-9a2e-4531-ba9e-45c409e4f1ca",
+   "source": "ashby",
+   "stated_experience": [
+    7
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:8642387a-86f4-417a-b0ff-070433c2d895",
+   "source": "ashby",
+   "stated_experience": [
+    6
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:86f88674-eb78-4abc-93f4-c8be453d15ae",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:87292639-c1ef-4674-b66c-2a960ad0c735",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:874ab976-6e27-4d89-9e16-8ae452bbaaac",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:87be5888-afac-4871-93e5-c1444db52afb",
+   "source": "ashby",
+   "stated_experience": [
+    7,
+    3
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:87d3538a-99db-4751-b220-a2474dec514b",
+   "source": "ashby",
+   "stated_experience": [
+    10
+   ],
+   "stated_levels": null,
+   "places": [
+    "India"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:88a67836-6ec6-4112-a69c-77bc9c7a369d",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:8b103ce1-06d7-4442-8faf-e977df75ef85",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:8ce9b064-e20b-4c71-8c53-385ea89299ae",
+   "source": "ashby",
+   "stated_experience": [
+    2
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Hybrid",
+   "required_places": null,
+   "described_workplace": "on site",
+   "described": true
+  },
+  {
+   "identity": "ashby:8d7ef0a5-5a0a-4598-b39d-c4c0ac011547",
+   "source": "ashby",
+   "stated_experience": [
+    1
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:8ea8a116-f05f-4f5a-98f5-2c6ffde7c2ad",
+   "source": "ashby",
+   "stated_experience": [
+    3
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
    "identity": "ashby:8f42c95e-6cee-4811-ba1c-cd6b74e7b01d",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:904b69f9-802e-43f4-9378-dfe7a577145c",
+   "source": "ashby",
+   "stated_experience": [
+    6
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States",
+    "Canada"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:91134f49-e8f6-4416-b5b2-b0f83f3066f2",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:92e03020-45c8-4585-b308-2b9a856b91a2",
+   "source": "ashby",
+   "stated_experience": [
+    10
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Hybrid",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:933fcea2-9d1a-42bd-8a0c-ecf51930add8",
    "source": "ashby",
    "stated_experience": null,
    "stated_levels": null,
@@ -224,6 +1765,107 @@
    "described": true
   },
   {
+   "identity": "ashby:9477c9e5-0745-47e8-b8be-15371da2bdae",
+   "source": "ashby",
+   "stated_experience": [
+    6
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:94996a25-9e50-455e-beda-3f3cdbf16a99",
+   "source": "ashby",
+   "stated_experience": [
+    6
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:960e334b-4a93-4444-afc2-6a99b4861c3f",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:96178d88-9e95-4919-8eca-330b94dd4954",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:962f45f3-d8d3-4073-add2-af763f7c3ffb",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:971b349e-9bcd-4775-b731-3198bd29273b",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:97536838-f046-40c9-afa8-f8acb9f468a3",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
    "identity": "ashby:98a8708b-3fe3-4483-bb31-802cde8c06f8",
    "source": "ashby",
    "stated_experience": null,
@@ -232,6 +1874,149 @@
     "United States"
    ],
    "workplace": "Hybrid",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:999e3811-e002-49f8-88b0-2d418b16cc80",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:99ec4a62-ec22-484e-ac1d-d291ad892114",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:9a1a6474-87ca-4b19-bf3f-7f52dcfcc6af",
+   "source": "ashby",
+   "stated_experience": [
+    6
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:9a571673-6f44-430e-b3ab-aaec64f64e3c",
+   "source": "ashby",
+   "stated_experience": [
+    6
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:9a84365b-a447-42f0-8aa0-2deb2170d9f8",
+   "source": "ashby",
+   "stated_experience": [
+    3
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:9d3e1529-5164-4fb1-b73a-b1b772bb890c",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:9e205698-0e50-42e5-8783-a79a7ff7efaa",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:9fbe839e-6ccf-436d-8d83-7a0b3481bfc8",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:a1159cde-3628-4b5e-aa4b-7b9e73f1dafc",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "Poland"
+   ],
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:a11e0267-85fb-4eaa-920b-849edbb5b625",
+   "source": "ashby",
+   "stated_experience": [
+    10
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:a2312b70-cc44-43ab-b0ba-31fd17f46110",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
    "required_places": null,
    "described_workplace": null,
    "described": true
@@ -250,7 +2035,100 @@
    "described": true
   },
   {
+   "identity": "ashby:a3a9cebb-e3ee-4eb0-80e8-dfaca76b9948",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:a626430b-3596-427e-a6f8-87ce6ae88a20",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:a68db3e5-0ec3-472a-8597-8586f40d43a5",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:a7182394-b016-4681-8e76-e71ad22cbe02",
+   "source": "ashby",
+   "stated_experience": [
+    6
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
    "identity": "ashby:a93aae94-6025-4977-a5c0-657874c6a230",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:aba1402a-8398-4356-b9b2-d6c1d06a7c50",
+   "source": "ashby",
+   "stated_experience": [
+    10
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:acaa223a-663e-445f-85f7-a5a4eb7f4f05",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:adf52ecd-e075-4a65-89b9-d129960b67f5",
    "source": "ashby",
    "stated_experience": null,
    "stated_levels": null,
@@ -279,6 +2157,19 @@
    "described": true
   },
   {
+   "identity": "ashby:af27c13b-e61a-4c56-8c63-a12037c4465f",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
    "identity": "ashby:af59b3da-9c41-4992-95ca-04b382b46daa",
    "source": "ashby",
    "stated_experience": [
@@ -289,6 +2180,71 @@
     "United States"
    ],
    "workplace": "Hybrid",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:b0c02c3f-790f-4cd8-960d-220800d35367",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "NAMER",
+    "APJ",
+    "EMEA"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:b10f5461-a5c0-4e5f-a8a1-7b705a92153d",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:b14a26ad-26e6-4d8b-be1a-b00517da3b41",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": [
+    "singapore"
+   ],
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:b196cca6-6cb3-4019-8d0f-1eaa7850bc07",
+   "source": "ashby",
+   "stated_experience": [
+    6
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:b1d83314-030f-4335-88d6-8f440ee0039d",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
    "required_places": null,
    "described_workplace": null,
    "described": true
@@ -309,6 +2265,21 @@
    "described": true
   },
   {
+   "identity": "ashby:b278b3c7-f9cd-4564-9c6b-ee655de75039",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "NAMER",
+    "APJ",
+    "EMEA"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
    "identity": "ashby:b289423a-ddd8-40bf-a9cb-fa75e8bdd8fa",
    "source": "ashby",
    "stated_experience": [
@@ -317,6 +2288,241 @@
    ],
    "stated_levels": null,
    "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:b2ac526a-4dd3-4a32-83cb-9bfe41189632",
+   "source": "ashby",
+   "stated_experience": [
+    5,
+    2
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:b2df834b-fff8-46fa-80a3-f5ad7e7e0b96",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:b3e6d985-b540-456c-8eee-edfd79580572",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:b4f90b85-72e2-4b75-86ff-1617a5868c92",
+   "source": "ashby",
+   "stated_experience": [
+    8
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:b55850f7-419c-4a27-ac6d-33e46e39c428",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:b66b5501-17ca-4887-878b-c3c5a7273142",
+   "source": "ashby",
+   "stated_experience": [
+    7
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:b69a9efb-c309-47b9-b787-8e975c40a1e3",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:b6e7fb97-e7e2-4e29-9476-b777d787a94c",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:b889ef16-4d5d-4b71-b0a9-682026a0a1ee",
+   "source": "ashby",
+   "stated_experience": [
+    7
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States of America",
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:b8abb814-8505-435a-9c08-f2b5593ae134",
+   "source": "ashby",
+   "stated_experience": [
+    8
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:b8ebc311-9742-4a17-ac8e-36d23b925626",
+   "source": "ashby",
+   "stated_experience": [
+    10
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:bcc8256c-d28f-4fba-a069-bf697328cfd4",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:bd6d5e55-790a-4f3d-a905-193fe39ed5cf",
+   "source": "ashby",
+   "stated_experience": [
+    6,
+    3
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:bdad5644-3c80-4b7f-b5a2-aacd5ef3e5d1",
+   "source": "ashby",
+   "stated_experience": [
+    3,
+    1
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:bdb81a3b-dd72-4785-a908-9fd394025f73",
+   "source": "ashby",
+   "stated_experience": [
+    8
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:bf41aec7-162d-4e97-bcbe-44e4febb877e",
+   "source": "ashby",
+   "stated_experience": [
+    7
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:c06d1e07-e6e9-4129-9f0c-093f7ebd56b2",
+   "source": "ashby",
+   "stated_experience": [
+    10
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
    "workplace": "Remote",
    "required_places": null,
    "described_workplace": null,
@@ -333,6 +2539,198 @@
     "Egypt",
     "Philippines",
     "Pakistan"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:c3617664-a679-406a-8fd5-71d51a407243",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:c3a55a5b-479c-409c-b5c5-8e0eec6b25f2",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:c4a4b4ac-ee45-4eda-800a-6dfb5a573e6e",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "NAMER",
+    "APJ",
+    "EMEA"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:c4bb5a89-45de-4761-8d19-f8207faf49ea",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:c7c9ac7e-b739-49e6-b6f9-71fb5d700d5f",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:c8098929-c448-4d69-b164-0273e996abcf",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "NAMER"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:c832d609-ec6c-4f0f-8808-269e804846b6",
+   "source": "ashby",
+   "stated_experience": [
+    8
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:c9c55913-563f-432d-9d9b-722e71f57b53",
+   "source": "ashby",
+   "stated_experience": [
+    10
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:ca47c69a-36eb-48cb-b61b-4134eff78030",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "NAMER",
+    "APJ",
+    "EMEA"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:cad55156-d34b-4071-9c0f-c730a1d09d55",
+   "source": "ashby",
+   "stated_experience": [
+    7
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:caf49f06-ed35-4637-9372-f4df114e852f",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:cb09d347-5369-4f84-87cd-6ae5b84097c7",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:cbbb4347-341f-4100-8241-2d317ae7effe",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:cdca3956-daa8-4d45-a5ea-c599924b7e2f",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
    ],
    "workplace": "Remote",
    "required_places": null,
@@ -370,6 +2768,166 @@
    "described": true
   },
   {
+   "identity": "ashby:d0dbf189-af6d-400e-ac1f-4da798be85bb",
+   "source": "ashby",
+   "stated_experience": [
+    8
+   ],
+   "stated_levels": null,
+   "places": [
+    "NAMER",
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:d10194a8-a919-49ec-8beb-b2f13e5098dd",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:d24579a7-6d8c-4433-a9af-ddde1878e092",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:d277e904-27cb-486b-b226-f13584803774",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": [
+    "australia"
+   ],
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:d2fe6df7-bd9b-4880-9c1d-4d6f1f37ac64",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Hybrid",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:d32ac240-4d0c-486a-a7bd-279f1afdfed3",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:d3f9fcac-cbb9-4d36-a7ff-70a107b6a008",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:d4f2f359-428b-40bf-9eba-46a2ff4b267c",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:d5643305-7532-4526-883d-f3285b6bf7a3",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "Poland"
+   ],
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:d6fac8f0-a198-4cd7-91cd-7c34776683c2",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:d750c2f9-5141-4a2b-8a67-66eac58a5710",
+   "source": "ashby",
+   "stated_experience": [
+    6,
+    3
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:d8414b6c-51f2-4a40-a65d-26681575604a",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
    "identity": "ashby:d9699d18-2821-4228-8404-cf2adb2d689f",
    "source": "ashby",
    "stated_experience": [
@@ -378,6 +2936,44 @@
    "stated_levels": null,
    "places": null,
    "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:da8e10a0-7fd7-4061-9da8-7b86f9dfcb65",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:dab5bb2b-db63-49b4-b839-684dc4743675",
+   "source": "ashby",
+   "stated_experience": [
+    10,
+    5
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:dabecba2-7464-4fee-ac62-ead8df2c49d4",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
    "required_places": null,
    "described_workplace": null,
    "described": true
@@ -396,6 +2992,270 @@
    "described": true
   },
   {
+   "identity": "ashby:dae8ec41-213e-41d8-9ba6-edff9778934f",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:db498a8c-c8d8-405b-b86a-0943a5122e7d",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:dc0ec843-13a4-4032-9992-7e7a924228c8",
+   "source": "ashby",
+   "stated_experience": [
+    7,
+    3
+   ],
+   "stated_levels": null,
+   "places": [
+    "European Union"
+   ],
+   "workplace": "Hybrid",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:dd1eb66c-b6ab-4afa-9aff-7c6c254a6554",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:de617ed2-7ce7-4e2c-bfad-bb4d811e5e8b",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:dff279b0-4b9d-4aad-b2bf-9385dbeedd8a",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:e0a5ee0f-44b9-4b96-8504-b576cc843966",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:e17a51f3-9b63-4c81-b419-2ea6d3db0211",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": [
+    "us"
+   ],
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:e1a83e12-d19b-40e8-b946-18d5a88b8f1c",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:e294a839-0c55-4fc1-8208-0c1df496fd00",
+   "source": "ashby",
+   "stated_experience": [
+    8
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:e30864bd-e36d-483f-8de2-a95d4aa3db26",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:e4b96bc5-fdd1-477a-908d-815bf03dce0a",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:e608cde7-ebe3-4fd0-83d3-74da3e20663e",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:e69ad01d-e646-4d00-a4f1-047d0aa9e6c2",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:e6ea501b-70dc-4d50-8e53-68ec87139b6d",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:e747f432-d6c9-45de-a216-59b030a1d6df",
+   "source": "ashby",
+   "stated_experience": [
+    10
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:e863d643-244a-422a-b750-292e0a0d555f",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:e8c2864e-7b1c-4618-a46d-a9227339c82b",
+   "source": "ashby",
+   "stated_experience": [
+    4
+   ],
+   "stated_levels": null,
+   "places": [
+    "NAMER"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:e966d4cd-3373-43fe-879d-876e854b8a86",
+   "source": "ashby",
+   "stated_experience": [
+    7,
+    3
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:ea8b2aff-ba34-4435-81c8-7dafab2b87a1",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
    "identity": "ashby:ea8f23bf-5e87-4cd6-85be-73bd5d6114ff",
    "source": "ashby",
    "stated_experience": [
@@ -404,6 +3264,32 @@
    ],
    "stated_levels": null,
    "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:eb0f2127-9dd0-4a3b-8f7d-f0d4f728312c",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:ebbc631a-e4b8-41c3-9124-0017afdab823",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
    "workplace": "Remote",
    "required_places": null,
    "described_workplace": null,
@@ -426,6 +3312,91 @@
    "described": true
   },
   {
+   "identity": "ashby:ef1de527-5f5e-477c-85b7-19f19c72bf40",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:efc06ff8-37c4-473e-8de8-bbba56cf0479",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States",
+    "Canada"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:f016e771-0be2-4dd7-820d-af360d0d7402",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "Ireland"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:f038a7b6-2329-4d27-aeca-7c93fdb043c8",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "India"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:f0495f4d-fcc2-4a55-b9d5-5e7dbf20df1d",
+   "source": "ashby",
+   "stated_experience": [
+    4
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:f2dffb5f-9852-456f-9ebe-92cae51c99c4",
+   "source": "ashby",
+   "stated_experience": [
+    7
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
    "identity": "ashby:f4e10593-bce2-4fa1-8817-d6437e21f74e",
    "source": "ashby",
    "stated_experience": [
@@ -434,6 +3405,36 @@
    ],
    "stated_levels": null,
    "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:f50a8446-11d4-45e7-8fc9-45ae3caa6e79",
+   "source": "ashby",
+   "stated_experience": [
+    10
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:f55462bd-b0e2-4eea-aa87-f4095493cae7",
+   "source": "ashby",
+   "stated_experience": [
+    6
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
    "workplace": "Remote",
    "required_places": null,
    "described_workplace": null,
@@ -450,6 +3451,45 @@
     "United States"
    ],
    "workplace": "Hybrid",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:fd1e8b68-744d-480b-b38c-42ee999ecc6e",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:fd8daa96-8c56-4f15-9817-ce55e97a8964",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "ashby:fe8430ad-2150-4838-ae36-535aa659b389",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": [
+    "Poland"
+   ],
+   "workplace": null,
    "required_places": null,
    "described_workplace": null,
    "described": true
@@ -21459,6 +24499,19 @@
    "described": true
   },
   {
+   "identity": "lever:c7d50a36-db0a-4574-bfe4-8700b74a22c0",
+   "source": "lever",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "US"
+   ],
+   "workplace": "remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
    "identity": "lever:d044d1d8-7273-414c-9413-2249314bcc47",
    "source": "lever",
    "stated_experience": [
@@ -21585,6 +24638,21 @@
    ],
    "workplace": "onsite",
    "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "lever:f89193c2-d755-47e9-95f3-3dc1c99f41e6",
+   "source": "lever",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "US"
+   ],
+   "workplace": "remote",
+   "required_places": [
+    "us, united states"
+   ],
    "described_workplace": null,
    "described": true
   },
@@ -25421,6 +28489,19 @@
    "described": true
   },
   {
+   "identity": "manatal:2694244",
+   "source": "manatal",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "Switzerland"
+   ],
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
    "identity": "manatal:2694249",
    "source": "manatal",
    "stated_experience": null,
@@ -25773,6 +28854,19 @@
   },
   {
    "identity": "manatal:2694444",
+   "source": "manatal",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "manatal:2694454",
    "source": "manatal",
    "stated_experience": null,
    "stated_levels": null,
@@ -26175,7 +29269,33 @@
    "described": true
   },
   {
+   "identity": "manatal:2694606",
+   "source": "manatal",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
    "identity": "manatal:2694609",
+   "source": "manatal",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "manatal:2694611",
    "source": "manatal",
    "stated_experience": null,
    "stated_levels": null,
@@ -26461,6 +29581,19 @@
    "described": true
   },
   {
+   "identity": "manatal:2694826",
+   "source": "manatal",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
    "identity": "manatal:2694851",
    "source": "manatal",
    "stated_experience": null,
@@ -26656,6 +29789,19 @@
    "described": true
   },
   {
+   "identity": "manatal:2695037",
+   "source": "manatal",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
    "identity": "manatal:2695039",
    "source": "manatal",
    "stated_experience": null,
@@ -26747,6 +29893,19 @@
    "described": true
   },
   {
+   "identity": "manatal:2695071",
+   "source": "manatal",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
    "identity": "manatal:2695073",
    "source": "manatal",
    "stated_experience": null,
@@ -26825,6 +29984,19 @@
    "described": true
   },
   {
+   "identity": "manatal:2695107",
+   "source": "manatal",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
    "identity": "manatal:2695109",
    "source": "manatal",
    "stated_experience": null,
@@ -26839,6 +30011,19 @@
   },
   {
    "identity": "manatal:2695111",
+   "source": "manatal",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true
+  },
+  {
+   "identity": "manatal:2695154",
    "source": "manatal",
    "stated_experience": null,
    "stated_levels": null,
