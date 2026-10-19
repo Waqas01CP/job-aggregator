@@ -294,7 +294,9 @@ CONFIRMATIONS["0063"] = dict(CONFIRMATIONS["0059"], **{
         "test_adapters.TestHackerNews.test_the_link_is_the_posts_own_page_on_hacker_news",
         "test_adapters.TestHnJobs.test_the_link_is_the_storys_own_page_and_no_text_is_none",
         "test_adapters.TestJobicy.test_the_link_is_jobicys_own_page_and_jobicy_the_source",
-        "test_adapters.TestRemoteOK.test_the_link_is_its_remote_ok_page_and_remote_ok_the_source"]},
+        "test_adapters.TestRemoteOK.test_the_link_is_its_remote_ok_page_and_remote_ok_the_source",
+        "test_adapters.TestWeWorkRemotely."
+        "test_the_link_is_its_page_on_we_work_remotely_and_it_the_source"]},
 })
 
 # ADR-0062 consolidates ADR-0050 (2026-10-16): its eleven leads word for word,

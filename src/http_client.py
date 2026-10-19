@@ -132,10 +132,17 @@ class HttpClient(ResilientClient):
             self._record_failure(source)
             raise PermanentError(url, "200 but body is not JSON: %s" % e)
 
-    def get(self, url, source, params=None):
+    def get(self, url, source, params=None, accept="application/json"):
         """A GET is safe to repeat, so every retryable failure is retried."""
         return self._send(
             lambda: self._session.get(
                 url, params=params, timeout=self.timeout,
-                headers={"User-Agent": USER_AGENT, "Accept": "application/json"}),
+                headers={"User-Agent": USER_AGENT, "Accept": accept}),
             url, source)
+
+    def get_text(self, url, source, params=None):
+        """GET a body that is not JSON, We Work Remotely's RSS, whole: the same
+        retries, budget and breaker as get_json, since fetch behaviour lives
+        here and nowhere else. The adapter decodes it."""
+        return self.get(url, source, params=params,
+                        accept="application/rss+xml, application/xml;q=0.9, */*;q=0.8").text

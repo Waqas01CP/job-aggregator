@@ -15,7 +15,7 @@ from datetime import datetime, timezone
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.adapters import (ashby, greenhouse, hackernews, hnjobs, jobicy, lever, manatal,
-                          remoteok, smartrecruiters, workable)
+                          remoteok, smartrecruiters, weworkremotely, workable)
 from src.adapters.base import AdapterError, Posting
 from src.config import Board
 
@@ -883,6 +883,66 @@ class TestRemoteOK(unittest.TestCase):
         self.assertTrue(p.url.lower().startswith("https://remoteok.com/remote-jobs/"))
         self.assertEqual((p.source, p.board_id, p.url_provenance),
                          ("remoteok", "remoteok:remoteok-feed", "payload"))
+
+
+WWR_BOARD = Board(platform="weworkremotely", slug="wwr-feed")
+WWR_RSS = ("<rss><channel><item><guid>https://weworkremotely.com/remote-jobs/acme-ai-engineer</guid>"
+               "<title>Acme: AI Engineer</title>"
+               "<link>https://weworkremotely.com/remote-jobs/acme-ai-engineer</link>"
+               "<pubDate>Sun, 18 Oct 2026 07:31:05 +0000</pubDate>"
+               "<region>Anywhere in the World</region><country></country>"
+               "<description>&lt;p&gt;Text&lt;/p&gt;</description></item></channel></rss>")
+
+
+class TestWeWorkRemotely(unittest.TestCase):
+    """We Work Remotely's RSS. Cassette: the first 30 of its feed of
+    2026-10-18, as its adapter decodes it, sanitised."""
+
+    def setUp(self):
+        self.payload = cassette("weworkremotely-feed.json")
+
+    def item(self, **extra):
+        return dict(self.payload["items"][0], **extra)
+
+    def one(self, item):
+        return weworkremotely.parse({"items": [item]}, WWR_BOARD).postings[0]
+
+    def test_the_feed_is_decoded_into_items(self):
+        doc = weworkremotely.decode(WWR_RSS)
+        self.assertEqual([i["title"] for i in doc["items"]], ["Acme: AI Engineer"])
+        for bad in ("not xml", "<rss></rss>"):
+            with self.subTest(bad=bad), self.assertRaises(AdapterError):
+                weworkremotely.decode(bad)
+
+    def test_parses_every_item_and_splits_the_employer_from_the_role(self):
+        result = weworkremotely.parse(self.payload, WWR_BOARD)
+        self.assertEqual((len(result.postings), result.problems), (30, []))
+        p = self.one(self.item(title="Airbnb: Engineering Manager, Payments"))
+        self.assertEqual((p.employer, p.title, p.workplace),
+                         ("Airbnb", "Engineering Manager, Payments", "remote"))
+
+    def test_the_countries_named_are_the_place_and_else_the_region(self):
+        """The region says "Anywhere in the World" beside a country that
+        narrows it, on 17 of 88. Mutation: "We Work Remotely's countries are
+        not read"."""
+        us = [i for i in self.payload["items"] if "United States" in (i["country"] or "")][0]
+        self.assertEqual(self.one(us).location, "United States of America")
+        many = self.item(country="\U0001F1E6\U0001F1FA Australia, \U0001F1E8\U0001F1E6 Canada, "
+                               "and \U0001F1FA\U0001F1F8 United States of America")
+        self.assertEqual(self.one(many).location, "Australia; Canada; United States of America")
+        uk = self.item(country="\U0001F1E8\U0001F1E6 Canada, and \U0001F1EC\U0001F1E7 United Kingdom of "
+                               "Great Britain and Northern Ireland")
+        self.assertEqual(self.one(uk).location,
+                         "Canada; United Kingdom of Great Britain and Northern Ireland")
+        self.assertEqual(self.one(self.item(country="")).location, "Anywhere in the World")
+
+    def test_the_link_is_its_page_on_we_work_remotely_and_it_the_source(self):
+        """ADR-0063 and its terms: links attributed back. Mutation: "a We
+        Work Remotely posting is shown without its source"."""
+        p = self.one(self.item())
+        self.assertTrue(p.url.startswith("https://weworkremotely.com/remote-jobs/"))
+        self.assertEqual((p.source, p.board_id, p.external_id),
+                         ("weworkremotely", "weworkremotely:wwr-feed", p.url.rsplit("/", 1)[-1]))
 
 
 class TestPostingInvariants(unittest.TestCase):

@@ -263,6 +263,12 @@
       "slug": "remoteok-feed",
       "normalisations": [],
       "note": "ADR-0063's second wave, after Jobicy: Remote OK's API, its newest postings in one request a run, about 99 over two months. Its terms: link back to the posting on Remote OK and name it as the source, or access is suspended; each row links to its Remote OK page and names it as its board. An aggregator, so its rows keep to the private store. The slug is a label; the feed has no account."
+    },
+    {
+      "platform": "weworkremotely",
+      "slug": "wwr-feed",
+      "normalisations": [],
+      "note": "ADR-0063's second wave, last: We Work Remotely's all-jobs RSS, the newest ten postings of each category, one request a run, fetched as text and decoded by its adapter. Its terms: links attributed back to We Work Remotely; each row links to its page there and names it as its board. An aggregator, so its rows keep to the private store. The slug is a label; the feed has no account."
     }
   ]
 }

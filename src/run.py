@@ -56,7 +56,7 @@ from .airtable_sweep import JOBS, SweepClient, TABLE_SECRETS
 from .closure import Closure, covered as walk_covered
 from .sweep import Sweep, older_than
 from .adapters import (ashby, greenhouse, hackernews, himalayas, hnjobs, jobicy, lever,
-                       manatal, remoteok, smartrecruiters, workable)
+                       manatal, remoteok, smartrecruiters, weworkremotely, workable)
 from . import health
 from .airtable import (BASE_ENV, CALL_LOG_KEYS, HEALTH_LOG_KEY, HEALTH_TABLE_ENV,
                        HEALTH_TEST_TABLE_ENV, RUN_LOG_KEY, TABLE_ENV, TEST_TABLE_ENV,
@@ -88,6 +88,7 @@ ADAPTERS = {
     "hnjobs": hnjobs,
     "jobicy": jobicy,
     "remoteok": remoteok,
+    "weworkremotely": weworkremotely,
 }
 
 # A paginated feed is read until it reaches postings already stored, or
@@ -728,6 +729,11 @@ class Run:
         try:
             if getattr(adapter, "PAGINATED", False):
                 payload = self._fetch_pages(adapter, board, log)
+            elif getattr(adapter, "decode", None):
+                # A feed that is not JSON, We Work Remotely's RSS: fetched as
+                # text through the same client, decoded by its adapter.
+                payload = adapter.decode(self.client.get_text(adapter.url_for(board),
+                                                              board.source))
             else:
                 payload = self.client.get_json(adapter.url_for(board), board.source)
                 # A feed found through a first request, Hacker News' month's

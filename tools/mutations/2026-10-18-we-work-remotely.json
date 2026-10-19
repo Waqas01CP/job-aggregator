@@ -1,0 +1,38 @@
+[
+  {
+    "label": "We Work Remotely's countries are not read",
+    "path": "src/adapters/weworkremotely.py",
+    "find": "    if countries:\n        return \"; \".join(countries)",
+    "replace": "    if False:\n        return \"; \".join(countries)"
+  },
+  {
+    "label": "a We Work Remotely posting is shown without its source",
+    "path": "src/adapters/weworkremotely.py",
+    "find": "            url=url,",
+    "replace": "            url=\"https://example.invalid/\" + external_id,"
+  },
+  {
+    "label": "We Work Remotely's feed is fetched as JSON",
+    "path": "src/run.py",
+    "find": "            elif getattr(adapter, \"decode\", None):",
+    "replace": "            elif False:"
+  },
+  {
+    "label": "the contract check reads We Work Remotely as JSON",
+    "path": "src/contract.py",
+    "find": "        decode = getattr(adapter, \"decode\", None)",
+    "replace": "        decode = None"
+  },
+  {
+    "label": "We Work Remotely's rows reach the public branch",
+    "path": "src/config.py",
+    "find": "    \"weworkremotely\",\n",
+    "replace": ""
+  },
+  {
+    "label": "We Work Remotely's boards are configured and not polled",
+    "path": "src/run.py",
+    "find": "    \"weworkremotely\": weworkremotely,\n",
+    "replace": ""
+  }
+]

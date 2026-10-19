@@ -420,6 +420,25 @@ Measured over the 99 `[VERIFIED]`:
 
 **Every posting is remote** by the feed's own scope. **What the chain keeps, read fresh:** 6 of the 99; 7 on November's rules.
 
+## We Work Remotely
+
+ADR-0063's second wave, last, built 2026-10-19. `weworkremotely.com/remote-jobs.rss`, its all-jobs RSS, one request a run: the newest ten postings of each category, 88 on 2026-10-18, dated 2026-05-20 to 10-18. **RSS, not JSON:** fetched as text through the shared client (`get_text`) and decoded by the adapter into one object an item, so the run, the contract check and the stores treat it as any other source. Its terms: "Anyone can use the feed, all we ask is that you attribute the links back to We Work Remotely." Each row links to its page there and names it as its board. An aggregator, so its rows keep to the private store.
+
+Measured over the 88 `[VERIFIED]`:
+
+| Field | Present | Read | Notes |
+|---|---|---|---|
+| `guid` | 100% | yes | the posting's page, the same as `link` on 88 of 88; its last part is the identity |
+| `title` | 100% | yes | "Company: Role" on 88 of 88: the employer before the first ": ", the title after |
+| `link` | 100% | yes | the posting's page on We Work Remotely, which names the source |
+| `pubDate` | 100% | yes | RFC 822 |
+| `country` | 17 of 88 | yes | **the place where it names any**, each country a place of its own, its flag removed: the United States 11. The region beside it still says "Anywhere in the World" |
+| `region` | 100% | yes | the place where no country is named: "Anywhere in the World" 86 of 88 |
+| `description` | 100% | **yes** | HTML; stripped from every cassette |
+| `state`, `skills`, `category`, `type`, `expires_at`, media | | no | `expires_at` is 30 days after `pubDate` |
+
+**Every posting is remote** by the feed's own scope. **What the chain keeps, read fresh:** 1 of the 88. The title rule drops 76, seniority 9, experience 1 and location 1.
+
 ## What each API accepts
 
 From each provider's own documentation, read 2026-10-02 `[outside this
@@ -683,6 +702,7 @@ what happens when it is absent, and each of these deserves that separately.
 
 | Date | Change | Reason |
 |---|---|---|
+| 2026-10-19 | We Work Remotely's section added: its RSS decoded, the countries it names read as the place before the region, what the chain keeps read fresh | Its adapter is built, ADR-0063's second wave, last |
 | 2026-10-18 | RemoteOK's section added: its one array, its terms, every field counted over 99 postings, what the chain keeps read fresh | Its adapter is built, ADR-0063's second wave |
 | 2026-10-18 | Jobicy's section added: its paged feed, every field counted over 833 postings, its terms, what the chain keeps read fresh | Its adapter is built, ADR-0063's second wave |
 | 2026-10-18 | Hacker News' section added: the Who is hiring thread found then read, its post's first line as title, employer, place and workplace, and the job stories; what the chain keeps read fresh | Its adapters are built, ADR-0063's second wave, first |

@@ -77,7 +77,13 @@ class FakeResponse:
         self.headers = {}
 
     def json(self):
+        if isinstance(self._payload, str):
+            raise ValueError("not JSON")
         return self._payload
+
+    @property
+    def text(self):
+        return self._payload if isinstance(self._payload, str) else json.dumps(self._payload)
 
 
 class FakeSession:
@@ -376,6 +382,23 @@ class TestRemoteOKInTheRun(RunHarness):
                          (1, 29, 0))
         self.assertEqual(log["source_class"], {"remoteok": "aggregator"})
         self.assertTrue(os.path.exists(storage.raw_path("remoteok", False, "aggregator")))
+
+
+class TestWeWorkRemotelyInTheRun(RunHarness):
+    """We Work Remotely, last: its RSS fetched as text through the shared
+    client, decoded by its adapter, its rows in the private layer."""
+
+    def test_the_feed_is_fetched_as_text_and_stored_privately(self):
+        """Mutations: "We Work Remotely's feed is fetched as JSON", "We Work
+        Remotely's rows reach the public branch"."""
+        from tests.test_adapters import WWR_RSS
+        client = client_for({"remote-jobs.rss": WWR_RSS})
+        board = Board(platform="weworkremotely", slug="wwr-feed")
+        log = Run([board], client, now=NOW, matcher=MATCHER).execute()
+        [entry] = log["boards"]
+        self.assertEqual((entry["status"], entry["fetched"]), ("ok", 1))
+        self.assertEqual(log["source_class"], {"weworkremotely": "aggregator"})
+        self.assertTrue(os.path.exists(storage.raw_path("weworkremotely", False, "aggregator")))
 
 
 class TestTheRunLogsCommit(RunHarness):

@@ -148,6 +148,10 @@ def postings_of(doc):
         return doc["children"], "children"
     if isinstance(doc, dict) and isinstance(doc.get("hits"), list):
         return doc["hits"], "hits"
+    # We Work Remotely's RSS as its adapter decodes it, its items under
+    # `items`; the tool reads the decoded form, never the XML.
+    if isinstance(doc, dict) and isinstance(doc.get("items"), list):
+        return doc["items"], "items"
     # Manatal's career site pages twenty postings under `results`, beside
     # `count`, `next` and `previous`, which the envelope keeps.
     if isinstance(doc, dict) and isinstance(doc.get("results"), list):

@@ -79,7 +79,7 @@ from datetime import datetime, timezone
 
 from . import envfile, storage
 from .adapters import (ashby, greenhouse, hackernews, himalayas, hnjobs, jobicy, lever,
-                       manatal, remoteok, smartrecruiters, workable)
+                       manatal, remoteok, smartrecruiters, weworkremotely, workable)
 from .config import REPO_ROOT, ConfigError, load_boards
 from .http_client import HttpClient, HttpError
 from .normalise import dumps, iso, loads
@@ -97,6 +97,7 @@ PLATFORMS = {
     "hnjobs": hnjobs,
     "jobicy": jobicy,
     "remoteok": remoteok,
+    "weworkremotely": weworkremotely,
 }
 
 FINGERPRINT_FILE = "contract/fingerprint.json"
@@ -333,7 +334,9 @@ def check_one(platform, adapter, board, client, stored, entry, now, rebaselines)
     """One platform's check, filling `entry`. Returns its new fingerprint, or
     None when the board could not be answered and the old one stands."""
     try:
-        payload = client.get_json(adapter.url_for(board), board.source)
+        decode = getattr(adapter, "decode", None)
+        payload = (decode(client.get_text(adapter.url_for(board), board.source)) if decode
+                   else client.get_json(adapter.url_for(board), board.source))
         # Hacker News' thread is found by a first request, as the run finds
         # it, and the check fingerprints what the run parses.
         follow = getattr(adapter, "follow", None)

@@ -23,10 +23,10 @@ DEFAULT_PATH = os.path.join(REPO_ROOT, "config", "boards.json")
 # Manatal is ADR-0059's first, by measured yield, on 2026-10-07; Workable
 # second, on 2026-10-08; SmartRecruiters third, on 2026-10-17; Ashby fourth,
 # on 2026-10-17. Hacker News' thread and job stories, ADR-0063's second wave,
-# on 2026-10-18; Jobicy and RemoteOK the same day.
+# on 2026-10-18; Jobicy, RemoteOK and We Work Remotely the same day.
 PLATFORMS = frozenset({"greenhouse", "lever", "himalayas", "manatal", "workable",
                        "smartrecruiters", "ashby", "hackernews", "hnjobs", "jobicy",
-                       "remoteok"})
+                       "remoteok", "weworkremotely"})
 
 # Every normalisation that may be named by a board entry. A name outside this
 # set is a typo, and a typo that silently did nothing would be invisible: the
@@ -41,7 +41,8 @@ NORMALISATIONS = frozenset({"strip_location_suffix"})
 # people on a site that is not theirs, and nothing in its terms grants
 # republishing them, so its rows keep to the private store with Himalayas'.
 # Jobicy's terms forbid redistributing its listings (ADR-0019), so its too;
-# and RemoteOK's, whose terms ask for its link and name with every row.
+# and RemoteOK's and We Work Remotely's, whose terms ask for their link and
+# name with every row.
 # One platform a line, so adding one moves no other's line.
 AGGREGATOR_PLATFORMS = frozenset({
     "himalayas",
@@ -49,6 +50,7 @@ AGGREGATOR_PLATFORMS = frozenset({
     "hnjobs",
     "jobicy",
     "remoteok",
+    "weworkremotely",
 })
 
 # Sources whose rows may reach the public data branch. Named rather than
