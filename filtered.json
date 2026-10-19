@@ -7562,5 +7562,34 @@
   "workplace": null,
   "required_places": null,
   "described_workplace": null
+ },
+ {
+  "identity": "lever:c7d50a36-db0a-4574-bfe4-8700b74a22c0",
+  "source": "lever",
+  "board_id": "lever:postera",
+  "external_id": "c7d50a36-db0a-4574-bfe4-8700b74a22c0",
+  "employer": "PostEra",
+  "employer_provenance": "slug",
+  "title": "Machine Learning Researcher - Agentic Science",
+  "title_normalised": "Machine Learning Researcher - Agentic Science",
+  "location": "Remote",
+  "published_at": "2026-09-28T19:02:28.738000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-10-19T03:32:32.608553Z",
+  "ordering_date": "2026-09-28T19:02:28.738000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/postera/c7d50a36-db0a-4574-bfe4-8700b74a22c0",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "US"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true
  }
 ]
