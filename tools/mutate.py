@@ -4,6 +4,7 @@ suite notices.
     python tools/mutate.py tools/mutations/<file>.json
     python tools/mutate.py tools/mutations/<file>.json --only <label>
     python tools/mutate.py tools/mutations/<file>.json --why
+    python tools/mutate.py tools/mutations/<file>.json --targeted
 
 A mutation file is a JSON list of {"label", "path", "find", "replace"}. Each
 mutation replaces one exact, unique piece of source text, runs the whole suite,
@@ -41,20 +42,32 @@ Guards, each against a failure that has already happened once:
   the test that was running, and with its input closed, so no test can wait
   on one.
 
+**`--targeted` runs first the test modules that name a mutation or import
+its file,** and the whole suite only when they all pass, so a caught
+mutation costs seconds and a survivor is still decided on the whole suite.
+Added 2026-10-19: Brief 17's 40 mutations took about four hours one whole
+suite at a time on a laptop paging hard, the operator's concern; running
+suites side by side would have added to the paging.
+
 Exit 0 when every mutation was caught, 1 otherwise.
 """
 
 import argparse
+import ast
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
 import tempfile
+import time
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 SUITE = [sys.executable, "-m", "unittest", "discover", "-s", "tests", "-t", ".", "-v"]
+# A targeted run: the named test modules alone, verbose like the suite.
+MODULES = [sys.executable, "-m", "unittest", "-v"]
 KEYS = {"label", "path", "find", "replace"}
 # The whole suite takes three to five minutes on the operator's laptop at
 # below-normal priority; four times that has stopped, not slowed.
@@ -80,21 +93,23 @@ def kill_tree(process):
         process.kill()
 
 
-def run_suite(applied=None, timeout=SUITE_TIMEOUT):
+def run_suite(applied=None, timeout=SUITE_TIMEOUT, modules=None):
     """(passed, tail, failing, timed_out). The tail lets a failing baseline
     be read without rerunning, and names the running test when the suite
     timed out; `failing` names the tests that failed or errored, so `--why`
     can show that a mutation was caught by the test meant to catch it rather
     than by an unrelated crash. `applied` is the path of the file a mutation
-    has changed, or None for the baseline and the final run."""
+    has changed, or None for the baseline and the final run. `modules`, when
+    given, runs those test modules alone instead of the whole suite."""
     cache = tempfile.mkdtemp(prefix="mutate-pyc-")
     env = dict(os.environ, PYTHONPYCACHEPREFIX=cache)
     env.pop(APPLIED_ENV, None)
     if applied:
         env[APPLIED_ENV] = applied
     timed_out = False
+    command = SUITE if modules is None else MODULES + list(modules)
     try:
-        p = subprocess.Popen(SUITE, cwd=REPO_ROOT, env=env, stdin=subprocess.DEVNULL,
+        p = subprocess.Popen(command, cwd=REPO_ROOT, env=env, stdin=subprocess.DEVNULL,
                              stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                              text=True, encoding="utf-8", errors="replace")
         try:
@@ -166,16 +181,81 @@ def load(path, only=None):
     return mutations
 
 
-def apply_one(m):
+def named_in(path, label):
+    """The tests in one test file whose docstrings name `label`, as unittest
+    names them; the whole module when the file names it only elsewhere, in
+    a class's docstring or a comment."""
+    text = path.read_bytes().decode("utf-8")
+    if label not in " ".join(text.split()):
+        return []
+    module = "tests." + path.stem
+    found = []
+    for cls in ast.parse(text).body:
+        if not isinstance(cls, ast.ClassDef):
+            continue
+        for fn in cls.body:
+            if (isinstance(fn, (ast.FunctionDef, ast.AsyncFunctionDef))
+                    and fn.name.startswith("test")
+                    and label in " ".join((ast.get_docstring(fn) or "").split())):
+                found.append("%s.%s.%s" % (module, cls.name, fn.name))
+    return found or [module]
+
+
+def targets_for(m, root=REPO_ROOT):
+    """What a targeted run tries first for mutation `m`: the tests whose
+    docstrings name its label, as `Mutation: "..."` does, wrapped across
+    lines or not, each alone; and only when no test file names it, the
+    modules that import the module it changes. The tests naming a mutation
+    are the ones written to catch it, one or two, where the run tests'
+    whole module is most of the suite's time and the importers of
+    `src/run.py` are ten. Sorted; empty when neither, and the whole suite
+    runs at once."""
+    label = " ".join(m["label"].split())
+    module = m["path"][:-3].replace("/", ".") if m["path"].endswith(".py") else None
+    imports = None
+    if module:
+        package, _, name = module.rpartition(".")
+        imports = re.compile(r"\b%s\b|\bfrom\s+%s\s+import\s+(?:\([^)]*\b%s\b[^)]*\)|[^\n]*\b%s\b)"
+                             % (re.escape(module), re.escape(package), re.escape(name),
+                                re.escape(name)))
+    named, importing = [], []
+    for path in sorted((Path(root) / "tests").glob("test_*.py")):
+        hits = named_in(path, label)
+        if hits:
+            named += hits
+        elif imports is not None and imports.search(path.read_bytes().decode("utf-8")):
+            importing.append("tests." + path.stem)
+    return named or importing
+
+
+def apply_one(m, targeted=False, note=None):
     """Mutate, run, restore. Returns (caught, failing test names, the
     tail when the suite timed out or None). A suite that timed out caught
-    nothing anyone can name."""
+    nothing anyone can name.
+
+    **`targeted`: the tests most likely to catch it first.** The modules
+    `targets_for` names run alone; if one fails, the mutation is caught, as
+    the whole suite would have caught it, and the rest is not run. Only when
+    they all pass does the whole suite run and decide, so a mutation is
+    never called a survivor on less than the whole suite. On the operator's
+    laptop, short of memory, a whole suite takes five or six minutes and
+    the modules naming a mutation seconds (2026-10-19). `note`, a dict,
+    is told which run decided."""
     target = REPO_ROOT / m["path"]
     original = target.read_bytes()
     mutated = original.decode("utf-8").replace(m["find"], m["replace"], 1).encode("utf-8")
+    note = {} if note is None else note
     try:
         target.write_bytes(mutated)
-        passed, tail, failing, timed_out = run_suite(applied=m["path"])
+        modules = targets_for(m) if targeted else []
+        decided = False
+        if modules:
+            passed, tail, failing, timed_out = run_suite(applied=m["path"], modules=modules)
+            decided = not passed and not timed_out
+            note["modules"] = len(modules)
+        note["whole suite"] = not decided
+        if not decided:
+            passed, tail, failing, timed_out = run_suite(applied=m["path"])
     finally:
         target.write_bytes(original)
     if target.read_bytes() != original:
@@ -189,6 +269,9 @@ def main(argv=None):
     parser.add_argument("--only", help="apply only the mutation with this label")
     parser.add_argument("--why", action="store_true",
                         help="name the tests that caught each mutation")
+    parser.add_argument("--targeted", action="store_true",
+                        help="run first the test modules that name each mutation or import "
+                             "its file; the whole suite only when they all pass")
     args = parser.parse_args(argv)
 
     mutations = load(args.file, args.only)
@@ -204,13 +287,20 @@ def main(argv=None):
     before = refs()
     results = []
     for m in mutations:
-        caught, failing, hung = apply_one(m)
+        note, started = {}, time.monotonic()
+        caught, failing, hung = apply_one(m, targeted=args.targeted, note=note)
         stray = sorted(refs() - before)
         results.append((m["label"], caught, stray, hung is not None))
         print("  %-9s %s%s" % ("caught" if caught else "TIMED OUT" if hung is not None
                                else "SURVIVED", m["label"],
                                "   STRAY REF: %s" % ", ".join(stray) if stray else ""),
               flush=True)
+        if args.targeted:
+            print("              %d s, %s" % (
+                time.monotonic() - started,
+                "by the whole suite" if note.get("whole suite")
+                else "by the %d test module(s) naming it or importing its file"
+                % note.get("modules", 0)), flush=True)
         if hung is not None:
             print("              the suite ran past %d seconds and was stopped; its last "
                   "lines:\n%s" % (SUITE_TIMEOUT, hung), flush=True)

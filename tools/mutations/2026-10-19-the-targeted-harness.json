@@ -1,0 +1,44 @@
+[
+  {
+    "label": "a label wrapped across lines is not found",
+    "path": "tools/mutate.py",
+    "find": "    if label not in \" \".join(text.split()):",
+    "replace": "    if label not in text:"
+  },
+  {
+    "label": "a test naming it runs with its whole module",
+    "path": "tools/mutate.py",
+    "find": "    return found or [module]",
+    "replace": "    return [module]"
+  },
+  {
+    "label": "a module importing the file is not tried first",
+    "path": "tools/mutate.py",
+    "find": "        elif imports is not None and imports.search(path.read_bytes().decode(\"utf-8\")):",
+    "replace": "        elif False:"
+  },
+  {
+    "label": "importers are tried beside the modules that name it",
+    "path": "tools/mutate.py",
+    "find": "    return named or importing",
+    "replace": "    return named + importing"
+  },
+  {
+    "label": "the whole suite runs although the named tests caught it",
+    "path": "tools/mutate.py",
+    "find": "            decided = not passed and not timed_out",
+    "replace": "            decided = False"
+  },
+  {
+    "label": "a timed-out targeted run counts as caught",
+    "path": "tools/mutate.py",
+    "find": "            decided = not passed and not timed_out",
+    "replace": "            decided = not passed"
+  },
+  {
+    "label": "a mutation the named tests miss survives without the whole suite",
+    "path": "tools/mutate.py",
+    "find": "        if not decided:\n            passed, tail, failing, timed_out = run_suite(applied=m[\"path\"])",
+    "replace": "        if not decided and not modules:\n            passed, tail, failing, timed_out = run_suite(applied=m[\"path\"])"
+  }
+]

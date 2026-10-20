@@ -438,6 +438,96 @@ class TestTheMutationsOnFile(unittest.TestCase):
             restored = f.read()
         self.assertEqual((caught, failing, hung, restored), (False, [], "test_x ... ", "A = 1\n"))
 
+    def test_targeted_tries_first_the_modules_naming_it_or_else_importing_its_file(self):
+        """`--targeted`, 2026-10-19. A label wrapped across a docstring's
+        lines is found, and the test naming it is tried alone, or its whole
+        module when only a comment names it; only when no file names it are
+        the modules importing its file tried, one inside brackets among
+        them; a module that does neither is never tried. Mutation: "a label
+        wrapped across lines is not found". Mutation: "a module importing
+        the file is not tried first". Mutation: "importers are tried beside
+        the modules that name it". Mutation: "a test naming it runs with its
+        whole module"."""
+        import shutil
+        import tempfile
+        root = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, root, True)
+        files = {"tests/test_a.py": ('class T:\n    def test_x(self):\n        """Mutation: "a long\n'
+                                     '        label wrapped"."""\n\n    def test_y(self):\n'
+                                     '        """Nothing named."""\n'),
+                 "tests/test_e.py": "# A comment naming a long label wrapped.\n",
+                 "tests/test_b.py": "from src import (\n    other,\n    target,\n)\n",
+                 "tests/test_c.py": "from src.target import thing\n",
+                 "tests/test_d.py": "from src import targets\nimport src.other\n",
+                 "src/target.py": "A = 1\n"}
+        for name, text in files.items():
+            os.makedirs(os.path.dirname(os.path.join(root, name)), exist_ok=True)
+            with open(os.path.join(root, name), "w", encoding="utf-8") as f:
+                f.write(text)
+        m = {"label": "a long label wrapped", "path": "src/target.py", "find": "A = 1",
+             "replace": "A = 2"}
+        self.assertEqual(mutate.targets_for(m, root), ["tests.test_a.T.test_x", "tests.test_e"])
+        unnamed = dict(m, label="a label no test names")
+        self.assertEqual(mutate.targets_for(unnamed, root), ["tests.test_b", "tests.test_c"])
+        real = {"label": "a founder writing is not read", "path": "src/description.py",
+                "find": "x", "replace": "y"}
+        # This file names the label too, in the line above, so it is tried
+        # as well, whole.
+        self.assertIn("tests.test_description.TestWhoReads.test_each_label_on_the_line_that_gives_it",
+                      mutate.targets_for(real))
+
+    def targeted(self, answers, targeted=True):
+        """apply_one on a file of its own, the suite stood in for: each call
+        answers in turn and records which modules it was asked to run."""
+        import tempfile
+        folder = tempfile.mkdtemp()
+        path = os.path.join(folder, "target.py")
+        with open(path, "w", encoding="utf-8") as f:
+            f.write("A = 1\n")
+        calls, note = [], {}
+
+        def suite(applied=None, timeout=None, modules=None):
+            calls.append(modules)
+            return answers[len(calls) - 1]
+        real = (mutate.run_suite, mutate.targets_for)
+        mutate.run_suite, mutate.targets_for = suite, lambda m: ["tests.test_x"]
+        try:
+            result = mutate.apply_one({"label": "x", "path": path, "find": "A = 1",
+                                       "replace": "A = 2"}, targeted=targeted, note=note)
+        finally:
+            mutate.run_suite, mutate.targets_for = real
+        with open(path, encoding="utf-8") as f:
+            self.assertEqual(f.read(), "A = 1\n")
+        return result, calls, note
+
+    def test_caught_by_the_modules_it_names_the_whole_suite_is_not_run(self):
+        """Mutation: "the whole suite runs although the named tests caught
+        it"."""
+        (caught, failing, hung), calls, note = self.targeted([(False, "", ["t (x.T)"], False)])
+        self.assertEqual((caught, failing, hung, calls, note["whole suite"]),
+                         (True, ["t (x.T)"], None, [["tests.test_x"]], False))
+
+    def test_missed_by_them_the_whole_suite_decides(self):
+        """Never a survivor on less than the whole suite, and caught when
+        the whole suite catches what they missed. Mutation: "a mutation the
+        named tests miss survives without the whole suite"."""
+        (caught, _, _), calls, note = self.targeted([(True, "", [], False), (True, "", [], False)])
+        self.assertEqual((caught, calls, note["whole suite"]),
+                         (False, [["tests.test_x"], None], True))
+        (caught, failing, _), calls, _ = self.targeted([(True, "", [], False),
+                                                        (False, "", ["u (y.U)"], False)])
+        self.assertEqual((caught, failing, calls), (True, ["u (y.U)"], [["tests.test_x"], None]))
+
+    def test_a_targeted_run_that_timed_out_leaves_it_to_the_whole_suite(self):
+        """Mutation: "a timed-out targeted run counts as caught"."""
+        (caught, _, _), calls, _ = self.targeted([(False, "t ...", [], True),
+                                                  (True, "", [], False)])
+        self.assertEqual((caught, calls), (False, [["tests.test_x"], None]))
+
+    def test_without_targeted_the_whole_suite_alone(self):
+        (caught, _, _), calls, _ = self.targeted([(False, "", ["t (x.T)"], False)], targeted=False)
+        self.assertEqual((caught, calls), (True, [None]))
+
     def test_the_check_can_fail(self):
         """The cases built to defeat it: a find matching nothing, a find
         matching twice, and the same stale find exempt. Mutation: "a find
