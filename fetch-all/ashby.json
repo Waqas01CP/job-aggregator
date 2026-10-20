@@ -7735,5 +7735,69 @@
   "required_places": null,
   "described_workplace": null,
   "described": true
+ },
+ {
+  "identity": "ashby:2137b19e-a226-4e3c-8c8d-0e0ca30415e6",
+  "source": "ashby",
+  "board_id": "ashby:clickhouse",
+  "external_id": "2137b19e-a226-4e3c-8c8d-0e0ca30415e6",
+  "employer": "ClickHouse",
+  "employer_provenance": "slug",
+  "title": "Regional VP, AMER Southwest",
+  "title_normalised": "Regional VP, AMER Southwest",
+  "location": "Denver; Los Angeles",
+  "published_at": "2026-10-19T23:46:36.147000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-20T03:41:56.396251Z",
+  "ordering_date": "2026-10-19T23:46:36.147000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/clickhouse/2137b19e-a226-4e3c-8c8d-0e0ca30415e6",
+  "url_provenance": "payload",
+  "stated_experience": [
+   10,
+   5
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "United States"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null,
+  "described": true
+ },
+ {
+  "identity": "ashby:4c3c0f54-e955-47e2-8629-8e0c1df347a9",
+  "source": "ashby",
+  "board_id": "ashby:clickhouse",
+  "external_id": "4c3c0f54-e955-47e2-8629-8e0c1df347a9",
+  "employer": "ClickHouse",
+  "employer_provenance": "slug",
+  "title": "Regional VP, AMER Southeast",
+  "title_normalised": "Regional VP, AMER Southeast",
+  "location": "Atlanta; Charlotte",
+  "published_at": "2026-10-19T23:44:43.441000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-20T03:41:56.396251Z",
+  "ordering_date": "2026-10-19T23:44:43.441000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/clickhouse/4c3c0f54-e955-47e2-8629-8e0c1df347a9",
+  "url_provenance": "payload",
+  "stated_experience": [
+   10,
+   5
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "United States"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null,
+  "described": true
  }
 ]
