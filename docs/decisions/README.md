@@ -76,7 +76,7 @@ Records are written at the moment a decision concludes. A record's factual error
 | 0060 | The projection sends only what differs from `Jobs` | Accepted, supersedes 0056; one read of `Jobs` shared with the sweep |
 | 0061 | The contract check reports per source, in its log and in Airtable | Accepted, supersedes 0036 |
 | 0062 | The classification flow, with gone, applied and a reason in `Jobs` | Accepted, supersedes 0050; the rejection tables read only when needed |
-| 0063 | Version 1, its test for done set, and the second wave by who reads the application | Accepted, supersedes 0059; the second wave built, Breezy out on a conclusive read |
+| 0063 | Version 1, its test for done set, and the second wave by who reads the application | Accepted, supersedes 0059; the second wave built, Breezy out on a conclusive read; four more sources to build, Startup.jobs' seven-day clause set aside by his decision |
 | RULES | How records are resolved, amended and retired | Accepted |
 
 ## Pending

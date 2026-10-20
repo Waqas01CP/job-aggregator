@@ -87,6 +87,7 @@ supersedes and superseded-by links, deliberately not duplicated here.
 | `docs/research/0003-job-source-survey.md` | Pass 0003. Survey of free, pollable job board and aggregator APIs. Six keyless feeds recommended; Rozee.pk has no API path. | current |
 | `docs/research/0004-project-context-documentation.md` | Pass 0004. Project context documentation for humans and AI agents. Corrects pass 0002 on CLAUDE.md length; finds the strongest source was the operator's own prior repository. | current |
 | `docs/research/0005-job-source-value.md` | Pass 0005. Which job sources are worth integrating, judged by their value to the operator rather than by whether they can be polled. Every load-bearing claim checked against its primary source; employer ATS boards first, Himalayas kept, four feeds as a second wave, the rest out. | current |
+| `docs/research/0006-founder-read-sources.md` | Pass 0006. Sources where a founder or an engineer reads the application, for an agentic AI graduate in Karachi. Three outside research reports, two by Gemini and one by Claude's research tool, each decisive claim tested against the source's own pages on 2026-10-20 by trying to falsify it. Python.org, Hasjob, CryptoJobsList and Startup.jobs' API stand; most others fall. | current |
 
 ## log
 
@@ -233,4 +234,4 @@ Grouped by topic, in the order the pipeline runs. A record appears under exactly
 | `docs/deferred/rozee-pk.md` | Adding Rozee.pk as a source. Out of automated use since 2026-10-04 (2026-10-03 UTC), because its privacy policy prohibits networked use of its material; revisiting needs that to change first. | current |
 | `docs/deferred/similarity-matching.md` | Ranking postings by similarity to accepted roles. Deferred because ADR-0010 forbids it and the deterministic star was built instead; revisit when the accepted store holds fifty rows or when the operator stops reading every row. | current |
 
-Files listed: 128
+Files listed: 129

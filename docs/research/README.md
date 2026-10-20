@@ -15,6 +15,7 @@ A research record is never edited to reflect a later finding. A new pass gets a 
 | 0003 | Job source survey | 2026-09-10 | `0003-job-source-survey.md`, plus ADR-0019 and ADR-0020. | complete, **corrected by 0005 on ai-jobs.net, Jobicy and Rozee.pk** |
 | 0004 | Project context documentation | 2026-09-11 | `0004-project-context-documentation.md`, plus ADR-0022, ADR-0023 and ADR-0024. Corrects pass 0002 on instruction-file length. | complete |
 | 0005 | Job source value | 2026-10-04 (begun 2026-10-03 UTC) | `0005-job-source-value.md`, plus ADR-0059. Judges sources by their value to the operator, with every load-bearing claim checked against its primary source. Corrects pass 0003 on three sources. | complete |
+| 0006 | Founder-read sources | 2026-10-20 | `0006-founder-read-sources.md`, plus ADR-0063's Changes of that day. Three outside research reports, each decisive claim tested by trying to falsify it against the source's own pages, the operator's method. Adds sources to 0005's; corrects nothing in it. | complete |
 
 Passes 0001 and 0002 also produced cross-project standards, which live outside this repository because their findings apply to every project rather than this one. The records here carry the evidence and the source ratings; the standards carry the conclusions.
 
