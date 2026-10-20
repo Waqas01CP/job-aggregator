@@ -2026,5 +2026,133 @@
   "required_places": null,
   "described_workplace": null,
   "described": true
+ },
+ {
+  "identity": "workable:5AC63E4704",
+  "source": "workable",
+  "board_id": "workable:petra-brands",
+  "external_id": "5AC63E4704",
+  "employer": "Petra Brands",
+  "employer_provenance": "envelope",
+  "title": "Independent Retailer Account Executive",
+  "title_normalised": "Independent Retailer Account Executive",
+  "location": "Mexico City, Mexico City, Mexico",
+  "published_at": "2026-10-20T00:00:00Z",
+  "published_field": "published_on",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-20T17:51:09.440064Z",
+  "ordering_date": "2026-10-20T00:00:00Z",
+  "ordering_date_source": "publication",
+  "url": "https://apply.workable.com/j/5AC63E4704",
+  "url_provenance": "payload",
+  "stated_experience": [
+   2
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "MX"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "workable:5AC63E4704",
+  "source": "workable",
+  "board_id": "workable:petra-brands",
+  "external_id": "5AC63E4704",
+  "employer": "Petra Brands",
+  "employer_provenance": "envelope",
+  "title": "Independent Retailer Account Executive",
+  "title_normalised": "Independent Retailer Account Executive",
+  "location": "São Paulo, State of São Paulo, Brazil",
+  "published_at": "2026-10-20T00:00:00Z",
+  "published_field": "published_on",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-20T17:51:09.440064Z",
+  "ordering_date": "2026-10-20T00:00:00Z",
+  "ordering_date_source": "publication",
+  "url": "https://apply.workable.com/j/5AC63E4704",
+  "url_provenance": "payload",
+  "stated_experience": [
+   2
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "BR"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "workable:5AC63E4704",
+  "source": "workable",
+  "board_id": "workable:petra-brands",
+  "external_id": "5AC63E4704",
+  "employer": "Petra Brands",
+  "employer_provenance": "envelope",
+  "title": "Independent Retailer Account Executive",
+  "title_normalised": "Independent Retailer Account Executive",
+  "location": "Metro Manila, Philippines",
+  "published_at": "2026-10-20T00:00:00Z",
+  "published_field": "published_on",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-20T17:51:09.440064Z",
+  "ordering_date": "2026-10-20T00:00:00Z",
+  "ordering_date_source": "publication",
+  "url": "https://apply.workable.com/j/5AC63E4704",
+  "url_provenance": "payload",
+  "stated_experience": [
+   2
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "PH"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "workable:5AC63E4704",
+  "source": "workable",
+  "board_id": "workable:petra-brands",
+  "external_id": "5AC63E4704",
+  "employer": "Petra Brands",
+  "employer_provenance": "envelope",
+  "title": "Independent Retailer Account Executive",
+  "title_normalised": "Independent Retailer Account Executive",
+  "location": "Jakarta, Jakarta, Indonesia",
+  "published_at": "2026-10-20T00:00:00Z",
+  "published_field": "published_on",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-20T17:51:09.440064Z",
+  "ordering_date": "2026-10-20T00:00:00Z",
+  "ordering_date_source": "publication",
+  "url": "https://apply.workable.com/j/5AC63E4704",
+  "url_provenance": "payload",
+  "stated_experience": [
+   2
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "ID"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]

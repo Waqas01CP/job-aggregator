@@ -7799,5 +7799,35 @@
   "required_places": null,
   "described_workplace": null,
   "described": true
+ },
+ {
+  "identity": "ashby:8bad579f-818e-4409-9269-b012b82b2064",
+  "source": "ashby",
+  "board_id": "ashby:clickhouse",
+  "external_id": "8bad579f-818e-4409-9269-b012b82b2064",
+  "employer": "ClickHouse",
+  "employer_provenance": "slug",
+  "title": "Technical Account Manager Architect - EMEA",
+  "title_normalised": "Technical Account Manager Architect - EMEA",
+  "location": "Israel",
+  "published_at": "2026-10-20T15:37:24.092000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-20T17:51:09.440064Z",
+  "ordering_date": "2026-10-20T15:37:24.092000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/clickhouse/8bad579f-818e-4409-9269-b012b82b2064",
+  "url_provenance": "payload",
+  "stated_experience": [
+   5
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": null,
+  "workplace": "Remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": "recruiter"
  }
 ]

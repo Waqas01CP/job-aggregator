@@ -2190,5 +2190,38 @@
   "required_places": null,
   "described_workplace": null,
   "described": true
+ },
+ {
+  "identity": "lever:66620be1-3b74-4841-af51-58cd302a0341",
+  "source": "lever",
+  "board_id": "lever:smart-working-solutions",
+  "external_id": "66620be1-3b74-4841-af51-58cd302a0341",
+  "employer": "Smart Working Solutions",
+  "employer_provenance": "slug",
+  "title": "Technical SEO Manager - React/Next.js (Remote, Full - Time) [HR210] (PK)",
+  "title_normalised": "Technical SEO Manager - React/Next.js (Remote, Full - Time) [HR210] (PK)",
+  "location": "Pakistan",
+  "published_at": "2026-10-20T12:25:23.238000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-10-20T17:51:09.440064Z",
+  "ordering_date": "2026-10-20T12:25:23.238000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/smart-working-solutions/66620be1-3b74-4841-af51-58cd302a0341",
+  "url_provenance": "payload",
+  "stated_experience": [
+   5,
+   2
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "PK"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]
