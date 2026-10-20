@@ -1,0 +1,38 @@
+[
+  {
+    "label": "Python.org's place is read from the description",
+    "path": "src/adapters/pythonorg.py",
+    "find": "        entry[\"place\"], entry[\"description\"] = first.strip() or None, rest",
+    "replace": "        entry[\"place\"] = None"
+  },
+  {
+    "label": "a legal form is read as the employer",
+    "path": "src/adapters/pythonorg.py",
+    "find": "    take = 2 if len(parts) > 2 and _LEGAL_FORM.match(parts[-1].strip()) else 1",
+    "replace": "    take = 1"
+  },
+  {
+    "label": "a Python.org posting is shown without its source",
+    "path": "src/adapters/pythonorg.py",
+    "find": "            source=PLATFORM,",
+    "replace": "            source=\"weworkremotely\","
+  },
+  {
+    "label": "Python.org's feed is fetched as JSON",
+    "path": "src/adapters/pythonorg.py",
+    "find": "def decode(text):",
+    "replace": "def decode_unused(text):"
+  },
+  {
+    "label": "Python.org's rows reach the public branch",
+    "path": "src/config.py",
+    "find": "    \"pythonorg\",\n})",
+    "replace": "})"
+  },
+  {
+    "label": "Python.org's boards are configured and not polled",
+    "path": "src/run.py",
+    "find": "    \"pythonorg\": pythonorg,\n",
+    "replace": ""
+  }
+]

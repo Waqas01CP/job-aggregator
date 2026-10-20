@@ -439,6 +439,21 @@ Measured over the 88 `[VERIFIED]`:
 
 **Every posting is remote** by the feed's own scope. **What the chain keeps, read fresh:** 1 of the 88. The title rule drops 76, seniority 9, experience 1 and location 1.
 
+## Python.org
+
+Research 0006 and ADR-0063's Changes of 2026-10-20, built 2026-10-20. `www.python.org/jobs/feed/rss/`, its newest 20 postings, one request a run, RSS fetched as text and decoded by the adapter, as We Work Remotely's is. Its robots rules leave `/jobs/` open, and its Legal Statements (2024-12-10) say nothing on automated reading. Each row links to the posting's page on Python.org and names it as its board. An aggregator, so its rows keep to the private store.
+
+Measured over the 20 of 2026-10-20 `[VERIFIED]`:
+
+| Field | Present | Read | Notes |
+|---|---|---|---|
+| `link` | 100% | yes | the posting's page on Python.org, `/jobs/<number>/`; the number is the identity |
+| `guid` | 100% | no | equal to `link` on 20 of 20 |
+| `title` | 100% | yes | "Role, Employer" on 20 of 20: the employer after the last ", ", with a legal form after its own comma kept with it ("ActivePrime, Inc.") |
+| `description` | 100% | **yes** | its first line is the place, "Remote, Worldwide" or a city and country, which the adapter's `decode` makes a field of its own, `place`; the rest is HTML, stripped from every cassette |
+
+**No date of any kind**: a dateless source, its postings ordered after every dated one and never dropped for age, as Manatal's are, the operator's decision of 2026-10-20. **What the chain keeps:** 7 of the 20 on today's rules and on November's, five roles: HFT Architecture's two, Micro1's, Gridnaut Recruiting's (an agency) and Evaboot's, listed three times. Seniority drops 6, location 3, title 2 and experience 2. Who reads: an engineer 1, an agency 1, the rest unsaid.
+
 ## What each API accepts
 
 From each provider's own documentation, read 2026-10-02 `[outside this

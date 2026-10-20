@@ -15,7 +15,7 @@ from datetime import datetime, timezone
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.adapters import (ashby, greenhouse, hackernews, hnjobs, jobicy, lever, manatal,
-                          remoteok, smartrecruiters, weworkremotely, workable)
+                          pythonorg, remoteok, smartrecruiters, weworkremotely, workable)
 from src.adapters.base import AdapterError, Posting
 from src.config import Board
 
@@ -943,6 +943,67 @@ class TestWeWorkRemotely(unittest.TestCase):
         self.assertTrue(p.url.startswith("https://weworkremotely.com/remote-jobs/"))
         self.assertEqual((p.source, p.board_id, p.external_id),
                          ("weworkremotely", "weworkremotely:wwr-feed", p.url.rsplit("/", 1)[-1]))
+
+
+PYTHONORG_BOARD = Board(platform="pythonorg", slug="pythonorg-feed")
+PYTHONORG_RSS = ("<rss><channel><item><title>AI Engineer, Acme, Inc.</title>"
+                 "<link>https://www.python.org/jobs/9001/</link>"
+                 "<description>Remote, Worldwide\n&lt;p&gt;Text&lt;/p&gt;</description>"
+                 "<guid>https://www.python.org/jobs/9001/</guid></item></channel></rss>")
+
+
+class TestPythonOrg(unittest.TestCase):
+    """Python.org's job board, its RSS. Cassette: its feed of 2026-10-20, all
+    20 items, as its adapter decodes it, sanitised."""
+
+    def setUp(self):
+        self.payload = cassette("pythonorg-feed.json")
+
+    def one(self, **extra):
+        return pythonorg.parse({"items": [dict(self.payload["items"][0], **extra)]},
+                               PYTHONORG_BOARD).postings[0]
+
+    def test_the_feed_is_decoded_its_first_line_the_place(self):
+        """The description's first line is the place: a field of its own, so
+        a sanitised description leaves it. Mutation: "Python.org's place is
+        read from the description"."""
+        [item] = pythonorg.decode(PYTHONORG_RSS)["items"]
+        self.assertEqual((item["title"], item["place"]),
+                         ("AI Engineer, Acme, Inc.", "Remote, Worldwide"))
+        self.assertNotIn("Remote", item["description"])
+        for bad in ("not xml", "<rss></rss>"):
+            with self.subTest(bad=bad), self.assertRaises(AdapterError):
+                pythonorg.decode(bad)
+
+    def test_parses_every_item_with_no_date_the_role_and_the_employer(self):
+        """No date of any kind: a dateless posting, ordered after every dated
+        one, as Manatal's. The employer is after the title's last comma, its
+        legal form kept with it. Mutation: "a legal form is read as the
+        employer"."""
+        result = pythonorg.parse(self.payload, PYTHONORG_BOARD)
+        self.assertEqual((len(result.postings), result.problems), (20, []))
+        self.assertTrue(all(p.published_at is None for p in result.postings))
+        p = self.one(title="SENIOR Back-End Python Engineer - FULLY REMOTE, ActivePrime, Inc.")
+        self.assertEqual((p.title, p.employer),
+                         ("SENIOR Back-End Python Engineer - FULLY REMOTE", "ActivePrime, Inc."))
+        p = self.one(title="Software Engineer, Full Stack (Python, Rust), Gridnaut Recruiting")
+        self.assertEqual((p.title, p.employer),
+                         ("Software Engineer, Full Stack (Python, Rust)", "Gridnaut Recruiting"))
+        self.assertEqual(self.one(title="Engineer").employer, None)
+        self.assertEqual(self.one().location, "Remote, Worldwide")
+
+    def test_the_link_is_its_page_on_python_org_and_it_the_source(self):
+        """ADR-0063's Confirmation, annotated 2026-10-20: each row links to
+        the source's own page and names it. Mutation: "a Python.org posting
+        is shown without its source"."""
+        p = self.one()
+        self.assertTrue(p.url.startswith("https://www.python.org/jobs/"))
+        self.assertEqual((p.source, p.board_id, p.external_id),
+                         ("pythonorg", "pythonorg:pythonorg-feed",
+                          p.url.rstrip("/").rsplit("/", 1)[-1]))
+        self.assertEqual(pythonorg.parse({"items": [dict(self.payload["items"][0],
+                                                         link="https://x.test/")]},
+                                         PYTHONORG_BOARD).postings, [])
 
 
 class TestPostingInvariants(unittest.TestCase):

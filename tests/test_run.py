@@ -384,6 +384,24 @@ class TestRemoteOKInTheRun(RunHarness):
         self.assertTrue(os.path.exists(storage.raw_path("remoteok", False, "aggregator")))
 
 
+class TestPythonOrgInTheRun(RunHarness):
+    """Python.org's job board: its RSS fetched as text, decoded, its rows in
+    the private layer, and none dropped for having no date."""
+
+    def test_the_feed_is_fetched_as_text_and_stored_privately_undated(self):
+        """Mutation: "Python.org's rows reach the public branch". Mutation:
+        "Python.org's boards are configured and not polled"."""
+        from tests.test_adapters import PYTHONORG_RSS
+        client = client_for({"python.org/jobs/feed": PYTHONORG_RSS})
+        board = Board(platform="pythonorg", slug="pythonorg-feed")
+        log = Run([board], client, now=NOW, matcher=MATCHER).execute()
+        [entry] = log["boards"]
+        self.assertEqual((entry["status"], entry["fetched"]), ("ok", 1))
+        self.assertEqual(log["source_class"], {"pythonorg": "aggregator"})
+        path = storage.raw_path("pythonorg", False, "aggregator")
+        self.assertTrue(os.path.exists(path))
+
+
 class TestWeWorkRemotelyInTheRun(RunHarness):
     """We Work Remotely, last: its RSS fetched as text through the shared
     client, decoded by its adapter, its rows in the private layer."""

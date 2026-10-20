@@ -79,7 +79,7 @@ from datetime import datetime, timezone
 
 from . import envfile, storage
 from .adapters import (ashby, greenhouse, hackernews, himalayas, hnjobs, jobicy, lever,
-                       manatal, remoteok, smartrecruiters, weworkremotely, workable)
+                       manatal, pythonorg, remoteok, smartrecruiters, weworkremotely, workable)
 from .config import REPO_ROOT, ConfigError, load_boards
 from .http_client import HttpClient, HttpError
 from .normalise import dumps, iso, loads
@@ -98,6 +98,7 @@ PLATFORMS = {
     "jobicy": jobicy,
     "remoteok": remoteok,
     "weworkremotely": weworkremotely,
+    "pythonorg": pythonorg,
 }
 
 FINGERPRINT_FILE = "contract/fingerprint.json"

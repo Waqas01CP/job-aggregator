@@ -24,7 +24,7 @@ from src import contract, storage
 from src.adapters import greenhouse, himalayas, lever
 from src.config import Board
 from src.http_client import HttpClient
-from tests.test_adapters import WWR_RSS, cassette
+from tests.test_adapters import PYTHONORG_RSS, WWR_RSS, cassette
 
 NOW = datetime(2026, 9, 24, 6, 30, tzinfo=timezone.utc)
 LATER = datetime(2026, 9, 25, 6, 30, tzinfo=timezone.utc)
@@ -40,7 +40,8 @@ HNJ = Board(platform="hnjobs", slug="jobstories")
 JB = Board(platform="jobicy", slug="jobicy-remote")
 RO = Board(platform="remoteok", slug="remoteok-feed")
 WWR = Board(platform="weworkremotely", slug="wwr-feed")
-BOARDS = [GH, LV, HIM, MN, WK, SR, AB, HN, HNJ, JB, RO, WWR]
+PYO = Board(platform="pythonorg", slug="pythonorg-feed")
+BOARDS = [GH, LV, HIM, MN, WK, SR, AB, HN, HNJ, JB, RO, WWR, PYO]
 # The requests a check makes: one a platform, one more for each whose
 # description is a request of its own, and one more for each found by a
 # first request, Hacker News' thread.
@@ -96,7 +97,8 @@ def responses():
             "tags=job": cassette("hnjobs-job.json"),
             "jobicy.com/api/v2/remote-jobs": cassette("jobicy-remote.json"),
             "remoteok.com/api": cassette("remoteok-feed.json"),
-            "remote-jobs.rss": WWR_RSS}
+            "remote-jobs.rss": WWR_RSS,
+            "python.org/jobs/feed": PYTHONORG_RSS}
 
 
 def client(routes, max_attempts=1, budget=contract.PER_PLATFORM_BUDGET):
@@ -155,10 +157,10 @@ class TestConsumedFields(unittest.TestCase):
     that is read, and the check would watch the wrong thing."""
 
     def test_each_adapter_declares_exactly_what_it_reads(self):
-        from src.adapters import (ashby, hackernews, hnjobs, jobicy, remoteok, smartrecruiters,
-                                  weworkremotely)
+        from src.adapters import (ashby, hackernews, hnjobs, jobicy, pythonorg, remoteok,
+                                  smartrecruiters, weworkremotely)
         for module in (greenhouse, lever, himalayas, smartrecruiters, ashby, hackernews,
-                       hnjobs, jobicy, remoteok, weworkremotely):
+                       hnjobs, jobicy, remoteok, weworkremotely, pythonorg):
             with self.subTest(adapter=module.PLATFORM):
                 declared = {path.split(".")[-1]
                             for path in module.CONSUMED + module.CONSUMED_RESPONSE
@@ -454,6 +456,12 @@ class TestCheck(unittest.TestCase):
         fp, log = contract.check(BOARDS, client(responses()), {}, NOW)
         self.assertEqual(log["platforms"]["weworkremotely"]["postings"], 1)
         self.assertIn("title", fp["weworkremotely"]["posting"])
+
+    def test_python_org_is_checked_on_the_feed_decoded(self):
+        """Mutation: "Python.org's feed is fetched as JSON"."""
+        fp, log = contract.check(BOARDS, client(responses()), {}, NOW)
+        self.assertEqual(log["platforms"]["pythonorg"]["postings"], 1)
+        self.assertIn("place", fp["pythonorg"]["posting"])
 
     def test_hacker_news_is_checked_on_the_thread_the_run_reads(self):
         """The thread is found by a first request, as the run finds it, and

@@ -269,6 +269,12 @@
       "slug": "wwr-feed",
       "normalisations": [],
       "note": "ADR-0063's second wave, last: We Work Remotely's all-jobs RSS, the newest ten postings of each category, one request a run, fetched as text and decoded by its adapter. Its terms: links attributed back to We Work Remotely; each row links to its page there and names it as its board. An aggregator, so its rows keep to the private store. The slug is a label; the feed has no account."
+    },
+    {
+      "platform": "pythonorg",
+      "slug": "pythonorg-feed",
+      "normalisations": [],
+      "note": "Research 0006 and ADR-0063's Changes of 2026-10-20: Python.org's job board, its RSS of the newest 20 postings, one request a run, fetched as text and decoded by its adapter. Its robots rules leave /jobs/ open and its Legal Statements say nothing on automated reading. The feed carries no date, so its postings are ordered after every dated one, the operator's decision of 2026-10-20. Each row links to its page on Python.org and names it as its board. An aggregator, so its rows keep to the private store. The slug is a label; the feed has no account."
     }
   ]
 }
