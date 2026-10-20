@@ -402,6 +402,23 @@ class TestPythonOrgInTheRun(RunHarness):
         self.assertTrue(os.path.exists(path))
 
 
+class TestHasjobInTheRun(RunHarness):
+    """Hasjob: its Atom feed fetched as text, decoded, its rows in the
+    private layer."""
+
+    def test_the_feed_is_fetched_as_text_and_stored_privately(self):
+        """Mutation: "Hasjob's rows reach the public branch". Mutation:
+        "Hasjob's boards are configured and not polled"."""
+        from tests.test_adapters import HASJOB_ATOM
+        client = client_for({"hasjob.co/feed": HASJOB_ATOM})
+        board = Board(platform="hasjob", slug="hasjob-feed")
+        log = Run([board], client, now=NOW, matcher=MATCHER).execute()
+        [entry] = log["boards"]
+        self.assertEqual((entry["status"], entry["fetched"]), ("ok", 1))
+        self.assertEqual(log["source_class"], {"hasjob": "aggregator"})
+        self.assertTrue(os.path.exists(storage.raw_path("hasjob", False, "aggregator")))
+
+
 class TestWeWorkRemotelyInTheRun(RunHarness):
     """We Work Remotely, last: its RSS fetched as text through the shared
     client, decoded by its adapter, its rows in the private layer."""

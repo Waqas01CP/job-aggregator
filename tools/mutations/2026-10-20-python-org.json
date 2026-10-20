@@ -26,8 +26,8 @@
   {
     "label": "Python.org's rows reach the public branch",
     "path": "src/config.py",
-    "find": "    \"pythonorg\",\n})",
-    "replace": "})"
+    "find": "\n    \"pythonorg\",\n",
+    "replace": "\n"
   },
   {
     "label": "Python.org's boards are configured and not polled",

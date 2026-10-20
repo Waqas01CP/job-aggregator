@@ -454,6 +454,23 @@ Measured over the 20 of 2026-10-20 `[VERIFIED]`:
 
 **No date of any kind**: a dateless source, its postings ordered after every dated one and never dropped for age, as Manatal's are, the operator's decision of 2026-10-20. **What the chain keeps:** 7 of the 20 on today's rules and on November's, five roles: HFT Architecture's two, Micro1's, Gridnaut Recruiting's (an agency) and Evaboot's, listed three times. Seniority drops 6, location 3, title 2 and experience 2. Who reads: an engineer 1, an agency 1, the rest unsaid.
 
+## Hasjob
+
+Research 0006 and ADR-0063's Changes of 2026-10-20, built 2026-10-20. `hasjob.co/feed`, its Atom feed of its newest postings, one request a run, fetched as text and decoded by the adapter. Its terms (`/tos`) have no clause on automated reading, and its robots rules bar only its edit, confirm, withdraw and admin pages. Each row links to the posting's page on Hasjob and names it as its board. An aggregator, so its rows keep to the private store.
+
+Measured over the 17 of 2026-10-20, dated 2026-09-21 to 10-19 `[VERIFIED]`:
+
+| Field | Present | Read | Notes |
+|---|---|---|---|
+| `link` `href` | 100% | yes | the posting's page, `hasjob.co/<employer's domain>/<code>`; the code is the identity. Read from the XML before decoding, so declared as `CONSUMED_FEED` |
+| `id` | 100% | no | equal to the link on 17 of 17 |
+| `title` | 100% | yes | the role |
+| `published` | 100% | yes | ISO 8601 with its offset |
+| `location` | 100% | yes | as the poster wrote it: "Anywhere" 4, an Indian city 13; no country stated, so a city the place rules cannot name keeps its posting |
+| `content` | 100% | **yes** | HTML whose first linked name is the employer's byline, on 17 of 17; stripped from every cassette |
+
+**What the chain keeps:** none with its real date, since the feed's newest was already a day old; dated at its reading, as a daily poller sees it, 2 (Bharat Digital's fellowship and testAIng's AI and ML internship, both "Anywhere"), and 3 on November's rules (MuralWorksAI's voice AI developer, in Pune). The title rule drops 13 and seniority 2. Who reads: none says.
+
 ## What each API accepts
 
 From each provider's own documentation, read 2026-10-02 `[outside this

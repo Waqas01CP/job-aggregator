@@ -1,0 +1,38 @@
+[
+  {
+    "label": "Hasjob's byline is not read as the employer",
+    "path": "src/adapters/hasjob.py",
+    "find": "        employer = _text(byline.group(1)) if byline else None",
+    "replace": "        employer = None"
+  },
+  {
+    "label": "a Hasjob posting with no date is kept",
+    "path": "src/adapters/hasjob.py",
+    "find": "        if published_at is None:\n            result.problem(external_id,",
+    "replace": "        if False:\n            result.problem(external_id,"
+  },
+  {
+    "label": "a Hasjob posting is shown without its source",
+    "path": "src/adapters/hasjob.py",
+    "find": "            source=PLATFORM,",
+    "replace": "            source=\"weworkremotely\","
+  },
+  {
+    "label": "Hasjob's feed is fetched as JSON",
+    "path": "src/adapters/hasjob.py",
+    "find": "def decode(text):",
+    "replace": "def decode_unused(text):"
+  },
+  {
+    "label": "Hasjob's rows reach the public branch",
+    "path": "src/config.py",
+    "find": "\n    \"hasjob\",\n",
+    "replace": "\n"
+  },
+  {
+    "label": "Hasjob's boards are configured and not polled",
+    "path": "src/run.py",
+    "find": "    \"hasjob\": hasjob,\n",
+    "replace": ""
+  }
+]

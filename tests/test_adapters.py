@@ -14,7 +14,7 @@ from datetime import datetime, timezone
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from src.adapters import (ashby, greenhouse, hackernews, hnjobs, jobicy, lever, manatal,
+from src.adapters import (ashby, greenhouse, hackernews, hasjob, hnjobs, jobicy, lever, manatal,
                           pythonorg, remoteok, smartrecruiters, weworkremotely, workable)
 from src.adapters.base import AdapterError, Posting
 from src.config import Board
@@ -1004,6 +1004,53 @@ class TestPythonOrg(unittest.TestCase):
         self.assertEqual(pythonorg.parse({"items": [dict(self.payload["items"][0],
                                                          link="https://x.test/")]},
                                          PYTHONORG_BOARD).postings, [])
+
+
+HASJOB_BOARD = Board(platform="hasjob", slug="hasjob-feed")
+HASJOB_ATOM = ('<feed xmlns="http://www.w3.org/2005/Atom"><entry>'
+               '<title type="text">AI Engineer</title>'
+               "<id>https://hasjob.co/acme.test/abc12</id>"
+               '<link href="https://hasjob.co/acme.test/abc12"/>'
+               "<published>2026-10-19T11:55:35.484215+00:00</published>"
+               "<location>Anywhere</location>"
+               '<content type="html">&lt;p&gt;&lt;strong&gt;&lt;a href="https://acme.test/"&gt;'
+               "Acme Labs&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Text&lt;/p&gt;</content>"
+               "</entry></feed>")
+
+
+class TestHasjob(unittest.TestCase):
+    """Hasjob's Atom feed. Cassette: its feed of 2026-10-20, all 17 entries,
+    as its adapter decodes it, sanitised."""
+
+    def setUp(self):
+        self.payload = cassette("hasjob-feed.json")
+
+    def test_the_feed_is_decoded_and_the_byline_is_the_employer(self):
+        """Mutation: "Hasjob's byline is not read as the employer"."""
+        [p] = hasjob.parse(hasjob.decode(HASJOB_ATOM), HASJOB_BOARD).postings
+        self.assertEqual((p.title, p.employer, p.location, p.external_id),
+                         ("AI Engineer", "Acme Labs", "Anywhere", "abc12"))
+        self.assertEqual(p.published_at.isoformat(), "2026-10-19T11:55:35.484215+00:00")
+        for bad in ("not xml", "<rss></rss>"):
+            with self.subTest(bad=bad), self.assertRaises(AdapterError):
+                hasjob.decode(bad)
+
+    def test_parses_every_entry_and_refuses_one_without_a_date(self):
+        """Mutation: "a Hasjob posting with no date is kept"."""
+        result = hasjob.parse(self.payload, HASJOB_BOARD)
+        self.assertEqual((len(result.postings), result.problems), (17, []))
+        undated = dict(self.payload["entries"][0], published="")
+        result = hasjob.parse({"entries": [undated]}, HASJOB_BOARD)
+        self.assertEqual((result.postings, len(result.problems)), ([], 1))
+
+    def test_the_link_is_its_page_on_hasjob_and_it_the_source(self):
+        """ADR-0063's Confirmation, annotated 2026-10-20: each row links to
+        the source's own page and names it. Mutation: "a Hasjob posting is
+        shown without its source"."""
+        p = hasjob.parse({"entries": [self.payload["entries"][0]]}, HASJOB_BOARD).postings[0]
+        self.assertTrue(p.url.startswith("https://hasjob.co/"))
+        self.assertEqual((p.source, p.board_id, p.external_id),
+                         ("hasjob", "hasjob:hasjob-feed", p.url.rsplit("/", 1)[-1]))
 
 
 class TestPostingInvariants(unittest.TestCase):

@@ -152,6 +152,10 @@ def postings_of(doc):
     # `items`; the tool reads the decoded form, never the XML.
     if isinstance(doc, dict) and isinstance(doc.get("items"), list):
         return doc["items"], "items"
+    # Hasjob's Atom feed as its adapter decodes it, its entries under
+    # `entries`.
+    if isinstance(doc, dict) and isinstance(doc.get("entries"), list):
+        return doc["entries"], "entries"
     # Manatal's career site pages twenty postings under `results`, beside
     # `count`, `next` and `previous`, which the envelope keeps.
     if isinstance(doc, dict) and isinstance(doc.get("results"), list):
