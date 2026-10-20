@@ -299,7 +299,7 @@ def main(argv=None):
             print("              %d s, %s" % (
                 time.monotonic() - started,
                 "by the whole suite" if note.get("whole suite")
-                else "by the %d test module(s) naming it or importing its file"
+                else "by the %d test(s) or module(s) tried first"
                 % note.get("modules", 0)), flush=True)
         if hung is not None:
             print("              the suite ran past %d seconds and was stopped; its last "

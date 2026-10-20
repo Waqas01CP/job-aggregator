@@ -454,6 +454,9 @@ class TestWhoReads(unittest.TestCase):
             with self.assertRaises(description.WhoReadsConfigError):
                 description.load_roles(path)
         self.assertEqual(description._ROLES, description.load_roles())
+        # The patterns the reader uses are built from it, not written in.
+        self.assertIn(description._ROLES["founder_roles"], description._FOUNDER.pattern)
+        self.assertIn(description._ROLES["engineer_roles"], description._ENGINEER.pattern)
 
 
 if __name__ == "__main__":
