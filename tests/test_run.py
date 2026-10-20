@@ -92,9 +92,12 @@ class FakeSession:
     def __init__(self, routes):
         self.routes = routes
         self.calls = []
+        # Each call's headers, beside `calls`: a keyed source's key.
+        self.headers = []
 
     def get(self, url, params=None, timeout=None, headers=None):
         self.calls.append(url)
+        self.headers.append(headers or {})
         for fragment, value in self.routes.items():
             if fragment in url:
                 if isinstance(value, Exception):
@@ -417,6 +420,42 @@ class TestHasjobInTheRun(RunHarness):
         self.assertEqual((entry["status"], entry["fetched"]), ("ok", 1))
         self.assertEqual(log["source_class"], {"hasjob": "aggregator"})
         self.assertTrue(os.path.exists(storage.raw_path("hasjob", False, "aggregator")))
+
+
+class TestStartupJobsInTheRun(RunHarness):
+    """Startup.jobs through its keyed API: its key from the environment, in
+    its header; without it the board is not polled and says why; its rows
+    private."""
+
+    def test_without_its_key_the_board_says_so_and_nothing_is_asked(self):
+        """An ended or missing key stops this source alone. Mutation: "a
+        keyed source is polled without its key"."""
+        from unittest import mock
+        from tests.test_adapters import cassette
+        client = client_for({"api.startup.jobs": cassette("startupjobs-remote.json")})
+        board = Board(platform="startupjobs", slug="sj-workplace-remote")
+        with mock.patch.dict(os.environ, {"STARTUP_JOBS_API_KEY": ""}):
+            log = Run([board], client, now=NOW, matcher=MATCHER).execute()
+        [entry] = log["boards"]
+        self.assertEqual(entry["status"], "failed")
+        self.assertIn("STARTUP_JOBS_API_KEY", entry["detail"])
+        self.assertEqual(client._session.calls, [])
+
+    def test_with_its_key_it_is_asked_with_it_and_stored_privately(self):
+        """Mutation: "Startup.jobs' rows reach the public branch". Mutation:
+        "Startup.jobs' boards are configured and not polled"."""
+        from unittest import mock
+        from tests.test_adapters import cassette
+        client = client_for({"api.startup.jobs": cassette("startupjobs-remote.json")})
+        board = Board(platform="startupjobs", slug="sj-workplace-remote")
+        with mock.patch.dict(os.environ, {"STARTUP_JOBS_API_KEY": "sk_FAKEKEY"}):
+            log = Run([board], client, now=NOW, matcher=MATCHER).execute()
+        [entry] = log["boards"]
+        self.assertEqual((entry["status"], entry["fetched"] > 0), ("ok", True))
+        self.assertEqual(client._session.headers[0]["Authorization"], "Bearer sk_FAKEKEY")
+        self.assertNotIn("sk_FAKEKEY", json.dumps(log))
+        self.assertEqual(log["source_class"], {"startupjobs": "aggregator"})
+        self.assertTrue(os.path.exists(storage.raw_path("startupjobs", False, "aggregator")))
 
 
 class TestWeWorkRemotelyInTheRun(RunHarness):

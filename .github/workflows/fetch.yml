@@ -167,6 +167,9 @@ jobs:
           AIRTABLE_TEST_TABLE_ID: ${{ secrets.AIRTABLE_TEST_TABLE_ID }}
           AGGREGATOR_STORE_TOKEN: ${{ secrets.AGGREGATOR_STORE_TOKEN }}
           AGGREGATOR_STORE_REPO: ${{ secrets.AGGREGATOR_STORE_REPO }}
+          # Startup.jobs' API key (research 0006). Unset, that source is not
+          # polled and its board says why; no other source is touched.
+          STARTUP_JOBS_API_KEY: ${{ secrets.STARTUP_JOBS_API_KEY }}
           # ADR-0050's sweep: the three classification tables, production and
           # test. A run reads only its own mode's three.
           AIRTABLE_NOT_A_FIT_TABLE_ID: ${{ secrets.AIRTABLE_NOT_A_FIT_TABLE_ID }}

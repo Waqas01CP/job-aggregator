@@ -11,6 +11,7 @@ import inspect
 import io
 import json
 import os
+from unittest import mock
 import shutil
 import subprocess
 import sys
@@ -42,7 +43,8 @@ RO = Board(platform="remoteok", slug="remoteok-feed")
 WWR = Board(platform="weworkremotely", slug="wwr-feed")
 PYO = Board(platform="pythonorg", slug="pythonorg-feed")
 HJ = Board(platform="hasjob", slug="hasjob-feed")
-BOARDS = [GH, LV, HIM, MN, WK, SR, AB, HN, HNJ, JB, RO, WWR, PYO, HJ]
+SJ = Board(platform="startupjobs", slug="sj-workplace-remote")
+BOARDS = [GH, LV, HIM, MN, WK, SR, AB, HN, HNJ, JB, RO, WWR, PYO, HJ, SJ]
 # The requests a check makes: one a platform, one more for each whose
 # description is a request of its own, and one more for each found by a
 # first request, Hacker News' thread.
@@ -73,9 +75,12 @@ class FakeSession:
     def __init__(self, routes):
         self.routes = routes
         self.calls = []
+        # Each call's headers, beside `calls`: a keyed source's key.
+        self.headers = []
 
     def get(self, url, params=None, timeout=None, headers=None):
         self.calls.append(url)
+        self.headers.append(headers or {})
         for fragment, value in self.routes.items():
             if fragment in url:
                 if isinstance(value, int):
@@ -100,7 +105,8 @@ def responses():
             "remoteok.com/api": cassette("remoteok-feed.json"),
             "remote-jobs.rss": WWR_RSS,
             "python.org/jobs/feed": PYTHONORG_RSS,
-            "hasjob.co/feed": HASJOB_ATOM}
+            "hasjob.co/feed": HASJOB_ATOM,
+            "api.startup.jobs/v1/jobs": cassette("startupjobs-remote.json")}
 
 
 def client(routes, max_attempts=1, budget=contract.PER_PLATFORM_BUDGET):
@@ -160,9 +166,10 @@ class TestConsumedFields(unittest.TestCase):
 
     def test_each_adapter_declares_exactly_what_it_reads(self):
         from src.adapters import (ashby, hackernews, hasjob, hnjobs, jobicy, pythonorg,
-                                  remoteok, smartrecruiters, weworkremotely)
+                                  remoteok, smartrecruiters, startupjobs, weworkremotely)
         for module in (greenhouse, lever, himalayas, smartrecruiters, ashby, hackernews,
-                       hnjobs, jobicy, remoteok, weworkremotely, pythonorg, hasjob):
+                       hnjobs, jobicy, remoteok, weworkremotely, pythonorg, hasjob,
+                       startupjobs):
             with self.subTest(adapter=module.PLATFORM):
                 declared = {path.split(".")[-1]
                             for path in module.CONSUMED + module.CONSUMED_RESPONSE
@@ -471,6 +478,17 @@ class TestCheck(unittest.TestCase):
         fp, log = contract.check(BOARDS, client(responses()), {}, NOW)
         self.assertEqual(log["platforms"]["hasjob"]["postings"], 1)
         self.assertIn("location", fp["hasjob"]["posting"])
+
+    def test_startup_jobs_is_checked_with_its_key(self):
+        """Its check asks as the run does, with the key from the environment.
+        Mutation: "the contract check asks Startup.jobs without its key"."""
+        make = client(responses())
+        session = make()._session
+        with mock.patch.dict(os.environ, {"STARTUP_JOBS_API_KEY": "sk_FAKEKEY"}):
+            fp, log = contract.check(BOARDS, make, {}, NOW)
+        self.assertEqual(log["platforms"]["startupjobs"]["postings"], 30)
+        [i] = [n for n, url in enumerate(session.calls) if "startup.jobs" in url]
+        self.assertEqual(session.headers[i]["Authorization"], "Bearer sk_FAKEKEY")
 
     def test_hacker_news_is_checked_on_the_thread_the_run_reads(self):
         """The thread is found by a first request, as the run finds it, and

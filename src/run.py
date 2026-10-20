@@ -56,7 +56,8 @@ from .airtable_sweep import JOBS, SweepClient, TABLE_SECRETS
 from .closure import Closure, covered as walk_covered
 from .sweep import JOBS_FIELDS, Sweep, older_than
 from .adapters import (ashby, greenhouse, hackernews, hasjob, himalayas, hnjobs, jobicy, lever,
-                       manatal, pythonorg, remoteok, smartrecruiters, weworkremotely, workable)
+                       manatal, pythonorg, remoteok, smartrecruiters, startupjobs,
+                       weworkremotely, workable)
 from . import health
 from .airtable import (BASE_ENV, CALL_LOG_KEYS, HEALTH_LOG_KEY, HEALTH_TABLE_ENV,
                        HEALTH_TEST_TABLE_ENV, RUN_LOG_KEY, TABLE_ENV, TEST_TABLE_ENV,
@@ -68,7 +69,8 @@ from .dedupe import counts as dedupe_counts
 from .dedupe import group, split_new
 from .filters import (ELIGIBILITY, FilterError, TitleMatcher, apply_chain, drop_counts,
                       rule_location)
-from .http_client import (BudgetExhausted, CircuitOpen, HttpClient, HttpError)
+from .http_client import (BudgetExhausted, CircuitOpen, HttpClient, HttpError,
+                          source_options)
 from .normalise import UNCONFIRMED_PUBLISHED, dumps, iso, loads, normalise
 
 EXIT_OK = 0
@@ -90,6 +92,7 @@ ADAPTERS = {
     "remoteok": remoteok,
     "weworkremotely": weworkremotely,
     "hasjob": hasjob,
+    "startupjobs": startupjobs,
     "pythonorg": pythonorg,
 }
 
@@ -121,7 +124,8 @@ def walk_floor(source, now):
 # before it is recorded, as a last line behind the clients' own discipline.
 SECRET_ENVS = (TOKEN_ENV, BASE_ENV, TABLE_ENV, TEST_TABLE_ENV, HEALTH_TABLE_ENV,
                HEALTH_TEST_TABLE_ENV,
-               storage.PRIVATE_STORE_TOKEN_ENV, storage.PRIVATE_STORE_REPO_ENV) + tuple(
+               storage.PRIVATE_STORE_TOKEN_ENV, storage.PRIVATE_STORE_REPO_ENV,
+               startupjobs.AUTH_ENV) + tuple(
     name for mode in (False, True) for key, name in sorted(TABLE_SECRETS[mode].items())
     if key != "jobs")
 
@@ -753,6 +757,14 @@ class Run:
         adapter = ADAPTERS[board.platform]
         log = {"board": board.board_id, "fetched": 0, "parse_problems": 0,
                "new": 0, "kept": 0, "drops": {}, "status": "ok", "detail": None}
+        auth_env = getattr(adapter, "AUTH_ENV", None)
+        if auth_env and not (os.environ.get(auth_env) or "").strip():
+            # A keyed source without its key is not polled, and says so; no
+            # request is made, and no other source is touched.
+            log["status"] = "failed"
+            log["detail"] = "%s is not set, so this keyed source was not polled" % auth_env
+            self.board_logs.append(log)
+            return []
         try:
             if getattr(adapter, "PAGINATED", False):
                 payload = self._fetch_pages(adapter, board, log)
@@ -909,7 +921,8 @@ class Run:
         key = adapter.POSTINGS_AT
         merged, cursor, pages, stopped_by = {key: []}, None, 0, "cap"
         while pages < MAX_PAGES:
-            payload = self.client.get_json(adapter.url_for(board, cursor), board.source)
+            payload = self.client.get_json(adapter.url_for(board, cursor), board.source,
+                                           **source_options(adapter))
             pages += 1
             merged[key].extend(payload.get(key, []))
             if adapter.stop_after(payload, mark):

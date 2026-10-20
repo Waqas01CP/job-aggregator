@@ -79,9 +79,10 @@ from datetime import datetime, timezone
 
 from . import envfile, storage
 from .adapters import (ashby, greenhouse, hackernews, hasjob, himalayas, hnjobs, jobicy, lever,
-                       manatal, pythonorg, remoteok, smartrecruiters, weworkremotely, workable)
+                       manatal, pythonorg, remoteok, smartrecruiters, startupjobs,
+                       weworkremotely, workable)
 from .config import REPO_ROOT, ConfigError, load_boards
-from .http_client import HttpClient, HttpError
+from .http_client import HttpClient, HttpError, source_options
 from .normalise import dumps, iso, loads
 
 # One platform a line, so adding one moves no other's line.
@@ -99,6 +100,7 @@ PLATFORMS = {
     "remoteok": remoteok,
     "weworkremotely": weworkremotely,
     "hasjob": hasjob,
+    "startupjobs": startupjobs,
     "pythonorg": pythonorg,
 }
 
@@ -338,7 +340,8 @@ def check_one(platform, adapter, board, client, stored, entry, now, rebaselines)
     try:
         decode = getattr(adapter, "decode", None)
         payload = (decode(client.get_text(adapter.url_for(board), board.source)) if decode
-                   else client.get_json(adapter.url_for(board), board.source))
+                   else client.get_json(adapter.url_for(board), board.source,
+                                        **source_options(adapter)))
         # Hacker News' thread is found by a first request, as the run finds
         # it, and the check fingerprints what the run parses.
         follow = getattr(adapter, "follow", None)

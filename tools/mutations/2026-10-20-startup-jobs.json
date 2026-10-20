@@ -1,0 +1,80 @@
+[
+  {
+    "label": "Startup.jobs' country is not read",
+    "path": "src/adapters/startupjobs.py",
+    "find": "            places=(country,) if len(country) == 2 else None,",
+    "replace": "            places=None,"
+  },
+  {
+    "label": "Startup.jobs' walk stops after the first page",
+    "path": "src/adapters/startupjobs.py",
+    "find": "    cursor = payload.get(\"next_cursor\")",
+    "replace": "    cursor = None"
+  },
+  {
+    "label": "Startup.jobs' walk stops on one old posting",
+    "path": "src/adapters/startupjobs.py",
+    "find": "    return bool(dated) and all(d <= high_water for d in dated)",
+    "replace": "    return bool(dated) and any(d <= high_water for d in dated)"
+  },
+  {
+    "label": "a Startup.jobs posting is shown without its source",
+    "path": "src/adapters/startupjobs.py",
+    "find": "            source=PLATFORM,",
+    "replace": "            source=\"weworkremotely\","
+  },
+  {
+    "label": "Startup.jobs is asked faster than its 20 a minute",
+    "path": "src/adapters/startupjobs.py",
+    "find": "MIN_INTERVAL = 3.5",
+    "replace": "MIN_INTERVAL = 0"
+  },
+  {
+    "label": "the key is not sent",
+    "path": "src/http_client.py",
+    "find": "            headers[\"Authorization\"] = \"Bearer %s\" % bearer",
+    "replace": "            pass"
+  },
+  {
+    "label": "a source's own pace is not kept",
+    "path": "src/http_client.py",
+    "find": "            if pacer is not None:\n                pacer.wait()",
+    "replace": "            if pacer is not None:\n                pass"
+  },
+  {
+    "label": "a keyed source is polled without its key",
+    "path": "src/run.py",
+    "find": "        if auth_env and not (os.environ.get(auth_env) or \"\").strip():",
+    "replace": "        if False:"
+  },
+  {
+    "label": "the contract check asks Startup.jobs without its key",
+    "path": "src/contract.py",
+    "find": "                                        **source_options(adapter)))",
+    "replace": "                                        ))"
+  },
+  {
+    "label": "Startup.jobs' rows reach the public branch",
+    "path": "src/config.py",
+    "find": "\n    \"startupjobs\",\n",
+    "replace": "\n"
+  },
+  {
+    "label": "Startup.jobs' boards are configured and not polled",
+    "path": "src/run.py",
+    "find": "    \"startupjobs\": startupjobs,\n",
+    "replace": ""
+  },
+  {
+    "label": "the key is not scrubbed from the run log",
+    "path": "src/run.py",
+    "find": "               startupjobs.AUTH_ENV) + tuple(",
+    "replace": "               ) + tuple("
+  },
+  {
+    "label": "the fetch module names Airtable's token",
+    "path": "src/http_client.py",
+    "find": "DEFAULT_MIN_INTERVAL = 1.0",
+    "replace": "DEFAULT_MIN_INTERVAL = 1.0\n_LEAK = \"AIRTABLE_TOKEN\""
+  }
+]

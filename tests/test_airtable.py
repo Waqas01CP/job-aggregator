@@ -537,9 +537,14 @@ class TestNoSecretInAnError(unittest.TestCase):
 # of a token or a write verb. Either is a violation."
 FETCH_IMPORT = re.compile(r"^\s*(?:from\s+[.\w]*http_client\s+import|import\s+[.\w]*http_client)",
                           re.M)
+# ADR-0034's Confirmation: the fetch module mentions no token and no write
+# verb. Narrowed by the operator on 2026-10-20 (Brief 18, Startup.jobs): it
+# may carry a job board's own key, which its adapter declares and the module
+# sends only in an Authorization header; never Airtable's token, by any of
+# its names, nor an import of the Airtable client, nor a write verb.
 WRITE_SIGNS = [re.compile(p, re.I) for p in (
-    r"\btoken\b", r"\bauthorization\b", r"\.(?:post|patch|put|delete)\(",
-    r"['\"](?:post|patch|put|delete)['\"]")]
+    r"\btoken\b", r"AIRTABLE_", r"\bTOKEN_ENV\b", r"from\s+\.airtable", r"import\s+airtable",
+    r"\.(?:post|patch|put|delete)\(", r"['\"](?:post|patch|put|delete)['\"]")]
 MAKES_REQUESTS = re.compile(r"^\s*(?:import\s+requests|from\s+requests\s+import)", re.M)
 # Ruling 4 made checkable: a read verb or a read call on the session.
 READ_METHODS = re.compile(r"['\"]GET['\"]|\._session\.(?:get|head)\(")
@@ -575,6 +580,11 @@ class TestTheExceptionStaysScoped(unittest.TestCase):
         self.assertTrue(fetch_imports("import src.http_client\n"))
         self.assertTrue(write_signs('self._session.post(url, json=body)'))
         self.assertTrue(write_signs('method = "PATCH"'))
+        # Airtable's token by any of its names, and its client imported.
+        self.assertTrue(write_signs('key = os.environ["AIRTABLE_TOKEN"]'))
+        self.assertTrue(write_signs("from .airtable import TOKEN_ENV"))
+        # A job board's own key in a header is what the operator allowed.
+        self.assertFalse(write_signs('headers["Authorization"] = "Bearer %s" % bearer'))
         self.assertTrue(write_signs('headers["Authorization"] = token'))
         self.assertTrue(MAKES_REQUESTS.search("import requests\n"))
 

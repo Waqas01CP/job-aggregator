@@ -27,7 +27,8 @@ SECRET_NAMES = ("AIRTABLE_TOKEN", "AIRTABLE_BASE_ID", "AIRTABLE_TABLE_ID",
                 "AIRTABLE_NOT_A_FIT_TABLE_ID", "AIRTABLE_POOR_FILTERING_TABLE_ID",
                 "AIRTABLE_ACCEPTED_TABLE_ID", "AIRTABLE_NOT_A_FIT_TEST_TABLE_ID",
                 "AIRTABLE_POOR_FILTERING_TEST_TABLE_ID", "AIRTABLE_ACCEPTED_TEST_TABLE_ID",
-                "AIRTABLE_HEALTH_TABLE_ID", "AIRTABLE_HEALTH_TEST_TABLE_ID")
+                "AIRTABLE_HEALTH_TABLE_ID", "AIRTABLE_HEALTH_TEST_TABLE_ID",
+                "STARTUP_JOBS_API_KEY")
 
 
 def workflow():
@@ -222,9 +223,14 @@ class TestContractWorkflow(unittest.TestCase):
                                               "python -m src.contract", "git push")]
         self.assertEqual(order, sorted(order))
 
-    def test_no_secret_reaches_it(self):
-        """Every board it asks is public."""
-        self.assertNotIn("secrets.", self.text)
+    def test_no_secret_reaches_it_but_a_keyed_sources_key(self):
+        """Every board it asks is public but a keyed source's, whose check asks
+        with its key as the run does (Startup.jobs, 2026-10-20). Nothing else:
+        never the Airtable token nor the private store's."""
+        import re
+        from src.run import ADAPTERS
+        keys = {getattr(a, "AUTH_ENV") for a in ADAPTERS.values() if getattr(a, "AUTH_ENV", None)}
+        self.assertEqual(set(re.findall(r"secrets\.([A-Z_]+)", self.text)), keys)
 
     def test_a_failed_platform_is_pushed_and_then_marked_failed(self):
         """ADR-0059: a platform whose check failed exits 2. Its push must

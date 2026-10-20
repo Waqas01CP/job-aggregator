@@ -24,10 +24,12 @@ DEFAULT_PATH = os.path.join(REPO_ROOT, "config", "boards.json")
 # second, on 2026-10-08; SmartRecruiters third, on 2026-10-17; Ashby fourth,
 # on 2026-10-17. Hacker News' thread and job stories, ADR-0063's second wave,
 # on 2026-10-18; Jobicy, RemoteOK and We Work Remotely the same day.
-# Python.org's job board and Hasjob from research 0006, on 2026-10-20.
+# Python.org's job board, Hasjob and Startup.jobs' API from research 0006,
+# on 2026-10-20.
 PLATFORMS = frozenset({"greenhouse", "lever", "himalayas", "manatal", "workable",
                        "smartrecruiters", "ashby", "hackernews", "hnjobs", "jobicy",
-                       "remoteok", "weworkremotely", "pythonorg", "hasjob"})
+                       "remoteok", "weworkremotely", "pythonorg", "hasjob",
+                       "startupjobs"})
 
 # Every normalisation that may be named by a board entry. A name outside this
 # set is a typo, and a typo that silently did nothing would be invisible: the
@@ -45,7 +47,8 @@ NORMALISATIONS = frozenset({"strip_location_suffix"})
 # and RemoteOK's and We Work Remotely's, whose terms ask for their link and
 # name with every row. Python.org's job board and Hasjob too, ADR-0063's
 # Changes of 2026-10-20: many employers' postings on a site that is not
-# theirs, whose terms grant no republishing.
+# theirs, whose terms grant no republishing; and Startup.jobs, whose API
+# terms ask for its link and name with every row.
 # One platform a line, so adding one moves no other's line.
 AGGREGATOR_PLATFORMS = frozenset({
     "himalayas",
@@ -56,6 +59,7 @@ AGGREGATOR_PLATFORMS = frozenset({
     "weworkremotely",
     "pythonorg",
     "hasjob",
+    "startupjobs",
 })
 
 # Sources whose rows may reach the public data branch. Named rather than

@@ -471,6 +471,27 @@ Measured over the 17 of 2026-10-20, dated 2026-09-21 to 10-19 `[VERIFIED]`:
 
 **What the chain keeps:** none with its real date, since the feed's newest was already a day old; dated at its reading, as a daily poller sees it, 2 (Bharat Digital's fellowship and testAIng's AI and ML internship, both "Anywhere"), and 3 on November's rules (MuralWorksAI's voice AI developer, in Pune). The title rule drops 13 and seniority 2. Who reads: none says.
 
+## Startup.jobs
+
+Research 0006 and ADR-0063's Changes of 2026-10-20, built 2026-10-20. **Its keyed API, never its RSS feed**, which its general terms forbid copying "(including RSS feeds)" outside "content accessed through our API in accordance with the Startup Jobs API Terms of Service". `api.startup.jobs/v1/jobs`, `Authorization: Bearer <key>`, the repository secret `STARTUP_JOBS_API_KEY`; live jobs of the last 14 days, newest first, up to 50 a page, paged by `next_cursor` passed as `starting_after` while `has_more`; 20 requests a minute, so paced at one every 3.5 seconds by the shared client. Two boards, each a query its slug carries: `sj-workplace-remote` and `sj-country-pk`. Each row links to the URL the API supplies and names Startup.jobs as its board, as its API terms ask. An aggregator, so its rows keep to the private store. **Kept past the seven days its API terms set**, the operator's decision of 2026-10-20: like every source's, a posting is stored once, at first sight, and never refreshed.
+
+Measured over the 8,225 remote and Pakistani jobs of 2026-10-06 to 10-19, read 2026-10-20 in 166 requests `[VERIFIED]`:
+
+| Field | Present | Read | Notes |
+|---|---|---|---|
+| `id` | 100% | yes | an integer; the identity |
+| `title` | 100% | yes | |
+| `url` | 100% | yes | the posting's page on Startup.jobs, with the API's tracking parameters, kept as supplied |
+| `published_at` | 100% | yes | ISO 8601, UTC |
+| `company.name` | 100% | yes | the employer |
+| `location.city`, `.state`, `.country` | partly | yes | joined as the place |
+| `location.country_code` | 7,297 of 8,225 | yes | **the source's own country**, as Lever's: the United States 4,528 |
+| `workplace_type` | 100% | yes | remote 8,186, on-site 32, hybrid 7 |
+| `description_html` | 100% | **yes** | stripped from every cassette |
+| `employment_type`, `roles`, `salary`, `company.slug` and the rest | | no | |
+
+**What the chain keeps:** 35 with their real dates, 44 dated at their reading, as a daily poller sees them, and 61 on November's rules; 60 of the 61 remote with no country stated, so some may limit their region only in their text. The title rule drops 7,455, seniority 503, location 132, experience 66, authorisation 13 and the annotation-vendor rule 12. **About 585 remote jobs a day, so about 12 pages a run after its first**; a first walk back to the age limit is about 82 pages, past the run's cap of 80 once, which the run logs and warns of.
+
 ## What each API accepts
 
 From each provider's own documentation, read 2026-10-02 `[outside this

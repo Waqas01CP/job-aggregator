@@ -15,7 +15,8 @@ from datetime import datetime, timezone
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from src.adapters import (ashby, greenhouse, hackernews, hasjob, hnjobs, jobicy, lever, manatal,
-                          pythonorg, remoteok, smartrecruiters, weworkremotely, workable)
+                          pythonorg, remoteok, smartrecruiters, startupjobs, weworkremotely,
+                          workable)
 from src.adapters.base import AdapterError, Posting
 from src.config import Board
 
@@ -1051,6 +1052,72 @@ class TestHasjob(unittest.TestCase):
         self.assertTrue(p.url.startswith("https://hasjob.co/"))
         self.assertEqual((p.source, p.board_id, p.external_id),
                          ("hasjob", "hasjob:hasjob-feed", p.url.rsplit("/", 1)[-1]))
+
+
+SJ_REMOTE = Board(platform="startupjobs", slug="sj-workplace-remote")
+SJ_COUNTRY = Board(platform="startupjobs", slug="sj-country-pk")
+
+
+class TestStartupJobs(unittest.TestCase):
+    """Startup.jobs through its keyed API. Cassette: the first 30 remote jobs
+    of its page of 2026-10-20, sanitised."""
+
+    def setUp(self):
+        self.payload = cassette("startupjobs-remote.json")
+
+    def one(self, **extra):
+        return startupjobs.parse({"data": [dict(self.payload["data"][0], **extra)]},
+                                 SJ_REMOTE).postings[0]
+
+    def test_parses_every_job_its_country_and_its_workplace(self):
+        """The source's own country is the posting's place, as Lever's is, so
+        a remote job in the United States closes as one. Mutation: "Startup.jobs'
+        country is not read"."""
+        result = startupjobs.parse(self.payload, SJ_REMOTE)
+        self.assertEqual((len(result.postings), result.problems), (30, []))
+        p = self.one(location={"city": "Karachi", "state": "Sindh", "country": "Pakistan",
+                               "country_code": "pk"}, workplace_type="on-site")
+        self.assertEqual((p.location, p.places, p.workplace),
+                         ("Karachi, Sindh, Pakistan", ("PK",), "on-site"))
+        p = self.one(location={"city": None, "state": None, "country": None,
+                               "country_code": None})
+        self.assertEqual((p.location, p.places), (None, None))
+        self.assertEqual(self.one(company={"name": "Acme"}).employer, "Acme")
+
+    def test_each_board_is_its_query_paged_by_its_cursor(self):
+        """Mutation: "Startup.jobs' walk stops after the first page"."""
+        self.assertEqual(startupjobs.url_for(SJ_REMOTE),
+                         "https://api.startup.jobs/v1/jobs?limit=50&workplace_type=remote")
+        self.assertEqual(startupjobs.url_for(SJ_COUNTRY, 123),
+                         "https://api.startup.jobs/v1/jobs?limit=50&country=PK&starting_after=123")
+        with self.assertRaises(AdapterError):
+            startupjobs.url_for(Board(platform="startupjobs", slug="mars"))
+        self.assertEqual(startupjobs.next_cursor(self.payload), self.payload["next_cursor"])
+        self.assertIsNone(startupjobs.next_cursor(dict(self.payload, has_more=False)))
+
+    def test_the_walk_stops_on_a_page_wholly_at_or_before_the_mark(self):
+        """Mutation: "Startup.jobs' walk stops on one old posting"."""
+        dates = sorted(j["published_at"] for j in self.payload["data"])
+        self.assertTrue(startupjobs.stop_after(self.payload, dates[-1]))
+        self.assertFalse(startupjobs.stop_after(self.payload, dates[0]))
+        self.assertFalse(startupjobs.stop_after(self.payload, None))
+
+    def test_the_link_is_its_page_on_startup_jobs_and_it_the_source(self):
+        """ADR-0063's Confirmation, annotated 2026-10-20, and its API terms:
+        each title links to the URL the API supplies. Mutation: "a
+        Startup.jobs posting is shown without its source"."""
+        p = self.one()
+        self.assertTrue(p.url.startswith("https://startup.jobs/"))
+        self.assertEqual(p.url, self.payload["data"][0]["url"])
+        self.assertEqual((p.source, p.board_id, p.external_id),
+                         ("startupjobs", "startupjobs:sj-workplace-remote", str(self.payload["data"][0]["id"])))
+
+    def test_the_key_is_named_and_the_pace_kept_by_declaration(self):
+        """The adapter declares its key's name and its pace; the shared client
+        sends and keeps them (src/http_client.py). Mutation: "Startup.jobs is
+        asked faster than its 20 a minute"."""
+        self.assertEqual(startupjobs.AUTH_ENV, "STARTUP_JOBS_API_KEY")
+        self.assertGreaterEqual(startupjobs.MIN_INTERVAL, 3.0)
 
 
 class TestPostingInvariants(unittest.TestCase):

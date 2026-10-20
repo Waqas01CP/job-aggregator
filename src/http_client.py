@@ -39,12 +39,13 @@ month. The error classes are imported from there and re-exported, so a caller
 of this module sees the names it always did.
 """
 
+import os
 import time
 
 import requests
 
 from .resilience import (RETRYABLE_STATUS, CircuitOpen, HttpError,  # noqa: F401
-                         PermanentError, ResilientClient, TransientError)
+                         Pacer, PermanentError, ResilientClient, TransientError)
 
 # ADR-0028. Provisional, and explicitly so: a runaway guard, not a measured
 # volume. Amended once the run log has a month of per-source counts.
@@ -59,6 +60,22 @@ DEFAULT_MIN_INTERVAL = 1.0
 
 USER_AGENT = ("job-aggregator/0.1 (scheduled job-board poller; "
               "https://github.com/Waqas01CP/job-aggregator)")
+
+
+def source_options(adapter, environ=None):
+    """What a source's own terms ask of every request to it, as `get` takes
+    them: its key, from the environment variable its adapter names
+    (`AUTH_ENV`), and its pace (`MIN_INTERVAL`). Empty for every source that
+    asks neither. The run and the contract check both take them from here,
+    so the adapter declares and this module fetches."""
+    environ = os.environ if environ is None else environ
+    options = {}
+    auth_env = getattr(adapter, "AUTH_ENV", None)
+    if auth_env:
+        options["bearer"] = (environ.get(auth_env) or "").strip() or None
+    if getattr(adapter, "MIN_INTERVAL", None):
+        options["min_interval"] = adapter.MIN_INTERVAL
+    return options
 
 
 class BudgetExhausted(HttpError):
@@ -85,6 +102,10 @@ class HttpClient(ResilientClient):
         self.budget = budget
         self.timeout = timeout
         self._session = session if session is not None else requests.Session()
+        self._clock = (sleep, now)
+        # A source with a rate limit of its own paces itself beside the run's
+        # pace: Startup.jobs' 20 requests a minute (src/adapters/startupjobs.py).
+        self._source_pacers = {}
 
         # Counters. These are the run log's raw material, so they count
         # attempts rather than logical fetches: a fetch that retried twice
@@ -120,10 +141,13 @@ class HttpClient(ResilientClient):
         self.requests_by_source[source] = self.requests_by_source.get(source, 0) + 1
 
     # ---------------------------------------------------------------- fetch
-    def get_json(self, url, source, params=None):
+    def get_json(self, url, source, params=None, bearer=None, min_interval=None):
         """GET and decode JSON, or raise. `source` names the counter bucket,
-        which is the platform, because ADR-0020 stores one file per source."""
-        response = self.get(url, source, params=params)
+        which is the platform, because ADR-0020 stores one file per source.
+        `bearer` and `min_interval`: a keyed source's key and its own rate
+        limit, as `get` takes them."""
+        response = self.get(url, source, params=params, bearer=bearer,
+                            min_interval=min_interval)
         try:
             return response.json()
         except ValueError as e:
@@ -132,13 +156,29 @@ class HttpClient(ResilientClient):
             self._record_failure(source)
             raise PermanentError(url, "200 but body is not JSON: %s" % e)
 
-    def get(self, url, source, params=None, accept="application/json"):
-        """A GET is safe to repeat, so every retryable failure is retried."""
-        return self._send(
-            lambda: self._session.get(
-                url, params=params, timeout=self.timeout,
-                headers={"User-Agent": USER_AGENT, "Accept": accept}),
-            url, source)
+    def get(self, url, source, params=None, accept="application/json", bearer=None,
+            min_interval=None):
+        """A GET is safe to repeat, so every retryable failure is retried.
+
+        **A keyed source's key travels in its header and nowhere else**
+        (`bearer`): never in the URL, so no error, which names the URL, can
+        carry it. **A source's own rate limit** (`min_interval`, seconds
+        between its requests) is kept by a pacer of its own, every attempt
+        and retry included, beside the run's pace for every source."""
+        headers = {"User-Agent": USER_AGENT, "Accept": accept}
+        if bearer:
+            headers["Authorization"] = "Bearer %s" % bearer
+        pacer = None
+        if min_interval:
+            pacer = self._source_pacers.get(source)
+            if pacer is None or pacer.min_interval != min_interval:
+                pacer = self._source_pacers[source] = Pacer(min_interval, *self._clock)
+
+        def send():
+            if pacer is not None:
+                pacer.wait()
+            return self._session.get(url, params=params, timeout=self.timeout, headers=headers)
+        return self._send(send, url, source)
 
     def get_text(self, url, source, params=None):
         """GET a body that is not JSON, We Work Remotely's RSS, whole: the same

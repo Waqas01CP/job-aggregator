@@ -281,6 +281,18 @@
       "slug": "hasjob-feed",
       "normalisations": [],
       "note": "Research 0006 and ADR-0063's Changes of 2026-10-20: Hasjob's Atom feed of its newest postings, one request a run, fetched as text and decoded by its adapter. Its terms have no clause on automated reading, and its robots rules bar only its edit, confirm, withdraw and admin pages. India-centred: a place is a city or Anywhere, with no country stated. Each row links to its page on Hasjob and names it as its board. An aggregator, so its rows keep to the private store. The slug is a label; the feed has no account."
+    },
+    {
+      "platform": "startupjobs",
+      "slug": "sj-workplace-remote",
+      "normalisations": [],
+      "note": "Research 0006 and ADR-0063's Changes of 2026-10-20: Startup.jobs through its keyed API, never its RSS feed, which its terms forbid; the remote jobs (workplace_type=remote), about 585 a day, live jobs of the last 14 days, newest first, read back to what is stored. The key is the secret STARTUP_JOBS_API_KEY. Its postings are kept past the seven days its API terms set, the operator's decision of 2026-10-20. Each row links to its page on Startup.jobs and names it as its board. An aggregator, so its rows keep to the private store."
+    },
+    {
+      "platform": "startupjobs",
+      "slug": "sj-country-pk",
+      "normalisations": [],
+      "note": "Research 0006 and ADR-0063's Changes of 2026-10-20: Startup.jobs through its keyed API, never its RSS feed, which its terms forbid; the jobs in Pakistan (country=PK), every workplace, live jobs of the last 14 days, newest first, read back to what is stored. The key is the secret STARTUP_JOBS_API_KEY. Its postings are kept past the seven days its API terms set, the operator's decision of 2026-10-20. Each row links to its page on Startup.jobs and names it as its board. An aggregator, so its rows keep to the private store."
     }
   ]
 }

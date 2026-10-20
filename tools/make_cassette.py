@@ -34,6 +34,7 @@ DESCRIPTION_FIELDS = frozenset({
     "key_responsibilities", "skills_knowledge_expertise", "publicDescription",
     "Job_Description", "descriptionHtml", "companyLogo", "hybridDescription",
     "story_text", "comment_text", "_highlightResult", "jobExcerpt", "friendlyNotice",
+    "description_html",
 })
 
 # SmartRecruiters' job ad, 2026-10-17: four named sections under
@@ -156,6 +157,10 @@ def postings_of(doc):
     # `entries`.
     if isinstance(doc, dict) and isinstance(doc.get("entries"), list):
         return doc["entries"], "entries"
+    # Startup.jobs' API page, its jobs under `data`, beside `has_more`,
+    # `next_cursor` and `total_count`, which the envelope keeps.
+    if isinstance(doc, dict) and isinstance(doc.get("data"), list):
+        return doc["data"], "data"
     # Manatal's career site pages twenty postings under `results`, beside
     # `count`, `next` and `previous`, which the envelope keeps.
     if isinstance(doc, dict) and isinstance(doc.get("results"), list):

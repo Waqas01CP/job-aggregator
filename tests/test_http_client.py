@@ -245,6 +245,38 @@ class TestRequestShape(unittest.TestCase):
         c.get("https://example.test/jobs", "greenhouse")
         self.assertTrue(c._session.calls[0]["timeout"])
 
+    def test_a_keyed_sources_key_travels_in_its_header_and_nowhere_else(self):
+        """Startup.jobs' key (research 0006): in the Authorization header,
+        never in the URL an error names. Mutation: "the key is not sent"."""
+        c = client([FakeResponse(200), FakeResponse(401)])
+        c.get_json("https://api.example.test/v1/jobs", "startupjobs", bearer="sk_FAKEKEY")
+        call = c._session.calls[0]
+        self.assertEqual(call["headers"]["Authorization"], "Bearer sk_FAKEKEY")
+        self.assertNotIn("sk_FAKEKEY", call["url"])
+        with self.assertRaises(PermanentError) as caught:
+            c.get_json("https://api.example.test/v1/jobs", "startupjobs", bearer="sk_FAKEKEY")
+        self.assertNotIn("sk_FAKEKEY", str(caught.exception))
+
+    def test_a_sources_own_pace_is_kept_for_it_alone(self):
+        """Startup.jobs' 20 requests a minute: its second request waits out
+        its interval, retries included, and another source does not wait for
+        it. Mutation: "a source's own pace is not kept"."""
+        c = client([FakeResponse(200)] * 3)
+        c.get_json("https://api.example.test/a", "startupjobs", min_interval=3.5)
+        c.get_json("https://other.example.test/b", "greenhouse")
+        self.assertEqual(c.slept, [])
+        c.get_json("https://api.example.test/c", "startupjobs", min_interval=3.5)
+        self.assertEqual(len(c.slept), 1)
+        self.assertGreater(c.slept[0], 3.0)
+
+    def test_source_options_name_the_key_and_the_pace_an_adapter_declares(self):
+        from src.adapters import greenhouse, startupjobs
+        from src.http_client import source_options
+        self.assertEqual(source_options(greenhouse, {}), {})
+        self.assertEqual(source_options(startupjobs, {"STARTUP_JOBS_API_KEY": " k "}),
+                         {"bearer": "k", "min_interval": startupjobs.MIN_INTERVAL})
+        self.assertEqual(source_options(startupjobs, {})["bearer"], None)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

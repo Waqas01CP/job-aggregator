@@ -80,11 +80,14 @@ jobs:
             *) echo "::error::could not ask origin whether $DATA_BRANCH exists"; exit 1 ;;
           esac
 
-      # No secret reaches this step: every board it asks is public.
+      # No secret reaches this step but a keyed source's own key: every other
+      # board it asks is public. Never the Airtable token or the private store's.
       - name: Check
         id: check
         env:
           TEST_MODE: ${{ inputs.test_mode && '1' || '0' }}
+          # Startup.jobs' API key: its check asks with it, as the run does.
+          STARTUP_JOBS_API_KEY: ${{ secrets.STARTUP_JOBS_API_KEY }}
         run: |
           set +e
           python -m src.contract
