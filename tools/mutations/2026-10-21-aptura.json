@@ -1,0 +1,8 @@
+[
+  {
+    "label": "Aptura is dropped by employer whatever its title",
+    "path": "docs/reference/annotation-vendors.md",
+    "find": "`welo data` · `welocalize` · `innodata` · `aptura`",
+    "replace": "`welo data` · `welocalize` · `innodata`"
+  }
+]

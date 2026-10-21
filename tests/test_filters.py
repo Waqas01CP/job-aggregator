@@ -1026,7 +1026,7 @@ class TestAnnotationVendorFile(unittest.TestCase):
         path in backticks outside the Vendors section. Reading the whole
         document would turn each of those into a vendor name."""
         names = load_annotation_vendors()
-        self.assertEqual(names, ["welo data", "welocalize", "innodata"])
+        self.assertEqual(names, ["welo data", "welocalize", "innodata", "aptura"])
         for not_a_vendor in ("src filters py", "annotation vendors",
                              "tools title pool report py dropped"):
             self.assertNotIn(not_a_vendor, names)
@@ -1035,6 +1035,18 @@ class TestAnnotationVendorFile(unittest.TestCase):
         self.assertEqual(tuple(load_annotation_vendors()), ANNOTATION_VENDORS)
         self.assertFalse(rule_annotation_vendor(row(employer="Welocalize"),
                                                 ANNOTATION_VENDORS).keep)
+
+    def test_aptura_is_dropped_by_employer_whatever_its_title(self):
+        """The operator's decision of 2026-10-21: Aptura's "... AI Research
+        Contributor" postings are AI evaluation task work, kept by the pool's
+        `ai research`, so the employer is what drops them. Another employer
+        is kept."""
+        aptura = row(employer="Aptura", title="Accounting AI Research Contributor")
+        verdict = rule_annotation_vendor(aptura, ANNOTATION_VENDORS)
+        self.assertFalse(verdict.keep)
+        self.assertEqual(verdict.rule, "annotation_vendor")
+        self.assertTrue(rule_annotation_vendor(row(employer="ElevenLabs"),
+                                               ANNOTATION_VENDORS).keep)
 
     def test_a_missing_or_empty_vendor_list_stops_the_run_starting(self):
         import tempfile

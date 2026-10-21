@@ -22,7 +22,7 @@ normalised employer string.
 
 ## Vendors
 
-`welo data` · `welocalize` · `innodata`
+`welo data` · `welocalize` · `innodata` · `aptura`
 
 ## The evidence, and how thin it is
 
@@ -38,6 +38,10 @@ appear.
 
 Until then, treat this file as a hypothesis that has never fired, rather than
 as a filter with a track record.
+
+*(2026-10-21: it has fired. Startup.jobs' measurement of 2026-10-20 dropped
+12 postings by these names; and Aptura, the fourth name, met the test below
+on a board this pipeline polls: 14 of the 44 postings kept at reading.)*
 
 ## What would justify a fourth name
 
@@ -55,3 +59,4 @@ show up there first.
 | Date | Change | Reason |
 |---|---|---|
 | 2026-09-17 | File created from the constant `ANNOTATION_VENDORS` in `src/filters.py`, with no change to the three names | The list was a tuple in code with a comment saying it was provisional and carried by no record. ADR-0031 requires that a preference live in a versioned file with an audit trail, like the title pool and the seniority list, so this is that file. The names are unchanged, so no filtering behaviour changes with this move |
+| 2026-10-21 | `aptura` added, the operator's decision of 2026-10-21 | Seen on Startup.jobs, a board this pipeline polls: 14 postings, one text in fourteen fields ("Accounting AI Research Contributor", "Legal AI Research Contributor" and so on), each an independent contract of about 4 to 6 weeks, paid by the task, writing Excel tasks and yes-or-no marking criteria to test frontier AI models, asking 3 or more years in that field and no engineering. Kept by the title pool's `ai research`. The operator: "the aptura 14 roles can be left behind as they are of not my domain and simple repetetive work". The name matches inside any employer name; no stored employer but Aptura contains it, checked over every stored layer the same day |
