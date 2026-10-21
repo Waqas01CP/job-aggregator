@@ -704,7 +704,7 @@ class TestTheLevelRule(unittest.TestCase):
         self.assertFalse(self.stated(" %s " % self.dropping[0].upper())[0])
 
     def test_the_title_rule_still_runs_first(self):
-        r = row(title="Senior AI Engineer")
+        r = row(title="Staff AI Engineer")
         r.stated_levels = ["Mid-level"]
         _, drops = apply_chain([r], NOW_ISO, matcher=MATCHER)
         self.assertEqual(drops[0]["rule"], "seniority")
@@ -852,13 +852,13 @@ class TestSeniority(unittest.TestCase):
     untitled roles; II and III excluded after checking; architect kept."""
 
     def test_senior_level_titles_are_dropped_by_the_seniority_rule(self):
-        for title in ("Senior AI Engineer", "Sr. AI Engineer", "Staff AI Engineer",
+        for title in ("Staff AI Engineer",
                       "Lead AI Engineer", "Machine Learning Team Lead", "Principal AI Engineer",
                       "Head of Machine Learning", "Machine Learning Manager",
                       "Director, Machine Learning", "VP, AI Platform",
                       "Vice President, Applied AI", "Chief Machine Learning Scientist",
                       "AI Engineer II", "Software Engineer III - Backend",
-                      "Machine Learning Engineer IV", "AI Engineer - Mid/Senior"):
+                      "Machine Learning Engineer IV", "AI Engineer - Mid/Staff"):
             kept, drop = keep(title=title)
             self.assertFalse(kept, title)
             self.assertEqual(drop["rule"], "seniority", title)
@@ -874,17 +874,38 @@ class TestSeniority(unittest.TestCase):
     def test_an_accented_senior_word_is_dropped_too(self):
         """Production's first projection put "Fullstack Developer | Sênior
         (13593)" in Jobs on 2026-09-24. The operator decided accents are
-        stripped before matching; this is that title."""
-        kept, drop = keep(title="Fullstack Developer | Sênior (13593)")
+        stripped before matching. The word is one that stays listed after
+        2026-11-01; Sênior itself is in the test that follows the list."""
+        kept, drop = keep(title="Fullstack Developer | Stâff (13593)")
         self.assertFalse(kept)
         self.assertEqual(drop["rule"], "seniority")
 
     def test_senior_with_level_one_is_still_dropped(self):
         """Careem's "Senior Software Engineer I": the operator accepted that a
-        senior word drops it whatever level follows."""
-        kept, drop = keep(title="Senior Software Engineer I")
+        listed word drops it whatever level follows. The word is one that
+        stays listed after 2026-11-01; Careem's title is in the test that
+        follows the list."""
+        kept, drop = keep(title="Staff Software Engineer I")
         self.assertFalse(kept)
         self.assertEqual(drop["rule"], "seniority")
+
+    def test_senior_and_sr_follow_the_word_list(self):
+        """ADR-0032, his decision of 2026-10-16: `senior` and `sr` leave the
+        list on 2026-11-01, when the description's years decide instead
+        (ADR-0058). So these titles drop by this rule exactly while the list
+        names their word, and the case is tested on either side of the
+        switch."""
+        words = load_seniority_words()
+        for title, word in (("Senior AI Engineer", "senior"), ("Sr. AI Engineer", "sr"),
+                            ("AI Engineer - Mid/Senior", "senior"),
+                            ("Fullstack Developer | Sênior (13593)", "senior"),
+                            ("Senior Software Engineer I", "senior")):
+            kept, drop = keep(title=title)
+            if word in words:
+                self.assertFalse(kept, title)
+                self.assertEqual(drop["rule"], "seniority", title)
+            else:
+                self.assertNotEqual(drop and drop["rule"], "seniority", title)
 
     def test_a_listed_word_in_a_title_the_pool_never_admits_is_a_title_drop(self):
         """ADR-0032's Confirmation, the case built to defeat the order: the
@@ -924,7 +945,7 @@ class TestSeniority(unittest.TestCase):
         self.assertEqual(kept[0][1], "matched 'data engineer'")
 
     def test_the_run_log_counts_seniority_drops_separately(self):
-        _, drops = apply_chain([row(title="Senior AI Engineer"),
+        _, drops = apply_chain([row(title="Staff AI Engineer"),
                                 row(title="Chief Happiness Officer")],
                                NOW_ISO, matcher=MATCHER)
         counts = drop_counts(drops)

@@ -77,8 +77,8 @@ class TestTheAuditCanFail(unittest.TestCase):
         self.assertEqual([v["kind"] for v in violations], ["employer"])
 
     def test_a_seniority_word_in_code_is_a_violation(self):
-        violations, _, _ = self._scan('WORDS = ("senior", "staff")\n')
-        self.assertEqual({v["value"] for v in violations}, {"senior", "staff"})
+        violations, _, _ = self._scan('WORDS = ("staff", "principal")\n')
+        self.assertEqual({v["value"] for v in violations}, {"staff", "principal"})
 
     def test_a_country_in_code_is_a_violation(self):
         """ADR-0057: "ADR-0031's audit must still find no country named in

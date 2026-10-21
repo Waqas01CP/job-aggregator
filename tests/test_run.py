@@ -1350,8 +1350,9 @@ class TestMain(unittest.TestCase):
         every call. Mutations: "the read-back names the description fields
         while off", "the description fields are sent while off"."""
         from src.airtable import DESCRIPTION_FIELDS, PIPELINE_FIELDS
-        from src.config import load_sweep_config
-        self.assertFalse(load_sweep_config().description_fields_shown)
+        real = run_module.description_fields_shown
+        run_module.description_fields_shown = lambda: False
+        self.addCleanup(setattr, run_module, "description_fields_shown", real)
         self.base.lacks = set(DESCRIPTION_FIELDS)
         self.assertEqual(self.main()[0], EXIT_OK)
         self.assertIsNone(self.last_run_log()["airtable"]["failure"])
@@ -1761,6 +1762,7 @@ class TestTheCeiling(unittest.TestCase):
         saved = {k: os.environ.get(k) for k in self.SECRETS}
         os.environ.update(self.SECRETS)
         try:
+            run_module.description_fields_shown = lambda: False
             off = real_airtable(False, 0)
             run_module.description_fields_shown = lambda: True
             on = real_airtable(False, 0)
@@ -1886,6 +1888,9 @@ class TestTheSweepInTheRun(unittest.TestCase):
         reads Jobs again". Mutation: "the run hands the sweep nothing".
         Mutation: "the projection reads only its own fields", which leaves
         the sweep no Status to copy."""
+        real = run_module.description_fields_shown
+        run_module.description_fields_shown = lambda: False
+        self.addCleanup(setattr, run_module, "description_fields_shown", real)
         def writer(test_mode, used_this_month):
             return AirtableClient("patFAKE.0000", "appFAKEBASE000001", "tblJOBSFAKE000001",
                                   session=self.base, min_interval=0, sleep=lambda s: None,

@@ -136,7 +136,7 @@ class TestStages(Harness):
     def test_the_current_chain_filters_the_projection_not_the_store(self):
         """ADR-0040. A senior row kept under older rules stays in the file
         and stays out of the display."""
-        self.write_filtered([make_row(1), make_row(2, title="Senior AI Engineer")])
+        self.write_filtered([make_row(1), make_row(2, title="Staff AI Engineer")])
         client, _ = self.project()
         self.assertEqual([r["Identity"] for r in client.sent], ["greenhouse:1"])
 
@@ -254,9 +254,9 @@ class TestTheReadBack(Harness):
         test_airtable.py), and the sweep's half is TestStep6Removed in
         test_sweep.py."""
         self.write_filtered([make_row(1),
-                             make_row(2, title="Senior AI Engineer", employer="Globex")])
+                             make_row(2, title="Staff AI Engineer", employer="Globex")])
         [kept] = self.planned()
-        dropped = dict(kept, Identity="greenhouse:2", Title="Senior AI Engineer",
+        dropped = dict(kept, Identity="greenhouse:2", Title="Staff AI Engineer",
                        Employer="Globex")
         client, stages = self.project_against([as_airtable_shows(kept),
                                                as_airtable_shows(dropped)])

@@ -48,10 +48,10 @@
   "replace": " · "
  },
  {
-  "label": "words: sr no longer excluded",
+  "label": "words: staff no longer excluded",
   "path": "docs/reference/seniority-exclusions.md",
-  "find": "`senior` · `sr` · ",
-  "replace": "`senior` · "
+  "find": "`staff` · `lead` · ",
+  "replace": "`lead` · "
  },
  {
   "label": "words: architect excluded against the operator's decision",
