@@ -2154,5 +2154,67 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "workable:9C48E176FE",
+  "source": "workable",
+  "board_id": "workable:igate-technologies",
+  "external_id": "9C48E176FE",
+  "employer": "iGATE Technology",
+  "employer_provenance": "envelope",
+  "title": "Creative Content Writer - B2B",
+  "title_normalised": "Creative Content Writer - B2B",
+  "location": "Islamabad, Islamabad Capital Territory, Pakistan",
+  "published_at": "2026-10-21T00:00:00Z",
+  "published_field": "published_on",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-21T17:57:43.667292Z",
+  "ordering_date": "2026-10-21T00:00:00Z",
+  "ordering_date_source": "publication",
+  "url": "https://apply.workable.com/j/9C48E176FE",
+  "url_provenance": "payload",
+  "stated_experience": [
+   4
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "PK"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "workable:34AF339802",
+  "source": "workable",
+  "board_id": "workable:igate-technologies",
+  "external_id": "34AF339802",
+  "employer": "iGATE Technology",
+  "employer_provenance": "envelope",
+  "title": "Online Python Tutor (UK-Based)",
+  "title_normalised": "Online Python Tutor (UK-Based)",
+  "location": "Manchester, England, United Kingdom",
+  "published_at": "2026-10-21T00:00:00Z",
+  "published_field": "published_on",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-21T17:57:43.667292Z",
+  "ordering_date": "2026-10-21T00:00:00Z",
+  "ordering_date_source": "publication",
+  "url": "https://apply.workable.com/j/34AF339802",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "GB"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]

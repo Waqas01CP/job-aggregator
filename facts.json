@@ -1,5 +1,5 @@
 {
- "fingerprint": "a9ac93e014030c93",
+ "fingerprint": "ee37668ba3c58f33",
  "records": [
   {
    "identity": "ashby:0087feaa-a275-427d-bf4a-14a508708687",
@@ -641,6 +641,20 @@
    "who_reads": null
   },
   {
+   "identity": "ashby:31f21f5f-1922-484d-9a38-d565c02b1fc4",
+   "source": "ashby",
+   "stated_experience": [
+    7
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
    "identity": "ashby:33313f14-1a98-4cd1-8baa-edb818316e2b",
    "source": "ashby",
    "stated_experience": [
@@ -1109,6 +1123,20 @@
    "stated_experience": [
     10
    ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
+   "identity": "ashby:558c0c16-5fde-407a-966b-7a2255d3531b",
+   "source": "ashby",
+   "stated_experience": null,
    "stated_levels": null,
    "places": [
     "United States"
@@ -1819,6 +1847,20 @@
    "described_workplace": null,
    "described": true,
    "who_reads": null
+  },
+  {
+   "identity": "ashby:8bad579f-818e-4409-9269-b012b82b2064",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": "recruiter"
   },
   {
    "identity": "ashby:8ce9b064-e20b-4c71-8c53-385ea89299ae",
@@ -3024,6 +3066,23 @@
     "United States"
    ],
    "workplace": "Hybrid",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
+   "identity": "ashby:cfd281ac-e4c5-4c62-b4c9-5002f59422e5",
+   "source": "ashby",
+   "stated_experience": [
+    1
+   ],
+   "stated_levels": null,
+   "places": [
+    "Egypt",
+    "Pakistan"
+   ],
+   "workplace": "Remote",
    "required_places": null,
    "described_workplace": null,
    "described": true,
@@ -4380,6 +4439,18 @@
   },
   {
    "identity": "greenhouse:4458106009",
+   "source": "greenhouse",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
+   "identity": "greenhouse:4459152009",
    "source": "greenhouse",
    "stated_experience": null,
    "stated_levels": null,
@@ -9194,6 +9265,18 @@
    "who_reads": null
   },
   {
+   "identity": "greenhouse:4988689101",
+   "source": "greenhouse",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
    "identity": "greenhouse:4988693101",
    "source": "greenhouse",
    "stated_experience": [
@@ -9584,6 +9667,20 @@
     "Riyadh, Riyadh, Saudi Arabia"
    ],
    "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
+   "identity": "greenhouse:4998755101",
+   "source": "greenhouse",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
    "required_places": null,
    "described_workplace": null,
    "described": true,
@@ -10021,6 +10118,22 @@
    "stated_levels": null,
    "places": null,
    "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
+   "identity": "greenhouse:5009692101",
+   "source": "greenhouse",
+   "stated_experience": [
+    8
+   ],
+   "stated_levels": null,
+   "places": [
+    "Riyadh, Riyadh, Saudi Arabia"
+   ],
+   "workplace": null,
    "required_places": null,
    "described_workplace": null,
    "described": true,
@@ -28235,6 +28348,20 @@
    "who_reads": null
   },
   {
+   "identity": "greenhouse:8776678002",
+   "source": "greenhouse",
+   "stated_experience": [
+    0
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": "on site",
+   "described": true,
+   "who_reads": null
+  },
+  {
    "identity": "greenhouse:8776759002",
    "source": "greenhouse",
    "stated_experience": [
@@ -29247,6 +29374,20 @@
    "who_reads": null
   },
   {
+   "identity": "greenhouse:8893977002",
+   "source": "greenhouse",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
    "identity": "greenhouse:8895819002",
    "source": "greenhouse",
    "stated_experience": null,
@@ -29255,6 +29396,20 @@
    "workplace": null,
    "required_places": null,
    "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
+   "identity": "greenhouse:8899725002",
+   "source": "greenhouse",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": "on site",
    "described": true,
    "who_reads": null
   },
@@ -29857,6 +30012,23 @@
    "stated_levels": null,
    "places": [
     "IN"
+   ],
+   "workplace": "remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
+   "identity": "lever:66620be1-3b74-4841-af51-58cd302a0341",
+   "source": "lever",
+   "stated_experience": [
+    5,
+    2
+   ],
+   "stated_levels": null,
+   "places": [
+    "PK"
    ],
    "workplace": "remote",
    "required_places": null,
@@ -36453,6 +36625,20 @@
    "who_reads": null
   },
   {
+   "identity": "manatal:2695171",
+   "source": "manatal",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
    "identity": "manatal:2695173",
    "source": "manatal",
    "stated_experience": null,
@@ -36565,7 +36751,35 @@
    "who_reads": null
   },
   {
+   "identity": "manatal:2696799",
+   "source": "manatal",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
    "identity": "manatal:2696802",
+   "source": "manatal",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
+   "identity": "manatal:2696815",
    "source": "manatal",
    "stated_experience": null,
    "stated_levels": null,
@@ -36664,6 +36878,20 @@
   },
   {
    "identity": "manatal:2696896",
+   "source": "manatal",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
+   "identity": "manatal:2696907",
    "source": "manatal",
    "stated_experience": null,
    "stated_levels": null,
@@ -40361,6 +40589,22 @@
    "who_reads": null
   },
   {
+   "identity": "manatal:4100963",
+   "source": "manatal",
+   "stated_experience": [
+    2
+   ],
+   "stated_levels": null,
+   "places": [
+    "Pakistan"
+   ],
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
    "identity": "manatal:4107870",
    "source": "manatal",
    "stated_experience": [
@@ -41287,6 +41531,20 @@
    "who_reads": null
   },
   {
+   "identity": "manatal:4508198",
+   "source": "manatal",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "Pakistan"
+   ],
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
    "identity": "manatal:498960",
    "source": "manatal",
    "stated_experience": null,
@@ -42029,6 +42287,22 @@
     "PK"
    ],
    "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
+   "identity": "workable:5AC63E4704",
+   "source": "workable",
+   "stated_experience": [
+    2
+   ],
+   "stated_levels": null,
+   "places": [
+    "ID"
+   ],
+   "workplace": "remote",
    "required_places": null,
    "described_workplace": null,
    "described": true,

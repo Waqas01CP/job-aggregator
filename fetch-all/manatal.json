@@ -21257,5 +21257,35 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "manatal:3890871",
+  "source": "manatal",
+  "board_id": "manatal:premiernx",
+  "external_id": "3890871",
+  "employer": "Premier NX",
+  "employer_provenance": "slug",
+  "title": "Data Validator",
+  "title_normalised": "Data Validator",
+  "location": "Lahore, Pakistan",
+  "published_at": null,
+  "published_field": null,
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-21T17:57:43.667292Z",
+  "ordering_date": "2026-10-21T17:57:43.667292Z",
+  "ordering_date_source": "first_seen",
+  "url": "https://www.careers-page.com/premiernx/job/934666Y4",
+  "url_provenance": "constructed",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "Pakistan"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]
