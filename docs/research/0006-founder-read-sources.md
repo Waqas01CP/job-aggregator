@@ -69,3 +69,4 @@ All read by the chat on 2026-10-20 unless dated otherwise.
 
 | Date | Correction | Source |
 |---|---|---|
+| 2026-10-21 | Hasjob's "about one fit a month", the reports' figure and marked untested here, is wrong for him: the implementing seat read all 17 postings, every one India's, the 4 "Anywhere" among them, and found none he can take; out on his decision (ADR-0063's Changes). Contradicted by that read of its feed, 17 postings of 2026-09-21 to 10-19; whether the reports' figure was wrong when written or the board changed is not settled by one read | The implementing seat's report on Brief 18 |

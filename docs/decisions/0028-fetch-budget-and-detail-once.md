@@ -50,7 +50,7 @@ Chosen option: "fetch detail once per posting, ever", with a measured budget to 
 
 **A per-run request ceiling is enforced in the shared HTTP module**, counting every attempt including retries and failures, refusing further requests once reached. Enforced in code, not by intention.
 
-**The initial ceiling is 500, and it is a runaway guard rather than a politeness policy.** Its only job is to stop a loop or a pagination bug from issuing unbounded requests. It is not a claim about what volume is appropriate, because nobody has measured what volume is needed.
+**The initial ceiling is 500, and it is a runaway guard rather than a politeness policy.** Its only job is to stop a loop or a pagination bug from issuing unbounded requests. It is not a claim about what volume is appropriate, because nobody has measured what volume is needed. *(2026-10-21: set from measurement at 400, Changes.)*
 
 **The real ceiling is set from measurement.** The run log records requests issued per source and in total, every run. After the first month of live running, the ceiling is set from the observed distribution and this record amended with the figure and its basis.
 
@@ -74,7 +74,7 @@ Until the measurement lands, the project is running on a number with no basis, a
 
 ### Confirmation
 
-**The measurement that sets the real ceiling.** Over the first month, the run log records requests per source and per run. The ceiling is then set from the observed distribution, with a stated margin, and this record amended with both the figure and how it was obtained. Until that amendment, the ceiling in force is explicitly provisional.
+**The measurement that sets the real ceiling.** Over the first month, the run log records requests per source and per run. The ceiling is then set from the observed distribution, with a stated margin, and this record amended with both the figure and how it was obtained. Until that amendment, the ceiling in force is explicitly provisional. *(Met 2026-10-21: the figure and its basis are in Changes.)*
 
 **That the once-only rule works:** run twice against a board with no new postings and confirm the second run issues no detail requests. If it issues any, the seen structure is not being consulted.
 
@@ -110,3 +110,4 @@ Evidence is the platform spikes of 2026-09-11, 15 and 16.
 |---|---|---|
 | 2026-09-25 | An unsourced board count marked, and this record's extensions of ADR-0003 and ADR-0005 noted in those records | The corpus audit found "roughly 20 registry boards" with no basis here, and found ADR-0003 and ADR-0005 did not name this record, which extends both. Annotated by the implementing seat under ADR-RULES, on Brief 7's corpus work; the Decision Outcome is untouched. |
 | 2026-10-16 | The fetch run's circuit breaker is one per platform, in the shared module: a platform's open breaker refuses only that platform's remaining boards, without a request, and every other platform is polled. The run still logs the stop and exits 2, and the budget of 500 still ends the run. The Airtable clients keep one breaker each, since each talks to one service | Built by the implementing seat as `82f131b` on 2026-10-15, recorded here at its suggestion. One breaker for the run let five consecutive failures anywhere end the loop: on 2026-10-14T03:47Z ITC's page 44 and four Manatal boards answered 403 in a row, and all six Workable boards, last in the order, went unread. ADR-0059 requires that a failure in one source reach no other |
+| 2026-10-21 | **The ceiling is 400 requests a run, set from measurement** (`b2c3ebf`), no longer provisional. Over the 69 production runs of 2026-09-17 to 10-20 the median was 36 requests and the most 104; none reached 500, and the one run that stopped early stopped on the breaker. Every source at its own peak in one run, with Brief 18's new sources and Startup.jobs' first walk, comes to about 264 by the seat's estimate; 400 is about half again that, so no real run stops on it and a looping one stops a fifth sooner. The budget of 500 named in the row of 2026-10-16 is 400 from this row on | This record's Decision Outcome and Confirmation, which set the real ceiling from a month of run logs. The implementing seat's report on Brief 18, 158 lines, read end to end and checked by the chat on 2026-10-21: every commit it cites is on `origin/main`, `fa3fd01` pushed the same day after the chat found it local |

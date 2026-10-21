@@ -21,7 +21,7 @@ The Airtable writer does not fit it. Every dimension differs:
 | | Board fetching | Airtable writing |
 |---|---|---|
 | Verb | GET | POST and PATCH with a JSON body |
-| Authentication | none | bearer token, a repository secret |
+| Authentication | none *(2026-10-21: a job board's own key in a header since Startup.jobs, Changes)* | bearer token, a repository secret |
 | Budget | ADR-0028's per-run request ceiling | roughly 33 calls a day, a separate monthly allowance |
 | Rate limit | politeness, self-imposed | 5 requests per second per base, enforced |
 | On limit | back off and retry | HTTP 429 then a required 30-second wait |
@@ -71,7 +71,7 @@ A failure to write to Airtable is not a failure to fetch. The run must distingui
 
 ### Confirmation
 
-Grep the Airtable client for any import of the fetch module's request function, and the fetch module for any mention of a token or a write verb. Either is a violation.
+Grep the Airtable client for any import of the fetch module's request function, and the fetch module for any mention of a token or a write verb. Either is a violation. *(Annotated 2026-10-21: narrowed with his approval of 2026-10-20: the fetch module may carry a job board's own key in a header, never Airtable's token by any of its names nor a write verb. Changes.)*
 
 The shared utilities are proved by mutation: break the backoff calculation once, and both the fetch module's tests and the Airtable client's tests must fail. If only one fails, the utility is not actually shared and the duplication this record was written to prevent has already happened.
 
@@ -104,3 +104,4 @@ CLAUDE.md carries the amended rule and points here.
 | 2026-09-24 | A private-store failure marks the run failed on its first occurrence, after the push; a projection failure still waits for the third in a row | The operator's decision, D9: he wants to hear of a private-store failure so it can be fixed, and its causes, an expired or revoked token or a moved repository, do not clear on their own, while Airtable's own errors often do. The workflow's last step is renamed "Fail the run if it needs attention" and still runs only after the push, so marking a run failed never costs its data |
 | 2026-09-24 | The month's call count covers the workspace: each run reads both branches' run logs, and the workflow fetches the other mode's branch read-only to make that possible | The allowance is per workspace and test runs spend it too. Before this, production counted 5 calls while the workspace had spent 22 (the audit of 2026-09-24). The operator's go, G7. The run log carries the count per branch |
 | 2026-10-09 | The month's call count includes the clearing tool's calls. The projection's read of `Jobs` is made through the sweep's client, so the writer still only writes | The clearing tool's calls were never counted: 2 and 4 on the operator's test-mode clearings, read from `data-test`. The count and ADR-0050's budget line now sum every block that spends calls (commit `425433e`). The read is ADR-0060's |
+| 2026-10-21 | The fetch module may carry a job board's own key, in an `Authorization` header and never a URL, for a source whose API requires one; it still never carries Airtable's token by any of its names, nor a write verb, and the guard's test checks exactly that with cases built to defeat it. The first such source is Startup.jobs (`b37a35b`): the adapter declares its key's environment name and its pace, a run without the key does not poll it and touches no other source, and the key is scrubbed from run logs. The scope of the exception, the verb, is unchanged: fetching stays in the shared module | Startup.jobs' API requires a key (ADR-0063's Changes of 2026-10-20). The narrowing was approved by the operator on 2026-10-20, asked by the implementing seat before the build, as its report on Brief 18 records. The implementing seat's report on Brief 18, 158 lines, read end to end and checked by the chat on 2026-10-21: every commit it cites is on `origin/main`, `fa3fd01` pushed the same day after the chat found it local |

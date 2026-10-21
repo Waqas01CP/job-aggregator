@@ -41,13 +41,13 @@ Records are written at the moment a decision concludes. A record's factual error
 | 0025 | Auto Memory is not authoritative | Accepted |
 | 0026 | Employer provenance where a payload does not carry it | Accepted |
 | 0027 | Deduplication key normalisation, configured per source | Accepted |
-| 0028 | Per-run fetch budget, and detail fetched once per posting | Accepted; one circuit breaker per platform |
+| 0028 | Per-run fetch budget, and detail fetched once per posting | Accepted; one circuit breaker per platform; the ceiling set from measurement at 400 |
 | 0029 | Adapter order after the slice, and Dover dropped | Accepted, adapter order replaced by 0059, now 0063; Manatal and Workable built |
 | 0030 | A rule change backfills the filtered layer | Accepted |
 | 0031 | Personal preferences are configuration, not code | Accepted |
 | 0032 | The seniority rule | Accepted, extended to a source's stated level; Senior no longer drops, by title or level |
 | 0033 | The data branch is the store, local files are working copies | Accepted |
-| 0034 | Airtable gets its own client | Accepted |
+| 0034 | Airtable gets its own client | Accepted; a job board's own key allowed in the fetch module |
 | 0035 | The projection upserts on Identity | Accepted; derived values, a reason field, a fixed row number and who reads classified |
 | 0036 | The contract check reports through the run log | Superseded by 0061 |
 | 0037 | The filtered layer stores rows, the projection groups them | Accepted |
@@ -76,7 +76,7 @@ Records are written at the moment a decision concludes. A record's factual error
 | 0060 | The projection sends only what differs from `Jobs` | Accepted, supersedes 0056; one read of `Jobs` shared with the sweep |
 | 0061 | The contract check reports per source, in its log and in Airtable | Accepted, supersedes 0036 |
 | 0062 | The classification flow, with gone, applied and a reason in `Jobs` | Accepted, supersedes 0050; the rejection tables read only when needed |
-| 0063 | Version 1, its test for done set, and the second wave by who reads the application | Accepted, supersedes 0059; the second wave built, Breezy out on a conclusive read; four more sources to build, Startup.jobs' seven-day clause set aside by his decision |
+| 0063 | Version 1, its test for done set, and the second wave by who reads the application | Accepted, supersedes 0059; the second wave built, Breezy out on a conclusive read; Python.org and Startup.jobs built, Startup.jobs' seven-day clause set aside by his decision, Hasjob out; CryptoJobsList waits for his key |
 | RULES | How records are resolved, amended and retired | Accepted |
 
 ## Pending
