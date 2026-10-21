@@ -1113,5 +1113,166 @@
    }
   },
   "since": "2026-10-19T13:50:03.621930Z"
+ },
+ "startupjobs": {
+  "response": {
+   "data": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "array"
+    ]
+   },
+   "has_more": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "boolean"
+    ]
+   },
+   "next_cursor": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "number"
+    ]
+   }
+  },
+  "posting": {
+   "id": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "number"
+    ]
+   },
+   "title": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "url": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "published_at": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "company": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "object"
+    ]
+   },
+   "company.name": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "location": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "object"
+    ]
+   },
+   "location.city": {
+    "present": "all",
+    "null": "some",
+    "types": [
+     "string"
+    ]
+   },
+   "location.state": {
+    "present": "all",
+    "null": "some",
+    "types": [
+     "string"
+    ]
+   },
+   "location.country": {
+    "present": "all",
+    "null": "some",
+    "types": [
+     "string"
+    ]
+   },
+   "location.country_code": {
+    "present": "all",
+    "null": "some",
+    "types": [
+     "string"
+    ]
+   },
+   "workplace_type": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "description_html": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   }
+  },
+  "since": "2026-10-21T12:14:16.416580Z"
+ },
+ "pythonorg": {
+  "response": {
+   "items": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "array"
+    ]
+   }
+  },
+  "posting": {
+   "title": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "link": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "place": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   },
+   "description": {
+    "present": "all",
+    "null": "never",
+    "types": [
+     "string"
+    ]
+   }
+  },
+  "since": "2026-10-21T12:14:16.416580Z"
  }
 }
