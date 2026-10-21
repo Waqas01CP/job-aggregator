@@ -17511,5 +17511,99 @@
   "described_workplace": "on site",
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "manatal:3390941",
+  "source": "manatal",
+  "board_id": "manatal:premiernx",
+  "external_id": "3390941",
+  "employer": "Premier NX",
+  "employer_provenance": "slug",
+  "title": "AI/ML Engineer",
+  "title_normalised": "AI/ML Engineer",
+  "location": "Lahore, Pakistan",
+  "published_at": null,
+  "published_field": null,
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-21T21:46:17.428325Z",
+  "ordering_date": "2026-10-21T21:46:17.428325Z",
+  "ordering_date_source": "first_seen",
+  "url": "https://www.careers-page.com/premiernx/job/3WW973R8",
+  "url_provenance": "constructed",
+  "stated_experience": [
+   3
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "Pakistan"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": "on site",
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "manatal:3526597",
+  "source": "manatal",
+  "board_id": "manatal:premiernx",
+  "external_id": "3526597",
+  "employer": "Premier NX",
+  "employer_provenance": "slug",
+  "title": "Data Analyst",
+  "title_normalised": "Data Analyst",
+  "location": "Lahore, Pakistan",
+  "published_at": null,
+  "published_field": null,
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-21T21:46:17.428325Z",
+  "ordering_date": "2026-10-21T21:46:17.428325Z",
+  "ordering_date_source": "first_seen",
+  "url": "https://www.careers-page.com/premiernx/job/V633WVY6",
+  "url_provenance": "constructed",
+  "stated_experience": [
+   1
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "Pakistan"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "manatal:3890871",
+  "source": "manatal",
+  "board_id": "manatal:premiernx",
+  "external_id": "3890871",
+  "employer": "Premier NX",
+  "employer_provenance": "slug",
+  "title": "Data Validator",
+  "title_normalised": "Data Validator",
+  "location": "Lahore, Pakistan",
+  "published_at": null,
+  "published_field": null,
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-21T21:46:17.428325Z",
+  "ordering_date": "2026-10-21T21:46:17.428325Z",
+  "ordering_date_source": "first_seen",
+  "url": "https://www.careers-page.com/premiernx/job/934666Y4",
+  "url_provenance": "constructed",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "Pakistan"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]

@@ -1549,5 +1549,37 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "workable:9C48E176FE",
+  "source": "workable",
+  "board_id": "workable:igate-technologies",
+  "external_id": "9C48E176FE",
+  "employer": "iGATE Technology",
+  "employer_provenance": "envelope",
+  "title": "Creative Content Writer - B2B",
+  "title_normalised": "Creative Content Writer - B2B",
+  "location": "Islamabad, Islamabad Capital Territory, Pakistan",
+  "published_at": "2026-10-21T00:00:00Z",
+  "published_field": "published_on",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-21T21:46:17.428325Z",
+  "ordering_date": "2026-10-21T00:00:00Z",
+  "ordering_date_source": "publication",
+  "url": "https://apply.workable.com/j/9C48E176FE",
+  "url_provenance": "payload",
+  "stated_experience": [
+   4
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "PK"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]
