@@ -293,6 +293,102 @@
       "slug": "sj-country-pk",
       "normalisations": [],
       "note": "Research 0006 and ADR-0063's Changes of 2026-10-20: Startup.jobs through its keyed API, never its RSS feed, which its terms forbid; the jobs in Pakistan (country=PK), every workplace, live jobs of the last 14 days, newest first, read back to what is stored. The key is the secret STARTUP_JOBS_API_KEY. Its postings are kept past the seven days its API terms set, the operator's decision of 2026-10-20. Each row links to its page on Startup.jobs and names it as its board. An aggregator, so its rows keep to the private store."
+    },
+    {
+      "platform": "ashby",
+      "slug": "cursor",
+      "employer_alias": "Cursor",
+      "normalisations": [],
+      "note": "Found through the a16z Speedrun talent network's feed, read once for discovery on 2026-10-20 (research 0006, ADR-0063's Changes): read once through the real adapter and chain that day, 7 kept dated at reading, 7 on November's rules. Not in the operator's registry file."
+    },
+    {
+      "platform": "ashby",
+      "slug": "elevenlabs",
+      "employer_alias": "ElevenLabs",
+      "normalisations": [],
+      "note": "Found through the a16z Speedrun talent network's feed, read once for discovery on 2026-10-20 (research 0006, ADR-0063's Changes): read once through the real adapter and chain that day, 7 kept dated at reading, 7 on November's rules. Not in the operator's registry file."
+    },
+    {
+      "platform": "ashby",
+      "slug": "vesta",
+      "employer_alias": "Vesta",
+      "normalisations": [],
+      "note": "Found through the a16z Speedrun talent network's feed, read once for discovery on 2026-10-20 (research 0006, ADR-0063's Changes): read once through the real adapter and chain that day, 4 kept dated at reading, 4 on November's rules. Not in the operator's registry file."
+    },
+    {
+      "platform": "ashby",
+      "slug": "quora",
+      "employer_alias": "Quora",
+      "normalisations": [],
+      "note": "Found through the a16z Speedrun talent network's feed, read once for discovery on 2026-10-20 (research 0006, ADR-0063's Changes): read once through the real adapter and chain that day, 3 kept dated at reading, 4 on November's rules. Not in the operator's registry file."
+    },
+    {
+      "platform": "ashby",
+      "slug": "realmalliance",
+      "employer_alias": "Realm",
+      "normalisations": [],
+      "note": "Found through the a16z Speedrun talent network's feed, read once for discovery on 2026-10-20 (research 0006, ADR-0063's Changes): read once through the real adapter and chain that day, 2 kept dated at reading, 2 on November's rules. Not in the operator's registry file."
+    },
+    {
+      "platform": "greenhouse",
+      "slug": "sourcegraph91",
+      "normalisations": [],
+      "note": "Found through the a16z Speedrun talent network's feed, read once for discovery on 2026-10-20 (research 0006, ADR-0063's Changes): read once through the real adapter and chain that day, 2 kept dated at reading, 2 on November's rules. Not in the operator's registry file."
+    },
+    {
+      "platform": "lever",
+      "slug": "pingwind",
+      "employer_alias": "PingWind",
+      "normalisations": [],
+      "note": "Found through the a16z Speedrun talent network's feed, read once for discovery on 2026-10-20 (research 0006, ADR-0063's Changes): read once through the real adapter and chain that day, 2 kept dated at reading, 2 on November's rules. Not in the operator's registry file."
+    },
+    {
+      "platform": "ashby",
+      "slug": "espa",
+      "employer_alias": "Espa AI",
+      "normalisations": [],
+      "note": "Found through the a16z Speedrun talent network's feed, read once for discovery on 2026-10-20 (research 0006, ADR-0063's Changes): read once through the real adapter and chain that day, 1 kept dated at reading, 1 on November's rules. Not in the operator's registry file."
+    },
+    {
+      "platform": "ashby",
+      "slug": "fal-ai",
+      "employer_alias": "Fal",
+      "normalisations": [],
+      "note": "Found through the a16z Speedrun talent network's feed, read once for discovery on 2026-10-20 (research 0006, ADR-0063's Changes): read once through the real adapter and chain that day, 1 kept dated at reading, 1 on November's rules. Not in the operator's registry file."
+    },
+    {
+      "platform": "ashby",
+      "slug": "intangible.ai",
+      "employer_alias": "Intangible",
+      "normalisations": [],
+      "note": "Found through the a16z Speedrun talent network's feed, read once for discovery on 2026-10-20 (research 0006, ADR-0063's Changes): read once through the real adapter and chain that day, 1 kept dated at reading, 1 on November's rules. Not in the operator's registry file."
+    },
+    {
+      "platform": "ashby",
+      "slug": "protege",
+      "employer_alias": "Protege",
+      "normalisations": [],
+      "note": "Found through the a16z Speedrun talent network's feed, read once for discovery on 2026-10-20 (research 0006, ADR-0063's Changes): read once through the real adapter and chain that day, 1 kept dated at reading, 1 on November's rules. Not in the operator's registry file."
+    },
+    {
+      "platform": "ashby",
+      "slug": "socket",
+      "employer_alias": "Socket.dev",
+      "normalisations": [],
+      "note": "Found through the a16z Speedrun talent network's feed, read once for discovery on 2026-10-20 (research 0006, ADR-0063's Changes): read once through the real adapter and chain that day, 1 kept dated at reading, 1 on November's rules. Not in the operator's registry file."
+    },
+    {
+      "platform": "ashby",
+      "slug": "sola",
+      "employer_alias": "Sola",
+      "normalisations": [],
+      "note": "Found through the a16z Speedrun talent network's feed, read once for discovery on 2026-10-20 (research 0006, ADR-0063's Changes): read once through the real adapter and chain that day, 1 kept dated at reading, 1 on November's rules. Not in the operator's registry file."
+    },
+    {
+      "platform": "greenhouse",
+      "slug": "cresta",
+      "normalisations": [],
+      "note": "Found through the a16z Speedrun talent network's feed, read once for discovery on 2026-10-20 (research 0006, ADR-0063's Changes): read once through the real adapter and chain that day, 1 kept dated at reading, 1 on November's rules. Not in the operator's registry file."
     }
   ]
 }

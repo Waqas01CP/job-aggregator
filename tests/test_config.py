@@ -40,6 +40,13 @@ REGISTRY_ASHBY = {"Overjet", "deeter-analytics"}
 # operator's word of 2026-10-18 (ADR-0063, Brief 16 item 3).
 DISCOVERED = {("ashby", "livekit"), ("ashby", "clickhouse"), ("ashby", "mastra"),
               ("lever", "postera")}
+# Found through the a16z Speedrun talent network's feed, read once for
+# discovery on 2026-10-20 (Brief 18, item 5): each keeps a posting read fresh.
+DISCOVERED |= {("ashby", "cursor"), ("ashby", "elevenlabs"), ("ashby", "vesta"),
+               ("ashby", "quora"), ("ashby", "realmalliance"), ("ashby", "espa"),
+               ("ashby", "fal-ai"), ("ashby", "intangible.ai"), ("ashby", "protege"),
+               ("ashby", "socket"), ("ashby", "sola"), ("greenhouse", "sourcegraph91"),
+               ("greenhouse", "cresta"), ("lever", "pingwind")}
 
 
 def write_config(boards):
@@ -60,13 +67,14 @@ class TestRealConfig(unittest.TestCase):
         """ADR-0009 fixed the slice at eleven employer boards; ADR-0059's
         Manatal adds nine, on 2026-10-07, Workable six, on 2026-10-08,
         SmartRecruiters two, on 2026-10-17, and Ashby two, on 2026-10-17; and
-        four found through the second wave, on 2026-10-18.
+        four found through the second wave, on 2026-10-18; and fourteen
+        through the a16z Speedrun network's feed, on 2026-10-20.
         Himalayas is the conditional
         aggregator from ADR-0019, not an employer board, so it is counted
         separately."""
         ats = [b for b in self.boards if b.source_class == "ats"]
         aggregators = [b for b in self.boards if b.source_class == "aggregator"]
-        self.assertEqual(len(ats), 34)
+        self.assertEqual(len(ats), 48)
         # The search endpoint filtered to the operator's country, since
         # 2026-09-26: the slug is the country.
         self.assertEqual([b.slug for b in aggregators],
@@ -83,7 +91,7 @@ class TestRealConfig(unittest.TestCase):
     def test_slugs_match_the_registry(self):
         gh = {b.slug for b in self.boards if b.platform == "greenhouse"}
         lv = {b.slug for b in self.boards if b.platform == "lever"}
-        self.assertEqual(gh, REGISTRY_GREENHOUSE)
+        self.assertEqual(gh, REGISTRY_GREENHOUSE | {s for p, s in DISCOVERED if p == "greenhouse"})
         self.assertEqual(lv, REGISTRY_LEVER | {s for p, s in DISCOVERED if p == "lever"})
         self.assertEqual({b.slug for b in self.boards if b.platform == "manatal"},
                          REGISTRY_MANATAL)

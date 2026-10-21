@@ -88,7 +88,10 @@ def load_employers(path=BOARDS_PATH):
             v = b.get(key)
             # "browse" is Himalayas' endpoint name, not an employer, and it is
             # an ordinary English word that would match prose everywhere.
-            if v and v != "browse":
+            # "cursor" is an employer, Cursor's Ashby board (2026-10-20), and
+            # also every paginated adapter's word for its next page; matched,
+            # it would flag the paging code, not a hard-coded employer.
+            if v and v.lower() not in ("browse", "cursor"):
                 out.add(v.lower())
     return sorted(out)
 
