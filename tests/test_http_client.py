@@ -98,7 +98,7 @@ class TestBudget(unittest.TestCase):
         counters = c.counters()
         self.assertEqual(counters["by_source"], {"greenhouse": 2, "lever": 1})
         self.assertEqual(counters["requests_used"], 3)
-        self.assertEqual(counters["budget"], 500)
+        self.assertEqual(counters["budget"], 400)
 
 
 class TestClassification(unittest.TestCase):

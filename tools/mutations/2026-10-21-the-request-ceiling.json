@@ -1,0 +1,8 @@
+[
+  {
+    "label": "the request ceiling is the old guess",
+    "path": "src/http_client.py",
+    "find": "DEFAULT_BUDGET = 400",
+    "replace": "DEFAULT_BUDGET = 500"
+  }
+]

@@ -607,7 +607,7 @@ class TestNormalRun(RunHarness):
                              "spreetail": []})
         log = Run([GH, LV], client, now=NOW, matcher=MATCHER).execute()
         self.assertEqual(log["requests"]["by_source"], {"greenhouse": 1, "lever": 1})
-        self.assertEqual(log["requests"]["budget"], 500)
+        self.assertEqual(log["requests"]["budget"], 400)
 
     def test_a_second_run_with_no_changes_writes_nothing_new(self):
         """The brief's check, end to end."""

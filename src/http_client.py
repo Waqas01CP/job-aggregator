@@ -47,9 +47,14 @@ import requests
 from .resilience import (RETRYABLE_STATUS, CircuitOpen, HttpError,  # noqa: F401
                          Pacer, PermanentError, ResilientClient, TransientError)
 
-# ADR-0028. Provisional, and explicitly so: a runaway guard, not a measured
-# volume. Amended once the run log has a month of per-source counts.
-DEFAULT_BUDGET = 500
+# ADR-0028: a runaway guard, not a volume to spend. 500 until 2026-10-21,
+# provisional; set from the run logs' month of per-source counts (Brief 18,
+# item 56): 69 runs from 2026-09-17 to 10-20 spent 36 at the median and 104
+# at most, and none reached the ceiling. Every source at its own peak in one
+# run, the sources of 2026-10-20 added and Startup.jobs' first walk of about
+# 84 pages with them, comes to about 264. Half again that, so no real run
+# stops on it and a looping one stops sooner.
+DEFAULT_BUDGET = 400
 
 # Retry and pacing are method choices, not decisions from a record.
 DEFAULT_MAX_ATTEMPTS = 3

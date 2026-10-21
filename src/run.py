@@ -105,7 +105,8 @@ ADAPTERS = {
 # 40 pages and 707 postings, about 17.7 a page, short of a week, and the
 # mornings of 10-01 and 10-02 found 96 and 104 new postings, so a week is now
 # about 41 pages. 80 holds a week with room for the feed to grow by half, and
-# a walk that reaches it uses 80 of the run's 500 requests.
+# a walk that reaches it uses 80 of the run's 400 requests (500 until
+# 2026-10-21).
 MAX_PAGES = 80
 
 
