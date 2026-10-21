@@ -79,13 +79,16 @@ class TestRealConfig(unittest.TestCase):
         # 2026-09-26: the slug is the country.
         self.assertEqual([b.slug for b in aggregators],
                          ["pakistan", "whoishiring", "jobstories", "jobicy-remote",
-                          "remoteok-feed", "wwr-feed", "pythonorg-feed", "hasjob-feed",
+                          "remoteok-feed", "wwr-feed", "pythonorg-feed",
                           "sj-workplace-remote", "sj-country-pk"])
+        # Hasjob's board is out since 2026-10-21, the operator's decision on
+        # its read: an Indian board, none of its postings one he can take.
+        # Its adapter and contract check stay, so it returns by one line.
         # Hacker News, ADR-0063's second wave, is an aggregator too: its rows
         # keep to the private store (src/config.py, AGGREGATOR_PLATFORMS).
         self.assertEqual([b.platform for b in aggregators],
                          ["himalayas", "hackernews", "hnjobs", "jobicy", "remoteok",
-                          "weworkremotely", "pythonorg", "hasjob", "startupjobs",
+                          "weworkremotely", "pythonorg", "startupjobs",
                           "startupjobs"])
 
     def test_slugs_match_the_registry(self):
@@ -126,7 +129,7 @@ class TestRealConfig(unittest.TestCase):
         self.assertEqual({b.source for b in self.boards},
                          {"greenhouse", "lever", "himalayas", "manatal", "workable",
                           "smartrecruiters", "ashby", "hackernews", "hnjobs", "jobicy",
-                          "remoteok", "weworkremotely", "pythonorg", "hasjob",
+                          "remoteok", "weworkremotely", "pythonorg",
                           "startupjobs"})
 
     def test_source_class_separates_employer_boards_from_aggregators(self):

@@ -456,6 +456,8 @@ Measured over the 20 of 2026-10-20 `[VERIFIED]`:
 
 ## Hasjob
 
+*(2026-10-21: its board is out of `config/boards.json`, the operator's decision, before its first scheduled run. Read on his question: its site calls itself "The Hasgeek Job Board", Hasgeek a Bengaluru company; of its 17 postings 12 name an Indian city, one "Remote ( India )", and of the 4 "Anywhere" one is for Indian citizens on site and one for applicants based in India; none of the three the rules keep is one he can take. The adapter and its contract check stay, so it returns by one line.)*
+
 Research 0006 and ADR-0063's Changes of 2026-10-20, built 2026-10-20. `hasjob.co/feed`, its Atom feed of its newest postings, one request a run, fetched as text and decoded by the adapter. Its terms (`/tos`) have no clause on automated reading, and its robots rules bar only its edit, confirm, withdraw and admin pages. Each row links to the posting's page on Hasjob and names it as its board. An aggregator, so its rows keep to the private store.
 
 Measured over the 17 of 2026-10-20, dated 2026-09-21 to 10-19 `[VERIFIED]`:
