@@ -1812,11 +1812,12 @@ class TestTheCeiling(unittest.TestCase):
                     with self.assertRaises(ConfigError):
                         load_sweep_config(path)
 
-    def test_the_description_switch_is_true_or_false_and_ships_off(self):
-        """Brief 13: off until the operator has made the four fields; a value
-        that is not true or false is refused rather than read as either."""
+    def test_the_description_switch_is_true_or_false_and_ships_on(self):
+        """Brief 13: off until the operator had made the four fields, and on
+        from 2026-11-01; a value that is not true or false is refused rather
+        than read as either."""
         from src.config import SWEEP_PATH, ConfigError, load_sweep_config
-        self.assertIs(load_sweep_config().description_fields_shown, False)
+        self.assertIs(load_sweep_config().description_fields_shown, True)
         with open(SWEEP_PATH, encoding="utf-8") as f:
             doc = json.load(f)
         path = os.path.join(self.dir, "sweep.json")

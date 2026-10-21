@@ -22,7 +22,7 @@ The rule reads the same normalised title the pool reads, and runs after the pool
 
 ## Excluded words
 
-`senior` · `sr` · `staff` · `lead` · `principal` · `head` · `manager` · `director` · `vp` · `vice president` · `chief` · `ii` · `iii` · `iv`
+`staff` · `lead` · `principal` · `head` · `manager` · `director` · `vp` · `vice president` · `chief` · `ii` · `iii` · `iv`
 
 ## Deliberately not excluded
 
@@ -34,7 +34,7 @@ The rule reads the same normalised title the pool reads, and runs after the pool
 
 ## Known behaviour, accepted deliberately
 
-**A senior word anywhere drops the posting**, including where the title also names an entry level. Careem's "Senior Software Engineer I" is dropped; the operator accepted that. So is a title like "AI Engineer, Mid/Senior", which is open to mid-level applicants.
+*(2026-11-01: `senior` and `sr` are no longer excluded words, so the two examples below now pass this rule, and the description's years decide them, ADR-0058.)* **A senior word anywhere drops the posting**, including where the title also names an entry level. Careem's "Senior Software Engineer I" is dropped; the operator accepted that. So is a title like "AI Engineer, Mid/Senior", which is open to mid-level applicants.
 
 **`lead` drops non-leadership uses too**, such as a lead-generation role. Those are outside the pool's families anyway.
 
@@ -60,4 +60,5 @@ On the 21 postings kept by production run 35236531478, this list drops 10: both 
 
 | Date | Change | Reason |
 |---|---|---|
+| 2026-11-01 | `senior` and `sr` removed | The operator's decision of 2026-10-16 (ADR-0032): Senior no longer drops by itself; a posting asking more years than he takes is dropped by the description's years instead (ADR-0058), and one with no description is flagged in `Jobs` (`No description`). Effective with Measure A's window, ADR-0063 |
 | 2026-09-17 | Version 1 created | Decided by the operator: keep roles a fresh graduate can reach, drop senior-level titles. `ii` and `iii` excluded after the evidence check above; `architect` deliberately kept; `iv` added as the next level up |
