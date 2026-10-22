@@ -5353,5 +5353,35 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "lever:87c0c5a8-6591-4990-b734-de772bcb8a1f",
+  "source": "lever",
+  "board_id": "lever:spreetail",
+  "external_id": "87c0c5a8-6591-4990-b734-de772bcb8a1f",
+  "employer": "Spreetail",
+  "employer_provenance": "slug",
+  "title": "Warehouse Team Member, $21/hr",
+  "title_normalised": "Warehouse Team Member, $21/hr",
+  "location": "Nanticoke, PA",
+  "published_at": "2026-10-21T22:03:29.553000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-10-22T03:33:41.689771Z",
+  "ordering_date": "2026-10-21T22:03:29.553000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/spreetail/87c0c5a8-6591-4990-b734-de772bcb8a1f",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "US"
+  ],
+  "workplace": "onsite",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]
