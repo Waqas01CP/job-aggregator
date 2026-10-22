@@ -7773,5 +7773,38 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "ashby:e6924f60-c8cc-42b3-9d05-2442ec30e12d",
+  "source": "ashby",
+  "board_id": "ashby:elevenlabs",
+  "external_id": "e6924f60-c8cc-42b3-9d05-2442ec30e12d",
+  "employer": "ElevenLabs",
+  "employer_provenance": "slug",
+  "title": "Full-Stack Engineer (Frontend Leaning) - Studio",
+  "title_normalised": "Full-Stack Engineer (Frontend Leaning) - Studio",
+  "location": "Remote; United States; Poland; United Kingdom; Bulgaria",
+  "published_at": "2026-10-22T10:57:54.716000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-22T17:53:25.556184Z",
+  "ordering_date": "2026-10-22T10:57:54.716000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/elevenlabs/e6924f60-c8cc-42b3-9d05-2442ec30e12d",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "United States",
+   "Poland",
+   "United Kingdom",
+   "Bulgaria"
+  ],
+  "workplace": "Remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]
