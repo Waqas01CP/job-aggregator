@@ -5383,5 +5383,37 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "lever:fdf3544e-41ff-4eef-853c-10e8064a9b28",
+  "source": "lever",
+  "board_id": "lever:pingwind",
+  "external_id": "fdf3544e-41ff-4eef-853c-10e8064a9b28",
+  "employer": "PingWind",
+  "employer_provenance": "slug",
+  "title": "Senior Power Platform Developer",
+  "title_normalised": "Senior Power Platform Developer",
+  "location": "Quantico VA",
+  "published_at": "2026-09-01T20:42:41.289000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-10-23T17:46:53.725607Z",
+  "ordering_date": "2026-09-01T20:42:41.289000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/pingwind/fdf3544e-41ff-4eef-853c-10e8064a9b28",
+  "url_provenance": "payload",
+  "stated_experience": [
+   3
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "US"
+  ],
+  "workplace": "onsite",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]
