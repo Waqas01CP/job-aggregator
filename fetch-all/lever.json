@@ -5415,5 +5415,37 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "lever:e60931d5-eaeb-42e0-ac95-da094b22381a",
+  "source": "lever",
+  "board_id": "lever:spreetail",
+  "external_id": "e60931d5-eaeb-42e0-ac95-da094b22381a",
+  "employer": "Spreetail",
+  "employer_provenance": "slug",
+  "title": "Head of Enterprise FP&A",
+  "title_normalised": "Head of Enterprise FP&A",
+  "location": "Nebraska",
+  "published_at": "2026-10-23T21:40:31.349000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-10-24T03:32:32.659449Z",
+  "ordering_date": "2026-10-23T21:40:31.349000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/spreetail/e60931d5-eaeb-42e0-ac95-da094b22381a",
+  "url_provenance": "payload",
+  "stated_experience": [
+   8
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "US"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]
