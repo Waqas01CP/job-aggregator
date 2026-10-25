@@ -22111,5 +22111,37 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "ashby:63cec43b-4627-4494-b70d-cb7f8041a4b1",
+  "source": "ashby",
+  "board_id": "ashby:livekit",
+  "external_id": "63cec43b-4627-4494-b70d-cb7f8041a4b1",
+  "employer": "LiveKit",
+  "employer_provenance": "slug",
+  "title": "Solutions Architect",
+  "title_normalised": "Solutions Architect",
+  "location": "United Kingdom (Remote)",
+  "published_at": "2026-10-24T19:55:45.821000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-25T03:29:35.623518Z",
+  "ordering_date": "2026-10-24T19:55:45.821000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/livekit/63cec43b-4627-4494-b70d-cb7f8041a4b1",
+  "url_provenance": "payload",
+  "stated_experience": [
+   4
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "United Kingdom"
+  ],
+  "workplace": "Remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]
