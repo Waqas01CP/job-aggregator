@@ -22143,5 +22143,35 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "ashby:676e1368-caa0-4ce5-b8bb-b7234d9455d3",
+  "source": "ashby",
+  "board_id": "ashby:protege",
+  "external_id": "676e1368-caa0-4ce5-b8bb-b7234d9455d3",
+  "employer": "Protege",
+  "employer_provenance": "slug",
+  "title": "Human Data Project Lead",
+  "title_normalised": "Human Data Project Lead",
+  "location": "New York City, NY",
+  "published_at": "2026-10-25T23:20:29.047000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-26T03:31:37.633198Z",
+  "ordering_date": "2026-10-25T23:20:29.047000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/protege/676e1368-caa0-4ce5-b8bb-b7234d9455d3",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "United States"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]
