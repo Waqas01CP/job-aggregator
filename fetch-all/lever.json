@@ -5447,5 +5447,37 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "lever:4def245a-a9b9-4646-9cff-f50bd1fe499d",
+  "source": "lever",
+  "board_id": "lever:smart-working-solutions",
+  "external_id": "4def245a-a9b9-4646-9cff-f50bd1fe499d",
+  "employer": "Smart Working Solutions",
+  "employer_provenance": "slug",
+  "title": "GTM Engineer (Remote, Full Time) [HR220]",
+  "title_normalised": "GTM Engineer (Remote, Full Time) [HR220]",
+  "location": "India",
+  "published_at": "2026-10-26T06:20:03.403000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-10-26T19:04:50.580870Z",
+  "ordering_date": "2026-10-26T06:20:03.403000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/smart-working-solutions/4def245a-a9b9-4646-9cff-f50bd1fe499d",
+  "url_provenance": "payload",
+  "stated_experience": [
+   3
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "IN"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]
