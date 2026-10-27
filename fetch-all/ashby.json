@@ -22386,5 +22386,134 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "ashby:f3eb6138-ae3f-4c42-b5f9-b17fd6e95709",
+  "source": "ashby",
+  "board_id": "ashby:livekit",
+  "external_id": "f3eb6138-ae3f-4c42-b5f9-b17fd6e95709",
+  "employer": "LiveKit",
+  "employer_provenance": "slug",
+  "title": "Senior Technical Recruiter",
+  "title_normalised": "Senior Technical Recruiter",
+  "location": "United States (Remote); Canada (Remote)",
+  "published_at": "2026-10-26T23:13:16.467000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-27T03:57:29.582126Z",
+  "ordering_date": "2026-10-26T23:13:16.467000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/livekit/f3eb6138-ae3f-4c42-b5f9-b17fd6e95709",
+  "url_provenance": "payload",
+  "stated_experience": [
+   5
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "United States",
+   "Canada"
+  ],
+  "workplace": "Remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "ashby:8721a2c5-e7c3-42aa-a24e-18de13b09158",
+  "source": "ashby",
+  "board_id": "ashby:fal-ai",
+  "external_id": "8721a2c5-e7c3-42aa-a24e-18de13b09158",
+  "employer": "Fal",
+  "employer_provenance": "slug",
+  "title": "Capital Markets",
+  "title_normalised": "Capital Markets",
+  "location": "San Francisco",
+  "published_at": "2026-10-26T20:52:34.599000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-27T03:57:29.582126Z",
+  "ordering_date": "2026-10-26T20:52:34.599000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/fal-ai/8721a2c5-e7c3-42aa-a24e-18de13b09158",
+  "url_provenance": "payload",
+  "stated_experience": [
+   5
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "United States"
+  ],
+  "workplace": "OnSite",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "ashby:6ad91c40-efc6-4b53-8a4d-45728563abbb",
+  "source": "ashby",
+  "board_id": "ashby:protege",
+  "external_id": "6ad91c40-efc6-4b53-8a4d-45728563abbb",
+  "employer": "Protege",
+  "employer_provenance": "slug",
+  "title": "Technical Project Lead, Data Privacy",
+  "title_normalised": "Technical Project Lead, Data Privacy",
+  "location": "New York City, NY",
+  "published_at": "2026-10-26T23:46:05.995000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-27T03:57:29.582126Z",
+  "ordering_date": "2026-10-26T23:46:05.995000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/protege/6ad91c40-efc6-4b53-8a4d-45728563abbb",
+  "url_provenance": "payload",
+  "stated_experience": [
+   2
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "United States"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "ashby:f2acca9e-3d32-486f-9111-0051f9ce0553",
+  "source": "ashby",
+  "board_id": "ashby:socket",
+  "external_id": "f2acca9e-3d32-486f-9111-0051f9ce0553",
+  "employer": "Socket.dev",
+  "employer_provenance": "slug",
+  "title": "Manager, Sales Engineering",
+  "title_normalised": "Manager, Sales Engineering",
+  "location": "United States",
+  "published_at": "2026-10-26T23:36:08.076000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-27T03:57:29.582126Z",
+  "ordering_date": "2026-10-26T23:36:08.076000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/socket/f2acca9e-3d32-486f-9111-0051f9ce0553",
+  "url_provenance": "payload",
+  "stated_experience": [
+   7
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "United States"
+  ],
+  "workplace": "Remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": "recruiter"
  }
 ]

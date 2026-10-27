@@ -21437,5 +21437,35 @@
   "described_workplace": "on site",
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "manatal:3243959",
+  "source": "manatal",
+  "board_id": "manatal:wadic-2",
+  "external_id": "3243959",
+  "employer": "Wadic",
+  "employer_provenance": "slug",
+  "title": "2D/3D Architectural CAD Draftsman",
+  "title_normalised": "2D/3D Architectural CAD Draftsman",
+  "location": "Lahore, Pakistan",
+  "published_at": null,
+  "published_field": null,
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-27T03:57:29.582126Z",
+  "ordering_date": "2026-10-27T03:57:29.582126Z",
+  "ordering_date_source": "first_seen",
+  "url": "https://www.careers-page.com/wadic-2/job/9339747Y",
+  "url_provenance": "constructed",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "Pakistan"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]

@@ -5479,5 +5479,67 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "lever:380d3712-b11c-4e30-b87c-80779ac9f40f",
+  "source": "lever",
+  "board_id": "lever:spreetail",
+  "external_id": "380d3712-b11c-4e30-b87c-80779ac9f40f",
+  "employer": "Spreetail",
+  "employer_provenance": "slug",
+  "title": "Channels Performance Specialist",
+  "title_normalised": "Channels Performance Specialist",
+  "location": "Manila",
+  "published_at": "2026-10-26T21:19:17.386000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-10-27T03:57:29.582126Z",
+  "ordering_date": "2026-10-26T21:19:17.386000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/spreetail/380d3712-b11c-4e30-b87c-80779ac9f40f",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "PH"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "lever:956e97e7-8c0a-4500-8e2e-1ca97e0e2f67",
+  "source": "lever",
+  "board_id": "lever:spreetail",
+  "external_id": "956e97e7-8c0a-4500-8e2e-1ca97e0e2f67",
+  "employer": "Spreetail",
+  "employer_provenance": "slug",
+  "title": "Software Engineer-II",
+  "title_normalised": "Software Engineer-II",
+  "location": "India",
+  "published_at": "2026-10-23T09:13:10.081000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-10-27T03:57:29.582126Z",
+  "ordering_date": "2026-10-23T09:13:10.081000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/spreetail/956e97e7-8c0a-4500-8e2e-1ca97e0e2f67",
+  "url_provenance": "payload",
+  "stated_experience": [
+   3
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "IN"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]
