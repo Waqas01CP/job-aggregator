@@ -5541,5 +5541,37 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "lever:2bf7de6f-7f5e-4004-b440-3604ad2a4112",
+  "source": "lever",
+  "board_id": "lever:pingwind",
+  "external_id": "2bf7de6f-7f5e-4004-b440-3604ad2a4112",
+  "employer": "PingWind",
+  "employer_provenance": "slug",
+  "title": "Processing, Exploitation, and Dissemination (PED) Subject Matter Expert (SME)",
+  "title_normalised": "Processing, Exploitation, and Dissemination (PED) Subject Matter Expert (SME)",
+  "location": "Fort Belvoir",
+  "published_at": "2026-10-27T13:44:27.974000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-10-27T18:36:24.078199Z",
+  "ordering_date": "2026-10-27T13:44:27.974000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/pingwind/2bf7de6f-7f5e-4004-b440-3604ad2a4112",
+  "url_provenance": "payload",
+  "stated_experience": [
+   5
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "US"
+  ],
+  "workplace": "onsite",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]
