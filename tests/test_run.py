@@ -2140,6 +2140,83 @@ class TestBudgetLine(unittest.TestCase):
         self.assertIsNone(self.line(800, 15)["warning"])
 
 
+class TestRecordsLine(unittest.TestCase):
+    """D3, the operator's approval of 2026-10-29 (Pakistan time): the base's
+    records counted from what each run knows, with no call of its own."""
+
+    CONFIG = run_module.load_sweep_config()
+
+    def morning(self, **sweep):
+        log = {"sweep": dict({"jobs_rows": 200, "deleted_from_jobs": 5,
+                              "table_rows": {"accepted": 40},
+                              "copied": {"accepted": 2, "rejected-not-a-fit": 3},
+                              "copies_deleted": {"accepted": 1}}, **sweep),
+               "projection": {"rows_in_base": 999}}
+        previous = {"records": {"tables": {"rejected-not-a-fit": 50,
+                                           "rejected-poor-filtering": 55,
+                                           "accepted": 70}, "health": 39}}
+        other = {"run_at": "2026-10-21T21:46:17Z", "records": {"own": 10}}
+        return run_module.records_line(log, previous, other, self.CONFIG)
+
+    def test_each_part_is_counted_as_this_run_knows_it(self):
+        """`Jobs` as read less the sweep's deletions; `accepted` as read this
+        run, not as last carried, with this run's copies and deletes; the
+        rejection tables carried from the last count with this run's copies;
+        `Health` carried; the test tables as their last run counted them.
+        Mutations: "the sweep's deletions are not taken from Jobs' count",
+        "a table not read this run is forgotten", "the copies made this run
+        are not counted", "the other mode's tables are not counted"."""
+        b = self.morning()
+        self.assertEqual(b["tables"], {"jobs": 195, "accepted": 41, "rejected-not-a-fit": 53,
+                                       "rejected-poor-filtering": 55})
+        self.assertEqual((b["health"], b["own"], b["other_mode"], b["estimate"]),
+                         (39, 383, 10, 393))
+        self.assertEqual((b["unknown"], b["warning"]), ([], None))
+
+    def test_past_the_line_it_warns(self):
+        """Mutation: "the warning never fires"."""
+        config = run_module.load_sweep_config()
+        line = run_module.records_line(
+            {"sweep": {"jobs_rows": 900}}, {"records": {"health": 0}}, None, config)
+        self.assertIn("about 900 of its 1000", line["warning"])
+        self.assertIsNone(run_module.records_line(
+            {"sweep": {"jobs_rows": 849}}, {"records": {"health": 0}}, None, config)["warning"])
+
+    def test_the_first_count_seeds_health_and_names_what_it_has_not_read(self):
+        """No count before: `Health` is every row the logs record as sent,
+        and a table never read is named, never guessed as nought."""
+        seed = [{"health": {"sent": ["a", "b"]}}, {"health": {"sent": ["c"]}}, {}]
+        b = run_module.records_line({"sweep": {"jobs_rows": 10}}, None, None, self.CONFIG,
+                                    seed_logs=seed)
+        self.assertEqual((b["health"], b["own"]), (3, 13))
+        self.assertEqual(b["unknown"], ["accepted", "rejected-not-a-fit",
+                                        "rejected-poor-filtering"])
+
+    def test_the_rows_this_run_sends_are_added_after(self):
+        b = self.morning()
+        run_module.add_sent_health_rows(b, {"rows_sent": 2})
+        self.assertEqual((b["health"], b["own"], b["estimate"]), (41, 385, 395))
+
+    def test_the_warning_is_one_health_row_a_month(self):
+        """Mutation: "the warning is sent every run, not once a month"."""
+        from src import health
+        logs = [{"run_at": "2026-11-0%dT03:30:00Z" % d,
+                 "records": {"warning": "the base holds about 900"}} for d in (2, 3)]
+        rows = health.pending(logs, [], datetime(2026, 11, 3, 4, tzinfo=timezone.utc))
+        self.assertEqual([r["Key"] for r in rows], ["records 2026-11"])
+
+    def test_a_warning_at_or_past_the_limit_is_refused(self):
+        """Mutation: "a warning past the limit is accepted"."""
+        from src.config import SWEEP_PATH, ConfigError
+        with open(SWEEP_PATH, encoding="utf-8") as f:
+            doc = json.load(f)
+        path = os.path.join(tempfile.mkdtemp(), "sweep.json")
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(dict(doc, records_warning_at=1000), f)
+        with self.assertRaises(ConfigError):
+            run_module.load_sweep_config(path)
+
+
 class TestAttention(unittest.TestCase):
     def test_a_previous_log_that_is_not_an_object_never_raises(self):
         """attention() promises never to raise, because it runs before the

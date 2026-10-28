@@ -231,6 +231,9 @@ class SweepConfig:
     # ADR-0063: sources fetched and stored but not sent to `Jobs` while the
     # month's allowance cannot carry their rows.
     held_from_display: tuple = ()
+    # D3: the base's record count at which a run warns, under Airtable's
+    # limit of AIRTABLE_BASE_RECORDS.
+    records_warning_at: int = 850
 
 
 # The tables whose reason field the sweep may fill from `Reason`.
@@ -240,6 +243,10 @@ REASON_TABLES = ("rejected-not-a-fit", "rejected-poor-filtering")
 # Airtable's free plan: 1,000 calls a month per workspace. A ceiling above it
 # would guard nothing.
 AIRTABLE_MONTHLY_ALLOWANCE = 1000
+# And 1,000 records a base, every table counted, the test tables among them
+# ("Airtable plans", support, read 2026-10-28). What happens at the limit is
+# not stated, so the run warns short of it (D3).
+AIRTABLE_BASE_RECORDS = 1000
 
 
 def load_sweep_config(path=None):
@@ -300,8 +307,13 @@ def load_sweep_config(path=None):
     if not isinstance(held, list) or not all(isinstance(s, str) and s in PLATFORMS for s in held):
         raise ConfigError("sweep config: sources_held_from_display must be a list of sources "
                           "this build adapts, got %r" % (held,))
+    records_at = whole("records_warning_at", 1)
+    if records_at >= AIRTABLE_BASE_RECORDS:
+        raise ConfigError("sweep config: records_warning_at (%d) must be below the base's limit "
+                          "of %d records, or the warning comes too late"
+                          % (records_at, AIRTABLE_BASE_RECORDS))
     return SweepConfig(monthly_call_ceiling=ceiling, description_fields_shown=shown,
-                       held_from_display=tuple(held),
+                       held_from_display=tuple(held), records_warning_at=records_at,
                        reason_choices={t: tuple(v) for t, v in choices.items()},
                        closed_after_polled_runs=runs,
                        retire_after_days=whole("retire_after_days", 1),

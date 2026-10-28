@@ -1,0 +1,44 @@
+[
+ {
+  "label": "the sweep's deletions are not taken from Jobs' count",
+  "path": "src/run.py",
+  "find": "tables[\"jobs\"] = max(int(jobs) - int(sweep.get(\"deleted_from_jobs\") or 0), 0)",
+  "replace": "tables[\"jobs\"] = max(int(jobs), 0)"
+ },
+ {
+  "label": "a table not read this run is forgotten",
+  "path": "src/run.py",
+  "find": "        base = read.get(t, tables.get(t))\n",
+  "replace": "        base = read.get(t)\n"
+ },
+ {
+  "label": "the copies made this run are not counted",
+  "path": "src/run.py",
+  "find": "        made = int((sweep.get(\"copied\") or {}).get(t) or 0)\n",
+  "replace": "        made = 0\n"
+ },
+ {
+  "label": "the other mode's tables are not counted",
+  "path": "src/run.py",
+  "find": "    estimate = own + int(other_own or 0)\n",
+  "replace": "    estimate = own\n"
+ },
+ {
+  "label": "the warning never fires",
+  "path": "src/run.py",
+  "find": "    if estimate >= config.records_warning_at:\n",
+  "replace": "    if False:\n"
+ },
+ {
+  "label": "the warning is sent every run, not once a month",
+  "path": "src/health.py",
+  "find": "\"records %s\" % str(when)[:7]",
+  "replace": "\"records %s\" % when"
+ },
+ {
+  "label": "a warning past the limit is accepted",
+  "path": "src/config.py",
+  "find": "    if records_at >= AIRTABLE_BASE_RECORDS:\n",
+  "replace": "    if False:\n"
+ }
+]

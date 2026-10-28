@@ -275,7 +275,7 @@ class Sweep:
                        "waiting_for_the_store": 0, "held_private_unavailable": 0,
                        "not_in_the_stored_layers": 0, "kept_after_a_clear": 0,
                        "aged_out": 0, "gone_recorded": 0, "transcribed": {},
-                       "removals": [], "problems": []}
+                       "table_rows": {}, "removals": [], "problems": []}
         self._load_rows()
 
     # ------------------------------------------------------------- the data
@@ -347,6 +347,9 @@ class Sweep:
             # `accepted` every morning, for `Delete` and a `Stage` of gone.
             if read_rejections or (daily and t == "accepted"):
                 copies[t] = self.client.list_records(t, READ_FIELDS[t])
+                # D3: what the table held as read, before this run's copies
+                # and deletes, which the run log counts apart.
+                self.report["table_rows"][t] = len(copies[t])
         self.copy_index = {t: {} for t in CLASSIFICATION_TABLES}
         for t in CLASSIFICATION_TABLES:
             for c in copies[t]:

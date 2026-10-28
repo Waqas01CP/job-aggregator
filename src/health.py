@@ -107,6 +107,12 @@ def run_events(log):
         text = failure(log)
         if text:
             out.append(row(when, FETCH, part, "failed", text, "run %s %s" % (when, part)))
+    # D3: the base near Airtable's 1,000 records. One row a month, keyed by
+    # the month, so a count past the line each morning costs one call, once.
+    warning = (log.get("records") or {}).get("warning")
+    if warning:
+        out.append(row(when, FETCH, "records", "warning", warning,
+                       "records %s" % str(when)[:7]))
     return out
 
 

@@ -52,7 +52,7 @@ import traceback
 from datetime import datetime, timedelta, timezone
 
 from . import clearing, envfile, facts, private_store, projection, storage
-from .airtable_sweep import JOBS, SweepClient, TABLE_SECRETS
+from .airtable_sweep import CLASSIFICATION_TABLES, JOBS, SweepClient, TABLE_SECRETS
 from .closure import Closure, covered as walk_covered
 from .sweep import JOBS_FIELDS, Sweep, older_than
 from .adapters import (ashby, greenhouse, hackernews, hasjob, himalayas, hnjobs, jobicy, lever,
@@ -64,7 +64,8 @@ from .airtable import (BASE_ENV, CALL_LOG_KEYS, HEALTH_LOG_KEY, HEALTH_TABLE_ENV
                        TOKEN_ENV, AirtableClient, month_to_date, pipeline_fields)
 from .contract import LOG_DIR as CONTRACT_LOG_DIR
 from .backfill import backfill
-from .config import ConfigError, is_publishable, load_boards, load_sweep_config
+from .config import (AIRTABLE_BASE_RECORDS, ConfigError, is_publishable, load_boards,
+                     load_sweep_config)
 from .dedupe import counts as dedupe_counts
 from .dedupe import group, split_new
 from .filters import (ELIGIBILITY, FilterError, TitleMatcher, apply_chain, drop_counts,
@@ -722,6 +723,92 @@ def budget_line(run_log, by_branch, config, now):
                             % (spent, allowance, round(config.budget_warning_share * 100),
                                config.budget_warning_before_day))
     return block
+
+
+# D3: how far back a run looks for the Health rows already sent, the first
+# time it counts the base's records with no count of its own before it. Every
+# production run log since go-live is about a hundred.
+RECORDS_SEED_LOGS = 2000
+
+
+def records_line(run_log, previous, other, config, seed_logs=()):
+    """D3, the operator's approval of 2026-10-29 (Pakistan time): the base's
+    records as this run knows them, with no call of its own, and a warning at
+    `records_warning_at`. Airtable's free plan holds 1,000 records a base and
+    says nothing of what happens at the limit.
+
+    - `Jobs`: as this run read it, less the rows its sweep deleted.
+    - Each classification table: as read this run, or as the last count
+      carried it, plus the copies made and less those deleted this run.
+    - `Health`: the last count, the first time every row the logs record as
+      sent (`seed_logs`). The rows this run sends are added once they are
+      sent (`count_records`), since the warning must go out with them.
+    - The other mode's tables, the test tables for a production run: its last
+      run's own count, with its date.
+
+    Rows deleted by hand are not seen, which can only make it high. A table
+    never yet read is named in `unknown` and left out rather than guessed,
+    which can make it low until a morning has read it; mornings read the
+    copy tables, so that is one day. `previous` and `other` are the last run
+    logs of this mode and the other."""
+    prev = (previous or {}).get("records") or {}
+    tables = dict(prev.get("tables") or {})
+    sweep = run_log.get("sweep") or {}
+    jobs = sweep.get("jobs_rows")
+    if jobs is None:
+        jobs = (run_log.get("projection") or {}).get("rows_in_base")
+    if jobs is not None:
+        tables["jobs"] = max(int(jobs) - int(sweep.get("deleted_from_jobs") or 0), 0)
+    read = sweep.get("table_rows") or {}
+    for t in CLASSIFICATION_TABLES:
+        base = read.get(t, tables.get(t))
+        if base is None:
+            continue
+        made = int((sweep.get("copied") or {}).get(t) or 0)
+        gone = sum(int((sweep.get(key) or {}).get(t) or 0)
+                   for key in ("copies_deleted", "stale_copies_deleted"))
+        tables[t] = max(int(base) + made - gone, 0)
+    health = prev.get("health")
+    if health is None:
+        health = sum(len((log.get(HEALTH_LOG_KEY) or {}).get("sent") or []) for log in seed_logs)
+    health = int(health)
+    own = sum(tables.values()) + health
+    other_records = (other or {}).get("records") or {}
+    other_own = other_records.get("own")
+    estimate = own + int(other_own or 0)
+    unknown = sorted({"jobs", *CLASSIFICATION_TABLES} - set(tables))
+    block = {"tables": tables, "health": health, "own": own,
+             "other_mode": other_own, "other_mode_counted_at": (other or {}).get("run_at")
+             if other_own is not None else None,
+             "estimate": estimate, "unknown": unknown,
+             "limit": AIRTABLE_BASE_RECORDS, "warning": None}
+    if estimate >= config.records_warning_at:
+        block["warning"] = ("the base holds about %d of its %d records by this run's count, past "
+                            "%d; rows deleted by hand are not seen, so it may be fewer"
+                            % (estimate, AIRTABLE_BASE_RECORDS, config.records_warning_at))
+    return block
+
+
+def count_records(run_log, test_mode, config):
+    """`records_line` over the branches' last run logs, the seed read only
+    when this mode has never counted. A count that cannot be made never costs
+    the fetch: the failure is named and the run goes on."""
+    try:
+        previous = (storage.read_recent_run_logs(1, test_mode) or [None])[-1]
+        other = (storage.read_recent_run_logs(1, not test_mode) or [None])[-1]
+        seed = () if ((previous or {}).get("records") or {}).get("health") is not None else \
+            storage.read_recent_run_logs(RECORDS_SEED_LOGS, test_mode)
+        return records_line(run_log, previous, other, config, seed_logs=seed)
+    except Exception as e:
+        return {"failure": redact_secrets("%s: %s" % (type(e).__name__, e)), "warning": None}
+
+
+def add_sent_health_rows(records, health_block):
+    """The `Health` rows this run sent, added to the count after they were."""
+    sent = int((health_block or {}).get("rows_sent") or 0)
+    if sent and "own" in records:
+        for key in ("health", "own", "estimate"):
+            records[key] += sent
 
 
 class Run:
@@ -1481,6 +1568,10 @@ def main(argv=None):
         private_failure = private_block["failure"]
     if store is not None:
         store.close()
+    # D3: the base's records, counted before the health rows are written so
+    # a warning goes out with them.
+    if not args.no_commit and count_failure is None:
+        run_log["records"] = count_records(run_log, test_mode, sweep_config)
     # Last of the writes to Airtable, so every failure of this run is known.
     if count_failure is None:
         run_log[HEALTH_LOG_KEY] = write_health(
@@ -1488,6 +1579,10 @@ def main(argv=None):
             used_before=sum(by_branch.values())
             + sum(int((run_log.get(k) or {}).get("calls_used") or 0)
                   for k in CALL_LOG_KEYS if k != HEALTH_LOG_KEY))
+    if "records" in run_log:
+        add_sent_health_rows(run_log["records"], run_log.get(HEALTH_LOG_KEY))
+        if run_log["records"].get("warning"):
+            print("::warning::%s" % run_log["records"]["warning"])
     if not args.no_commit and count_failure is not None:
         run_log["budget"] = {"month_to_date": None, "warning": None, "failure": count_failure}
     elif not args.no_commit:

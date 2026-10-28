@@ -23,5 +23,7 @@
   "monthly_call_ceiling_note": "ADR-0062: the pipeline refuses any Airtable call that would take its own month's count to this figure. Airtable's limit is the workspace's 1,000, which the chats' connector calls also spend and the pipeline cannot see, so the hundred between is theirs. Reaching it stops the projection and the sweep, each run exiting 2, and leaves the fetch and its stores untouched; the display catches up when the month resets. The operator's decision of 2026-10-16: '900 for now'. What he watches is the workspace's Usage count.",
   "budget_warning_share": 0.6,
   "budget_warning_before_day": 15,
-  "budget_warning_note": "Say so loudly when the month's Airtable calls pass this share of the allowance before this day of the month. ADR-0050's guard; ADR-0004 says why the warning must be ours."
+  "budget_warning_note": "Say so loudly when the month's Airtable calls pass this share of the allowance before this day of the month. ADR-0050's guard; ADR-0004 says why the warning must be ours.",
+  "records_warning_at": 850,
+  "records_warning_at_note": "D3, the operator's approval of 2026-10-29 (Pakistan time): Airtable's free plan holds at most 1,000 records a base, every table counted, the test tables among them, and says nothing of what happens at the limit. Each run counts the records it knows of, with no call of its own, and at this figure warns in the workflow and, once a month, with a Health row. Rows deleted by hand are not seen, which makes it high; a table not yet read is named as unknown and left out until a morning reads it."
 }
