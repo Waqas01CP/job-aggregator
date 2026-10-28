@@ -132,6 +132,64 @@ class CallBudgetExhausted(HttpError):
         self.used = used
 
 
+# Airtable's answer once the workspace's monthly allowance is spent: a 429,
+# like the per-second limit's, told apart only by the error's type, a code in
+# the answer's body ("Airtable API common troubleshooting", support, read
+# 2026-10-28). On the free plan every call then answers it until the month
+# resets, after a one-time grace period ("Managing API call limits in
+# Airtable"), so a retry can only spend the run's time. The type is compared
+# whole, as a status code is, never searched for in a message.
+ALLOWANCE_SPENT_ERROR = "PUBLIC_API_BILLING_LIMIT_EXCEEDED"
+
+
+def error_type(response):
+    """The error's type from an Airtable answer, or None. Airtable answers
+    `{"error": {"type": ..., "message": ...}}`, or `{"error": "<TYPE>"}`
+    for some errors; anything else, or a body that is not JSON, is None."""
+    try:
+        body = response.json()
+    except Exception:
+        return None
+    error = body.get("error") if isinstance(body, dict) else None
+    if isinstance(error, dict):
+        error = error.get("type")
+    return error if isinstance(error, str) else None
+
+
+class AllowanceSpent(CallBudgetExhausted):
+    """Airtable says the workspace's monthly calls are spent. The pipeline's
+    own ceiling is a guard short of that; this is the workspace's count, the
+    chats' connector calls included. Handled as the ceiling is: nothing more
+    is sent this run, the fetch is committed, the display catches up when the
+    month resets (ADR-0062)."""
+
+    def __init__(self):
+        HttpError.__init__(self, "Airtable answered %s: the workspace's monthly API calls "
+                                 "are spent, so nothing more is sent until the month "
+                                 "resets" % ALLOWANCE_SPENT_ERROR)
+        self.ceiling = None
+        self.used = None
+
+
+class AllowanceStop:
+    """For each Airtable client: stop at the first answer saying the month's
+    allowance is spent, and refuse every call after it without a request.
+    Mixed in ahead of ResilientClient, whose `_stops` it overrides."""
+
+    allowance_spent = False
+
+    def _stops(self, response, status):
+        if status == 429 and error_type(response) == ALLOWANCE_SPENT_ERROR:
+            self.allowance_spent = True
+            return AllowanceSpent()
+        return None
+
+    def _refuse_if_spent(self):
+        if self.allowance_spent:
+            self.refused += 1
+            raise AllowanceSpent()
+
+
 class ResponseMismatch(HttpError):
     """Airtable answered 2xx and the answer does not account for what was
     sent. Matched by key, never by position."""
@@ -175,7 +233,7 @@ def _batches(items, size):
         yield items[start:start + size]
 
 
-class AirtableClient(ResilientClient):
+class AirtableClient(AllowanceStop, ResilientClient):
     def __init__(self, token, base_id, table_id,
                  monthly_ceiling=DEFAULT_MONTHLY_CALLS, used_this_month=0,
                  max_attempts=DEFAULT_MAX_ATTEMPTS,
@@ -297,6 +355,7 @@ class AirtableClient(ResilientClient):
 
     # ------------------------------------------------------------ internals
     def _spend(self, operation):
+        self._refuse_if_spent()
         if self.used_before + self.calls_used >= self.monthly_ceiling:
             self.refused += 1
             raise CallBudgetExhausted(self.monthly_ceiling,

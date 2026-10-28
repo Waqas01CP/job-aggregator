@@ -1,0 +1,32 @@
+[
+ {
+  "label": "the allowance spent is retried like a rate limit",
+  "path": "src/resilience.py",
+  "find": "            stop = self._stops(response, status)\n            if stop is not None:\n                self._record_failure(label)\n                raise stop\n",
+  "replace": ""
+ },
+ {
+  "label": "a call after the allowance is spent still reaches the wire",
+  "path": "src/airtable.py",
+  "find": "    def _refuse_if_spent(self):\n        if self.allowance_spent:",
+  "replace": "    def _refuse_if_spent(self):\n        if False:"
+ },
+ {
+  "label": "the allowance's type is searched for in the answer",
+  "path": "src/airtable.py",
+  "find": "if status == 429 and error_type(response) == ALLOWANCE_SPENT_ERROR:",
+  "replace": "if status == 429 and ALLOWANCE_SPENT_ERROR in str(response.json()):"
+ },
+ {
+  "label": "any status carries the allowance",
+  "path": "src/airtable.py",
+  "find": "if status == 429 and error_type(response) == ALLOWANCE_SPENT_ERROR:",
+  "replace": "if error_type(response) == ALLOWANCE_SPENT_ERROR:"
+ },
+ {
+  "label": "the sweep's client retries the allowance spent",
+  "path": "src/airtable_sweep.py",
+  "find": "class SweepClient(AllowanceStop, ResilientClient):",
+  "replace": "class SweepClient(ResilientClient):"
+ }
+]

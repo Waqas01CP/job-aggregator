@@ -43,8 +43,8 @@ import requests
 from .airtable import (API_ROOT, BASE_ENV, BATCH_SIZE, DEFAULT_BACKOFF_BASE, SWEEP_LOG_KEY,
                        DEFAULT_BREAKER_THRESHOLD, DEFAULT_MAX_ATTEMPTS, DEFAULT_MONTHLY_CALLS,
                        DEFAULT_TIMEOUT, MIN_INTERVAL, RATE_LIMIT_WAIT, TABLE_ENV,
-                       TEST_TABLE_ENV, TOKEN_ENV, AirtableConfigError, CallBudgetExhausted,
-                       ResponseMismatch, TransportFailure)
+                       TEST_TABLE_ENV, TOKEN_ENV, AirtableConfigError, AllowanceStop,
+                       CallBudgetExhausted, ResponseMismatch, TransportFailure)
 from .resilience import PermanentError, ResilientClient
 
 JOBS = "jobs"
@@ -117,7 +117,7 @@ PAGE_SIZE = 100
 RUN_LOG_KEY = SWEEP_LOG_KEY
 
 
-class SweepClient(ResilientClient):
+class SweepClient(AllowanceStop, ResilientClient):
     def __init__(self, token, base_id, tables, monthly_ceiling=DEFAULT_MONTHLY_CALLS,
                  used_this_month=0, max_attempts=DEFAULT_MAX_ATTEMPTS,
                  backoff_base=DEFAULT_BACKOFF_BASE, timeout=DEFAULT_TIMEOUT,
@@ -199,6 +199,7 @@ class SweepClient(ResilientClient):
 
     # ------------------------------------------------------------ internals
     def _spend(self, operation):
+        self._refuse_if_spent()
         if self.used_before + self.calls_used >= self.monthly_ceiling:
             self.refused += 1
             raise CallBudgetExhausted(self.monthly_ceiling, self.used_before + self.calls_used)

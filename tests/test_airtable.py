@@ -19,9 +19,9 @@ from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from src.airtable import (API_ROOT, PIPELINE_FIELDS, AirtableClient,
-                          AirtableConfigError, CallBudgetExhausted, ResponseMismatch,
-                          month_to_date)
+from src.airtable import (ALLOWANCE_SPENT_ERROR, API_ROOT, PIPELINE_FIELDS, AirtableClient,
+                          AirtableConfigError, AllowanceSpent, CallBudgetExhausted,
+                          ResponseMismatch, month_to_date)
 from src.resilience import CircuitOpen, PermanentError, TransientError
 
 SRC = Path(__file__).resolve().parent.parent / "src"
@@ -393,6 +393,58 @@ class TestMonthlyBudget(unittest.TestCase):
         self.assertEqual(len(c._session.calls), 2)
         self.assertEqual(c.refused, 1)
         self.assertEqual(c.month_remaining, 0)
+
+    def test_the_workspace_allowance_spent_stops_at_once(self):
+        """Airtable's 429 with the type PUBLIC_API_BILLING_LIMIT_EXCEEDED
+        means the workspace's month is spent: every call answers it until the
+        month resets, so the client stops after the one attempt, waits for
+        nothing, and refuses every call after it without a request. It is a
+        CallBudgetExhausted, so the run handles it as the ceiling. Mutations:
+        "the allowance spent is retried like a rate limit", "a call after the
+        allowance is spent still reaches the wire"."""
+        spent = FakeResponse(429, {"error": {"type": ALLOWANCE_SPENT_ERROR,
+                                             "message": "billing limit"}})
+        c = client([spent, echo, echo])
+        with self.assertRaises(AllowanceSpent) as caught:
+            c.upsert(rows(1))
+        self.assertIsInstance(caught.exception, CallBudgetExhausted)
+        self.assertEqual((c.calls_used, c.slept, len(c._session.calls)), (1, [], 1))
+        with self.assertRaises(AllowanceSpent):
+            c.upsert(rows(1))
+        self.assertEqual(len(c._session.calls), 1, "a call after the month was spent was sent")
+        self.assertEqual(c.refused, 1)
+
+    def test_the_allowance_type_as_a_bare_string_is_read_too(self):
+        """Some Airtable errors answer `{"error": "<TYPE>"}`."""
+        c = client([FakeResponse(429, {"error": ALLOWANCE_SPENT_ERROR}), echo])
+        with self.assertRaises(AllowanceSpent):
+            c.upsert(rows(1))
+        self.assertEqual(c.calls_used, 1)
+
+    def test_the_type_is_compared_whole_never_searched_in_a_message(self):
+        """The cases built to defeat the check. A per-second 429 whose message
+        happens to name the billing code, a type that only contains it, and
+        a 429 with no body are each a rate limit, waited out and retried.
+        CLAUDE.md: errors are classified on codes, never on a message's
+        words. Mutation: "the allowance's type is searched for in the answer"."""
+        for body in ({"error": {"type": "TOO_MANY_REQUESTS",
+                                "message": "not %s" % ALLOWANCE_SPENT_ERROR}},
+                     {"error": {"type": "X_%s" % ALLOWANCE_SPENT_ERROR}},
+                     None):
+            with self.subTest(body=body):
+                c = client([FakeResponse(429, body), echo])
+                c.upsert(rows(1))
+                self.assertEqual((c.calls_used, c.slept), (2, [30.0]))
+
+    def test_only_a_429_carries_the_allowance(self):
+        """The same type on another status is that status's error: a 422 is
+        refused as permanent, as before, and does not stop the month.
+        Mutation: "any status carries the allowance"."""
+        c = client([FakeResponse(422, {"error": {"type": ALLOWANCE_SPENT_ERROR}}), echo])
+        with self.assertRaises(PermanentError):
+            c.upsert(rows(1))
+        self.assertFalse(c.allowance_spent)
+        c.upsert(rows(1))
 
     def test_retries_count_against_the_month(self):
         c = client([FakeResponse(503), FakeResponse(503), echo])

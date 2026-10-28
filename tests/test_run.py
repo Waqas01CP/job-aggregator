@@ -1830,6 +1830,46 @@ class TestTheCeiling(unittest.TestCase):
             json.dump(dict(doc, description_fields_shown=True), f)
         self.assertIs(load_sweep_config(path).description_fields_shown, True)
 
+    def test_the_workspace_allowance_spent_stops_the_display_and_keeps_the_fetch(self):
+        """Airtable's own month spent, though the pipeline's count is under its
+        ceiling, as when the chats' connector calls took the rest: each
+        client stops at its first answer, waits for nothing, and the run
+        exits 2 with the fetch stored, as at the ceiling. Mutation: "the
+        allowance spent is retried like a rate limit"."""
+        from src.airtable import ALLOWANCE_SPENT_ERROR
+
+        class Spent:
+            def __init__(self):
+                self.calls = []
+
+            def request(self, method, url, **kw):
+                self.calls.append(method)
+                return Response(429, {"error": {"type": ALLOWANCE_SPENT_ERROR}})
+        spent = Spent()
+        slept = []
+
+        def airtable(test_mode, used_this_month):
+            return AirtableClient("patFAKE.0000", "appFAKEBASE000001", "tblJOBSFAKE000001",
+                                  session=spent, min_interval=0, sleep=slept.append,
+                                  used_this_month=used_this_month)
+
+        def sweep(test_mode, used_this_month):
+            tables = {JOBS: "tblJOBSFAKE000001"}
+            tables.update({t: "tblCOPY%s" % str(i).zfill(10)
+                           for i, t in enumerate(CLASSIFICATION_TABLES)})
+            return SweepClient("patFAKE.0000", "appFAKEBASE000001", tables, session=spent,
+                               min_interval=0, sleep=slept.append,
+                               used_this_month=used_this_month)
+        run_module.make_airtable_client = airtable
+        run_module.make_sweep_client = sweep
+        code, _, _ = self.main()
+        self.assertEqual(code, EXIT_STOPPED_RESUMABLE)
+        log = self.last_run_log()
+        self.assertIn("AllowanceSpent", log["airtable"]["failure"])
+        self.assertEqual(slept, [], "a spent month was waited out like a rate limit")
+        self.assertLessEqual(len(spent.calls), 2, "more than one attempt a client")
+        self.assertEqual(self.identities("data"), ["greenhouse:1000"], "the fetch was lost")
+
     def test_at_the_ceiling_the_display_stops_and_the_fetch_is_stored(self):
         """Every Airtable call refused, the month standing at the ceiling:
         the projection and the sweep fail and the run exits 2, and the fetch

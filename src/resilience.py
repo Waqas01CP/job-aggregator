@@ -195,6 +195,13 @@ class ResilientClient:
     def _spend(self, label):
         raise NotImplementedError
 
+    def _stops(self, response, status):
+        """An exception to raise at once for this non-2xx answer, retrying
+        nothing, or None to treat it by its status as usual. A client whose
+        service says, by a code in its answer, that no retry this run can
+        succeed overrides this; the loop itself knows no service."""
+        return None
+
     def _record_success(self, label=None):
         self._breaker_for(label).record_success()
 
@@ -244,6 +251,11 @@ class ResilientClient:
             if 200 <= status < 300:
                 self._record_success(label)
                 return response
+
+            stop = self._stops(response, status)
+            if stop is not None:
+                self._record_failure(label)
+                raise stop
 
             if status not in RETRYABLE_STATUS:
                 self._record_failure(label)

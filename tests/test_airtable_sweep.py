@@ -9,7 +9,8 @@ import unittest
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from src.airtable import AirtableConfigError, CallBudgetExhausted, ResponseMismatch
+from src.airtable import (ALLOWANCE_SPENT_ERROR, AirtableConfigError, AllowanceSpent,
+                          CallBudgetExhausted, ResponseMismatch)
 from src.airtable_sweep import (CLASSIFICATION_TABLES, COPY_FIELDS, JOBS, TABLE_SECRETS,
                                 SweepClient)
 from src.resilience import HttpError, TransientError
@@ -263,6 +264,26 @@ class TestReadsAndWrites(unittest.TestCase):
         c.create_copies("accepted", [copy(1)])
         self.assertEqual(flaky.calls, ["POST", "POST"])
         self.assertEqual(len(base.rows(PROD["accepted"])), 1)
+
+    def test_the_workspace_allowance_spent_stops_the_sweep_at_once(self):
+        """The same as the projection's client: one attempt, no wait, and no
+        request after it. Mutation: "the sweep's client retries the
+        allowance spent"."""
+        class Spent:
+            calls = []
+
+            def request(self, method, url, **kw):
+                self.calls.append(method)
+                return Response(429, {"error": {"type": ALLOWANCE_SPENT_ERROR}})
+        spent = Spent()
+        slept = []
+        c = SweepClient("patFAKE.0000", BASE, PROD, session=spent, min_interval=0,
+                        sleep=slept.append)
+        with self.assertRaises(AllowanceSpent):
+            c.list_records(JOBS, ("Identity",))
+        with self.assertRaises(AllowanceSpent):
+            c.delete("accepted", ["rec%014d" % 1])
+        self.assertEqual((spent.calls, slept, c.calls_used, c.refused), (["GET"], [], 1, 1))
 
     def test_the_month_ceiling_refuses_without_sending(self):
         base = FakeBase({PROD[JOBS]})
