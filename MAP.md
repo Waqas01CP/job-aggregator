@@ -233,9 +233,10 @@ Grouped by topic, in the order the pipeline runs. A record appears under exactly
 
 | File | Holds | Status |
 | --- | --- | --- |
+| `docs/deferred/airtable-call-options.md` | The ways to spend fewer Airtable API calls, or fewer records, that were weighed on 2026-10-28 and not approved then: what each would do, what it would save, why it waited, and when to look again. The approved ones are being built; these are kept so none has to be rediscovered. | current |
 | `docs/deferred/employer-alias-map.md` | Deduplicating one role that arrives from two source classes, which needs an employer alias map. Deferred while one instance exists; revisit at the second or third, or when an accepted row turns out to have a twin. | current |
 | `docs/deferred/response-quality.md` | Recording what happened after he applied (a reply, an interview, a rejection, an offer), so that sources can one day be judged by how employers respond. Deferred until the operator has used the classification tables for long enough and decides to start. | current |
 | `docs/deferred/rozee-pk.md` | Adding Rozee.pk as a source. Out of automated use since 2026-10-04 (2026-10-03 UTC), because its privacy policy prohibits networked use of its material; revisiting needs that to change first. | current |
 | `docs/deferred/similarity-matching.md` | Ranking postings by similarity to accepted roles. Deferred because ADR-0010 forbids it and the deterministic star was built instead; revisit when the accepted store holds fifty rows or when the operator stops reading every row. | current |
 
-Files listed: 133
+Files listed: 134
