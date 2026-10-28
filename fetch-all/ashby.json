@@ -22931,5 +22931,37 @@
   "described_workplace": null,
   "described": true,
   "who_reads": "recruiter"
+ },
+ {
+  "identity": "ashby:da6f6da1-eabf-4647-ab1c-6e138b14a6fe",
+  "source": "ashby",
+  "board_id": "ashby:clickhouse",
+  "external_id": "da6f6da1-eabf-4647-ab1c-6e138b14a6fe",
+  "employer": "ClickHouse",
+  "employer_provenance": "slug",
+  "title": "Sr. Frontend Software Engineer - Growth",
+  "title_normalised": "Sr. Frontend Software Engineer - Growth",
+  "location": "United States",
+  "published_at": "2026-10-27T20:00:19.146000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-28T04:20:14.273996Z",
+  "ordering_date": "2026-10-27T20:00:19.146000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/clickhouse/da6f6da1-eabf-4647-ab1c-6e138b14a6fe",
+  "url_provenance": "payload",
+  "stated_experience": [
+   6
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "United States"
+  ],
+  "workplace": "Remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]

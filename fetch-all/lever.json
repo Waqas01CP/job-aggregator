@@ -5573,5 +5573,37 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "lever:2ce962c2-833c-4e62-a730-d6f741883cab",
+  "source": "lever",
+  "board_id": "lever:spreetail",
+  "external_id": "2ce962c2-833c-4e62-a730-d6f741883cab",
+  "employer": "Spreetail",
+  "employer_provenance": "slug",
+  "title": "Director of Human Resources Business Partners, Supply Chain",
+  "title_normalised": "Director of Human Resources Business Partners, Supply Chain",
+  "location": "Lincoln, NE",
+  "published_at": "2026-10-27T22:08:05.922000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-10-28T04:20:14.273996Z",
+  "ordering_date": "2026-10-27T22:08:05.922000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/spreetail/2ce962c2-833c-4e62-a730-d6f741883cab",
+  "url_provenance": "payload",
+  "stated_experience": [
+   8
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "US"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]
