@@ -5605,5 +5605,37 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "lever:9b1f2d7d-53bf-4add-bdd5-d0564ab6d8a3",
+  "source": "lever",
+  "board_id": "lever:spreetail",
+  "external_id": "9b1f2d7d-53bf-4add-bdd5-d0564ab6d8a3",
+  "employer": "Spreetail",
+  "employer_provenance": "slug",
+  "title": "Senior Benefits Analyst",
+  "title_normalised": "Senior Benefits Analyst",
+  "location": "Manila",
+  "published_at": "2026-10-28T14:56:55.996000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-10-28T18:42:08.851093Z",
+  "ordering_date": "2026-10-28T14:56:55.996000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/spreetail/9b1f2d7d-53bf-4add-bdd5-d0564ab6d8a3",
+  "url_provenance": "payload",
+  "stated_experience": [
+   5
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "PH"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]
