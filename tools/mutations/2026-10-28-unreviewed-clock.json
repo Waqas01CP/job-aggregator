@@ -1,0 +1,8 @@
+[
+ {
+  "label": "the unreviewed clock back at thirty days",
+  "path": "config/sweep.json",
+  "find": "\"unreviewed_after_days\": 21,",
+  "replace": "\"unreviewed_after_days\": 30,"
+ }
+]

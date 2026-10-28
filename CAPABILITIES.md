@@ -126,7 +126,7 @@ By his estimate, that took most of a working week. He usually found a posting th
 
       On a later run it reads the store back from the remote, and only then deletes the row from the display.
     - **The `accepted` table** keeps a row until he sets its `Delete` to yes, and every store is kept forever.
-    - **A row nobody marks** leaves thirty days after it was first seen, stored first as `unreviewed-aged-out` (ADR-0055).
+    - **A row nobody marks** leaves thirty days after it was first seen, stored first as `unreviewed-aged-out` (ADR-0055). *(21 days since 2026-10-28, the operator's decision, to spend fewer Airtable calls and records.)*
     - **What keeps a removed row out is its reason.** A row stored as closed, aged out or removed by the operator never returns. One a rule dropped returns if the rule is widened, because only the rules can change their mind (ADR-0043).
     - **Every removal is named in the run log** by identity. An aggregator's identity is masked there and named in its private store.
 12. **Writes a run log**:

@@ -23,7 +23,7 @@ with no classification there is nothing else to measure from.
 | `rejected-not-a-fit` | `Classified`, a `createdTime` field | **15 days** | The sweep deletes the row. Its outcome is already in the store |
 | `rejected-poor-filtering` | `Classified`, a `createdTime` field | **15 days** | The sweep deletes the row. Its outcome is already in the store |
 | `accepted` | none | never | Nothing, unless the operator sets `Delete`. See below |
-| `Jobs`, unreviewed | `First seen` | **30 days** | ADR-0055's clock, added 2026-09-30: the sweep writes the row to `outcomes/removed_unreviewed.json` with the reason `unreviewed-aged-out`, verifies the write on a later run, then deletes it. It never comes back. `unreviewed_after_days` in `config/sweep.json` |
+| `Jobs`, unreviewed | `First seen` | **21 days** *(30 until 2026-10-28)* | ADR-0055's clock, added 2026-09-30: the sweep writes the row to `outcomes/removed_unreviewed.json` with the reason `unreviewed-aged-out`, verifies the write on a later run, then deletes it. It never comes back. `unreviewed_after_days` in `config/sweep.json` |
 | `Jobs`, marked `gone` | none | **the next morning** | ADR-0062, 2026-10-16: the morning sweep writes the posting to `gone.json` with `Classified at`, his `Reason` and whether he had accepted it, and deletes the row at the first morning sweep after origin holds the record. It never comes back. A posting he had accepted is marked `gone` by `Stage` on its `accepted` copy instead; it is recorded the same way and the copy stays |
 
 **`accepted` is deleted by no clock.** Its rows are written to the accepted
@@ -178,6 +178,7 @@ changing one is a dated row there and here, never a code change.
 
 | Date | Change | Reason |
 |---|---|---|
+| 2026-10-28 | The unreviewed clock at 21 days, not 30 | The operator's approval of 2026-10-29 (Pakistan time) of the call options' C1: fewer rows in `Jobs`, so fewer pages to each read and fewer of the base's 1,000 records |
 | 2026-10-16 | `applied` stored as accepted; `Reason` kept beside the copy's reason; a row marked `gone` leaves the next morning, recorded in `gone.json` | ADR-0062, which consolidated ADR-0050 with the operator's three changes of 2026-10-16 |
 | 2026-10-01 | Four statements the file contradicted corrected: the clocks paragraph now names the first-seen clock, the sweep has run, a status change discards nothing (D12), and the numbers are read from `config/sweep.json`. The clearing tool removes only what its dry run listed | The fourth audit's F12 and F1 |
 | 2026-09-30 | ADR-0055's thirty-day clock for unreviewed rows and the operator's clearing tool added; the removal store is now read by reason | Brief 8. `Jobs` had no clock for a row nobody marked, the one unbounded quantity in the system, and rows deleted in the browser came back within about fourteen hours |

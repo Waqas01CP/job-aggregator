@@ -2217,6 +2217,15 @@ class TestRecordsLine(unittest.TestCase):
             run_module.load_sweep_config(path)
 
 
+class TestTheUnreviewedClock(unittest.TestCase):
+    def test_an_unreviewed_row_leaves_after_twenty_one_days(self):
+        """C1, the operator's approval of 2026-10-29 (Pakistan time): 21 days,
+        not ADR-0055's starting 30, so `Jobs` holds fewer rows to read and
+        fewer of the base's records. Mutation: "the unreviewed clock back at
+        thirty days"."""
+        self.assertEqual(run_module.load_sweep_config().unreviewed_after_days, 21)
+
+
 class TestAttention(unittest.TestCase):
     def test_a_previous_log_that_is_not_an_object_never_raises(self):
         """attention() promises never to raise, because it runs before the
