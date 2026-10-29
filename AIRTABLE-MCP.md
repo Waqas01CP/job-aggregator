@@ -63,16 +63,24 @@ The pipeline owns most fields and rewrites them every run. **A chat writes only 
 
 ## 3. What each connector tool costs
 
-Airtable's API reads one table per call, at most 100 records a page, and writes at most 10 records a call. The connector accepts more per tool call: up to 8,000 rows a read and 50 records a write. **Whether one connector call is counted as one API call, or as the pages and batches of 10 it stands for, is not stated anywhere read so far.** Section 6 says how to find out. Until then, plan on the cautious reading.
+Airtable's API reads one table per call, at most 100 records a page, and writes at most 10 records a call. The connector accepts more per tool call: up to 8,000 rows a read and 50 records a write. Airtable's pages do not say how a connector call is counted.
 
-| Tool | What it does | Calls, cautious reading |
+**Measured on 2026-10-29: a connector write of up to 50 records counts as about one call, not five.** Between his meter readings of 2026-10-28T10:26Z (870) and 10-29T15:52Z (896) the count rose 26. That window held:
+- the pipeline's 9 calls, from its run logs;
+- the seat's 2 schema reads;
+- one connector read of 232 rows;
+- five connector deletes of up to 50 rows each.
+
+Counted at ten rows a call, the deletes alone would have been about 24, and the rise at least 36. **Not settled:** whether a read of more than 100 rows counts once or once per 100. The 9 calls left over leave room for either; plan on once per 100.
+
+| Tool | What it does | Calls |
 |---|---|---|
 | `search_bases`, `list_tables_for_base` | Find the base and its tables' and fields' IDs | 1 each |
 | `get_table_schema` | A field's choices and their IDs | 1 |
-| `list_records_for_table` | Read rows, with filters, chosen fields and sort | 1 for each 100 rows returned |
+| `list_records_for_table` | Read rows, with filters, chosen fields and sort | 1, or 1 for each 100 rows returned; plan on the second |
 | `search_records` | Free-text search | 1 or more; avoid for bulk work |
-| `update_records_for_table` | Change rows by record ID | 1 for each 10 rows |
-| `create_records_for_table`, `delete_records_for_table` | Create or delete rows | 1 for each 10 rows; a chat should not need them on `Jobs` |
+| `update_records_for_table` | Change rows by record ID | About 1 for up to 50 rows, measured |
+| `create_records_for_table`, `delete_records_for_table` | Create or delete rows | About 1 for up to 50 rows, measured on deletes; a chat should not need them on `Jobs` |
 
 **Every tool call costs at least one call, even when it finds nothing.**
 
@@ -88,8 +96,7 @@ Airtable's API reads one table per call, at most 100 records a page, and writes 
 3. **Filter on the server, not in the chat.** A filter that returns 40 rows costs one call; reading all 300 rows to pick 40 costs three.
 4. **Write in batches.**
    - **How:** decide on a group of jobs first, then send one `update_records_for_table` carrying them all.
-   - **The cautious batch:** ten records a call. Ten jobs applied to is **one call** setting `Status` to `applied` (or `accepted`) on ten rows, not ten calls.
-   - **The measured batch:** up to 50 once section 6 has shown the connector counts a 50-record write as one call.
+   - **The batch:** up to 50 records a call, about one call however many of the 50 it carries (measured, section 3). Ten jobs applied to is **one call** setting `Status` to `applied` (or `accepted`) on ten rows, not ten calls; fifty is still one.
 5. **One write per job, not two.**
    - **Applying:** set `Status` to `applied` in `Jobs` when the field offers it. The pipeline then makes the `accepted` copy with `Stage` applied, so `accepted` needs no second write.
    - **Turning down:** set `Status` and `Reason` in the same update.
@@ -111,7 +118,7 @@ Airtable's API reads one table per call, at most 100 records a page, and writes 
 - One `update_records_for_table` on `Jobs` with the seven record IDs from the read.
 - Each gets `Status` `applied`, or `accepted` if `applied` is not offered.
 
-**"Turn down these twelve, not a fit, stack"** (2 calls at ten a call, 1 at fifty):
+**"Turn down these twelve, not a fit, stack"** (1 call):
 - `Status` `rejected-not-a-fit` and `Reason` `stack` on each row.
 
 **"Which accepted jobs are still open?"** (1 call):
@@ -122,17 +129,20 @@ Airtable's API reads one table per call, at most 100 records a page, and writes 
 - `Delete` yes on each.
 - They leave Airtable after the next morning run stores them; the store keeps them.
 
-## 6. Measuring what the connector really costs
+## 6. Measuring what the connector costs
+
+**Writes are measured** (section 3, 2026-10-29). **Reads of more than 100 rows are not:** whether a read of 300 rows counts once or three times. To settle it, the same method:
 
 1. **Pick a quiet hour,** when no pipeline run is due: the pipeline runs at about 03:30 UTC and in the evening.
 2. **Read the workspace's "Public API calls"** count.
-3. **Have the chat make one known call:** say one `update_records_for_table` writing 20 records, on rows that are safe to change. Re-setting a `Reason` to its own value is safe.
-4. **Read the count again**, after Airtable has refreshed it. It may lag; on 2026-10-22 it appeared to refresh once a day, by the morning UTC.
-5. **Read the difference:** a rise of 1 means the connector counts per tool call; a rise of 2 means it counts per ten records.
+3. **Have the chat make one known call:** one `list_records_for_table` reading about 300 rows of `Jobs`, and no other call until step 4.
+4. **Read the count again**, after Airtable has refreshed it. When it refreshes is not known; the reading of 2026-10-29 included a pipeline run of that morning.
+5. **Read the difference,** less any pipeline run between: a rise of 1 means one call however many rows; a rise of 3 means one call per 100 rows.
 6. **Then update section 3 of this file** with the result and its date.
 
 ## Changes
 
 | Date | Change | Reason |
 |---|---|---|
+| 2026-10-29 | Section 3: a connector write of up to 50 records counts as about one call, measured from his meter readings around the seat's deletes of `Jobs test`'s 232 rows; the batch rule and a recipe follow | His readings of 870 and 896 against the pipeline's run logs |
 | 2026-10-28 | File created | The operator's request of 2026-10-28: a guide to using the base through an LLM and the MCP connector, with the strategy for spending as few calls as possible, since his own chats share the workspace's allowance with the pipeline |
