@@ -23180,5 +23180,36 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "ashby:0684ae7c-4fd5-411e-a10c-3773e584cd97",
+  "source": "ashby",
+  "board_id": "ashby:livekit",
+  "external_id": "0684ae7c-4fd5-411e-a10c-3773e584cd97",
+  "employer": "LiveKit",
+  "employer_provenance": "slug",
+  "title": "Senior Product Designer, Developer Platform",
+  "title_normalised": "Senior Product Designer, Developer Platform",
+  "location": "United States (Remote); Canada (Remote)",
+  "published_at": "2026-10-29T04:02:38.102000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-29T04:40:16.337135Z",
+  "ordering_date": "2026-10-29T04:02:38.102000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/livekit/0684ae7c-4fd5-411e-a10c-3773e584cd97",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "United States",
+   "Canada"
+  ],
+  "workplace": "Remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]
