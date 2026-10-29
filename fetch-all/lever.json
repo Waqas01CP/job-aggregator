@@ -5637,5 +5637,35 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "lever:80d44eee-8e62-4d47-9025-9f7f7aea324c",
+  "source": "lever",
+  "board_id": "lever:spreetail",
+  "external_id": "80d44eee-8e62-4d47-9025-9f7f7aea324c",
+  "employer": "Spreetail",
+  "employer_provenance": "slug",
+  "title": "Director of Procurement",
+  "title_normalised": "Director of Procurement",
+  "location": "Nebraska",
+  "published_at": "2026-10-29T17:58:51.019000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-10-29T18:50:54.541016Z",
+  "ordering_date": "2026-10-29T17:58:51.019000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/spreetail/80d44eee-8e62-4d47-9025-9f7f7aea324c",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "US"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]

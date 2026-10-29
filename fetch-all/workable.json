@@ -2313,5 +2313,37 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "workable:65F7E2F2E1",
+  "source": "workable",
+  "board_id": "workable:inbox-business-technologies",
+  "external_id": "65F7E2F2E1",
+  "employer": "Inbox Business Technologies",
+  "employer_provenance": "envelope",
+  "title": "Cloud and EDN Service Officer",
+  "title_normalised": "Cloud and EDN Service Officer",
+  "location": "Islamabad, Islamabad Capital Territory, Pakistan",
+  "published_at": "2026-10-29T00:00:00Z",
+  "published_field": "published_on",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-29T18:50:54.541016Z",
+  "ordering_date": "2026-10-29T00:00:00Z",
+  "ordering_date_source": "publication",
+  "url": "https://apply.workable.com/j/65F7E2F2E1",
+  "url_provenance": "payload",
+  "stated_experience": [
+   1
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "PK"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]
