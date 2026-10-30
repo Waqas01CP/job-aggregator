@@ -629,5 +629,37 @@
   "required_places": null,
   "described_workplace": null,
   "described": true
+ },
+ {
+  "identity": "smartrecruiters:744000158609009",
+  "source": "smartrecruiters",
+  "board_id": "smartrecruiters:OneScreen",
+  "external_id": "744000158609009",
+  "employer": "OneScreen",
+  "employer_provenance": "payload",
+  "title": "AI Engineer Intern (Automation & Systems)",
+  "title_normalised": "AI Engineer Intern (Automation & Systems)",
+  "location": "Islamabad, Pakistan",
+  "published_at": "2026-10-29T21:34:25.125000Z",
+  "published_field": "releasedDate",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-30T04:40:05.713779Z",
+  "ordering_date": "2026-10-29T21:34:25.125000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.smartrecruiters.com/OneScreen/744000158609009-ai-engineer-intern-automation-systems-",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": [
+   "Executive"
+  ],
+  "places": [
+   "PK"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]

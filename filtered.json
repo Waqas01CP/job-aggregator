@@ -7806,5 +7806,35 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "ashby:fca52e03-9e9d-4dcd-bda8-c27dbdd0e0a4",
+  "source": "ashby",
+  "board_id": "ashby:protege",
+  "external_id": "fca52e03-9e9d-4dcd-bda8-c27dbdd0e0a4",
+  "employer": "Protege",
+  "employer_provenance": "slug",
+  "title": "Forward Deployed Engineer, Healthcare",
+  "title_normalised": "Forward Deployed Engineer, Healthcare",
+  "location": "Remote",
+  "published_at": "2026-10-29T22:59:50.056000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-30T04:40:05.713779Z",
+  "ordering_date": "2026-10-29T22:59:50.056000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/protege/fca52e03-9e9d-4dcd-bda8-c27dbdd0e0a4",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "United States"
+  ],
+  "workplace": "Remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]
