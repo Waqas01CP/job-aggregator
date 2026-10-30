@@ -5731,5 +5731,37 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "lever:f1251e77-cd06-4108-835f-84266076cbc5",
+  "source": "lever",
+  "board_id": "lever:spreetail",
+  "external_id": "f1251e77-cd06-4108-835f-84266076cbc5",
+  "employer": "Spreetail",
+  "employer_provenance": "slug",
+  "title": "Senior Fulfillment Operations Manager, Away Team",
+  "title_normalised": "Senior Fulfillment Operations Manager, Away Team",
+  "location": "Greenwood, IN",
+  "published_at": "2026-10-30T14:17:48.557000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-10-30T18:28:29.111696Z",
+  "ordering_date": "2026-10-30T14:17:48.557000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/spreetail/f1251e77-cd06-4108-835f-84266076cbc5",
+  "url_provenance": "payload",
+  "stated_experience": [
+   5
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "US"
+  ],
+  "workplace": "onsite",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]

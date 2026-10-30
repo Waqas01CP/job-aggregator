@@ -23487,5 +23487,68 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "ashby:539edb8a-b82a-48f8-ae7a-5c94fffbfa0a",
+  "source": "ashby",
+  "board_id": "ashby:cursor",
+  "external_id": "539edb8a-b82a-48f8-ae7a-5c94fffbfa0a",
+  "employer": "Cursor",
+  "employer_provenance": "slug",
+  "title": "Customer Success Strategy & Operations Manager",
+  "title_normalised": "Customer Success Strategy & Operations Manager",
+  "location": "San Francisco; New York; Austin",
+  "published_at": "2026-10-30T17:29:12.520000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-30T18:28:29.111696Z",
+  "ordering_date": "2026-10-30T17:29:12.520000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/cursor/539edb8a-b82a-48f8-ae7a-5c94fffbfa0a",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "United States"
+  ],
+  "workplace": "OnSite",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "ashby:7ab03a75-830a-40ee-b4e5-bf83b31b1d24",
+  "source": "ashby",
+  "board_id": "ashby:elevenlabs",
+  "external_id": "7ab03a75-830a-40ee-b4e5-bf83b31b1d24",
+  "employer": "ElevenLabs",
+  "employer_provenance": "slug",
+  "title": "Trust Strategy & Operations",
+  "title_normalised": "Trust Strategy & Operations",
+  "location": "London; Dublin",
+  "published_at": "2026-10-30T09:58:17.051000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-30T18:28:29.111696Z",
+  "ordering_date": "2026-10-30T09:58:17.051000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/elevenlabs/7ab03a75-830a-40ee-b4e5-bf83b31b1d24",
+  "url_provenance": "payload",
+  "stated_experience": [
+   4
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "United Kingdom",
+   "Ireland"
+  ],
+  "workplace": "Remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]

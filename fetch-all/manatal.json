@@ -21592,5 +21592,35 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "manatal:4538443",
+  "source": "manatal",
+  "board_id": "manatal:codedistrict",
+  "external_id": "4538443",
+  "employer": "Engineering",
+  "employer_provenance": "payload",
+  "title": "Associate Solutions Consultant",
+  "title_normalised": "Associate Solutions Consultant",
+  "location": "Lahore, Pakistan",
+  "published_at": null,
+  "published_field": null,
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-30T18:28:29.111696Z",
+  "ordering_date": "2026-10-30T18:28:29.111696Z",
+  "ordering_date_source": "first_seen",
+  "url": "https://www.careers-page.com/codedistrict/job/5W7Y6953",
+  "url_provenance": "constructed",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "Pakistan"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": "on site",
+  "described": true,
+  "who_reads": null
  }
 ]
