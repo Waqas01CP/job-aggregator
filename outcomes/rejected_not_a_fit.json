@@ -138,5 +138,40 @@
   "reason_in_jobs": null,
   "classified_at": "2026-10-13T22:03:39.000Z",
   "swept_at": "2026-10-29T04:40:16.337135Z"
+ },
+ {
+  "identity": "manatal:3087309",
+  "source": "manatal",
+  "board_id": "manatal:abacus-consulting-3",
+  "external_id": "3087309",
+  "employer": "Abacus Consulting",
+  "employer_provenance": "slug",
+  "title": "Software Engineer",
+  "title_normalised": "Software Engineer",
+  "location": "Karachi, Pakistan",
+  "published_at": null,
+  "published_field": null,
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-10-08T19:11:36.758758Z",
+  "ordering_date": "2026-10-08T19:11:36.758758Z",
+  "ordering_date_source": "first_seen",
+  "url": "https://www.careers-page.com/abacus-consulting-3/job/7XYV9663",
+  "url_provenance": "constructed",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "Pakistan"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": "on site",
+  "described": true,
+  "who_reads": null,
+  "status": "rejected-not-a-fit",
+  "reason": "stack",
+  "reason_in_jobs": null,
+  "classified_at": "2026-10-15T10:38:24.000Z",
+  "swept_at": "2026-10-31T04:23:54.902209Z"
  }
 ]
