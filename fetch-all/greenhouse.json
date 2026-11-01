@@ -52796,5 +52796,38 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "greenhouse:5024511101",
+  "source": "greenhouse",
+  "board_id": "greenhouse:brkz",
+  "external_id": "5024511101",
+  "employer": "BRKZ",
+  "employer_provenance": "payload",
+  "title": "Collection Officer",
+  "title_normalised": "Collection Officer",
+  "location": "Dammam; Riyadh",
+  "published_at": "2026-11-01T09:31:50Z",
+  "published_field": "first_published",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-01T18:18:26.454968Z",
+  "ordering_date": "2026-11-01T09:31:50Z",
+  "ordering_date_source": "publication",
+  "url": "https://job-boards.eu.greenhouse.io/brkz/jobs/5024511101",
+  "url_provenance": "payload",
+  "stated_experience": [
+   2
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "Addammam, Eastern, Saudi Arabia",
+   "Riyadh, Riyadh, Saudi Arabia"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]

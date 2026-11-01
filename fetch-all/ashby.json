@@ -23612,5 +23612,38 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "ashby:830e66a8-892c-4c68-b61c-494591236eef",
+  "source": "ashby",
+  "board_id": "ashby:elevenlabs",
+  "external_id": "830e66a8-892c-4c68-b61c-494591236eef",
+  "employer": "ElevenLabs",
+  "employer_provenance": "slug",
+  "title": "Account Manager - DACH",
+  "title_normalised": "Account Manager - DACH",
+  "location": "Germany; Switzerland",
+  "published_at": "2026-11-01T14:38:06.209000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-01T18:18:26.454968Z",
+  "ordering_date": "2026-11-01T14:38:06.209000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/elevenlabs/830e66a8-892c-4c68-b61c-494591236eef",
+  "url_provenance": "payload",
+  "stated_experience": [
+   5
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "Germany",
+   "Switzerland"
+  ],
+  "workplace": "Remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]
