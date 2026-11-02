@@ -5763,5 +5763,67 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "lever:5e408c63-d078-405f-ae6f-79a371825520",
+  "source": "lever",
+  "board_id": "lever:pingwind",
+  "external_id": "5e408c63-d078-405f-ae6f-79a371825520",
+  "employer": "PingWind",
+  "employer_provenance": "slug",
+  "title": "Administrative Assistant",
+  "title_normalised": "Administrative Assistant",
+  "location": "Fort Belvoir",
+  "published_at": "2026-11-02T13:54:14.782000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-11-02T22:13:47.552480Z",
+  "ordering_date": "2026-11-02T13:54:14.782000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/pingwind/5e408c63-d078-405f-ae6f-79a371825520",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "US"
+  ],
+  "workplace": "onsite",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "lever:73624aa3-a503-4bca-8f34-deb44f617e70",
+  "source": "lever",
+  "board_id": "lever:pingwind",
+  "external_id": "73624aa3-a503-4bca-8f34-deb44f617e70",
+  "employer": "PingWind",
+  "employer_provenance": "slug",
+  "title": "Senior Power Platform Developer",
+  "title_normalised": "Senior Power Platform Developer",
+  "location": "Quantico VA",
+  "published_at": "2026-11-02T14:14:25.020000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-11-02T22:13:47.552480Z",
+  "ordering_date": "2026-11-02T14:14:25.020000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/pingwind/73624aa3-a503-4bca-8f34-deb44f617e70",
+  "url_provenance": "payload",
+  "stated_experience": [
+   3
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "US"
+  ],
+  "workplace": "onsite",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]

@@ -2345,5 +2345,37 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "workable:4076A47053",
+  "source": "workable",
+  "board_id": "workable:thingtrax",
+  "external_id": "4076A47053",
+  "employer": "Thingtrax",
+  "employer_provenance": "envelope",
+  "title": "Account Executive",
+  "title_normalised": "Account Executive",
+  "location": "United Kingdom",
+  "published_at": "2026-11-02T00:00:00Z",
+  "published_field": "published_on",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-02T22:13:47.552480Z",
+  "ordering_date": "2026-11-02T00:00:00Z",
+  "ordering_date_source": "publication",
+  "url": "https://apply.workable.com/j/4076A47053",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": [
+   "Mid-Senior level"
+  ],
+  "places": [
+   "GB"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]
