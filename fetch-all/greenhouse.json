@@ -53007,5 +53007,36 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "greenhouse:5012498101",
+  "source": "greenhouse",
+  "board_id": "greenhouse:veeamsoftware",
+  "external_id": "5012498101",
+  "employer": "Veeam Software",
+  "employer_provenance": "payload",
+  "title": "Senior Director, Digital Advertising",
+  "title_normalised": "Senior Director, Digital Advertising",
+  "location": "Remote, United States",
+  "published_at": "2026-11-03T00:00:01Z",
+  "published_field": "first_published",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-03T05:36:02.123834Z",
+  "ordering_date": "2026-11-03T00:00:01Z",
+  "ordering_date_source": "publication",
+  "url": "https://job-boards.eu.greenhouse.io/veeamsoftware/jobs/5012498101",
+  "url_provenance": "payload",
+  "stated_experience": [
+   12,
+   5
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": null,
+  "workplace": "Remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]

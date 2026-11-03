@@ -23896,5 +23896,37 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "ashby:3a25ed8a-5870-4a0e-90e4-6e5a4b2c7e04",
+  "source": "ashby",
+  "board_id": "ashby:elevenlabs",
+  "external_id": "3a25ed8a-5870-4a0e-90e4-6e5a4b2c7e04",
+  "employer": "ElevenLabs",
+  "employer_provenance": "slug",
+  "title": "Account Manager - Enterprise",
+  "title_normalised": "Account Manager - Enterprise",
+  "location": "New York; United States; San Francisco",
+  "published_at": "2026-11-02T22:21:12.643000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-03T05:36:02.123834Z",
+  "ordering_date": "2026-11-02T22:21:12.643000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/elevenlabs/3a25ed8a-5870-4a0e-90e4-6e5a4b2c7e04",
+  "url_provenance": "payload",
+  "stated_experience": [
+   5
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "United States"
+  ],
+  "workplace": "Remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]
