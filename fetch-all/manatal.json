@@ -21654,5 +21654,35 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "manatal:4547643",
+  "source": "manatal",
+  "board_id": "manatal:codedistrict",
+  "external_id": "4547643",
+  "employer": "Marketing",
+  "employer_provenance": "payload",
+  "title": "Performance Marketing Specialist",
+  "title_normalised": "Performance Marketing Specialist",
+  "location": "Lahore, Pakistan",
+  "published_at": null,
+  "published_field": null,
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-03T20:01:12.912250Z",
+  "ordering_date": "2026-11-03T20:01:12.912250Z",
+  "ordering_date_source": "first_seen",
+  "url": "https://www.careers-page.com/codedistrict/job/5W7RR46R",
+  "url_provenance": "constructed",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "Pakistan"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]

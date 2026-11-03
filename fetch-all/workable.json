@@ -2377,5 +2377,39 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "workable:8D482A23C4",
+  "source": "workable",
+  "board_id": "workable:inbox-business-technologies",
+  "external_id": "8D482A23C4",
+  "employer": "Inbox Business Technologies",
+  "employer_provenance": "envelope",
+  "title": "Sales Executive",
+  "title_normalised": "Sales Executive",
+  "location": "Islamabad, Islamabad Capital Territory, Pakistan",
+  "published_at": "2026-11-03T00:00:00Z",
+  "published_field": "published_on",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-03T20:01:12.912250Z",
+  "ordering_date": "2026-11-03T00:00:00Z",
+  "ordering_date_source": "publication",
+  "url": "https://apply.workable.com/j/8D482A23C4",
+  "url_provenance": "payload",
+  "stated_experience": [
+   1
+  ],
+  "expires_at": null,
+  "stated_levels": [
+   "Associate"
+  ],
+  "places": [
+   "PK"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]
