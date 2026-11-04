@@ -6075,5 +6075,69 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "lever:1557fb2a-b3e8-4735-aa09-520f3e0012ae",
+  "source": "lever",
+  "board_id": "lever:spreetail",
+  "external_id": "1557fb2a-b3e8-4735-aa09-520f3e0012ae",
+  "employer": "Spreetail",
+  "employer_provenance": "slug",
+  "title": "Facilities Technician, up to $34/hr",
+  "title_normalised": "Facilities Technician, up to $34/hr",
+  "location": "Las Vegas, NV",
+  "published_at": "2026-11-03T22:21:24.298000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-11-04T05:04:24.816910Z",
+  "ordering_date": "2026-11-03T22:21:24.298000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/spreetail/1557fb2a-b3e8-4735-aa09-520f3e0012ae",
+  "url_provenance": "payload",
+  "stated_experience": [
+   3
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "US"
+  ],
+  "workplace": "onsite",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "lever:063887e0-e418-4520-a220-1a01793e6959",
+  "source": "lever",
+  "board_id": "lever:spreetail",
+  "external_id": "063887e0-e418-4520-a220-1a01793e6959",
+  "employer": "Spreetail",
+  "employer_provenance": "slug",
+  "title": "Warehouse Operations Manager",
+  "title_normalised": "Warehouse Operations Manager",
+  "location": "Las Vegas, NV",
+  "published_at": "2026-11-03T22:13:05.089000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-11-04T05:04:24.816910Z",
+  "ordering_date": "2026-11-03T22:13:05.089000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/spreetail/063887e0-e418-4520-a220-1a01793e6959",
+  "url_provenance": "payload",
+  "stated_experience": [
+   5
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "US"
+  ],
+  "workplace": "onsite",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]
