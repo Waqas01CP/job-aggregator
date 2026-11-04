@@ -6139,5 +6139,37 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "lever:004811ee-44b4-4036-a887-903d09272e6a",
+  "source": "lever",
+  "board_id": "lever:spreetail",
+  "external_id": "004811ee-44b4-4036-a887-903d09272e6a",
+  "employer": "Spreetail",
+  "employer_provenance": "slug",
+  "title": "IT Support Specialist (US Hours)",
+  "title_normalised": "IT Support Specialist (US Hours)",
+  "location": "Manila",
+  "published_at": "2026-11-04T20:03:04.560000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-11-04T20:20:16.153348Z",
+  "ordering_date": "2026-11-04T20:03:04.560000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/spreetail/004811ee-44b4-4036-a887-903d09272e6a",
+  "url_provenance": "payload",
+  "stated_experience": [
+   1
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "PH"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]

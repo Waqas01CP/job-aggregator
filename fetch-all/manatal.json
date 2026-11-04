@@ -21684,5 +21684,35 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "manatal:4552455",
+  "source": "manatal",
+  "board_id": "manatal:abacus-consulting-3",
+  "external_id": "4552455",
+  "employer": "Abacus Consulting",
+  "employer_provenance": "slug",
+  "title": "Talent Management Officer",
+  "title_normalised": "Talent Management Officer",
+  "location": "Lahore, Pakistan",
+  "published_at": null,
+  "published_field": null,
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-04T20:20:16.153348Z",
+  "ordering_date": "2026-11-04T20:20:16.153348Z",
+  "ordering_date_source": "first_seen",
+  "url": "https://www.careers-page.com/abacus-consulting-3/job/5W7R77RR",
+  "url_provenance": "constructed",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "Pakistan"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]

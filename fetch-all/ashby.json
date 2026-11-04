@@ -24237,5 +24237,102 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "ashby:daa01e68-4183-43b3-8599-882ea60d7a60",
+  "source": "ashby",
+  "board_id": "ashby:cursor",
+  "external_id": "daa01e68-4183-43b3-8599-882ea60d7a60",
+  "employer": "Cursor",
+  "employer_provenance": "slug",
+  "title": "Marketing Strategy & Operations Lead",
+  "title_normalised": "Marketing Strategy & Operations Lead",
+  "location": "San Francisco, CA; Los Angeles, CA; New York, NY; Chicago, IL; Austin, TX; Palo Alto, CA; Seattle, WA",
+  "published_at": "2026-11-04T17:17:57.395000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-04T20:20:16.153348Z",
+  "ordering_date": "2026-11-04T17:17:57.395000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/cursor/daa01e68-4183-43b3-8599-882ea60d7a60",
+  "url_provenance": "payload",
+  "stated_experience": [
+   8
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "United States"
+  ],
+  "workplace": "OnSite",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "ashby:1d3a2047-4739-479b-914d-377046f0fd1a",
+  "source": "ashby",
+  "board_id": "ashby:cursor",
+  "external_id": "1d3a2047-4739-479b-914d-377046f0fd1a",
+  "employer": "Cursor",
+  "employer_provenance": "slug",
+  "title": "ISV / Technology Marketplace Partner Manager",
+  "title_normalised": "ISV / Technology Marketplace Partner Manager",
+  "location": "San Francisco, CA; New York, NY",
+  "published_at": "2026-11-04T17:13:07.664000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-04T20:20:16.153348Z",
+  "ordering_date": "2026-11-04T17:13:07.664000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/cursor/1d3a2047-4739-479b-914d-377046f0fd1a",
+  "url_provenance": "payload",
+  "stated_experience": [
+   5,
+   9,
+   2
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "United States"
+  ],
+  "workplace": "OnSite",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "ashby:829d5af0-3581-4d49-8073-866f30d09503",
+  "source": "ashby",
+  "board_id": "ashby:elevenlabs",
+  "external_id": "829d5af0-3581-4d49-8073-866f30d09503",
+  "employer": "ElevenLabs",
+  "employer_provenance": "slug",
+  "title": "Deployment Strategist Lead - Middle East",
+  "title_normalised": "Deployment Strategist Lead - Middle East",
+  "location": "UAE; Saudi Arabia",
+  "published_at": "2026-11-04T19:39:30.042000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-04T20:20:16.153348Z",
+  "ordering_date": "2026-11-04T19:39:30.042000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/elevenlabs/829d5af0-3581-4d49-8073-866f30d09503",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "United Arab Emirates",
+   "Saudi Arabia"
+  ],
+  "workplace": "Remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]
