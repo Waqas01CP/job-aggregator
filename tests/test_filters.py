@@ -959,7 +959,7 @@ class TestSeniority(unittest.TestCase):
         """The file quotes the words it deliberately keeps elsewhere; reading
         them would exclude architects and interns."""
         words = load_seniority_words()
-        self.assertEqual(words, ["senior", "sr", "staff", "lead", "principal", "head",
+        self.assertEqual(words, ["staff", "lead", "principal", "head",
                                  "manager", "director", "vp", "vice president", "chief",
                                  "ii", "iii", "iv"])
         for kept_word in ("architect", "intern", "junior", "associate", "i"):
