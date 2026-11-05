@@ -6237,5 +6237,37 @@
   "described_workplace": "on site",
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "lever:ad325c85-7b73-4d85-8ac0-c478c8fcde6d",
+  "source": "lever",
+  "board_id": "lever:spreetail",
+  "external_id": "ad325c85-7b73-4d85-8ac0-c478c8fcde6d",
+  "employer": "Spreetail",
+  "employer_provenance": "slug",
+  "title": "Warehouse Team Member, $21/hr",
+  "title_normalised": "Warehouse Team Member, $21/hr",
+  "location": "Greenwood, IN",
+  "published_at": "2026-11-05T17:49:15.833000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-11-05T20:33:34.981728Z",
+  "ordering_date": "2026-11-05T17:49:15.833000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/spreetail/ad325c85-7b73-4d85-8ac0-c478c8fcde6d",
+  "url_provenance": "payload",
+  "stated_experience": [
+   18
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "US"
+  ],
+  "workplace": "onsite",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]
