@@ -6171,5 +6171,71 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "lever:9667df85-c6c2-46ce-b3d7-18e1a12d1f0d",
+  "source": "lever",
+  "board_id": "lever:pingwind",
+  "external_id": "9667df85-c6c2-46ce-b3d7-18e1a12d1f0d",
+  "employer": "PingWind",
+  "employer_provenance": "slug",
+  "title": "AI DevOps Engineer",
+  "title_normalised": "AI DevOps Engineer",
+  "location": "Rockville, MD",
+  "published_at": "2026-11-04T21:41:25.369000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-11-05T05:26:26.616519Z",
+  "ordering_date": "2026-11-04T21:41:25.369000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/pingwind/9667df85-c6c2-46ce-b3d7-18e1a12d1f0d",
+  "url_provenance": "payload",
+  "stated_experience": [
+   10,
+   8
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "US"
+  ],
+  "workplace": "onsite",
+  "required_places": null,
+  "described_workplace": "on site",
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "lever:edd8b131-b2ac-4abb-aefb-387392c1ed68",
+  "source": "lever",
+  "board_id": "lever:pingwind",
+  "external_id": "edd8b131-b2ac-4abb-aefb-387392c1ed68",
+  "employer": "PingWind",
+  "employer_provenance": "slug",
+  "title": "AI Software Architect",
+  "title_normalised": "AI Software Architect",
+  "location": "Rockville, MD",
+  "published_at": "2026-11-04T21:37:30.691000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-11-05T05:26:26.616519Z",
+  "ordering_date": "2026-11-04T21:37:30.691000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/pingwind/edd8b131-b2ac-4abb-aefb-387392c1ed68",
+  "url_provenance": "payload",
+  "stated_experience": [
+   10,
+   8
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "US"
+  ],
+  "workplace": "onsite",
+  "required_places": null,
+  "described_workplace": "on site",
+  "described": true,
+  "who_reads": null
  }
 ]
