@@ -6269,5 +6269,165 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "lever:3d4d7de1-8dd8-4f61-a461-ae7e7e72c614",
+  "source": "lever",
+  "board_id": "lever:spreetail",
+  "external_id": "3d4d7de1-8dd8-4f61-a461-ae7e7e72c614",
+  "employer": "Spreetail",
+  "employer_provenance": "slug",
+  "title": "EHS Manager",
+  "title_normalised": "EHS Manager",
+  "location": "Savannah, GA",
+  "published_at": "2026-11-05T22:42:53.827000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-11-06T05:26:00.889423Z",
+  "ordering_date": "2026-11-05T22:42:53.827000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/spreetail/3d4d7de1-8dd8-4f61-a461-ae7e7e72c614",
+  "url_provenance": "payload",
+  "stated_experience": [
+   6
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "US"
+  ],
+  "workplace": "onsite",
+  "required_places": null,
+  "described_workplace": "on site",
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "lever:6f5c906e-74c5-439d-a3bd-86f5f91a6aec",
+  "source": "lever",
+  "board_id": "lever:spreetail",
+  "external_id": "6f5c906e-74c5-439d-a3bd-86f5f91a6aec",
+  "employer": "Spreetail",
+  "employer_provenance": "slug",
+  "title": "EHS Manager",
+  "title_normalised": "EHS Manager",
+  "location": "Dallas, TX",
+  "published_at": "2026-11-05T22:34:51.006000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-11-06T05:26:00.889423Z",
+  "ordering_date": "2026-11-05T22:34:51.006000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/spreetail/6f5c906e-74c5-439d-a3bd-86f5f91a6aec",
+  "url_provenance": "payload",
+  "stated_experience": [
+   6
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "US"
+  ],
+  "workplace": "onsite",
+  "required_places": null,
+  "described_workplace": "on site",
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "lever:b42b7eb9-9672-4f32-93e4-aa102d0b9d7a",
+  "source": "lever",
+  "board_id": "lever:spreetail",
+  "external_id": "b42b7eb9-9672-4f32-93e4-aa102d0b9d7a",
+  "employer": "Spreetail",
+  "employer_provenance": "slug",
+  "title": "EHS Manager",
+  "title_normalised": "EHS Manager",
+  "location": "Las Vegas, NV",
+  "published_at": "2026-11-05T22:38:20.884000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-11-06T05:26:00.889423Z",
+  "ordering_date": "2026-11-05T22:38:20.884000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/spreetail/b42b7eb9-9672-4f32-93e4-aa102d0b9d7a",
+  "url_provenance": "payload",
+  "stated_experience": [
+   6
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "US"
+  ],
+  "workplace": "onsite",
+  "required_places": null,
+  "described_workplace": "on site",
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "lever:c89cad55-714a-4cee-9667-fd59d76e7fb6",
+  "source": "lever",
+  "board_id": "lever:spreetail",
+  "external_id": "c89cad55-714a-4cee-9667-fd59d76e7fb6",
+  "employer": "Spreetail",
+  "employer_provenance": "slug",
+  "title": "EHS Manager",
+  "title_normalised": "EHS Manager",
+  "location": "Greenwood, IN",
+  "published_at": "2026-11-05T22:40:12.711000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-11-06T05:26:00.889423Z",
+  "ordering_date": "2026-11-05T22:40:12.711000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/spreetail/c89cad55-714a-4cee-9667-fd59d76e7fb6",
+  "url_provenance": "payload",
+  "stated_experience": [
+   6
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "US"
+  ],
+  "workplace": "onsite",
+  "required_places": null,
+  "described_workplace": "on site",
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "lever:e3ed1337-ee62-4802-b199-8700be2040a4",
+  "source": "lever",
+  "board_id": "lever:spreetail",
+  "external_id": "e3ed1337-ee62-4802-b199-8700be2040a4",
+  "employer": "Spreetail",
+  "employer_provenance": "slug",
+  "title": "EHS Manager",
+  "title_normalised": "EHS Manager",
+  "location": "Lincoln, NE",
+  "published_at": "2026-11-05T22:46:38.009000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-11-06T05:26:00.889423Z",
+  "ordering_date": "2026-11-05T22:46:38.009000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/spreetail/e3ed1337-ee62-4802-b199-8700be2040a4",
+  "url_provenance": "payload",
+  "stated_experience": [
+   6
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "US"
+  ],
+  "workplace": "onsite",
+  "required_places": null,
+  "described_workplace": "on site",
+  "described": true,
+  "who_reads": null
  }
 ]

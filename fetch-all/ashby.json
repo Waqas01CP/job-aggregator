@@ -24677,5 +24677,198 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "ashby:23447766-ae25-4cc9-b83b-41d847563eb7",
+  "source": "ashby",
+  "board_id": "ashby:Overjet",
+  "external_id": "23447766-ae25-4cc9-b83b-41d847563eb7",
+  "employer": "Overjet",
+  "employer_provenance": "slug",
+  "title": "Legal Counsel",
+  "title_normalised": "Legal Counsel",
+  "location": "San Mateo, CA",
+  "published_at": "2026-11-05T21:21:31.534000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-06T05:26:00.889423Z",
+  "ordering_date": "2026-11-05T21:21:31.534000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/Overjet/23447766-ae25-4cc9-b83b-41d847563eb7",
+  "url_provenance": "payload",
+  "stated_experience": [
+   4
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "United States"
+  ],
+  "workplace": "Hybrid",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "ashby:bea199b7-b040-43b8-89bc-34706b60ef8d",
+  "source": "ashby",
+  "board_id": "ashby:livekit",
+  "external_id": "bea199b7-b040-43b8-89bc-34706b60ef8d",
+  "employer": "LiveKit",
+  "employer_provenance": "slug",
+  "title": "Security Engineer, Vulnerability Management",
+  "title_normalised": "Security Engineer, Vulnerability Management",
+  "location": "United States (Remote); Canada (Remote)",
+  "published_at": "2026-11-05T23:55:58.441000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-06T05:26:00.889423Z",
+  "ordering_date": "2026-11-05T23:55:58.441000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/livekit/bea199b7-b040-43b8-89bc-34706b60ef8d",
+  "url_provenance": "payload",
+  "stated_experience": [
+   5
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "United States",
+   "Canada"
+  ],
+  "workplace": "Remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "ashby:0b0d2dbb-ae94-4df8-8e7b-bd4dcdb67943",
+  "source": "ashby",
+  "board_id": "ashby:cursor",
+  "external_id": "0b0d2dbb-ae94-4df8-8e7b-bd4dcdb67943",
+  "employer": "Cursor",
+  "employer_provenance": "slug",
+  "title": "Strategic Partner Manager",
+  "title_normalised": "Strategic Partner Manager",
+  "location": "San Francisco, CA; New York, NY",
+  "published_at": "2026-11-05T23:01:44.614000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-06T05:26:00.889423Z",
+  "ordering_date": "2026-11-05T23:01:44.614000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/cursor/0b0d2dbb-ae94-4df8-8e7b-bd4dcdb67943",
+  "url_provenance": "payload",
+  "stated_experience": [
+   3
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "United States"
+  ],
+  "workplace": "OnSite",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "ashby:92997f8a-9f90-40fe-a76e-89ffbc44d0cc",
+  "source": "ashby",
+  "board_id": "ashby:elevenlabs",
+  "external_id": "92997f8a-9f90-40fe-a76e-89ffbc44d0cc",
+  "employer": "ElevenLabs",
+  "employer_provenance": "slug",
+  "title": "Account Executive  - Creative Specialist - Enterprise",
+  "title_normalised": "Account Executive  - Creative Specialist - Enterprise",
+  "location": "United States",
+  "published_at": "2026-11-05T22:30:58.877000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-06T05:26:00.889423Z",
+  "ordering_date": "2026-11-05T22:30:58.877000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/elevenlabs/92997f8a-9f90-40fe-a76e-89ffbc44d0cc",
+  "url_provenance": "payload",
+  "stated_experience": [
+   5
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "United States"
+  ],
+  "workplace": "Remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "ashby:c3442fcd-8679-41a3-ad16-b1e1883d916c",
+  "source": "ashby",
+  "board_id": "ashby:fal-ai",
+  "external_id": "c3442fcd-8679-41a3-ad16-b1e1883d916c",
+  "employer": "Fal",
+  "employer_provenance": "slug",
+  "title": "Staff Security Engineer",
+  "title_normalised": "Staff Security Engineer",
+  "location": "San Francisco",
+  "published_at": "2026-11-06T00:45:19.433000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-06T05:26:00.889423Z",
+  "ordering_date": "2026-11-06T00:45:19.433000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/fal-ai/c3442fcd-8679-41a3-ad16-b1e1883d916c",
+  "url_provenance": "payload",
+  "stated_experience": [
+   8
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "United States"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "ashby:d47e9698-cecf-4376-8791-d9c38c672712",
+  "source": "ashby",
+  "board_id": "ashby:fal-ai",
+  "external_id": "d47e9698-cecf-4376-8791-d9c38c672712",
+  "employer": "Fal",
+  "employer_provenance": "slug",
+  "title": "Senior Infrastructure Security Engineer",
+  "title_normalised": "Senior Infrastructure Security Engineer",
+  "location": "San Francisco",
+  "published_at": "2026-11-06T00:46:02.054000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-06T05:26:00.889423Z",
+  "ordering_date": "2026-11-06T00:46:02.054000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/fal-ai/d47e9698-cecf-4376-8791-d9c38c672712",
+  "url_provenance": "payload",
+  "stated_experience": [
+   5
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "United States"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]
