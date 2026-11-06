@@ -6429,5 +6429,39 @@
   "described_workplace": "on site",
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "lever:6d1c3e24-068c-4209-bbd6-bfe13d44987b",
+  "source": "lever",
+  "board_id": "lever:smart-working-solutions",
+  "external_id": "6d1c3e24-068c-4209-bbd6-bfe13d44987b",
+  "employer": "Smart Working Solutions",
+  "employer_provenance": "slug",
+  "title": "Senior React Native Engineer (Remote, Full-Time) [HR222]",
+  "title_normalised": "Senior React Native Engineer (Remote, Full-Time) [HR222]",
+  "location": "India",
+  "published_at": "2026-11-05T21:13:08.398000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-11-06T19:53:32.271839Z",
+  "ordering_date": "2026-11-05T21:13:08.398000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/smart-working-solutions/6d1c3e24-068c-4209-bbd6-bfe13d44987b",
+  "url_provenance": "payload",
+  "stated_experience": [
+   5,
+   3,
+   2
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "IN"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]
