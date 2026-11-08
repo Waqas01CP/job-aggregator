@@ -1,0 +1,14 @@
+[
+ {
+  "label": "the fetch module imports the Airtable client by its absolute module name",
+  "path": "src/http_client.py",
+  "find": "import requests\n",
+  "replace": "import requests\nimport src.airtable  # noqa: F401\n"
+ },
+ {
+  "label": "the fetch module sends through a verb in a variable",
+  "path": "src/http_client.py",
+  "find": "return self._session.get(url, params=params, timeout=self.timeout, headers=headers)",
+  "replace": "return self._session.request(\"GET\", url, params=params, timeout=self.timeout, headers=headers)"
+ }
+]

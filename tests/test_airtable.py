@@ -595,7 +595,11 @@ FETCH_IMPORT = re.compile(r"^\s*(?:from\s+[.\w]*http_client\s+import|import\s+[.
 # sends only in an Authorization header; never Airtable's token, by any of
 # its names, nor an import of the Airtable client, nor a write verb.
 WRITE_SIGNS = [re.compile(p, re.I) for p in (
-    r"\btoken\b", r"AIRTABLE_", r"\bTOKEN_ENV\b", r"from\s+\.airtable", r"import\s+airtable",
+    r"\btoken\b", r"AIRTABLE_", r"\bTOKEN_ENV\b", r"from\s+[.\w]*airtable\b",
+    r"import\s+[.\w]*airtable\b", r"import\s+\w*Airtable",
+    # `.request(`: the verb in a variable, which names no verb to find (the
+    # fifth audit's F9). The module reads with `.get(` alone.
+    r"\.request\(",
     r"\.(?:post|patch|put|delete)\(", r"['\"](?:post|patch|put|delete)['\"]")]
 MAKES_REQUESTS = re.compile(r"^\s*(?:import\s+requests|from\s+requests\s+import)", re.M)
 # Ruling 4 made checkable: a read verb or a read call on the session.
@@ -635,6 +639,11 @@ class TestTheExceptionStaysScoped(unittest.TestCase):
         # Airtable's token by any of its names, and its client imported.
         self.assertTrue(write_signs('key = os.environ["AIRTABLE_TOKEN"]'))
         self.assertTrue(write_signs("from .airtable import TOKEN_ENV"))
+        # The two forms the fifth audit's F9 found passing, and their kin.
+        self.assertTrue(write_signs("import src.airtable  # noqa: F401"))
+        self.assertTrue(write_signs("from src.airtable import AirtableClient"))
+        self.assertTrue(write_signs("from src import airtable"))
+        self.assertTrue(write_signs("self._session.request(method, url)"))
         # A job board's own key in a header is what the operator allowed.
         self.assertFalse(write_signs('headers["Authorization"] = "Bearer %s" % bearer'))
         self.assertTrue(write_signs('headers["Authorization"] = token'))
