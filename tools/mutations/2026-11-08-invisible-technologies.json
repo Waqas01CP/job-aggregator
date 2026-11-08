@@ -1,0 +1,8 @@
+[
+ {
+  "label": "Invisible Technologies is kept",
+  "path": "docs/reference/annotation-vendors.md",
+  "find": "`welo data` · `welocalize` · `innodata` · `aptura` · `invisible technologies`",
+  "replace": "`welo data` · `welocalize` · `innodata` · `aptura`"
+ }
+]
