@@ -8,7 +8,7 @@
   {
     "label": "a timed-out suite counts as caught",
     "path": "tools/mutate.py",
-    "find": "    return not passed and not timed_out, failing, tail if timed_out else None",
+    "find": "    return not passed and not timed_out and bool(failing), failing, tail if timed_out else None",
     "replace": "    return not passed, failing, tail if timed_out else None"
   }
 ]

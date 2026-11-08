@@ -476,7 +476,7 @@ class TestTheMutationsOnFile(unittest.TestCase):
         self.assertIn("tests.test_description.TestWhoReads.test_each_label_on_the_line_that_gives_it",
                       mutate.targets_for(real))
 
-    def targeted(self, answers, targeted=True):
+    def targeted(self, answers, targeted=True, alone=True):
         """apply_one on a file of its own, the suite stood in for: each call
         answers in turn and records which modules it was asked to run."""
         import tempfile
@@ -489,13 +489,14 @@ class TestTheMutationsOnFile(unittest.TestCase):
         def suite(applied=None, timeout=None, modules=None):
             calls.append(modules)
             return answers[len(calls) - 1]
-        real = (mutate.run_suite, mutate.targets_for)
+        real = (mutate.run_suite, mutate.targets_for, mutate.targets_pass_alone)
         mutate.run_suite, mutate.targets_for = suite, lambda m: ["tests.test_x"]
+        mutate.targets_pass_alone = lambda modules: alone
         try:
             result = mutate.apply_one({"label": "x", "path": path, "find": "A = 1",
                                        "replace": "A = 2"}, targeted=targeted, note=note)
         finally:
-            mutate.run_suite, mutate.targets_for = real
+            mutate.run_suite, mutate.targets_for, mutate.targets_pass_alone = real
         with open(path, encoding="utf-8") as f:
             self.assertEqual(f.read(), "A = 1\n")
         return result, calls, note
@@ -523,6 +524,42 @@ class TestTheMutationsOnFile(unittest.TestCase):
         (caught, _, _), calls, _ = self.targeted([(False, "t ...", [], True),
                                                   (True, "", [], False)])
         self.assertEqual((caught, calls), (False, [["tests.test_x"], None]))
+
+    def test_a_list_that_fails_with_no_mutation_decides_nothing(self):
+        """The fifth audit's F8: a test failing alone read as a catch. Mutation:
+        "a target list that fails alone still decides"."""
+        (caught, _, _), calls, note = self.targeted([(True, "", [], False)], alone=False)
+        self.assertEqual((caught, calls, note["targets fail alone"], note["whole suite"]),
+                         (False, [None], True, True))
+
+    def test_a_targeted_exit_naming_no_test_decides_nothing(self):
+        """A module that ran no tests exits 5 on 3.12. Mutation: "a targeted
+        exit naming no test is a catch"."""
+        (caught, _, _), calls, _ = self.targeted([(False, "", [], False), (True, "", [], False)])
+        self.assertEqual((caught, calls), (False, [["tests.test_x"], None]))
+
+    def test_a_whole_suite_exit_naming_no_test_is_a_crash_not_a_catch(self):
+        """Mutation: "a crash counts as caught"."""
+        (caught, _, _), _, note = self.targeted([(False, "", [], False)], targeted=False)
+        self.assertEqual((caught, note["crashed"]), (False, True))
+
+    def test_each_target_list_runs_unmutated_once(self):
+        """Mutation: "a target list runs unmutated for every mutation"."""
+        calls = []
+        real = mutate.run_suite
+
+        def suite(applied=None, timeout=None, modules=None):
+            calls.append((applied, modules))
+            return (True, "", [], False)
+        mutate.run_suite = suite
+        mutate._TARGETS_ALONE.clear()
+        self.addCleanup(mutate._TARGETS_ALONE.clear)
+        try:
+            self.assertTrue(mutate.targets_pass_alone(["tests.test_x"]))
+            self.assertTrue(mutate.targets_pass_alone(["tests.test_x"]))
+        finally:
+            mutate.run_suite = real
+        self.assertEqual(calls, [(None, ["tests.test_x"])])
 
     def test_without_targeted_the_whole_suite_alone(self):
         (caught, _, _), calls, _ = self.targeted([(False, "", ["t (x.T)"], False)], targeted=False)

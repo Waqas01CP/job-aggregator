@@ -228,6 +228,18 @@ def targets_for(m, root=REPO_ROOT):
     return named or importing
 
 
+# Each target list's run with no mutation applied, so a list is run unmutated
+# once however many mutations share it.
+_TARGETS_ALONE = {}
+
+
+def targets_pass_alone(modules):
+    key = tuple(modules)
+    if key not in _TARGETS_ALONE:
+        _TARGETS_ALONE[key] = run_suite(modules=modules)[0]
+    return _TARGETS_ALONE[key]
+
+
 def apply_one(m, targeted=False, note=None):
     """Mutate, run, restore. Returns (caught, failing test names, the
     tail when the suite timed out or None). A suite that timed out caught
@@ -240,18 +252,29 @@ def apply_one(m, targeted=False, note=None):
     never called a survivor on less than the whole suite. On the operator's
     laptop, short of memory, a whole suite takes five or six minutes and
     the modules naming a mutation seconds (2026-10-19). `note`, a dict,
-    is told which run decided."""
+    is told which run decided.
+
+    **A catch names a failing test** (the fifth audit's F8). Any non-zero
+    exit used to count, so a test that fails with no mutation at all, a name
+    unittest cannot load or a module running no tests read as a catch. So
+    the modules are first run unmutated, once for each list, and a list that
+    fails alone is left to the whole suite; a targeted run decides only when
+    it names a failing test; and an exit naming none is `crashed`, in `note`,
+    and no catch."""
     target = REPO_ROOT / m["path"]
     original = target.read_bytes()
     mutated = original.decode("utf-8").replace(m["find"], m["replace"], 1).encode("utf-8")
     note = {} if note is None else note
     try:
-        target.write_bytes(mutated)
         modules = targets_for(m) if targeted else []
+        if modules and not targets_pass_alone(modules):
+            note["targets fail alone"] = True
+            modules = []
+        target.write_bytes(mutated)
         decided = False
         if modules:
             passed, tail, failing, timed_out = run_suite(applied=m["path"], modules=modules)
-            decided = not passed and not timed_out
+            decided = not passed and not timed_out and bool(failing)
             note["modules"] = len(modules)
         note["whole suite"] = not decided
         if not decided:
@@ -260,7 +283,8 @@ def apply_one(m, targeted=False, note=None):
         target.write_bytes(original)
     if target.read_bytes() != original:
         raise SystemExit("RESTORE FAILED for %s. Stop and repair it by hand." % m["path"])
-    return not passed and not timed_out, failing, tail if timed_out else None
+    note["crashed"] = not passed and not timed_out and not failing
+    return not passed and not timed_out and bool(failing), failing, tail if timed_out else None
 
 
 def main(argv=None):
@@ -292,6 +316,7 @@ def main(argv=None):
         stray = sorted(refs() - before)
         results.append((m["label"], caught, stray, hung is not None))
         print("  %-9s %s%s" % ("caught" if caught else "TIMED OUT" if hung is not None
+                               else "CRASHED" if note.get("crashed")
                                else "SURVIVED", m["label"],
                                "   STRAY REF: %s" % ", ".join(stray) if stray else ""),
               flush=True)

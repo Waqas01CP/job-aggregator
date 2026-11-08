@@ -1,0 +1,26 @@
+[
+ {
+  "label": "a target list that fails alone still decides",
+  "path": "tools/mutate.py",
+  "find": "if modules and not targets_pass_alone(modules):",
+  "replace": "if False:"
+ },
+ {
+  "label": "a targeted exit naming no test is a catch",
+  "path": "tools/mutate.py",
+  "find": "decided = not passed and not timed_out and bool(failing)",
+  "replace": "decided = not passed and not timed_out"
+ },
+ {
+  "label": "a crash counts as caught",
+  "path": "tools/mutate.py",
+  "find": "return not passed and not timed_out and bool(failing), failing,",
+  "replace": "return not passed and not timed_out, failing,"
+ },
+ {
+  "label": "a target list runs unmutated for every mutation",
+  "path": "tools/mutate.py",
+  "find": "if key not in _TARGETS_ALONE:",
+  "replace": "if True:"
+ }
+]
