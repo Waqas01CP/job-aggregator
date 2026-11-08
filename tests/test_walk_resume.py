@@ -325,5 +325,18 @@ class TestAWalkTheCapStopped(unittest.TestCase):
         self.assertIn("the next walk reads on", out.getvalue())
 
 
+class TestTheCapHoldsTheSearch(unittest.TestCase):
+    def test_the_morning_walk_can_read_the_whole_search_in_one_run(self):
+        """The operator's yes of 2026-11-08 UTC: the search held 102 pages that
+        day, and only a walk read to the end counts for the closure test and
+        the agreement check. And it leaves the run its ceiling. Mutation: "the
+        cap goes back under the size of the search"."""
+        from src.http_client import DEFAULT_BUDGET
+        from src.run import MAX_PAGES
+        self.assertEqual(MAX_PAGES, 130)
+        # About 105 requests a run go to every other board (the runs of 11-08).
+        self.assertLess(MAX_PAGES + 105, DEFAULT_BUDGET)
+
+
 if __name__ == "__main__":
     unittest.main()

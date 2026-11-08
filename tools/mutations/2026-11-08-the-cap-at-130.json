@@ -1,0 +1,8 @@
+[
+ {
+  "label": "the cap goes back under the size of the search",
+  "path": "src/run.py",
+  "find": "MAX_PAGES = 130\n",
+  "replace": "MAX_PAGES = 80\n"
+ }
+]

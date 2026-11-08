@@ -107,11 +107,14 @@ ADAPTERS = {
 # mornings of 10-01 and 10-02 found 96 and 104 new postings, so a week is now
 # about 41 pages. 80 holds a week with room for the feed to grow by half, and
 # a walk that reaches it uses 80 of the run's 400 requests (500 until
-# 2026-10-21). The cap holds per run, a walk's head and tail together: what
-# it leaves is read on from by the next run (the fifth audit's F1). On
-# 2026-11-08 Himalayas' search held 102 pages and 1,920 postings, 722 of them
-# dated 2026-11-01, so its morning walk takes this run and the next.
-MAX_PAGES = 80
+# 2026-10-21). 130, not 80, since 2026-11-08 UTC, the operator's yes: Himalayas'
+# search held 102 pages and 1,920 postings that day, and its morning walk reads
+# to the feed's end (the fifth audit's F1). Read whole in one run, it counts for
+# the closure test and ADR-0053's agreement check, as a capped walk never does.
+# 130 holds that with room for the feed to grow by a quarter, and a walk that
+# reaches it uses 130 of the run's 400. The cap holds per run, a walk's head and
+# tail together, and what it leaves the next run reads on from.
+MAX_PAGES = 130
 
 
 def walk_floor(source, now):
