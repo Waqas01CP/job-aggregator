@@ -237,11 +237,11 @@ Each is measured, with its date and source. `data` is the public data branch.
 | Display intake | About one new display row a day under the current rules, so by arithmetic, not measurement, the display settles near thirty rows, and the cheaper delta projection is not yet needed. *(Overtaken 2026-10-04: the week to then measured about 7.5 new rows a day, and `Jobs` held 149 rows on 2026-10-14; the read-back projection was built on 2026-10-07 instead, ADR-0060)* | 2026-09-29 and 09-30 | Run logs, against ADR-0056's trigger of 100 |
 | Recurring cost | None | 2026-09-27 | Free plans only |
 | Feasibility research | 16 ATS platforms probed; 1,646 postings across the first 11 boards | 2026-09-11 to 09-16 | Spike logs |
-| Code | 37 source files, 9,869 lines; 36 test files, 14,565 lines; 9 tool files, 2,073 lines | 2026-10-19 | `git ls-files`, `wc` |
-| Tests | 1,080, passing on Python 3.11 and 3.12 | 2026-11-05 | `unittest`, the suite of `285d228` |
-| Mutations | 665 recorded across 68 files. Since 2026-10-01 the suite fails when a code change leaves any of them unable to run, which two commits had done to 10, unnoticed. A survivor is closed by a new test, or, where the mutation changes nothing, replaced and recorded as such. Since 2026-10-17 each suite under the harness has twenty minutes, and one stopped there is reported timed out, never caught. Since 2026-10-20 the harness can try first the tests that name a mutation, the whole suite deciding only when they pass: Brief 17's 40 took 254 minutes one whole suite at a time, and 29 with its own 7 added | 2026-10-20 | `tools/mutations/`, run by `tools/mutate.py`; results in the session logs |
-| Decision records | 61 (eight superseded), plus the rules for amending them. 188 dated Changes rows across 52 records, counted as rows under each record's Changes heading | 2026-10-17 | `docs/decisions/` |
-| History | 212 commits on `main` with this session's record, the first on 2026-09-01 UTC; 32 session logs; one audit report in `logs/audit/` | 2026-10-19 | `git log`, `logs/` |
+| Code | 40 source files, 11,093 lines; 37 test files, 16,297 lines; 9 tool files, 2,200 lines | 2026-11-08 | `git ls-files`, `wc` |
+| Tests | 1,118, passing on Python 3.11 and 3.12 | 2026-11-08 | `unittest` |
+| Mutations | 745 recorded across 84 files, 2026-11-08 (665 across 68 on 2026-10-20). Since 2026-10-01 the suite fails when a code change leaves any of them unable to run, which two commits had done to 10, unnoticed. A survivor is closed by a new test, or, where the mutation changes nothing, replaced and recorded as such. Since 2026-10-17 each suite under the harness has twenty minutes, and one stopped there is reported timed out, never caught. Since 2026-10-20 the harness can try first the tests that name a mutation, the whole suite deciding only when they pass: Brief 17's 40 took 254 minutes one whole suite at a time, and 29 with its own 7 added | 2026-10-20 | `tools/mutations/`, run by `tools/mutate.py`; results in the session logs |
+| Decision records | 62 numbered (nine superseded; 0042 reserved, no record), plus the rules for amending them. 188 dated Changes rows across 52 records on 2026-10-17, counted as rows under each record's Changes heading, not re-counted | 2026-11-08 | `docs/decisions/` |
+| History | About 260 commits on `main` with this session's records, the first on 2026-09-01 UTC; 38 session logs; two audit reports in `logs/audit/`, of five audits | 2026-11-08 | `git log`, `logs/` |
 
 ---
 
@@ -299,6 +299,7 @@ Each is measured, with its date and source. `data` is the public data branch.
 | 2026-10-18 | Briefs 15 and 16: the second wave measured for who reads the application, then built, Hacker News first, then Jobicy, RemoteOK and We Work Remotely; an on-site post on Hacker News in a place the rule cannot name dropped; every run log naming its commit; four employer boards found through the second wave |
 | 2026-10-19 | Brief 17: `Jobs` read once a run for the projection and the sweep; the rejection tables read only when a step needs them; who reads the application read from every description, measured over all 5,750 saved, and built to show in `Jobs` |
 | 2026-11-05 | November 1's switch landed four days late: a title's Senior and a source's stated Senior no longer drop a posting, the description's years decide, and Jobs shows the four description fields. Each run counts the base's records against Airtable's 1,000 and stops at once when the workspace's month is spent (2026-10-29); an unreviewed row leaves Jobs after 21 days, not 30 |
+| 2026-11-08 | The fifth code audit's corrections: a walk the page cap stops is read on from at the next run, and the morning walk reads Himalayas' search to its end, the search having lost its date order; the agreement check's findings reach `Health`; a cleared rejection retires as his rejection; the mutation harness counts a catch only when a test is named |
 
 ---
 
@@ -419,14 +420,14 @@ Short, role-neutral statements a reader can take as they are. Every figure is fr
 
 - Built an unattended job-discovery pipeline on GitHub Actions and Python (standard library plus `requests`). It polls employer job boards twice a day and shows only eligible, matching postings in Airtable, at no recurring cost.
 - New postings are first seen a median of 5.4 hours after publication, and 90% within 10.5 hours, against targets of 24 and 72 hours, over 114 postings.
-- 30 production runs over 13.6 days with no retries and no failed requests, reading 803 to 1,420 postings a run and, under the location and age rules, keeping 5 to 56.
+- As of 2026-10-01, 30 production runs over 13.6 days with no retries and no failed requests, reading 803 to 1,420 postings a run and, under the location and age rules, keeping 5 to 56.
 - Every posting is admitted or dropped by a named, deterministic rule, and every drop is logged. There is no model and no scoring.
 - Git branches serve as the database, with privacy enforced in code: employers' description text and aggregator data never reach the public repository. Every posting is saved in full to a private repository, verified by read-back.
-- A classification workflow: the operator's marks are copied to their own tables and stored permanently. Rows are deleted from the display only after the store is read back from the remote. The display is bounded by a thirty-day clock and a dry-run-first clearing tool.
+- A classification workflow: the operator's marks are copied to their own tables and stored permanently. Rows are deleted from the display only after the store is read back from the remote. The display is bounded by a twenty-one-day clock (thirty until 2026-10-29) and a dry-run-first clearing tool.
 - A day's worth of an aggregator's feed went from about a third read, 93% of it irrelevant, to all of the relevant postings, by moving to a filtered endpoint an earlier measurement had wrongly rejected.
-- 893 tests, and 533 mutations that deliberately break the code to prove the tests notice.
+- 1,118 tests, and 745 mutations that deliberately break the code to prove the tests notice (2026-11-08).
 - Assessed candidate data sources by evidence of their value to the user, genuine postings and a fair route to the employer, rather than by their reach, with every load-bearing claim checked at its primary source, and set the integration order from that.
-- Designed by the operator and built with AI agents in separate roles: architecture, implementation, and cold, read-only audit. The work was carried out under a written verification discipline and produced 55 decision records and 24 session logs.
+- Designed by the operator and built with AI agents in separate roles: architecture, implementation, and cold, read-only audit. The work was carried out under a written verification discipline and produced 62 decision records and 38 session logs (2026-11-08).
 
 ---
 

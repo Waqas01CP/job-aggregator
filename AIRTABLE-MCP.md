@@ -10,8 +10,8 @@ status: current
 
 **Why it matters:** every call the connector makes spends from the same allowance the pipeline uses.
 - **The allowance:** 1,000 API calls a month for the whole workspace, on Airtable's free plan.
-- **The pipeline's share:** in October it spent 635 of them (measured from its run logs, test runs included). It will spend about 590 in November [estimate, `briefs/architecture.md`'s addendum of 2026-10-28].
-- **What is left for chats:** about 400 calls a month, so every call a chat saves is one he can spend applying.
+- **The pipeline's share:** in October it spent 673 of them, 596 in production runs and 77 in test runs (measured from the run logs of both data branches). In November it spent 139 by the morning of 11-08, 32 of them one re-send, about 15 a day otherwise, so about 480 for the month [estimate, from that pace].
+- **What is left for chats:** about 500 calls a month, so every call a chat saves is one he can spend applying.
 
 Facts about Airtable below were read on 2026-10-28 from Airtable's own pages:
 - "Managing API call limits in Airtable" (support);
@@ -26,7 +26,7 @@ Facts about Airtable below were read on 2026-10-28 from Airtable's own pages:
 - **Past 1,000:** a one-time thirty-day grace period, then every call answers 429 until the month resets. **The grace period is given once, ever.** Do not spend it on a busy week; keep it for an emergency.
 - **Where to see the count:** Workspace settings, Summary, "Public API calls" for the current month (the workspace owner sees it).
 - **The pipeline's guard:** it stops itself at 900 of its own calls (`config/sweep.json`, `monthly_call_ceiling`). It does not see the chats' calls, so the guard does not protect the chats, and the chats can still use up the workspace.
-- **The records limit:** the base holds at most **1,000 records across all its tables** on the free plan. On 2026-10-28 it held about 630 by the run logs' count, test tables included. Creating rows by hand uses that up too.
+- **The records limit:** the base holds at most **1,000 records across all its tables** on the free plan. On 2026-11-08 it held about 580 by the run logs' count, the test tables left out, `Jobs test` being empty; each run's log names its count. Creating rows by hand uses that up too.
 
 ## 2. The tables, and what a chat may write
 
