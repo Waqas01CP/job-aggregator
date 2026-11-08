@@ -182,7 +182,7 @@
   {
     "label": "hitting the page cap is silent",
     "path": "src/run.py",
-    "find": "        log[\"capped\"] = not ended\n        if not ended:\n",
+    "find": "        log[\"capped\"] = resume is not None\n        if resume is not None:\n",
     "replace": "        log[\"capped\"] = False\n        if False:\n"
   },
   {

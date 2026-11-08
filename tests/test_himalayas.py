@@ -522,8 +522,8 @@ class TestRunIntegration(unittest.TestCase):
                 log = Run([deep], client, now=NOW, matcher=MATCHER, slot=slot).execute()
                 self.assertEqual(client.served["n"], served)
                 walk = next(b["walk"] for b in log["boards"] if b["board"] == deep.board_id)
-                from src.run import walk_floor
-                self.assertEqual(walk["mark"] == walk_floor("himalayas", NOW), slot == "morning")
+                self.assertEqual(walk["mark"] == "", slot == "morning")
+                self.assertEqual(walk["stopped_by"], "end" if slot == "morning" else "mark")
 
     def test_the_shipped_search_board_walks_deep_on_the_morning_only(self):
         """The configuration carries the decision, and a value no slot names

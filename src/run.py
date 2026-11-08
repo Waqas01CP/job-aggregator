@@ -107,7 +107,10 @@ ADAPTERS = {
 # mornings of 10-01 and 10-02 found 96 and 104 new postings, so a week is now
 # about 41 pages. 80 holds a week with room for the feed to grow by half, and
 # a walk that reaches it uses 80 of the run's 400 requests (500 until
-# 2026-10-21).
+# 2026-10-21). The cap holds per run, a walk's head and tail together: what
+# it leaves is read on from by the next run (the fifth audit's F1). On
+# 2026-11-08 Himalayas' search held 102 pages and 1,920 postings, 722 of them
+# dated 2026-11-01, so its morning walk takes this run and the next.
 MAX_PAGES = 80
 
 
@@ -627,6 +630,10 @@ def sweep_display(run, no_commit, test_mode, slot, private_ok, closure, config, 
 # the public branch.
 AGREEMENT_FILE = "agreement_disagreements.json"
 AGREEMENT_PENDING_FILE = "agreement_pending.json"
+# Where a walk the cap stopped left off, one entry a board (the fifth audit's
+# F1). Private, beside the agreement check's files: a cursor can be a posting's
+# own ID, Startup.jobs' is.
+WALK_RESUME_FILE = "walk_resume.json"
 # How long a browse posting the search has not returned waits before its
 # absence can count. The search trails browse by hours: at the fourth audit's
 # sample its newest posting was 6.3 hours old, older than all 20 on browse's
@@ -997,30 +1004,56 @@ class Run:
         the mark and is read to its end."""
         floor = walk_floor(board.source, self.now) or ""
         if self.slot in board.deep_slots:
-            # ADR-0053's Changes, 2026-10-16: on this slot the walk reads to
-            # the age limit, past what is stored, so a posting that reached
-            # the feed after the walks that covered its date is read. The
-            # other slot keeps the mark.
-            mark = floor
+            # ADR-0053's Changes, 2026-10-16: on this slot the walk reads past
+            # what is stored, so a posting that reached the feed after the
+            # walks that covered its date is read. The other slot keeps the
+            # mark. To the feed's end, not the age limit, since 2026-11-08 (the
+            # fifth audit's F1): the search is in date order only for its first
+            # thirteen pages or so that day. Below them a page wholly older than
+            # the week can sit above postings dated this week, page 65 holding
+            # one dated the day before, so a walk stopping at the first such
+            # page reads none of them. With the cap, about 300 postings of 1,920
+            # had never been read; with the age rule held aside, the rules keep
+            # 87 of them.
+            mark = ""
         else:
             mark = max(self.high_water.get(board.board_id) or "", floor)
         # The pages merged under the adapter's own key, Himalayas' `jobs`,
         # Manatal's `results`, so its parse reads them as one response.
-        key = adapter.POSTINGS_AT
-        merged, cursor, pages, stopped_by = {key: []}, None, 0, "cap"
-        while pages < MAX_PAGES:
-            payload = self.client.get_json(adapter.url_for(board, cursor), board.source,
-                                           **source_options(adapter))
-            pages += 1
-            merged[key].extend(payload.get(key, []))
-            if adapter.stop_after(payload, mark):
-                stopped_by = "mark"
-                break
-            cursor = adapter.next_cursor(payload)
-            if not cursor:
-                stopped_by = "end"
-                break
-        ended = stopped_by != "cap"
+        merged = {adapter.POSTINGS_AT: []}
+        stopped_by, cursor, pages = self._walk(adapter, board, merged, None, mark, 0)
+        # What the cap left unread, read on from where it stopped (the fifth
+        # audit's F1). The next walk's mark is the newest posting stored, so a
+        # walk stopping there never reached the rest, and by the time a deep
+        # walk did, a posting past seven days was dropped at first sight: lost,
+        # not late. Startup.jobs' first walk lost about eleven hours that way.
+        held = self._held_walk(board, log)
+        resume, tail = None, None
+        if stopped_by == "cap":
+            # No pages left this run. The older of the two marks, so a walk
+            # capped twice still owes everything the first one left.
+            resume = {"board": board.board_id, "cursor": cursor,
+                      "mark": min(mark, held["mark"]) if held else mark,
+                      "capped_at": held.get("capped_at") if held else iso(self.now)}
+        elif held and stopped_by != "end" and self._tail_mark(held, floor) < mark:
+            # The rest is what lies between the held mark, or the age limit if
+            # that is later, and this walk's own. A deep walk's own mark is no
+            # mark, so a walk read to its end, or stopped by the cap above: a
+            # held mark of none means the deep walk was cut short, and its
+            # tail reads to the end too.
+            tail_mark = self._tail_mark(held, floor)
+            pages_before = pages
+            try:
+                how, cursor, pages = self._walk(adapter, board, merged, held["cursor"],
+                                                tail_mark, pages)
+            except HttpError as e:
+                # What the walk already read is kept and the rest waits: a
+                # stale cursor must not cost the board its new postings.
+                how, cursor = "failed: %s" % type(e).__name__, held["cursor"]
+            tail = {"stopped_by": how, "mark": tail_mark, "pages": pages - pages_before}
+            if how == "cap" or how.startswith("failed"):
+                resume = dict(held, cursor=cursor)
+        self._keep_walk(board, held, resume)
         log["pages"] = pages
         # What the walk covered, for ADR-0050's closure test: stopped at the
         # mark, it read every posting newer than the mark; at the feed's end,
@@ -1029,18 +1062,76 @@ class Run:
         # logged 2026-09-16 as its oldest, one page or thirty, and the
         # closure test read that as reaching back to 09-16. It marked 47 open
         # Himalayas rows closed on 10-01 and 10-02, hiding them from the
-        # `To review` view, fifteen days from being retired for good.
+        # `To review` view, fifteen days from being retired for good. A tail
+        # read on from an earlier walk is logged beside it and claims nothing
+        # for that test, and its cursor never reaches this public log.
         log["walk"] = {"stopped_by": stopped_by, "mark": mark}
+        if tail:
+            log["walk"]["tail"] = tail
         # The cap cuts the oldest days of the window unannounced, and only
         # `pages: 40` showed it: a recovery walk after several failed saves,
         # in a busy week, is the case (the fourth audit's F17). Logged and
-        # warned, so it is read on the run's page.
-        log["capped"] = not ended
-        if not ended:
+        # warned, so it is read on the run's page, and a row in `Health`.
+        log["capped"] = resume is not None
+        if resume is not None:
             print("::warning::%s: the walk reached its cap of %d pages before the stop mark "
-                  "or the age limit, so older postings in the window were not read"
-                  % (board.board_id, MAX_PAGES))
+                  "or the age limit, so older postings in the window were not read; the next "
+                  "walk reads on from where this one stopped" % (board.board_id, MAX_PAGES))
         return merged
+
+    def _walk(self, adapter, board, merged, cursor, mark, pages):
+        """Read pages from `cursor` into `merged` until a page is wholly at or
+        before `mark`, the feed ends, or the run's pages reach the cap. Returns
+        how it stopped, the cursor to read on from if the cap stopped it, and
+        the pages read so far, this run's head and tail together."""
+        key = adapter.POSTINGS_AT
+        while pages < MAX_PAGES:
+            payload = self.client.get_json(adapter.url_for(board, cursor), board.source,
+                                           **source_options(adapter))
+            pages += 1
+            merged[key].extend(payload.get(key, []))
+            if adapter.stop_after(payload, mark):
+                return "mark", None, pages
+            cursor = adapter.next_cursor(payload)
+            if not cursor:
+                return "end", None, pages
+        return "cap", cursor, pages
+
+    @staticmethod
+    def _tail_mark(held, floor):
+        return max(held["mark"], floor) if held["mark"] else ""
+
+    def _resume_path(self):
+        return "%s/%s" % (self.paths["local_agreement_dir"], WALK_RESUME_FILE)
+
+    def _held_walk(self, board, log):
+        """Where an earlier walk of this board stopped at the cap, or None.
+        With the private store down its file was not restored, so nothing is
+        known; a file that cannot be read costs the tail, never the walk."""
+        if self.private_unavailable:
+            return None
+        try:
+            for entry in storage.read_records(self._resume_path()):
+                if (entry.get("board") == board.board_id and entry.get("cursor")
+                        and isinstance(entry.get("mark"), str)):
+                    return entry
+        except (ValueError, storage.StorageError) as e:
+            log["walk_resume_failure"] = type(e).__name__
+        return None
+
+    def _keep_walk(self, board, held, resume):
+        """Write this board's entry only when it changed, so a run with no
+        capped walk leaves the file as it found it. Never with the private
+        store down: nothing here could reach origin."""
+        if self.private_unavailable or resume == held:
+            return
+        try:
+            others = [e for e in storage.read_records(self._resume_path())
+                      if e.get("board") != board.board_id]
+        except (ValueError, storage.StorageError):
+            others = []
+        storage.write_atomic(self._resume_path(),
+                             dumps(others + ([resume] if resume else [])))
 
     # ---------------------------------------------------------------- main
     def execute(self):

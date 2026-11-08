@@ -1,0 +1,104 @@
+[
+ {
+  "label": "a capped walk leaves nothing for the next",
+  "path": "src/run.py",
+  "find": "        self._keep_walk(board, held, resume)\n",
+  "replace": "        self._keep_walk(board, held, None)\n"
+ },
+ {
+  "label": "the next walk never reads on",
+  "path": "src/run.py",
+  "find": "elif held and stopped_by != \"end\" and self._tail_mark(held, floor) < mark:",
+  "replace": "elif False:"
+ },
+ {
+  "label": "a walk that reached the end still reads the tail",
+  "path": "src/run.py",
+  "find": "elif held and stopped_by != \"end\" and self._tail_mark(held, floor) < mark:",
+  "replace": "elif held and self._tail_mark(held, floor) < mark:"
+ },
+ {
+  "label": "the tail reads past the held mark",
+  "path": "src/run.py",
+  "find": "                                                tail_mark, pages)",
+  "replace": "                                                \"\", pages)"
+ },
+ {
+  "label": "the tail ignores the age limit",
+  "path": "src/run.py",
+  "find": "return max(held[\"mark\"], floor) if held[\"mark\"] else \"\"",
+  "replace": "return held[\"mark\"]"
+ },
+ {
+  "label": "a deep walk's tail stops at the age limit",
+  "path": "src/run.py",
+  "find": "return max(held[\"mark\"], floor) if held[\"mark\"] else \"\"",
+  "replace": "return max(held[\"mark\"], floor)"
+ },
+ {
+  "label": "the deep walk stops at the age limit",
+  "path": "src/run.py",
+  "find": "            mark = \"\"\n",
+  "replace": "            mark = floor\n"
+ },
+ {
+  "label": "the tail has a cap of its own",
+  "path": "src/run.py",
+  "find": "                                                tail_mark, pages)",
+  "replace": "                                                tail_mark, 0)"
+ },
+ {
+  "label": "a tail the cap stops forgets what it still owes",
+  "path": "src/run.py",
+  "find": "if how == \"cap\" or how.startswith(\"failed\"):",
+  "replace": "if how.startswith(\"failed\"):"
+ },
+ {
+  "label": "a second capped walk forgets the first one's mark",
+  "path": "src/run.py",
+  "find": "\"mark\": min(mark, held[\"mark\"]) if held else mark,",
+  "replace": "\"mark\": mark,"
+ },
+ {
+  "label": "a failed tail fails the board",
+  "path": "src/run.py",
+  "find": "            except HttpError as e:\n                # What the walk already read",
+  "replace": "            except KeyError as e:\n                # What the walk already read"
+ },
+ {
+  "label": "an unreadable file fails the board",
+  "path": "src/run.py",
+  "find": "except (ValueError, storage.StorageError) as e:\n            log[\"walk_resume_failure\"]",
+  "replace": "except KeyError as e:\n            log[\"walk_resume_failure\"]"
+ },
+ {
+  "label": "a malformed entry is taken as a held walk",
+  "path": "src/run.py",
+  "find": "if (entry.get(\"board\") == board.board_id and entry.get(\"cursor\")\n                        and isinstance(entry.get(\"mark\"), str)):",
+  "replace": "if entry.get(\"board\") == board.board_id:"
+ },
+ {
+  "label": "writing one board's entry drops the others'",
+  "path": "src/run.py",
+  "find": "others = [e for e in storage.read_records(self._resume_path())\n                      if e.get(\"board\") != board.board_id]",
+  "replace": "others = []"
+ },
+ {
+  "label": "every walk rewrites the file",
+  "path": "src/run.py",
+  "find": "if self.private_unavailable or resume == held:",
+  "replace": "if self.private_unavailable:"
+ },
+ {
+  "label": "the held walk is read with the private store down",
+  "path": "src/run.py",
+  "find": "        if self.private_unavailable:\n            return None\n        try:\n            for entry in",
+  "replace": "        try:\n            for entry in"
+ },
+ {
+  "label": "the file is left out of the private push",
+  "path": "src/run.py",
+  "find": "WALK_RESUME_FILE = \"walk_resume.json\"",
+  "replace": "WALK_RESUME_FILE = \"walk_resume.txt\""
+ }
+]
