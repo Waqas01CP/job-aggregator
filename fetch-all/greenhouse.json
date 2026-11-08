@@ -54392,5 +54392,38 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "greenhouse:8916073002",
+  "source": "greenhouse",
+  "board_id": "greenhouse:careem",
+  "external_id": "8916073002",
+  "employer": "Careem",
+  "employer_provenance": "payload",
+  "title": "Quality Specialist",
+  "title_normalised": "Quality Specialist",
+  "location": "Dubai, United Arab Emirates",
+  "published_at": "2026-11-08T12:43:51Z",
+  "published_field": "first_published",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-08T18:15:41.203029Z",
+  "ordering_date": "2026-11-08T12:43:51Z",
+  "ordering_date_source": "publication",
+  "url": "https://boards.greenhouse.io/careem/jobs/8916073002?gh_jid=8916073002",
+  "url_provenance": "payload",
+  "stated_experience": [
+   3
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "Dubai, United Arab Emirates",
+   "United Arab Emirates"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]
