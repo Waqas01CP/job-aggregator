@@ -1,0 +1,8 @@
+[
+ {
+  "label": "a change to the filter module re-reads nothing",
+  "path": "src/facts.py",
+  "find": "\"src/filters.py\", ",
+  "replace": ""
+ }
+]

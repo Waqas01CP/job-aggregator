@@ -49,8 +49,11 @@ DERIVED = ("stated_experience", "stated_levels", "places", "workplace", "require
            "described_workplace", "described", "who_reads")
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-# The code and configuration the derived facts come from.
-SOURCES = ("src/description.py", "src/normalise.py", "src/adapters/*.py",
+# The code and configuration the derived facts come from. `src/filters.py`
+# since the fifth audit's F5: its `place_names` derives `required_places`, so
+# a change there changed the fact for new postings while every stored row
+# kept the old one.
+SOURCES = ("src/description.py", "src/filters.py", "src/normalise.py", "src/adapters/*.py",
            "config/eligibility.json", "config/who_reads.json")
 
 

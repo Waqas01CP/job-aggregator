@@ -93,8 +93,10 @@ class TestTheFingerprint(Harness):
     def test_the_shipped_sources_are_the_reader_the_adapters_and_the_eligibility(self):
         """And the role words `Who reads` is read by, from 2026-10-19, so a
         change to them re-reads every saved posting. Mutation: "a change to
-        the role words re-reads nothing"."""
-        self.assertEqual(facts.SOURCES, ("src/description.py", "src/normalise.py",
+        the role words re-reads nothing". And the filter module, whose
+        `place_names` derives `required_places` (the fifth audit's F5).
+        Mutation: "a change to the filter module re-reads nothing"."""
+        self.assertEqual(facts.SOURCES, ("src/description.py", "src/filters.py", "src/normalise.py",
                                          "src/adapters/*.py", "config/eligibility.json",
                                          "config/who_reads.json"))
 
