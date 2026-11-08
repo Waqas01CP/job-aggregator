@@ -39,7 +39,7 @@ tool the base's record cap needs. It never touches the store.
 **A copy removed any other way is saved first, and a clear removes
 nothing** (D12). A rejection copy whose row the operator reclassified goes
 to `removed_copies.json` with its reason, then is deleted on a later run.
-A cleared `Status` leaves every copy where it is.
+A cleared `Status` leaves every copy where it is. A rejected row whose `Status` was cleared stays his rejection: when a reason would remove it, the clock's among them, it retires fifteen days after his classification into its rejection store, marked `status_cleared`, and its copy goes the morning after, never as a row nobody reviewed. What the clear's copy said is kept in `cleared_rejections.json`, since most mornings read no rejection table (2026-11-08, the fifth audit's F4).
 
 **Nothing deletes from a store.** The three outcome stores, the removed-unreviewed and removed-copies stores, the filtered layer
 and the raw layer stay append-only. The accepted store is the file the
@@ -167,7 +167,7 @@ record provides for.
 ## What reads these numbers
 
 The sweep and the clearing tool, from `config/sweep.json`: `retire_after_days`
-(15), `unreviewed_after_days` (30) and `clearing_dry_run_valid_hours` (48).
+(15), `unreviewed_after_days` (21, 30 until 2026-10-29) and `clearing_dry_run_valid_hours` (48).
 This file was written before the sweep, so the sweep was built to the
 operator's numbers rather than ones chosen during implementation; it now
 says what each number is and why, and the configuration is what the code

@@ -1,0 +1,38 @@
+[
+ {
+  "label": "a cleared rejection is stored as unreviewed",
+  "path": "src/sweep.py",
+  "find": "            if cleared is not None:\n                if removal is not None",
+  "replace": "            if False:\n                if removal is not None"
+ },
+ {
+  "label": "a cleared rejection's reason is lost",
+  "path": "src/sweep.py",
+  "find": "reason=cleared.get(\"reason\"),",
+  "replace": "reason=None,"
+ },
+ {
+  "label": "a cleared rejection's row is deleted before its record reaches origin",
+  "path": "src/sweep.py",
+  "find": "        if self.stores.durable_has(where, name, identity):\n            delete_jobs.append((row[\"id\"], identity, why))\n            return\n        self.stores.write(where, name, self.record(identity, f, status=table,",
+  "replace": "        delete_jobs.append((row[\"id\"], identity, why))\n        self.stores.write(where, name, self.record(identity, f, status=table,"
+ },
+ {
+  "label": "only the morning of the clear knows it",
+  "path": "src/sweep.py",
+  "find": "cleared = self.cleared_now.get(identity) or self.stores.cleared(where, identity)",
+  "replace": "cleared = self.cleared_now.get(identity)"
+ },
+ {
+  "label": "a cleared rejection retires before its fifteen days",
+  "path": "src/sweep.py",
+  "find": "if name is None or not older_than(cleared.get(\"classified\"), days, self.now):",
+  "replace": "if name is None:"
+ },
+ {
+  "label": "a cleared accepted copy is kept as a cleared rejection",
+  "path": "src/sweep.py",
+  "find": "                    if t in REJECTION_TABLES:\n                        self.note_cleared(",
+  "replace": "                    if True:\n                        self.note_cleared("
+ }
+]

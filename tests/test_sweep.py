@@ -111,6 +111,112 @@ class Harness(unittest.TestCase):
         return self.base.rows(TABLES[table])
 
 
+class TestACleared(Harness):
+    """The fifth audit's F4. A rejected row whose `Status` is cleared keeps its
+    copy, as D12 says; but its row was stored as never reviewed once the clock
+    reached it, its copy stayed in its table for good, and the rejection store
+    never had his classification."""
+
+    CONFIG21 = replace(CONFIG, unreviewed_after_days=21)
+
+    def rejected_and_cleared(self, first_seen_days=25, classified_days=20, reason="salary"):
+        r = make_row(2, published=stamp(NOW - timedelta(days=first_seen_days)))
+        self.store_rows([r])
+        rid = self.in_jobs(r, status="rejected-not-a-fit", classified_days_ago=classified_days)
+        self.base.seed(TABLES["rejected-not-a-fit"], {"Identity": "greenhouse:2",
+                                                      "Choice reason": reason},
+                       created=NOW - timedelta(days=classified_days))
+        fields = self.base.table(TABLES[JOBS])[rid]["fields"]
+        fields.pop("Status")
+        fields["Classified at"] = stamp(NOW - timedelta(hours=1))
+        return rid
+
+    def morning(self, days=0):
+        return self.sweep(daily=True, since=stamp(NOW - timedelta(hours=12)),
+                          now=NOW + timedelta(days=days), config=self.CONFIG21)
+
+    def test_it_retires_as_his_rejection_not_as_unreviewed(self):
+        """The audit's own case: first seen 25 days ago, rejected 20 days ago,
+        then cleared. Mutations: "a cleared rejection is stored as unreviewed";
+        "a cleared rejection's reason is lost"."""
+        self.rejected_and_cleared()
+        first = self.morning()
+        self.assertEqual(first["aged_out"], 0)
+        self.assertEqual(first["cleared_retired"], 1)
+        self.assertEqual(self.store("removed_unreviewed.json"), [])
+        [record] = self.store("rejected_not_a_fit.json")
+        self.assertEqual((record["identity"], record["reason"], record["status"],
+                          record["status_cleared"]),
+                         ("greenhouse:2", "salary", "rejected-not-a-fit", True))
+        self.assertEqual(len(self.jobs()), 1)
+
+    def test_the_row_and_the_copy_leave_the_morning_after_and_never_before(self):
+        """Stored first, deleted once origin holds it; and the record just
+        stored is the reason that morning reads the table. Mutation: "a cleared
+        rejection's row is deleted before its record reaches origin"."""
+        self.rejected_and_cleared()
+        self.morning()
+        self.assertEqual([c for c in self.base.calls if c["method"] == "DELETE"], [])
+        second = self.morning(days=1)
+        self.assertTrue(second["tables_read"])
+        self.assertEqual(self.jobs(), [])
+        self.assertEqual(self.copies("rejected-not-a-fit"), [])
+        self.assertEqual(self.store("removed_unreviewed.json"), [])
+        third = self.morning(days=2)
+        self.assertEqual(third["problems"], [])
+
+    def test_a_later_morning_that_reads_no_table_still_knows(self):
+        """The clear is seen once, on the morning its `Classified at` moved,
+        and the clock reaches the row weeks later with no table read. Mutation:
+        "only the morning of the clear knows it"."""
+        self.rejected_and_cleared(first_seen_days=10, classified_days=5)
+        seen = self.morning()
+        self.assertEqual((seen["kept_after_a_clear"], seen["aged_out"]), (1, 0))
+        self.assertEqual(len(self.store("cleared_rejections.json")), 1)
+        later = self.sweep(daily=True, since=stamp(NOW + timedelta(days=20)),
+                           now=NOW + timedelta(days=20), config=self.CONFIG21)
+        self.assertFalse(later["tables_read"])
+        self.assertEqual(later["aged_out"], 0)
+        self.assertEqual(later["cleared_retired"], 1)
+        self.assertEqual(self.store("removed_unreviewed.json"), [])
+
+    def test_it_waits_for_the_fifteen_days_of_his_classification(self):
+        """So its copy is past its own fifteen when the row goes. Mutation:
+        "a cleared rejection retires before its fifteen days"."""
+        self.rejected_and_cleared(first_seen_days=25, classified_days=5)
+        first = self.morning()
+        self.assertEqual((first["cleared_retired"], first["aged_out"]), (0, 0))
+        self.assertEqual(self.store("rejected_not_a_fit.json"), [])
+        self.assertEqual(self.store("removed_unreviewed.json"), [])
+        self.assertEqual(len(self.jobs()), 1)
+
+    def test_a_row_reclassified_after_a_clear_is_judged_on_its_new_status(self):
+        """Mutation: "a reclassified row is retired as its cleared rejection"."""
+        rid = self.rejected_and_cleared()
+        self.morning()
+        fields = self.base.table(TABLES[JOBS])[rid]["fields"]
+        fields["Status"] = "accepted"
+        fields["Classified at"] = stamp(NOW + timedelta(days=1))
+        report = self.morning(days=1)
+        self.assertEqual(report["cleared_retired"], 0)
+        self.assertEqual(len(self.copies("accepted")), 1)
+        self.assertEqual(len(self.jobs()), 1)
+
+    def test_a_cleared_accepted_copy_is_no_cleared_rejection(self):
+        """`accepted` leaves only on his `Delete`, so its clear is not kept here.
+        Mutation: "a cleared accepted copy is kept as a cleared rejection"."""
+        r = make_row(2, published=stamp(NOW - timedelta(days=5)))
+        self.store_rows([r])
+        rid = self.in_jobs(r, status="accepted", classified_days_ago=3)
+        self.base.seed(TABLES["accepted"], {"Identity": "greenhouse:2", "Stage": "applied"},
+                       created=NOW - timedelta(days=3))
+        fields = self.base.table(TABLES[JOBS])[rid]["fields"]
+        fields.pop("Status")
+        fields["Classified at"] = stamp(NOW - timedelta(hours=1))
+        self.morning()
+        self.assertEqual(self.store("cleared_rejections.json"), [])
+
+
 class TestStep1Copy(Harness):
     def test_a_marked_row_is_copied_with_its_ten_fields_and_nothing_else(self):
         r = make_row(1)

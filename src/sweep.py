@@ -106,6 +106,12 @@ GONE_WHY = "he marked it gone"
 # be reclassified more than once. Not a classification store: the projection
 # never reads it, so nothing in it hides a row. D12.
 REMOVED_COPIES_STORE = "removed_copies.json"
+# A rejection copy whose row's `Status` was cleared, keyed by the copy's ID, as
+# step 1 saw it (the fifth audit's F4). A clear is no new classification (D12),
+# so his rejection still stands when the row retires; and the rejection tables
+# are not read on most mornings, so what that morning cannot read is kept here.
+# Not a classification store: the projection never reads it.
+CLEARED_STORE = "cleared_rejections.json"
 # The mark a record carries when the operator's own tool wrote it (ADR-0055).
 # Such a classified row or copy leaves at once rather than at fifteen days,
 # once the store holding the mark is read back from origin.
@@ -146,6 +152,7 @@ class Stores:
         names = tuple(STORE_FOR.values()) + (REMOVED_UNREVIEWED_STORE, GONE_STORE)
         self.durable = {}
         self.durable_copies = {}
+        self.durable_cleared = {}
         # The removal store by (identity, reason): a row can leave, return
         # when a rule widens, and leave again for another reason, and the
         # second removal must be written before its row is deleted.
@@ -172,6 +179,9 @@ class Stores:
                     self.durable_removals[where] = {(r.get("identity"), r.get("reason"))
                                                     for r in records}
                     self.durable_latest[where] = latest_reasons(records)
+            self.durable_cleared[where] = {
+                r.get("identity"): r
+                for r in storage.read_records("%s/%s" % (directory, CLEARED_STORE))}
             removed = storage.read_records("%s/%s" % (directory, REMOVED_COPIES_STORE))
             self.durable_copies[where] = {r.get("copy_id") for r in removed}
             self.rejections_stored_at += [r.get("swept_at") for r in removed
@@ -234,6 +244,10 @@ class Stores:
         return [n for n in STORE_FOR.values() if n != name
                 and identity in self.durable.get((where, n), set())]
 
+    def cleared(self, where, identity):
+        """The latest rejection copy origin holds as cleared for this row."""
+        return self.durable_cleared.get(where, {}).get(identity)
+
     def copy_saved(self, where, copy_id):
         """Whether the removed-copies store restored from origin holds it."""
         return copy_id in self.durable_copies.get(where, set())
@@ -274,8 +288,11 @@ class Sweep:
                        "copies_deleted": {}, "closed_marked": 0, "closed_cleared": 0,
                        "waiting_for_the_store": 0, "held_private_unavailable": 0,
                        "not_in_the_stored_layers": 0, "kept_after_a_clear": 0,
-                       "aged_out": 0, "gone_recorded": 0, "transcribed": {},
+                       "aged_out": 0, "cleared_retired": 0, "gone_recorded": 0,
+                       "transcribed": {},
                        "table_rows": {}, "removals": [], "problems": []}
+        # What this run's step 1 saw cleared, which no store read yet holds.
+        self.cleared_now = {}
         self._load_rows()
 
     # ------------------------------------------------------------- the data
@@ -442,6 +459,8 @@ class Sweep:
                     # A clear is no new classification, and one stray
                     # keystroke makes it: nothing is removed (D12).
                     self.report["kept_after_a_clear"] += len(held)
+                    if t in REJECTION_TABLES:
+                        self.note_cleared(identity, t, held, r["fields"])
                 elif t == "accepted":
                     # A posting he accepted and then found gone keeps its
                     # copy, as ADR-0062 says, and that is no problem to
@@ -698,6 +717,9 @@ class Sweep:
                 delete_jobs.append((r["id"], identity, kept))
                 continue
             closed, removal = self.judge(identity)
+            # A rejection whose status was cleared is still his, so its row
+            # is never stored as one nobody reviewed.
+            cleared = self.cleared_now.get(identity) or self.stores.cleared(where, identity)
             # Step 4: mark, or clear a mark whose posting came back.
             marked = f.get("Closed")
             if closed and not marked:
@@ -711,6 +733,10 @@ class Sweep:
             # Step 5: retire what closed fifteen days ago.
             if marked and older_than(marked + "T00:00:00Z", days, self.now):
                 removal = REASON_CLOSED
+            if cleared is not None:
+                if removal is not None or self.aged_out(identity, f):
+                    self.retire_cleared(r, cleared, where, days, delete_jobs)
+                continue
             # Step 7: ADR-0055's clock, for a row no other reason removes.
             if removal is None and self.aged_out(identity, f):
                 removal = REASON_AGED_OUT
@@ -755,6 +781,46 @@ class Sweep:
                           "stored")
             self.report["gone_recorded"] += 1
             self.report["waiting_for_the_store"] += 1
+
+    def note_cleared(self, identity, table, held, fields):
+        """Keep what a cleared rejection's copy says, this run and for later
+        mornings, which may never read its table."""
+        where = self.stores.where(identity)
+        for copy in held:
+            record = self.copy_record(copy, table, "its status was cleared", fields)
+            self.cleared_now[identity] = record
+            if where is not None:
+                self.stores.write(where, CLEARED_STORE, record, key="copy_id")
+
+    def retire_cleared(self, row, cleared, where, days, delete_jobs):
+        """A row whose rejection was cleared, on any morning a reason would
+        remove it: it retires as what he made it, not as a row nobody
+        reviewed (the fifth audit's F4). Fifteen days after his classification,
+        as any classified row: by then its copy is past its own fifteen, so
+        step 3 takes the copy on the morning after the store reaches origin,
+        when `rejection_reads` names the record just stored. Stored first, and
+        deleted once origin holds it."""
+        f = row["fields"]
+        identity, table = f.get("Identity"), cleared.get("table")
+        name = STORE_FOR.get(table)
+        if name is None or not older_than(cleared.get("classified"), days, self.now):
+            return
+        if self.stores.classified_elsewhere(where, name, identity):
+            self._problem("%s is already in another classification store; left in Jobs"
+                          % masked(identity))
+            return
+        why = "classified %s, its status since cleared" % table
+        if self.stores.durable_has(where, name, identity):
+            delete_jobs.append((row["id"], identity, why))
+            return
+        self.stores.write(where, name, self.record(identity, f, status=table,
+                                                   reason=cleared.get("reason"),
+                                                   reason_in_jobs=f.get(REASON_FIELD),
+                                                   classified_at=cleared.get("classified"),
+                                                   status_cleared=True))
+        self._removal(identity, JOBS, why, "stored")
+        self.report["cleared_retired"] += 1
+        self.report["waiting_for_the_store"] += 1
 
     def aged_out(self, identity, fields):
         """ADR-0055: first seen more than `unreviewed_after_days` ago. The
