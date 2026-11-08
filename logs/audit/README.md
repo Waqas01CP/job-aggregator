@@ -71,4 +71,5 @@ These audits ran before 2026-09-30. Only the implementing seat's account of each
 
 | Date | Audit | Range | Verdict | Report |
 |---|---|---|---|---|
+| 2026-11-05 | The fifth audit | `015bead..b811455` | No deletion wrong, every delete waits for its record on origin; 1,080 tests on both Pythons, 351 of 351 mutations caught; four defects that lose or hide postings or classifications (capped walks lose their tail for good, aggregator postings in ten cassettes on `main`, twelve agreement disagreements unread, a cleared classification stored as unreviewed), five latent, and stale documents | `2026-11-05-fifth-audit.md` |
 | 2026-09-30 | The fourth audit | `783ba3e..015bead` | No deletion wrong and the deletion paths hold; five defects, none yet triggered (the clearing tool's confirmation, the agreement check, location strings the operator can take, the contract re-baseline, eight stale mutations), and wrong documents, `CAPABILITIES.md` among them | `2026-09-30-fourth-audit.md` |
