@@ -1,0 +1,8 @@
+[
+ {
+  "label": "the other mode's uncounted tables are not named",
+  "path": "src/run.py",
+  "find": "    if other_own is None:\n        unknown.append(OTHER_MODE_UNCOUNTED)\n",
+  "replace": ""
+ }
+]

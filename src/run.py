@@ -736,6 +736,8 @@ def budget_line(run_log, by_branch, config, now):
 # time it counts the base's records with no count of its own before it. Every
 # production run log since go-live is about a hundred.
 RECORDS_SEED_LOGS = 2000
+# How a count names the tables of a mode that has never counted.
+OTHER_MODE_UNCOUNTED = "the other mode's tables"
 
 
 def records_line(run_log, previous, other, config, seed_logs=()):
@@ -756,8 +758,10 @@ def records_line(run_log, previous, other, config, seed_logs=()):
     Rows deleted by hand are not seen, which can only make it high. A table
     never yet read is named in `unknown` and left out rather than guessed,
     which can make it low until a morning has read it; mornings read the
-    copy tables, so that is one day. `previous` and `other` are the last run
-    logs of this mode and the other."""
+    copy tables, so that is one day. The other mode's tables, when it has
+    never counted, are named there too (the fifth audit's F13): they add
+    nought until its next run, which may be far off. `previous` and `other`
+    are the last run logs of this mode and the other."""
     prev = (previous or {}).get("records") or {}
     tables = dict(prev.get("tables") or {})
     sweep = run_log.get("sweep") or {}
@@ -784,6 +788,8 @@ def records_line(run_log, previous, other, config, seed_logs=()):
     other_own = other_records.get("own")
     estimate = own + int(other_own or 0)
     unknown = sorted({"jobs", *CLASSIFICATION_TABLES} - set(tables))
+    if other_own is None:
+        unknown.append(OTHER_MODE_UNCOUNTED)
     block = {"tables": tables, "health": health, "own": own,
              "other_mode": other_own, "other_mode_counted_at": (other or {}).get("run_at")
              if other_own is not None else None,

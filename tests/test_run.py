@@ -2191,7 +2191,22 @@ class TestRecordsLine(unittest.TestCase):
                                     seed_logs=seed)
         self.assertEqual((b["health"], b["own"]), (3, 13))
         self.assertEqual(b["unknown"], ["accepted", "rejected-not-a-fit",
-                                        "rejected-poor-filtering"])
+                                        "rejected-poor-filtering",
+                                        run_module.OTHER_MODE_UNCOUNTED])
+
+    def test_a_mode_that_has_never_counted_is_named_not_counted_as_nought(self):
+        """The fifth audit's F13: every production log since D3 said `unknown:
+        []` while adding nothing for the test tables. A later count of them
+        clears it. Mutation: "the other mode's uncounted tables are not named"."""
+        run_log = {"sweep": {"jobs_rows": 10, "table_rows": {"accepted": 1,
+                                                             "rejected-not-a-fit": 1,
+                                                             "rejected-poor-filtering": 1}}}
+        prev = {"records": {"health": 0}}
+        b = run_module.records_line(run_log, prev, {"run_at": "x"}, self.CONFIG)
+        self.assertEqual(b["unknown"], [run_module.OTHER_MODE_UNCOUNTED])
+        b = run_module.records_line(run_log, prev,
+                                    {"run_at": "x", "records": {"own": 5}}, self.CONFIG)
+        self.assertEqual((b["unknown"], b["estimate"]), ([], 18))
 
     def test_the_rows_this_run_sends_are_added_after(self):
         b = self.morning()
