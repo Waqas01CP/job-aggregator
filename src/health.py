@@ -11,7 +11,9 @@ when something is wrong or new, never for a healthy run:
   and a platform's first baseline;
 - **from a fetch run:** a board that failed, errored, could not be parsed or
   was not reached, a run stopped early, and a projection, sweep, private
-  store, clearing tool, closure test or health write that failed.
+  store, clearing tool, closure test or health write that failed; ADR-0053's
+  agreement check finding a disagreement, or failing; and, once a month for
+  a board, a walk the page cap stopped.
 
 **The fetch run writes them all**, the contract check's included, from the
 logs on the data branch. The contract workflow so holds no Airtable secret,
@@ -101,6 +103,29 @@ def run_events(log):
         if board.get("status") in BOARD_ROWS:
             out.append(row(when, FETCH, board.get("board"), board["status"], board.get("detail"),
                            "run %s %s" % (when, board.get("board"))))
+        # The fifth audit's F3: twelve disagreements from 10-21 to 11-02 were
+        # workflow warnings only, while the session logs called those runs
+        # clean. ADR-0053's check stands in for ADR-0005's observability, so
+        # its findings reach the table he reads. Counts only: the private
+        # store names the postings.
+        agreement = board.get("agreement")
+        if isinstance(agreement, dict) and agreement.get("disagreements"):
+            out.append(row(when, FETCH, board.get("board"), "disagreement",
+                           "ADR-0053: %d posting(s) the location rule would admit were still not "
+                           "returned by the search, a day after browse listed them; the private "
+                           "store's agreement file names them" % agreement["disagreements"],
+                           "run %s %s agreement" % (when, board.get("board"))))
+        elif isinstance(agreement, dict) and agreement.get("failure"):
+            out.append(row(when, FETCH, board.get("board"), "agreement check failed",
+                           agreement["failure"],
+                           "run %s %s agreement" % (when, board.get("board"))))
+        # F1: what the cap left is read on from by the next walk, so one row
+        # a month says it happened, not one a morning through a week's batch.
+        if board.get("capped"):
+            out.append(row(when, FETCH, board.get("board"), "capped",
+                           "the walk reached its page cap before its stop mark or the age limit; "
+                           "the next walk reads on from where it stopped",
+                           "capped %s %s" % (board.get("board"), str(when)[:7])))
     if log.get("stopped"):
         out.append(row(when, FETCH, "fetch", "stopped", log["stopped"], "run %s fetch" % when))
     for part, failure in RUN_PARTS:

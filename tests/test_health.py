@@ -74,6 +74,46 @@ class TestWhatIsARow(unittest.TestCase):
             ("clearing tool", "failed"), ("closure test", "failed"), ("health", "failed")])
 
 
+class TestTheWalkAndTheAgreementCheck(unittest.TestCase):
+    """The fifth audit's F3: findings that were workflow warnings alone."""
+
+    BOARD = "himalayas:pakistan"
+
+    def _run(self, **board):
+        return {"run_at": "2026-11-02T22:13:47Z",
+                "boards": [dict(board=self.BOARD, status="ok", **board)]}
+
+    def test_a_disagreement_is_a_row_with_its_count_and_nothing_of_a_posting(self):
+        """Mutation: "a disagreement stays a workflow warning"."""
+        [r] = health.run_events(self._run(agreement={"disagreements": 2}))
+        self.assertEqual((r["Subject"], r["Status"]), (self.BOARD, "disagreement"))
+        self.assertIn("2 posting(s)", r["Detail"])
+        self.assertEqual(r["Key"], "run 2026-11-02T22:13:47Z %s agreement" % self.BOARD)
+
+    def test_no_disagreement_is_no_row(self):
+        """A check that agreed is the healthy case. Mutation: "every agreement
+        check is a row"."""
+        self.assertEqual(health.run_events(self._run(agreement={"disagreements": 0})), [])
+        self.assertEqual(health.run_events(self._run()), [])
+
+    def test_a_failed_check_is_a_row(self):
+        """Mutation: "a check that failed says nothing"."""
+        [r] = health.run_events(self._run(agreement={"failure": "HttpError: 500"}))
+        self.assertEqual(r["Status"], "agreement check failed")
+        self.assertEqual(r["Detail"], "HttpError: 500")
+
+    def test_a_capped_walk_is_one_row_a_month_for_a_board(self):
+        """A week's batch caps every morning, and one row says so. Mutations:
+        "a capped walk reaches no row"; "a capped walk is a row every run"."""
+        first = health.run_events(self._run(capped=True))
+        later = dict(self._run(capped=True), run_at="2026-11-03T05:36:01Z")
+        [a], [b] = first, health.run_events(later)
+        self.assertEqual(a["Status"], "capped")
+        self.assertEqual(a["Key"], b["Key"])
+        self.assertEqual(a["Key"], "capped %s 2026-11" % self.BOARD)
+        self.assertEqual(health.run_events(self._run(capped=False)), [])
+
+
 class TestSentOnce(unittest.TestCase):
     def failing_run(self, run_at, **extra):
         return run_log(run_at=run_at, airtable={"failure": "PermanentError: 503"}, **extra)

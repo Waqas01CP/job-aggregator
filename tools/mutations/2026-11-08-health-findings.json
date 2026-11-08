@@ -1,0 +1,32 @@
+[
+ {
+  "label": "a disagreement stays a workflow warning",
+  "path": "src/health.py",
+  "find": "if isinstance(agreement, dict) and agreement.get(\"disagreements\"):",
+  "replace": "if False:"
+ },
+ {
+  "label": "every agreement check is a row",
+  "path": "src/health.py",
+  "find": "if isinstance(agreement, dict) and agreement.get(\"disagreements\"):",
+  "replace": "if isinstance(agreement, dict):"
+ },
+ {
+  "label": "a check that failed says nothing",
+  "path": "src/health.py",
+  "find": "elif isinstance(agreement, dict) and agreement.get(\"failure\"):",
+  "replace": "elif False:"
+ },
+ {
+  "label": "a capped walk reaches no row",
+  "path": "src/health.py",
+  "find": "if board.get(\"capped\"):",
+  "replace": "if False:"
+ },
+ {
+  "label": "a capped walk is a row every run",
+  "path": "src/health.py",
+  "find": "\"capped %s %s\" % (board.get(\"board\"), str(when)[:7])))",
+  "replace": "\"capped %s %s\" % (board.get(\"board\"), when)))"
+ }
+]
