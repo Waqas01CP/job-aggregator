@@ -233,5 +233,77 @@ class TestDefeatCases(unittest.TestCase):
         self.assertEqual(boards[0].board_id, "greenhouse:careem")
 
 
+class TestPublicDetail(unittest.TestCase):
+    """The fifth audit's F21: two public logs could carry an aggregator's URL."""
+
+    URL = "https://himalayas.app/jobs/api/search?country=pakistan&page=1"
+
+    def test_an_aggregators_failure_names_no_url(self):
+        """Mutation: "an aggregator's failure keeps its whole message"."""
+        from src.config import public_detail
+        from src.resilience import PermanentError, TransientError
+        self.assertEqual(public_detail(PermanentError(self.URL, 404), "himalayas"),
+                         "PermanentError 404")
+        self.assertEqual(public_detail(TransientError(self.URL, "timed out", 3), "startupjobs"),
+                         "TransientError")
+        self.assertEqual(public_detail(ValueError(self.URL), "jobicy"), "ValueError")
+
+    def test_a_source_nobody_named_stays_quiet(self):
+        """Mutation: "an unknown source is treated as publishable"."""
+        from src.config import public_detail
+        self.assertEqual(public_detail(ValueError(self.URL), "nothing-known"), "ValueError")
+
+    def test_a_publishable_sources_message_is_kept(self):
+        """It helps to find the fault, and the board is public."""
+        from src.config import public_detail
+        self.assertEqual(public_detail(ValueError("no such key"), "greenhouse"),
+                         "ValueError: no such key")
+
+    def test_the_contract_logs_no_aggregators_url(self):
+        """Mutation: "the contract log keeps an aggregator's URL"."""
+        from src import contract
+        from src.adapters import himalayas
+        from src.config import Board
+        from src.resilience import PermanentError
+
+        class Client:
+            def get_json(self, url, source, **kw):
+                raise PermanentError(url, 404)
+        entry = {}
+        self.assertIsNone(contract.check_one("himalayas", himalayas,
+                                             Board(platform="himalayas", slug="pakistan"),
+                                             Client(), {}, entry, None, {}))
+        self.assertEqual(entry, {"status": "unreachable", "detail": "PermanentError 404"})
+
+    def test_the_run_log_keeps_no_aggregators_url(self):
+        """Mutation: "the run log keeps an aggregator's URL"."""
+        import os
+        import shutil
+        import tempfile
+        from datetime import datetime, timezone
+        from src.config import Board
+        from src.filters import TitleMatcher
+        from src.http_client import HttpClient
+        from src.run import Run
+
+        class Session:
+            def get(_self, url, params=None, timeout=None, headers=None):
+                class R:
+                    status_code = 404
+                    headers = {}
+                    text = ""
+                return R()
+        folder, cwd = tempfile.mkdtemp(), os.getcwd()
+        os.chdir(folder)
+        self.addCleanup(shutil.rmtree, folder, True)
+        self.addCleanup(os.chdir, cwd)
+        client = HttpClient(session=Session(), sleep=lambda s: None, min_interval=0)
+        log = Run([Board(platform="himalayas", slug="pakistan")], client,
+                  now=datetime(2026, 9, 16, 12, 0, tzinfo=timezone.utc),
+                  matcher=TitleMatcher()).execute()
+        self.assertEqual(log["boards"][0]["status"], "failed")
+        self.assertEqual(log["boards"][0]["detail"], "PermanentError 404")
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)

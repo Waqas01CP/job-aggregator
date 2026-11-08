@@ -65,7 +65,7 @@ from .airtable import (BASE_ENV, CALL_LOG_KEYS, HEALTH_LOG_KEY, HEALTH_TABLE_ENV
 from .contract import LOG_DIR as CONTRACT_LOG_DIR
 from .backfill import backfill
 from .config import (AIRTABLE_BASE_RECORDS, ConfigError, is_publishable, load_boards,
-                     load_sweep_config)
+                     load_sweep_config, public_detail)
 from .dedupe import counts as dedupe_counts
 from .dedupe import group, split_new
 from .filters import (ELIGIBILITY, FilterError, TitleMatcher, apply_chain, drop_counts,
@@ -891,7 +891,8 @@ class Run:
             raise
         except HttpError as e:
             log["status"] = "failed"
-            log["detail"] = str(e)
+            log["detail"] = str(e) if is_publishable(board.source) \
+                else public_detail(e, board.source)
             self.board_logs.append(log)
             return []
         except Exception as e:
@@ -900,7 +901,7 @@ class Run:
             # log that spelled them the same would hide our own bugs among
             # theirs.
             log["status"] = "error"
-            log["detail"] = "%s: %s" % (type(e).__name__, e)
+            log["detail"] = public_detail(e, board.source)
             self.board_logs.append(log)
             return []
 
@@ -908,7 +909,7 @@ class Run:
             parsed = adapter.parse(payload, board)
         except Exception as e:
             log["status"] = "unparseable"
-            log["detail"] = "%s: %s" % (type(e).__name__, e)
+            log["detail"] = public_detail(e, board.source)
             self.board_logs.append(log)
             return []
 
@@ -981,7 +982,7 @@ class Run:
         except (BudgetExhausted, CircuitOpen):
             raise
         except Exception as e:
-            log["agreement"] = {"failure": "%s: %s" % (type(e).__name__, e)}
+            log["agreement"] = {"failure": public_detail(e, board.source)}
             return
         counts, still, disagree = agreement(browse, search,
                                             self.board_seen.get(board.board_id, ()), pending,

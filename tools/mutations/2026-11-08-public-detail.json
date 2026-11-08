@@ -1,0 +1,26 @@
+[
+ {
+  "label": "an aggregator's failure keeps its whole message",
+  "path": "src/config.py",
+  "find": "    if is_publishable(source):\n        return \"%s: %s\" % (type(error).__name__, error)\n",
+  "replace": "    if True:\n        return \"%s: %s\" % (type(error).__name__, error)\n"
+ },
+ {
+  "label": "an unknown source is treated as publishable",
+  "path": "src/config.py",
+  "find": "    if is_publishable(source):\n        return \"%s: %s\" % (type(error).__name__, error)\n",
+  "replace": "    if source not in AGGREGATOR_PLATFORMS:\n        return \"%s: %s\" % (type(error).__name__, error)\n"
+ },
+ {
+  "label": "the contract log keeps an aggregator's URL",
+  "path": "src/contract.py",
+  "find": "return str(error) if is_publishable(source) else public_detail(error, source)",
+  "replace": "return str(error)"
+ },
+ {
+  "label": "the run log keeps an aggregator's URL",
+  "path": "src/run.py",
+  "find": "log[\"detail\"] = str(e) if is_publishable(board.source) \\\n                else public_detail(e, board.source)",
+  "replace": "log[\"detail\"] = str(e)"
+ }
+]

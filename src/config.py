@@ -72,6 +72,18 @@ PUBLISHABLE_SOURCES = PLATFORMS - AGGREGATOR_PLATFORMS
 def is_publishable(source):
     return source in PUBLISHABLE_SOURCES
 
+
+def public_detail(error, source):
+    """What a public log may say of a failure on this source (the fifth
+    audit's F21). A publishable source's whole message, which names its URL
+    and helps to find the fault. An aggregator's, the exception's class and
+    its status alone: its URL names the host, and a message may quote more.
+    Named by source, so an unknown one stays quiet, as `is_publishable` does."""
+    if is_publishable(source):
+        return "%s: %s" % (type(error).__name__, error)
+    status = getattr(error, "status", None)
+    return type(error).__name__ + (" %s" % status if status else "")
+
 # Platforms whose payload carries no employer field. A board on one of these
 # needs an alias or its employer is unresolvable. ADR-0026 requires the absence
 # to be recorded rather than guessed, so this is not a hard error here.

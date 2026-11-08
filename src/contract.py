@@ -81,7 +81,7 @@ from . import envfile, storage
 from .adapters import (ashby, greenhouse, hackernews, hasjob, himalayas, hnjobs, jobicy, lever,
                        manatal, pythonorg, remoteok, smartrecruiters, startupjobs,
                        weworkremotely, workable)
-from .config import REPO_ROOT, ConfigError, load_boards
+from .config import REPO_ROOT, ConfigError, is_publishable, load_boards, public_detail
 from .http_client import HttpClient, HttpError, source_options
 from .normalise import dumps, iso, loads
 
@@ -334,6 +334,13 @@ def check(boards, new_client, stored, now, rebaselines=()):
     return updated, log
 
 
+def reachable_detail(error, source):
+    """An HTTP failure's text for the public contract log. A failed follow on
+    Hacker News' thread would otherwise publish its URL (the fifth audit's F21).
+    A publishable source keeps the whole message, as before."""
+    return str(error) if is_publishable(source) else public_detail(error, source)
+
+
 def check_one(platform, adapter, board, client, stored, entry, now, rebaselines):
     """One platform's check, filling `entry`. Returns its new fingerprint, or
     None when the board could not be answered and the old one stands."""
@@ -349,7 +356,7 @@ def check_one(platform, adapter, board, client, stored, entry, now, rebaselines)
         if found:
             payload = client.get_json(found, board.source)
     except HttpError as e:
-        entry.update(status="unreachable", detail=str(e))
+        entry.update(status="unreachable", detail=reachable_detail(e, board.source))
         return None
     fp, count = fingerprint(adapter, payload)
     if getattr(adapter, "DETAIL", False):
@@ -357,7 +364,8 @@ def check_one(platform, adapter, board, client, stored, entry, now, rebaselines)
             fp["detail"] = detail_fingerprint(adapter, board, client, payload,
                                               stored.get(platform))
         except HttpError as e:
-            entry.update(status="unreachable", detail="the detail: %s" % e)
+            entry.update(status="unreachable",
+                         detail="the detail: %s" % reachable_detail(e, board.source))
             return None
     entry["postings"] = count
     if not count:
