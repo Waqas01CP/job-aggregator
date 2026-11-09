@@ -1,0 +1,20 @@
+[
+ {
+  "label": "Welo Global is kept",
+  "path": "docs/reference/annotation-vendors.md",
+  "find": "`welo data` · `welocalize` · `innodata` · `aptura` · `invisible technologies` · `welo global` · `imerit` · `mercor`",
+  "replace": "`welo data` · `welocalize` · `innodata` · `aptura` · `invisible technologies` · `imerit` · `mercor`"
+ },
+ {
+  "label": "iMerit is kept",
+  "path": "docs/reference/annotation-vendors.md",
+  "find": "`welo data` · `welocalize` · `innodata` · `aptura` · `invisible technologies` · `welo global` · `imerit` · `mercor`",
+  "replace": "`welo data` · `welocalize` · `innodata` · `aptura` · `invisible technologies` · `welo global` · `mercor`"
+ },
+ {
+  "label": "Mercor is kept",
+  "path": "docs/reference/annotation-vendors.md",
+  "find": "`welo data` · `welocalize` · `innodata` · `aptura` · `invisible technologies` · `welo global` · `imerit` · `mercor`",
+  "replace": "`welo data` · `welocalize` · `innodata` · `aptura` · `invisible technologies` · `welo global` · `imerit`"
+ }
+]

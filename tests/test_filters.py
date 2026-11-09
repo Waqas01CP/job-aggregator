@@ -1048,7 +1048,7 @@ class TestAnnotationVendorFile(unittest.TestCase):
         document would turn each of those into a vendor name."""
         names = load_annotation_vendors()
         self.assertEqual(names, ["welo data", "welocalize", "innodata", "aptura",
-                                 "invisible technologies"])
+                                 "invisible technologies", "welo global", "imerit", "mercor"])
         for not_a_vendor in ("src filters py", "annotation vendors",
                              "tools title pool report py dropped"):
             self.assertNotIn(not_a_vendor, names)
@@ -1078,6 +1078,18 @@ class TestAnnotationVendorFile(unittest.TestCase):
         verdict = rule_annotation_vendor(posting, ANNOTATION_VENDORS)
         self.assertFalse(verdict.keep)
         self.assertEqual(verdict.rule, "annotation_vendor")
+
+    def test_the_three_of_his_standing_rule_are_dropped_and_their_neighbours_kept(self):
+        """His standing rule of 2026-11-09: any employer of AI-training or
+        annotation gig work. A talent pool posting engineering roles is not one.
+        Mutations: "Welo Global is kept"; "iMerit is kept"; "Mercor is kept"."""
+        for employer in ("Welo Global", "iMerit Technology", "mercor"):
+            with self.subTest(employer=employer):
+                self.assertFalse(rule_annotation_vendor(row(employer=employer, title="AI Trainer"),
+                                                        ANNOTATION_VENDORS).keep)
+        for employer in ("G2i", "Toptal", "Xperteez Technology"):
+            with self.subTest(employer=employer):
+                self.assertTrue(rule_annotation_vendor(row(employer=employer), ANNOTATION_VENDORS).keep)
 
     def test_a_missing_or_empty_vendor_list_stops_the_run_starting(self):
         import tempfile
