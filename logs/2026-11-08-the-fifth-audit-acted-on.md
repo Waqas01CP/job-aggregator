@@ -10,10 +10,10 @@ Previous log: `2026-11-05-november-1s-switch-four-days-late.md`.
 
 | Header | Value |
 |---|---|
-| Date | 2026-11-08 from about 12:30Z, the same session as Briefs 12 to 19 |
+| Date | 2026-11-08 from about 12:30Z to 2026-11-09 about 11:30Z, the same session as Briefs 12 to 19 |
 | Model | claude-opus-5-5 |
 | HEAD at start | `b811455`, level with `origin/main` |
-| HEAD at end | This commit, ten commits on from `b811455` |
+| HEAD at end | `75cac66`, ten commits on from `b811455`; then `a0e0d1e`, `b0ecf86`, `e7edc79`, `cd34956` and this record |
 | Mode | **Read-only on the data.** `data` and the private repository's `data` from scratch clones; **two read-only walks of Himalayas' Pakistan search**, at 5 seconds a page, one of 102 pages and one of 26, plus one of 14 pages first; **no Airtable call** |
 
 **Tags.** `[VERIFIED]` exercised and observed this session. `[INFERRED]` reasoned, not run. `[O]` outside this repository.
@@ -78,8 +78,19 @@ With the cap at 80 and the search at 102 pages, the morning reads 80 and that ev
 
 ## Verification
 
-- **Each commit alone in a scratch clone, on 3.12 and 3.11,** 1,118 tests at the tip, the map checked, before the push.
-- **The 40 new mutations** under the targeted harness at the tip.
+- **Each commit alone in a scratch clone, on 3.12 and 3.11,** 1,118 tests at `75cac66`, 1,120 at `b0ecf86`, the map checked [VERIFIED, every one passing].
+- **His push came first.** He pushed `75cac66` at about 21:40Z, while the last two commits' suites were still running and before the privacy scan. Both were then run: the scan over `b811455..75cac66` clean, proven on a planted ID, and no employer name from the private layer in the diff or the messages; every suite passing.
+- **The laptop slept twice with its lid closed,** 13:45Z to 18:31Z and 19:07Z to 21:35Z [VERIFIED from the power log], which paused the suites: one 3.11 suite reads 17,402 seconds. That is why the fixes missed the evening run of 11-08, which ran at 18:15Z on `b811455`, none failed or stopped.
+- **The mutation round at `cd34956`,** the targeted harness with its new baseline: 49 mutations: 48 caught, and the one survivor, "a malformed entry is taken as a held walk", closed by a stronger test (`ca78c0c`) that fails under it in all three of its cases.
+
+## Later the same session: his answers
+
+The operator, 2026-11-09 Pakistan time: "1. yes, i can leave it open for about 35 mins. 2. yes, raise. 3. yes, do it. 4. no i do not want the senior ones back but only those 88." And: "i have pushed."
+- **The cap at 130,** `a0e0d1e`: a morning walk reads the search whole, so it counts for the closure test and the agreement check again.
+- **Invisible Technologies on the annotation-vendor list,** `b0ecf86`: all 88 of its stored postings are AI-training listings.
+- **The 88 Senior rows stay out,** those 88 only.
+- **He pushed twice himself.** `75cac66` at about 21:40Z on 11-08, the fixes, after their suites but before the seat's privacy scan; then `a0e0d1e` and `b0ecf86` before any of their checks had run. `a0e0d1e` failed one test: two older mutations of the cap, "the cap stays at 25" and "at 40", still found `MAX_PAGES = 80`, and the suite checks every find. The fetch workflow runs the suite before it touches a board, so the evening run of 11-09 would have failed whole. Fixed in `e7edc79`, its suites passing, pushed at 10:44Z; no run had started on the red `main`, the contract check of 11-09 not yet run. **The seat's lesson:** a cap's mutation lives in three files, and the seat changed the line without running the suite's find check first. Said to him plainly.
+- **His standing rule, 2026-11-09:** "the welo global or any other should go as long as it is under the category and is agianst our constraints and goals." Applied to every employer the filtered layers held, 1,083 rows: `welo global`, `imerit` and `mercor` added (`cd34956`), 34 rows; talent pools and contract engineering left off.
 
 ## Not done
 
@@ -88,6 +99,5 @@ With the cap at 80 and the search at 102 pages, the morning reads 80 and that ev
 
 ## Open
 
-- **Himalayas' cap above the search's size:** his to approve.
-- **The switch's rows the clock took:** his to judge.
+- **The clock on a backfilled row:** the chat's; the 88 of 11-06 stay out, his answer.
 - **Measure A's window:** the chat's.
