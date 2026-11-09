@@ -274,14 +274,20 @@ class TestAWalkTheCapStopped(unittest.TestCase):
         self.assertEqual(entry["walk_resume_failure"], "JSONDecodeError")
 
     def test_a_malformed_entry_is_no_held_walk(self):
-        """Mutation: "a malformed entry is taken as a held walk"."""
+        """On a walk the cap stops, where a held entry's mark is read, one with
+        no cursor or no mark, or a mark that is not text, must cost nothing:
+        the board reads as usual and the file is rewritten whole. Mutation: "a
+        malformed entry is taken as a held walk"."""
         for bad in ({"board": SEARCH.board_id}, {"board": SEARCH.board_id, "cursor": "4"},
                     {"board": SEARCH.board_id, "cursor": "4", "mark": 7}):
             with self.subTest(bad=bad):
                 write_resume([bad])
-                _, entry = self._run(feed(self._epochs(2)))
+                _, entry = self._run(feed(self._epochs()))
                 self.assertEqual(entry["status"], "ok")
-                self.assertNotIn("tail", entry["walk"])
+                self.assertEqual(entry["walk"]["stopped_by"], "cap")
+                self.assertEqual(read_resume(), [{"board": SEARCH.board_id, "cursor": "4",
+                                                  "mark": FLOOR,
+                                                  "capped_at": "2026-09-16T12:00:00Z"}])
 
     def test_another_boards_entry_is_left_alone(self):
         """Mutation: "writing one board's entry drops the others'"."""
