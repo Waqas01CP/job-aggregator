@@ -176,7 +176,7 @@
   {
     "label": "the cap stays at 40",
     "path": "src/run.py",
-    "find": "MAX_PAGES = 80",
+    "find": "MAX_PAGES = 130",
     "replace": "MAX_PAGES = 40"
   }
 ]
