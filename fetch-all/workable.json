@@ -2411,5 +2411,39 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "workable:1020BDFA5A",
+  "source": "workable",
+  "board_id": "workable:igate-technologies",
+  "external_id": "1020BDFA5A",
+  "employer": "iGATE Technology",
+  "employer_provenance": "envelope",
+  "title": "FBA Inventory Executive",
+  "title_normalised": "FBA Inventory Executive",
+  "location": "Islamabad, Islamabad Capital Territory, Pakistan",
+  "published_at": "2026-11-09T00:00:00Z",
+  "published_field": "published_on",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-09T22:55:04.856829Z",
+  "ordering_date": "2026-11-09T00:00:00Z",
+  "ordering_date_source": "publication",
+  "url": "https://apply.workable.com/j/1020BDFA5A",
+  "url_provenance": "payload",
+  "stated_experience": [
+   1
+  ],
+  "expires_at": null,
+  "stated_levels": [
+   "Entry level"
+  ],
+  "places": [
+   "PK"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]
