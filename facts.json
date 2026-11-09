@@ -1,5 +1,5 @@
 {
- "fingerprint": "3709f937dcda9241",
+ "fingerprint": "9f9c7248e24ed504",
  "records": [
   {
    "identity": "ashby:00070f85-07f9-49a3-aaf1-597c153b807b",
@@ -596,6 +596,22 @@
    "stated_levels": null,
    "places": null,
    "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
+   "identity": "ashby:0b0d2dbb-ae94-4df8-8e7b-bd4dcdb67943",
+   "source": "ashby",
+   "stated_experience": [
+    3
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "OnSite",
    "required_places": null,
    "described_workplace": null,
    "described": true,
@@ -1817,6 +1833,22 @@
    "who_reads": null
   },
   {
+   "identity": "ashby:23447766-ae25-4cc9-b83b-41d847563eb7",
+   "source": "ashby",
+   "stated_experience": [
+    4
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Hybrid",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
    "identity": "ashby:2344ae13-045c-4513-ad01-94189029c46e",
    "source": "ashby",
    "stated_experience": null,
@@ -2652,6 +2684,21 @@
    "who_reads": null
   },
   {
+   "identity": "ashby:34e2d52b-f57a-4833-87a1-0a7b0c4c5532",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "United Kingdom",
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
    "identity": "ashby:34e9eed1-3fd4-4a25-8f02-dff7f12bebf6",
    "source": "ashby",
    "stated_experience": [
@@ -3384,6 +3431,20 @@
     "United States"
    ],
    "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
+   "identity": "ashby:44613e35-6150-4fa8-aa25-f1863f2bc566",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
    "required_places": null,
    "described_workplace": null,
    "described": true,
@@ -5479,6 +5540,24 @@
    "who_reads": null
   },
   {
+   "identity": "ashby:7758cdc5-b5c9-4a5c-8c80-11678f7cba9d",
+   "source": "ashby",
+   "stated_experience": [
+    3
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": [
+    "us"
+   ],
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
    "identity": "ashby:77bf35db-119c-4533-8187-1e8d5ae08c45",
    "source": "ashby",
    "stated_experience": null,
@@ -6791,6 +6870,22 @@
    "who_reads": null
   },
   {
+   "identity": "ashby:92997f8a-9f90-40fe-a76e-89ffbc44d0cc",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
    "identity": "ashby:92c212f2-0ee3-4b95-b08e-1e062c0d26cb",
    "source": "ashby",
    "stated_experience": [
@@ -7384,6 +7479,20 @@
    "who_reads": null
   },
   {
+   "identity": "ashby:9d13a6ac-6dfc-4bd1-bd81-d341b576c44e",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
    "identity": "ashby:9d3e1529-5164-4fb1-b73a-b1b772bb890c",
    "source": "ashby",
    "stated_experience": null,
@@ -7597,6 +7706,25 @@
     "United States"
    ],
    "workplace": "Hybrid",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
+   "identity": "ashby:a2910e63-1dcc-4da2-a8ee-bc2a044e4613",
+   "source": "ashby",
+   "stated_experience": [
+    2
+   ],
+   "stated_levels": null,
+   "places": [
+    "United Kingdom",
+    "Ireland",
+    "United States",
+    "Poland"
+   ],
+   "workplace": "Remote",
    "required_places": null,
    "described_workplace": null,
    "described": true,
@@ -8954,6 +9082,23 @@
    "who_reads": null
   },
   {
+   "identity": "ashby:bea199b7-b040-43b8-89bc-34706b60ef8d",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States",
+    "Canada"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
    "identity": "ashby:bf20b446-c839-4869-bac9-cc05740e03e1",
    "source": "ashby",
    "stated_experience": [
@@ -9128,6 +9273,22 @@
    "who_reads": null
   },
   {
+   "identity": "ashby:c3442fcd-8679-41a3-ad16-b1e1883d916c",
+   "source": "ashby",
+   "stated_experience": [
+    8
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
    "identity": "ashby:c351a0de-1826-4968-a023-a5243aba2ec6",
    "source": "ashby",
    "stated_experience": [
@@ -9244,6 +9405,20 @@
     "United Arab Emirates"
    ],
    "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
+   "identity": "ashby:c4f86796-2d73-4f0a-b44a-92372c80e25f",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "Poland"
+   ],
+   "workplace": "Hybrid",
    "required_places": null,
    "described_workplace": null,
    "described": true,
@@ -9664,6 +9839,20 @@
    "stated_levels": null,
    "places": null,
    "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
+   "identity": "ashby:cbf7c302-9e6a-4f8d-8896-5be61ae908c1",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
    "required_places": null,
    "described_workplace": null,
    "described": true,
@@ -10130,6 +10319,22 @@
     "United States"
    ],
    "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
+   "identity": "ashby:d47e9698-cecf-4376-8791-d9c38c672712",
+   "source": "ashby",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": null,
    "required_places": null,
    "described_workplace": null,
    "described": true,
@@ -11817,6 +12022,20 @@
    "who_reads": null
   },
   {
+   "identity": "ashby:f8d77096-72a6-41bd-bea5-af2932e394fd",
+   "source": "ashby",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "United States"
+   ],
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
    "identity": "ashby:f9e3d50b-bf15-492c-8feb-cd1870423e7f",
    "source": "ashby",
    "stated_experience": null,
@@ -12815,6 +13034,34 @@
    "source": "greenhouse",
    "stated_experience": [
     4
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
+   "identity": "greenhouse:4482529009",
+   "source": "greenhouse",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
+   "identity": "greenhouse:4485116009",
+   "source": "greenhouse",
+   "stated_experience": [
+    6
    ],
    "stated_levels": null,
    "places": null,
@@ -16084,6 +16331,18 @@
    "who_reads": null
   },
   {
+   "identity": "greenhouse:4954045101",
+   "source": "greenhouse",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
    "identity": "greenhouse:4954054101",
    "source": "greenhouse",
    "stated_experience": [
@@ -19150,6 +19409,20 @@
    "who_reads": null
   },
   {
+   "identity": "greenhouse:5011911101",
+   "source": "greenhouse",
+   "stated_experience": null,
+   "stated_levels": null,
+   "places": [
+    "Birmingham, England, United Kingdom"
+   ],
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
    "identity": "greenhouse:5011946101",
    "source": "greenhouse",
    "stated_experience": [
@@ -19537,6 +19810,20 @@
    "who_reads": null
   },
   {
+   "identity": "greenhouse:5024951101",
+   "source": "greenhouse",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Office Based",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
    "identity": "greenhouse:5025222101",
    "source": "greenhouse",
    "stated_experience": [
@@ -19592,6 +19879,20 @@
    "identity": "greenhouse:5027732101",
    "source": "greenhouse",
    "stated_experience": null,
+   "stated_levels": null,
+   "places": null,
+   "workplace": "Hybrid",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
+   "identity": "greenhouse:5028291101",
+   "source": "greenhouse",
+   "stated_experience": [
+    8
+   ],
    "stated_levels": null,
    "places": null,
    "workplace": "Hybrid",
@@ -20981,6 +21282,20 @@
    "who_reads": null
   },
   {
+   "identity": "greenhouse:5466418008",
+   "source": "greenhouse",
+   "stated_experience": [
+    3
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
    "identity": "greenhouse:5466436008",
    "source": "greenhouse",
    "stated_experience": null,
@@ -21016,6 +21331,34 @@
    "required_places": [
     "us"
    ],
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
+   "identity": "greenhouse:5476118008",
+   "source": "greenhouse",
+   "stated_experience": [
+    7
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
+   "identity": "greenhouse:5476127008",
+   "source": "greenhouse",
+   "stated_experience": [
+    7
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
    "described_workplace": null,
    "described": true,
    "who_reads": null
@@ -36657,6 +37000,20 @@
    "who_reads": null
   },
   {
+   "identity": "greenhouse:7284384002",
+   "source": "greenhouse",
+   "stated_experience": [
+    3
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
    "identity": "greenhouse:7471729002",
    "source": "greenhouse",
    "stated_experience": [
@@ -36772,6 +37129,20 @@
    "stated_experience": [
     5,
     2
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
+   "identity": "greenhouse:7895290002",
+   "source": "greenhouse",
+   "stated_experience": [
+    5
    ],
    "stated_levels": null,
    "places": null,
@@ -39978,6 +40349,20 @@
    "who_reads": null
   },
   {
+   "identity": "greenhouse:8875593002",
+   "source": "greenhouse",
+   "stated_experience": [
+    2
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
    "identity": "greenhouse:8875595002",
    "source": "greenhouse",
    "stated_experience": [
@@ -40169,6 +40554,20 @@
    "who_reads": null
   },
   {
+   "identity": "greenhouse:8890306002",
+   "source": "greenhouse",
+   "stated_experience": [
+    1
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": "on site",
+   "described": true,
+   "who_reads": null
+  },
+  {
    "identity": "greenhouse:8890956002",
    "source": "greenhouse",
    "stated_experience": [
@@ -40343,6 +40742,23 @@
    "who_reads": null
   },
   {
+   "identity": "greenhouse:8899591002",
+   "source": "greenhouse",
+   "stated_experience": [
+    2
+   ],
+   "stated_levels": null,
+   "places": [
+    "Dubai, United Arab Emirates",
+    "United Arab Emirates"
+   ],
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
    "identity": "greenhouse:8899725002",
    "source": "greenhouse",
    "stated_experience": [
@@ -40493,6 +40909,20 @@
    "who_reads": null
   },
   {
+   "identity": "greenhouse:8910505002",
+   "source": "greenhouse",
+   "stated_experience": [
+    8
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
    "identity": "greenhouse:8910507002",
    "source": "greenhouse",
    "stated_experience": [
@@ -40585,6 +41015,41 @@
    ],
    "stated_levels": null,
    "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
+   "identity": "greenhouse:8916072002",
+   "source": "greenhouse",
+   "stated_experience": [
+    5,
+    1
+   ],
+   "stated_levels": null,
+   "places": [
+    "Karachi, Pakistan",
+    "Pakistan"
+   ],
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
+   "identity": "greenhouse:8916073002",
+   "source": "greenhouse",
+   "stated_experience": [
+    3
+   ],
+   "stated_levels": null,
+   "places": [
+    "Dubai, United Arab Emirates",
+    "United Arab Emirates"
+   ],
    "workplace": null,
    "required_places": null,
    "described_workplace": null,
@@ -40688,6 +41153,50 @@
    "workplace": null,
    "required_places": null,
    "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
+   "identity": "greenhouse:8922072002",
+   "source": "greenhouse",
+   "stated_experience": [
+    5
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": "on site",
+   "described": true,
+   "who_reads": null
+  },
+  {
+   "identity": "greenhouse:8922102002",
+   "source": "greenhouse",
+   "stated_experience": [
+    6,
+    3
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
+   "identity": "greenhouse:8922329002",
+   "source": "greenhouse",
+   "stated_experience": [
+    2,
+    3
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": "on site",
    "described": true,
    "who_reads": null
   },
@@ -40877,6 +41386,49 @@
    "source": "greenhouse",
    "stated_experience": [
     3
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
+   "identity": "greenhouse:8930040002",
+   "source": "greenhouse",
+   "stated_experience": [
+    4,
+    2
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
+   "identity": "greenhouse:8930955002",
+   "source": "greenhouse",
+   "stated_experience": [
+    8
+   ],
+   "stated_levels": null,
+   "places": null,
+   "workplace": null,
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
+   "identity": "greenhouse:8933077002",
+   "source": "greenhouse",
+   "stated_experience": [
+    5
    ],
    "stated_levels": null,
    "places": null,
@@ -41732,6 +42284,22 @@
    "who_reads": null
   },
   {
+   "identity": "lever:3d4d7de1-8dd8-4f61-a461-ae7e7e72c614",
+   "source": "lever",
+   "stated_experience": [
+    6
+   ],
+   "stated_levels": null,
+   "places": [
+    "US"
+   ],
+   "workplace": "onsite",
+   "required_places": null,
+   "described_workplace": "on site",
+   "described": true,
+   "who_reads": null
+  },
+  {
    "identity": "lever:3e2a7d86-7898-4488-9581-19b736b2e480",
    "source": "lever",
    "stated_experience": null,
@@ -42463,6 +43031,24 @@
    "who_reads": null
   },
   {
+   "identity": "lever:6d1c3e24-068c-4209-bbd6-bfe13d44987b",
+   "source": "lever",
+   "stated_experience": [
+    5,
+    3,
+    2
+   ],
+   "stated_levels": null,
+   "places": [
+    "IN"
+   ],
+   "workplace": "remote",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
    "identity": "lever:6d21ac43-db11-426e-ad51-827f0d1e60e8",
    "source": "lever",
    "stated_experience": [
@@ -42491,6 +43077,22 @@
    "workplace": "remote",
    "required_places": null,
    "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
+   "identity": "lever:6f5c906e-74c5-439d-a3bd-86f5f91a6aec",
+   "source": "lever",
+   "stated_experience": [
+    6
+   ],
+   "stated_levels": null,
+   "places": [
+    "US"
+   ],
+   "workplace": "onsite",
+   "required_places": null,
+   "described_workplace": "on site",
    "described": true,
    "who_reads": null
   },
@@ -43386,6 +43988,22 @@
    "who_reads": null
   },
   {
+   "identity": "lever:ad325c85-7b73-4d85-8ac0-c478c8fcde6d",
+   "source": "lever",
+   "stated_experience": [
+    18
+   ],
+   "stated_levels": null,
+   "places": [
+    "US"
+   ],
+   "workplace": "onsite",
+   "required_places": null,
+   "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
    "identity": "lever:ae6c6464-feb2-46f1-a30a-78eb3bb2e740",
    "source": "lever",
    "stated_experience": [
@@ -43540,6 +44158,22 @@
    "workplace": "remote",
    "required_places": null,
    "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
+   "identity": "lever:b42b7eb9-9672-4f32-93e4-aa102d0b9d7a",
+   "source": "lever",
+   "stated_experience": [
+    6
+   ],
+   "stated_levels": null,
+   "places": [
+    "US"
+   ],
+   "workplace": "onsite",
+   "required_places": null,
+   "described_workplace": "on site",
    "described": true,
    "who_reads": null
   },
@@ -43730,6 +44364,22 @@
    "workplace": "remote",
    "required_places": null,
    "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
+   "identity": "lever:c89cad55-714a-4cee-9667-fd59d76e7fb6",
+   "source": "lever",
+   "stated_experience": [
+    6
+   ],
+   "stated_levels": null,
+   "places": [
+    "US"
+   ],
+   "workplace": "onsite",
+   "required_places": null,
+   "described_workplace": "on site",
    "described": true,
    "who_reads": null
   },
@@ -43944,6 +44594,22 @@
    "workplace": "onsite",
    "required_places": null,
    "described_workplace": null,
+   "described": true,
+   "who_reads": null
+  },
+  {
+   "identity": "lever:e3ed1337-ee62-4802-b199-8700be2040a4",
+   "source": "lever",
+   "stated_experience": [
+    6
+   ],
+   "stated_levels": null,
+   "places": [
+    "US"
+   ],
+   "workplace": "onsite",
+   "required_places": null,
+   "described_workplace": "on site",
    "described": true,
    "who_reads": null
   },

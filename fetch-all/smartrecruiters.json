@@ -661,5 +661,39 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "smartrecruiters:744000160531111",
+  "source": "smartrecruiters",
+  "board_id": "smartrecruiters:SeekaTechnology",
+  "external_id": "744000160531111",
+  "employer": "Seeka Technology",
+  "employer_provenance": "payload",
+  "title": "Angular Frontend Developer - WFH/Remote Work (4 Years Exp Needed At least)",
+  "title_normalised": "Angular Frontend Developer - WFH/Remote Work (4 Years Exp Needed At least)",
+  "location": "Islamabad, Islamabad Capital Territory, Pakistan",
+  "published_at": "2026-11-09T03:38:51.518000Z",
+  "published_field": "releasedDate",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-09T04:59:17.649340Z",
+  "ordering_date": "2026-11-09T03:38:51.518000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.smartrecruiters.com/SeekaTechnology/744000160531111-angular-frontend-developer-wfh-remote-work-4-years-exp-needed-at-least-",
+  "url_provenance": "payload",
+  "stated_experience": [
+   4
+  ],
+  "expires_at": null,
+  "stated_levels": [
+   "Mid-Senior Level"
+  ],
+  "places": [
+   "PK"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]
