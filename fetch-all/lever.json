@@ -6463,5 +6463,41 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "lever:5e289337-f73b-45c5-89be-d4ad12817e6c",
+  "source": "lever",
+  "board_id": "lever:smart-working-solutions",
+  "external_id": "5e289337-f73b-45c5-89be-d4ad12817e6c",
+  "employer": "Smart Working Solutions",
+  "employer_provenance": "slug",
+  "title": "Senior Python Engineer - Data ( Remote, Full-Time) [AS340] (PK)",
+  "title_normalised": "Senior Python Engineer - Data ( Remote, Full-Time) [AS340] (PK)",
+  "location": "Pakistan",
+  "published_at": "2026-11-10T12:47:15.081000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-11-10T20:20:25.480357Z",
+  "ordering_date": "2026-11-10T12:47:15.081000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/smart-working-solutions/5e289337-f73b-45c5-89be-d4ad12817e6c",
+  "url_provenance": "payload",
+  "stated_experience": [
+   6,
+   5,
+   3,
+   2,
+   1
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "PK"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]
