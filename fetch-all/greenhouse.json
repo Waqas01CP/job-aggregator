@@ -54723,5 +54723,35 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "greenhouse:5027900101",
+  "source": "greenhouse",
+  "board_id": "greenhouse:veeamsoftware",
+  "external_id": "5027900101",
+  "employer": "Veeam Software",
+  "employer_provenance": "payload",
+  "title": "Senior Customer Success Renewals Representative, Commercial/Named (Hong Kong)",
+  "title_normalised": "Senior Customer Success Renewals Representative, Commercial/Named (Hong Kong)",
+  "location": "Kuala Lumpur, Malaysia",
+  "published_at": "2026-11-10T01:50:35Z",
+  "published_field": "first_published",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-10T06:11:18.762901Z",
+  "ordering_date": "2026-11-10T01:50:35Z",
+  "ordering_date_source": "publication",
+  "url": "https://job-boards.eu.greenhouse.io/veeamsoftware/jobs/5027900101",
+  "url_provenance": "payload",
+  "stated_experience": [
+   3
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": null,
+  "workplace": "Office Based",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]
