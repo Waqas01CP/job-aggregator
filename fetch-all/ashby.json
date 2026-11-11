@@ -28540,5 +28540,99 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "ashby:05297574-eb4d-4971-9d2e-e1e954e0224b",
+  "source": "ashby",
+  "board_id": "ashby:clickhouse",
+  "external_id": "05297574-eb4d-4971-9d2e-e1e954e0224b",
+  "employer": "ClickHouse",
+  "employer_provenance": "slug",
+  "title": "Creative Director",
+  "title_normalised": "Creative Director",
+  "location": "United States",
+  "published_at": "2026-11-11T02:43:27.495000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-11T04:57:10.428312Z",
+  "ordering_date": "2026-11-11T02:43:27.495000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/clickhouse/05297574-eb4d-4971-9d2e-e1e954e0224b",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "United States"
+  ],
+  "workplace": "Remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "ashby:db5d0c48-7c24-474d-a662-c960c3770d44",
+  "source": "ashby",
+  "board_id": "ashby:cursor",
+  "external_id": "db5d0c48-7c24-474d-a662-c960c3770d44",
+  "employer": "Cursor",
+  "employer_provenance": "slug",
+  "title": "Sr. Software Engineer, Pretraining Data",
+  "title_normalised": "Sr. Software Engineer, Pretraining Data",
+  "location": "Palo Alto, CA",
+  "published_at": "2026-11-11T00:53:40.315000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-11T04:57:10.428312Z",
+  "ordering_date": "2026-11-11T00:53:40.315000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/cursor/db5d0c48-7c24-474d-a662-c960c3770d44",
+  "url_provenance": "payload",
+  "stated_experience": [
+   5
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "United States"
+  ],
+  "workplace": "OnSite",
+  "required_places": null,
+  "described_workplace": "on site",
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "ashby:5db6aeaa-1074-41cd-8f2c-10ccfac73918",
+  "source": "ashby",
+  "board_id": "ashby:elevenlabs",
+  "external_id": "5db6aeaa-1074-41cd-8f2c-10ccfac73918",
+  "employer": "ElevenLabs",
+  "employer_provenance": "slug",
+  "title": "Sales Development - Japan",
+  "title_normalised": "Sales Development - Japan",
+  "location": "Tokyo; Japan",
+  "published_at": "2026-11-11T02:58:01.155000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-11T04:57:10.428312Z",
+  "ordering_date": "2026-11-11T02:58:01.155000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/ElevenLabs/5db6aeaa-1074-41cd-8f2c-10ccfac73918",
+  "url_provenance": "payload",
+  "stated_experience": [
+   2
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "Japan"
+  ],
+  "workplace": "Remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]

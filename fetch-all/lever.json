@@ -6499,5 +6499,37 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "lever:4b690c5b-5c13-43eb-8309-bd7d20e5c3f4",
+  "source": "lever",
+  "board_id": "lever:spreetail",
+  "external_id": "4b690c5b-5c13-43eb-8309-bd7d20e5c3f4",
+  "employer": "Spreetail",
+  "employer_provenance": "slug",
+  "title": "Warehouse Area Manager",
+  "title_normalised": "Warehouse Area Manager",
+  "location": "Dallas, TX",
+  "published_at": "2026-11-10T22:57:28.725000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-11-11T04:57:10.428312Z",
+  "ordering_date": "2026-11-10T22:57:28.725000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/spreetail/4b690c5b-5c13-43eb-8309-bd7d20e5c3f4",
+  "url_provenance": "payload",
+  "stated_experience": [
+   2
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "US"
+  ],
+  "workplace": "onsite",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]
