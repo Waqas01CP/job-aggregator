@@ -55294,5 +55294,35 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "greenhouse:5007252101",
+  "source": "greenhouse",
+  "board_id": "greenhouse:veeamsoftware",
+  "external_id": "5007252101",
+  "employer": "Veeam Software",
+  "employer_provenance": "payload",
+  "title": "Sr. Director, DevOps",
+  "title_normalised": "Sr. Director, DevOps",
+  "location": "San Jose, CA, USA",
+  "published_at": "2026-11-11T20:16:49Z",
+  "published_field": "first_published",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-12T05:59:23.430807Z",
+  "ordering_date": "2026-11-11T20:16:49Z",
+  "ordering_date_source": "publication",
+  "url": "https://job-boards.eu.greenhouse.io/veeamsoftware/jobs/5007252101",
+  "url_provenance": "payload",
+  "stated_experience": [
+   15
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": null,
+  "workplace": "Hybrid",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]

@@ -6531,5 +6531,37 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "lever:f58ee105-2393-49d9-bfe6-61f8100b8bfc",
+  "source": "lever",
+  "board_id": "lever:spreetail",
+  "external_id": "f58ee105-2393-49d9-bfe6-61f8100b8bfc",
+  "employer": "Spreetail",
+  "employer_provenance": "slug",
+  "title": "People Program Coordinator",
+  "title_normalised": "People Program Coordinator",
+  "location": "Lincoln, NE",
+  "published_at": "2026-11-11T22:32:29.553000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-11-12T05:59:23.430807Z",
+  "ordering_date": "2026-11-11T22:32:29.553000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/spreetail/f58ee105-2393-49d9-bfe6-61f8100b8bfc",
+  "url_provenance": "payload",
+  "stated_experience": [
+   1
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "US"
+  ],
+  "workplace": "hybrid",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]

@@ -28673,5 +28673,35 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "ashby:e199b19f-b523-4d2a-9bf5-35f360c6b33c",
+  "source": "ashby",
+  "board_id": "ashby:protege",
+  "external_id": "e199b19f-b523-4d2a-9bf5-35f360c6b33c",
+  "employer": "Protege",
+  "employer_provenance": "slug",
+  "title": "Strategic Partnerships Manager, Healthcare Data",
+  "title_normalised": "Strategic Partnerships Manager, Healthcare Data",
+  "location": "Remote",
+  "published_at": "2026-11-11T21:43:55.272000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-12T05:59:23.430807Z",
+  "ordering_date": "2026-11-11T21:43:55.272000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/protege/e199b19f-b523-4d2a-9bf5-35f360c6b33c",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "United States"
+  ],
+  "workplace": "Remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]
