@@ -28891,5 +28891,170 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "ashby:0f3bdc6f-cecc-4cb0-a636-210f3eade8bf",
+  "source": "ashby",
+  "board_id": "ashby:Overjet",
+  "external_id": "0f3bdc6f-cecc-4cb0-a636-210f3eade8bf",
+  "employer": "Overjet",
+  "employer_provenance": "slug",
+  "title": "Engineering Manager",
+  "title_normalised": "Engineering Manager",
+  "location": "Pakistan; Lahore, Pakistan; Egypt; Cairo, Egypt",
+  "published_at": "2026-11-13T01:18:03.535000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-13T05:23:51.727733Z",
+  "ordering_date": "2026-11-13T01:18:03.535000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/Overjet/0f3bdc6f-cecc-4cb0-a636-210f3eade8bf",
+  "url_provenance": "payload",
+  "stated_experience": [
+   6
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "Pakistan",
+   "Egypt"
+  ],
+  "workplace": "Remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "ashby:a84986c8-93c2-44a0-bbea-ca365a5655e6",
+  "source": "ashby",
+  "board_id": "ashby:Overjet",
+  "external_id": "a84986c8-93c2-44a0-bbea-ca365a5655e6",
+  "employer": "Overjet",
+  "employer_provenance": "slug",
+  "title": "Staff Software Engineer",
+  "title_normalised": "Staff Software Engineer",
+  "location": "Pakistan; Lahore, Pakistan; Egypt; Cairo, Egypt",
+  "published_at": "2026-11-13T01:20:14.404000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-13T05:23:51.727733Z",
+  "ordering_date": "2026-11-13T01:20:14.404000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/Overjet/a84986c8-93c2-44a0-bbea-ca365a5655e6",
+  "url_provenance": "payload",
+  "stated_experience": [
+   10
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "Pakistan",
+   "Egypt"
+  ],
+  "workplace": "Remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "ashby:086d8c0b-bbb6-46bc-a1b7-7dc5da34050b",
+  "source": "ashby",
+  "board_id": "ashby:Overjet",
+  "external_id": "086d8c0b-bbb6-46bc-a1b7-7dc5da34050b",
+  "employer": "Overjet",
+  "employer_provenance": "slug",
+  "title": "Executive Recruiter",
+  "title_normalised": "Executive Recruiter",
+  "location": "United States, Remote",
+  "published_at": "2026-11-13T01:13:27.930000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-13T05:23:51.727733Z",
+  "ordering_date": "2026-11-13T01:13:27.930000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/Overjet/086d8c0b-bbb6-46bc-a1b7-7dc5da34050b",
+  "url_provenance": "payload",
+  "stated_experience": [
+   5
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": null,
+  "workplace": "Remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "ashby:ead3a360-720d-45b1-92ef-33ec5083eb02",
+  "source": "ashby",
+  "board_id": "ashby:clickhouse",
+  "external_id": "ead3a360-720d-45b1-92ef-33ec5083eb02",
+  "employer": "ClickHouse",
+  "employer_provenance": "slug",
+  "title": "Senior Counsel, Commercial (AMER)",
+  "title_normalised": "Senior Counsel, Commercial (AMER)",
+  "location": "United States; Canada",
+  "published_at": "2026-11-12T23:59:02.355000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-13T05:23:51.727733Z",
+  "ordering_date": "2026-11-12T23:59:02.355000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/clickhouse/ead3a360-720d-45b1-92ef-33ec5083eb02",
+  "url_provenance": "payload",
+  "stated_experience": [
+   7
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "United States",
+   "Canada"
+  ],
+  "workplace": "Remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "ashby:e3bf5aee-0ca3-423c-bee0-4e431c4f98bc",
+  "source": "ashby",
+  "board_id": "ashby:socket",
+  "external_id": "e3bf5aee-0ca3-423c-bee0-4e431c4f98bc",
+  "employer": "Socket.dev",
+  "employer_provenance": "slug",
+  "title": "Technical Account Manager (EMEA)",
+  "title_normalised": "Technical Account Manager (EMEA)",
+  "location": "United Kingdom; Denmark",
+  "published_at": "2026-11-12T20:59:20.185000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-13T05:23:51.727733Z",
+  "ordering_date": "2026-11-12T20:59:20.185000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/socket/e3bf5aee-0ca3-423c-bee0-4e431c4f98bc",
+  "url_provenance": "payload",
+  "stated_experience": [
+   6,
+   2
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "European Union",
+   "Denmark"
+  ],
+  "workplace": "Remote",
+  "required_places": [
+   "uk, denmark"
+  ],
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]
