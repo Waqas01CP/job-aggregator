@@ -6563,5 +6563,71 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "lever:a6d7c275-30bc-45aa-9e1f-7e03241f2ff1",
+  "source": "lever",
+  "board_id": "lever:smart-working-solutions",
+  "external_id": "a6d7c275-30bc-45aa-9e1f-7e03241f2ff1",
+  "employer": "Smart Working Solutions",
+  "employer_provenance": "slug",
+  "title": "Senior Cloud Engineer (AWS/ Java) (Remote, Full-Time) [AS314] (PK)",
+  "title_normalised": "Senior Cloud Engineer (AWS/ Java) (Remote, Full-Time) [AS314] (PK)",
+  "location": "Pakistan",
+  "published_at": "2026-11-13T10:52:12.951000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-11-13T20:23:37.759525Z",
+  "ordering_date": "2026-11-13T10:52:12.951000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/smart-working-solutions/a6d7c275-30bc-45aa-9e1f-7e03241f2ff1",
+  "url_provenance": "payload",
+  "stated_experience": [
+   5,
+   3
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "PK"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "lever:ad9a0b91-6990-4987-9a9c-b0f568ad4a0f",
+  "source": "lever",
+  "board_id": "lever:smart-working-solutions",
+  "external_id": "ad9a0b91-6990-4987-9a9c-b0f568ad4a0f",
+  "employer": "Smart Working Solutions",
+  "employer_provenance": "slug",
+  "title": "Senior Cloud Engineer (Java & AWS) (Remote, Full-Time) [AS314]",
+  "title_normalised": "Senior Cloud Engineer (Java & AWS) (Remote, Full-Time) [AS314]",
+  "location": "India",
+  "published_at": "2026-11-13T07:24:12.374000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-11-13T20:23:37.759525Z",
+  "ordering_date": "2026-11-13T07:24:12.374000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/smart-working-solutions/ad9a0b91-6990-4987-9a9c-b0f568ad4a0f",
+  "url_provenance": "payload",
+  "stated_experience": [
+   5,
+   3
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "IN"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]
