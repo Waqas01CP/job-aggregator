@@ -29579,5 +29579,67 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "ashby:d863f326-49c9-41fb-84bb-bb1ddb72ef12",
+  "source": "ashby",
+  "board_id": "ashby:Overjet",
+  "external_id": "d863f326-49c9-41fb-84bb-bb1ddb72ef12",
+  "employer": "Overjet",
+  "employer_provenance": "slug",
+  "title": "Forward Deployed Engineer",
+  "title_normalised": "Forward Deployed Engineer",
+  "location": "San Mateo, CA",
+  "published_at": "2026-11-14T16:27:23.927000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-14T18:41:00.506011Z",
+  "ordering_date": "2026-11-14T16:27:23.927000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/Overjet/d863f326-49c9-41fb-84bb-bb1ddb72ef12",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "United States"
+  ],
+  "workplace": "Hybrid",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "ashby:b4e5aa10-058a-4f3f-8163-897abc5b31b2",
+  "source": "ashby",
+  "board_id": "ashby:Overjet",
+  "external_id": "b4e5aa10-058a-4f3f-8163-897abc5b31b2",
+  "employer": "Overjet",
+  "employer_provenance": "slug",
+  "title": "Forward Deployed Engineering Manager",
+  "title_normalised": "Forward Deployed Engineering Manager",
+  "location": "San Mateo, CA",
+  "published_at": "2026-11-14T16:47:30.485000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-14T18:41:00.506011Z",
+  "ordering_date": "2026-11-14T16:47:30.485000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/Overjet/b4e5aa10-058a-4f3f-8163-897abc5b31b2",
+  "url_provenance": "payload",
+  "stated_experience": [
+   2
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "United States"
+  ],
+  "workplace": "Hybrid",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]
