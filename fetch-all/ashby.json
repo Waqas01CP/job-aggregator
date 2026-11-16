@@ -29641,5 +29641,35 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "ashby:56992f29-17a5-4150-b50b-7a72206c2af6",
+  "source": "ashby",
+  "board_id": "ashby:clickhouse",
+  "external_id": "56992f29-17a5-4150-b50b-7a72206c2af6",
+  "employer": "ClickHouse",
+  "employer_provenance": "slug",
+  "title": "Sr. Software Engineer - Enterprise Features & Orchestration",
+  "title_normalised": "Sr. Software Engineer - Enterprise Features & Orchestration",
+  "location": "Europe or US",
+  "published_at": "2026-11-16T04:28:49.787000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-16T05:03:16.129513Z",
+  "ordering_date": "2026-11-16T04:28:49.787000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/clickhouse/56992f29-17a5-4150-b50b-7a72206c2af6",
+  "url_provenance": "payload",
+  "stated_experience": [
+   6
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": null,
+  "workplace": "Remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]
