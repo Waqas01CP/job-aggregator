@@ -2475,5 +2475,133 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "workable:94F4841CD9",
+  "source": "workable",
+  "board_id": "workable:igate-technologies",
+  "external_id": "94F4841CD9",
+  "employer": "iGATE Technology",
+  "employer_provenance": "envelope",
+  "title": "Manager Legal",
+  "title_normalised": "Manager Legal",
+  "location": "Islamabad, Islamabad Capital Territory, Pakistan",
+  "published_at": "2026-11-16T00:00:00Z",
+  "published_field": "published_on",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-16T22:46:55.620511Z",
+  "ordering_date": "2026-11-16T00:00:00Z",
+  "ordering_date_source": "publication",
+  "url": "https://apply.workable.com/j/94F4841CD9",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "PK"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "workable:F04F30B9BE",
+  "source": "workable",
+  "board_id": "workable:igate-technologies",
+  "external_id": "F04F30B9BE",
+  "employer": "iGATE Technology",
+  "employer_provenance": "envelope",
+  "title": "Project Manager - Governance, Risk & Compliance (GRC)",
+  "title_normalised": "Project Manager - Governance, Risk & Compliance (GRC)",
+  "location": "Islamabad, Islamabad Capital Territory, Pakistan",
+  "published_at": "2026-11-16T00:00:00Z",
+  "published_field": "published_on",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-16T22:46:55.620511Z",
+  "ordering_date": "2026-11-16T00:00:00Z",
+  "ordering_date_source": "publication",
+  "url": "https://apply.workable.com/j/F04F30B9BE",
+  "url_provenance": "payload",
+  "stated_experience": [
+   4
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "PK"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "workable:31374BFD8B",
+  "source": "workable",
+  "board_id": "workable:igate-technologies",
+  "external_id": "31374BFD8B",
+  "employer": "iGATE Technology",
+  "employer_provenance": "envelope",
+  "title": "Senior SEO Executive",
+  "title_normalised": "Senior SEO Executive",
+  "location": "Islamabad, Islamabad Capital Territory, Pakistan",
+  "published_at": "2026-11-16T00:00:00Z",
+  "published_field": "published_on",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-16T22:46:55.620511Z",
+  "ordering_date": "2026-11-16T00:00:00Z",
+  "ordering_date_source": "publication",
+  "url": "https://apply.workable.com/j/31374BFD8B",
+  "url_provenance": "payload",
+  "stated_experience": [
+   4
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "PK"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "workable:C2F8878045",
+  "source": "workable",
+  "board_id": "workable:thingtrax",
+  "external_id": "C2F8878045",
+  "employer": "Thingtrax",
+  "employer_provenance": "envelope",
+  "title": "Business Development Representative",
+  "title_normalised": "Business Development Representative",
+  "location": "United Kingdom",
+  "published_at": "2026-11-16T00:00:00Z",
+  "published_field": "published_on",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-16T22:46:55.620511Z",
+  "ordering_date": "2026-11-16T00:00:00Z",
+  "ordering_date_source": "publication",
+  "url": "https://apply.workable.com/j/C2F8878045",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": [
+   "Associate"
+  ],
+  "places": [
+   "GB"
+  ],
+  "workplace": "remote",
+  "required_places": [
+   "uk"
+  ],
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]

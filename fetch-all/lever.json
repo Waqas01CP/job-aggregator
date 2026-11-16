@@ -6629,5 +6629,203 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "lever:d37f77cd-1e8c-4fa5-94db-ecb0de7ef793",
+  "source": "lever",
+  "board_id": "lever:smart-working-solutions",
+  "external_id": "d37f77cd-1e8c-4fa5-94db-ecb0de7ef793",
+  "employer": "Smart Working Solutions",
+  "employer_provenance": "slug",
+  "title": "Computational Designer (Remote, Full-Time) [AS354]",
+  "title_normalised": "Computational Designer (Remote, Full-Time) [AS354]",
+  "location": "India",
+  "published_at": "2026-11-13T19:02:20.943000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-11-16T22:46:55.620511Z",
+  "ordering_date": "2026-11-13T19:02:20.943000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/smart-working-solutions/d37f77cd-1e8c-4fa5-94db-ecb0de7ef793",
+  "url_provenance": "payload",
+  "stated_experience": [
+   3,
+   2
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "IN"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "lever:db40a101-cd67-494e-be1f-71576b3453b3",
+  "source": "lever",
+  "board_id": "lever:smart-working-solutions",
+  "external_id": "db40a101-cd67-494e-be1f-71576b3453b3",
+  "employer": "Smart Working Solutions",
+  "employer_provenance": "slug",
+  "title": "Computational Designer (Remote, Full-Time) [AS354] (PK)",
+  "title_normalised": "Computational Designer (Remote, Full-Time) [AS354] (PK)",
+  "location": "Pakistan",
+  "published_at": "2026-11-16T09:40:01.386000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-11-16T22:46:55.620511Z",
+  "ordering_date": "2026-11-16T09:40:01.386000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/smart-working-solutions/db40a101-cd67-494e-be1f-71576b3453b3",
+  "url_provenance": "payload",
+  "stated_experience": [
+   3,
+   2
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "PK"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "lever:ea7609d0-fbe7-443e-ae95-5e92f5d1939f",
+  "source": "lever",
+  "board_id": "lever:smart-working-solutions",
+  "external_id": "ea7609d0-fbe7-443e-ae95-5e92f5d1939f",
+  "employer": "Smart Working Solutions",
+  "employer_provenance": "slug",
+  "title": "Senior DevSecOps Engineer (Remote, Full-Time) [AS355]",
+  "title_normalised": "Senior DevSecOps Engineer (Remote, Full-Time) [AS355]",
+  "location": "Delhi",
+  "published_at": "2026-11-16T05:32:28.508000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-11-16T22:46:55.620511Z",
+  "ordering_date": "2026-11-16T05:32:28.508000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/smart-working-solutions/ea7609d0-fbe7-443e-ae95-5e92f5d1939f",
+  "url_provenance": "payload",
+  "stated_experience": [
+   5
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "IN"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "lever:c69b6ac2-1c2d-4da2-b054-d3f3d9a4a5f7",
+  "source": "lever",
+  "board_id": "lever:smart-working-solutions",
+  "external_id": "c69b6ac2-1c2d-4da2-b054-d3f3d9a4a5f7",
+  "employer": "Smart Working Solutions",
+  "employer_provenance": "slug",
+  "title": "Sr. Endpoint Engineer (C++ 17/ System Designs) (Remote, Full-Time) [AS349] (PK)",
+  "title_normalised": "Sr. Endpoint Engineer (C++ 17/ System Designs) (Remote, Full-Time) [AS349] (PK)",
+  "location": "Pakistan",
+  "published_at": "2026-11-16T11:36:35.526000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-11-16T22:46:55.620511Z",
+  "ordering_date": "2026-11-16T11:36:35.526000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/smart-working-solutions/c69b6ac2-1c2d-4da2-b054-d3f3d9a4a5f7",
+  "url_provenance": "payload",
+  "stated_experience": [
+   5,
+   4,
+   3
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "PK"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "lever:3695831d-1595-4b15-9ae2-c0d38059a72c",
+  "source": "lever",
+  "board_id": "lever:smart-working-solutions",
+  "external_id": "3695831d-1595-4b15-9ae2-c0d38059a72c",
+  "employer": "Smart Working Solutions",
+  "employer_provenance": "slug",
+  "title": "Sr. React Native Developer (Remote, Full-Time) [HR222] (PK)",
+  "title_normalised": "Sr. React Native Developer (Remote, Full-Time) [HR222] (PK)",
+  "location": "Pakistan",
+  "published_at": "2026-11-16T11:51:01.505000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-11-16T22:46:55.620511Z",
+  "ordering_date": "2026-11-16T11:51:01.505000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/smart-working-solutions/3695831d-1595-4b15-9ae2-c0d38059a72c",
+  "url_provenance": "payload",
+  "stated_experience": [
+   5,
+   3,
+   2
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "PK"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "lever:b392d87f-434d-4e73-a2b0-afdca388c3df",
+  "source": "lever",
+  "board_id": "lever:spreetail",
+  "external_id": "b392d87f-434d-4e73-a2b0-afdca388c3df",
+  "employer": "Spreetail",
+  "employer_provenance": "slug",
+  "title": "Warehouse Team Member, $21/hr",
+  "title_normalised": "Warehouse Team Member, $21/hr",
+  "location": "Greenwood, IN",
+  "published_at": "2026-11-16T15:52:59.067000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-11-16T22:46:55.620511Z",
+  "ordering_date": "2026-11-16T15:52:59.067000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/spreetail/b392d87f-434d-4e73-a2b0-afdca388c3df",
+  "url_provenance": "payload",
+  "stated_experience": [
+   18
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "US"
+  ],
+  "workplace": "onsite",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]
