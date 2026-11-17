@@ -376,7 +376,7 @@ def retired_by(closure, config, now):
     return retired
 
 
-def project_display(run, no_commit, test_mode, restore_failure=None, retired=None):
+def project_display(run, no_commit, test_mode, restore_failure=None, retired=None, slot=None):
     """Project the filtered layer to `Jobs`, or to `Jobs test` in test mode.
 
     Returns (projection stages, the airtable block, failure or None, `Jobs`
@@ -388,6 +388,15 @@ def project_display(run, no_commit, test_mode, restore_failure=None, retired=Non
     well as the projection's, and what the upsert wrote is merged into it
     (`projection.as_written`). A projection that failed hands the sweep
     nothing, and the sweep reads `Jobs` itself.
+
+    **The evening sends against the last view of `Jobs`** (A1, the operator's
+    approval of 2026-10-29 Pakistan time). Every run that reads `Jobs` stores
+    it as its upsert left it, privately; a scheduled evening run with a view
+    of the last JOBS_VIEW_HOURS sends what differs from that view and reads
+    nothing. What it cannot see: a row he deleted by hand that day comes back
+    at the next morning, and a field he edited is put right then too. A
+    missing, stale or unreadable view, or a private store not restored, and
+    the evening reads as before.
 
     **A private store that could not be restored withholds only the
     aggregator rows.** The operator's decision of 2026-09-24, D9: the public
@@ -431,16 +440,35 @@ def project_display(run, no_commit, test_mode, restore_failure=None, retired=Non
         # The display read back first, by the sweep's client, the one that
         # reads (the operator's decision of 2026-10-07); then the writer,
         # whose monthly guard counts the read's calls as spent.
-        reader = make_sweep_client(test_mode, sum(by_branch.values()))
-        shown = reader.list_records(JOBS, tuple(dict.fromkeys(pipeline_fields(described)
-                                                              + JOBS_FIELDS)))
-        client = make_airtable_client(test_mode, sum(by_branch.values()) + reader.calls_used)
+        view, why = None, None
+        if slot == "evening":
+            view, why = (None, "the private store was not restored") if restore_failure \
+                else read_jobs_view(run.paths, run.now, described)
+        if view is not None:
+            reader, shown = None, view
+            stages["jobs_from"] = "the last view (A1)"
+        else:
+            reader = make_sweep_client(test_mode, sum(by_branch.values()))
+            shown = reader.list_records(JOBS, tuple(dict.fromkeys(pipeline_fields(described)
+                                                                  + JOBS_FIELDS)))
+            stages["jobs_from"] = "read" + (": %s" % why if why else "")
+        client = make_airtable_client(test_mode, sum(by_branch.values())
+                                      + (reader.calls_used if reader is not None else 0))
         projection.project(run.paths, now_iso, run.matcher, client,
                            projection.private_store_texts(run.paths), stages,
                            public_only=bool(restore_failure), retired=retired,
                            displayed=lambda: shown, described=described, held=held)
         written = getattr(client, "written", None)
         jobs = None if written is None else projection.as_written(shown, written)
+        if view is not None:
+            # The evening runs no sweep, and the view's rows carry no record ID.
+            jobs = None
+        elif jobs is not None and not restore_failure:
+            try:
+                write_jobs_view(run.paths, now_iso, described, jobs)
+            except (OSError, ValueError) as e:
+                # The next evening reads, as before; never the fetch's cost.
+                stages["jobs_view_failure"] = "%s: %s" % (type(e).__name__, e)
         return stages, with_reads(dict(client.counters(), failure=None,
                                        month_to_date_by_branch=by_branch), reader), None, jobs
     except Exception as e:
@@ -500,6 +528,41 @@ def write_health(run_log, no_commit, test_mode, now, used_before):
             block["calls_used"] = client.calls_used
         block["failure"] = redact_secrets(failure)
     return block
+
+
+def jobs_view_path(paths):
+    return "%s/%s" % (paths["local_agreement_dir"], JOBS_VIEW_FILE)
+
+
+def read_jobs_view(paths, now, described):
+    """(the view's rows, None), or (None, why it cannot serve). A view that
+    is missing, unreadable, older than JOBS_VIEW_HOURS, dated after now, or
+    made for another set of fields is no view: the run reads `Jobs`."""
+    path = jobs_view_path(paths)
+    if not os.path.exists(path):
+        return None, "no view of Jobs is stored"
+    try:
+        with open(path, encoding="utf-8") as f:
+            doc = loads(f.read())
+        at = datetime.fromisoformat(str(doc["at"]).replace("Z", "+00:00"))
+        rows = doc["rows"]
+        if not isinstance(rows, list) or not all(isinstance(r, dict) for r in rows):
+            raise ValueError("rows")
+    except (OSError, ValueError, KeyError, TypeError) as e:
+        return None, "the view could not be read (%s)" % type(e).__name__
+    age = now - at
+    if age < timedelta(0) or age > timedelta(hours=JOBS_VIEW_HOURS):
+        return None, "the view is %.1f hours old" % (age.total_seconds() / 3600)
+    if doc.get("described") is not described:
+        return None, "the view was made for another set of fields"
+    return [{"fields": dict(r)} for r in rows], None
+
+
+def write_jobs_view(paths, at, described, jobs):
+    """`Jobs` as this run's upsert left it, its fields alone."""
+    rows = [dict(r.get("fields") or {}) for r in jobs]
+    storage.write_atomic(jobs_view_path(paths),
+                         dumps({"at": at, "described": described, "rows": rows}))
 
 
 def with_reads(block, reader):
@@ -606,6 +669,13 @@ def sweep_display(run, no_commit, test_mode, slot, private_ok, closure, config, 
     if no_commit:
         return {"mode": "dry run: a no-commit run reaches no base", "calls_used": 0,
                 "failure": None}
+    if slot == "evening":
+        # A1: the copy step runs on mornings only, the operator's approval of
+        # 2026-10-29 Pakistan time. A status he sets in the day is copied the
+        # next morning; the evening's reads of the rejection tables and of
+        # `Jobs` for them are the calls this saves.
+        return {"mode": "the evening runs no sweep (A1); the next morning copies the day's "
+                        "statuses", "daily": False, "calls_used": 0, "failure": None}
     daily = slot != "evening" and closure_failure is None
     client = None
     try:
@@ -637,6 +707,15 @@ AGREEMENT_PENDING_FILE = "agreement_pending.json"
 # F1). Private, beside the agreement check's files: a cursor can be a posting's
 # own ID, Startup.jobs' is.
 WALK_RESUME_FILE = "walk_resume.json"
+# A1, the operator's approval of 2026-10-29 Pakistan time: the last read of
+# `Jobs`, as the upsert left it, so the evening sends against it rather than
+# reading again, about 100 calls a month at 225 rows. Private, beside the
+# agreement check's files: it names aggregator rows. Fields only, no record IDs.
+JOBS_VIEW_FILE = "jobs_view.json"
+# How old the view may be. A morning run lands about 03:30 to 07:00Z and an
+# evening one 17:30 to 23:00Z, so a view from that morning is 10 to 19
+# hours old; an older one means the morning failed, and the evening reads.
+JOBS_VIEW_HOURS = 22
 # How long a browse posting the search has not returned waits before its
 # absence can count. The search trails browse by hours: at the fourth audit's
 # sample its newest posting was 6.3 hours old, older than all 20 on browse's
@@ -1614,7 +1693,8 @@ def main(argv=None):
         closure, retired = None, None
         run_log["closure_failure"] = redact_secrets("%s: %s" % (type(e).__name__, e))
     run_log["projection"], run_log[RUN_LOG_KEY], projection_failure, jobs_written = \
-        project_display(run, args.no_commit, test_mode, restore_failure, retired=retired)
+        project_display(run, args.no_commit, test_mode, restore_failure, retired=retired,
+                        slot=slot)
 
     # ADR-0050's sweep, after the projection, on `Jobs` as the projection
     # read and then wrote it, so a row it just sent is swept with the rest.

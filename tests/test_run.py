@@ -1944,6 +1944,109 @@ class TestTheSweepInTheRun(unittest.TestCase):
         self.assertEqual((sweep["jobs_read_by"], sweep["jobs_rows"]), ("the projection", 2))
         self.assertEqual(sweep["copied"], {"accepted": 1})
 
+    # -------------------------------------------------- A1, the evening's view
+    def real_writer(self):
+        real = run_module.description_fields_shown
+        run_module.description_fields_shown = lambda: False
+        self.addCleanup(setattr, run_module, "description_fields_shown", real)
+
+        def writer(test_mode, used_this_month):
+            return AirtableClient("patFAKE.0000", "appFAKEBASE000001", "tblJOBSFAKE000001",
+                                  session=self.base, min_interval=0, sleep=lambda s: None,
+                                  used_this_month=used_this_month)
+        run_module.make_airtable_client = writer
+
+    def stores(self, refuse_restore=False):
+        made = []
+
+        class Refusing(MemoryStore):
+            def restore(self, paths):
+                raise storage.PrivateStoreUnreachable("listed but could not be read")
+
+        def make(test_mode):
+            made.append(Refusing() if refuse_restore else MemoryStore())
+            return made[-1]
+        run_module.make_private_store = make
+        return made
+
+    def test_a_run_that_reads_jobs_keeps_its_view_privately_and_without_ids(self):
+        """A1. The view goes to the private store's push, holds fields alone,
+        and names no Airtable record. Mutation: "no view of Jobs is kept"."""
+        self.real_writer()
+        made = self.stores()
+        self.jobs_row("greenhouse:9", "accepted", 1)
+        self.slot_run("morning")
+        path = run_module.jobs_view_path(storage.layout(False))
+        with open(path, encoding="utf-8") as f:
+            view = json.load(f)
+        self.assertEqual(sorted(view), ["at", "described", "rows"])
+        self.assertEqual(sorted(r["Identity"] for r in view["rows"]),
+                         ["greenhouse:1000", "greenhouse:9"])
+        self.assertNotIn("rec", json.dumps(view["rows"]).replace("recruiter", ""))
+        pushed = [k for push in made[-1].pushed for k in push]
+        self.assertIn("agreement/%s" % run_module.JOBS_VIEW_FILE, pushed)
+        self.assertNotIn(run_module.JOBS_VIEW_FILE, json.dumps(self.git("ls-tree", "-r",
+                                                                         "--name-only", "data")))
+
+    def test_the_evening_sends_against_the_view_and_reads_nothing(self):
+        """A1's saving: no read of `Jobs` in the evening, and a posting new
+        that day still reaches it. Mutation: "the evening reads Jobs anyway"."""
+        self.real_writer()
+        self.stores()
+        self.slot_run("morning")
+        reads = len(self.jobs_reads())
+        self.payload = gh_payload(["AI Engineer", "Machine Learning Engineer"])
+        self.slot_run("evening")
+        log = self.last_run_log()
+        self.assertEqual(len(self.jobs_reads()), reads)
+        self.assertEqual(log["projection"]["jobs_from"], "the last view (A1)")
+        self.assertEqual(log["airtable"].get("read_calls"), None)
+        self.assertEqual(len(self.base.rows("tblJOBSFAKE000001")), 2)
+
+    def test_the_evening_runs_no_sweep_and_the_morning_copies_the_day(self):
+        """Mutation: "the evening still sweeps"."""
+        self.real_writer()
+        self.stores()
+        self.slot_run("morning")
+        # Classified after the morning's copy step, as a status set that day is.
+        self.base.now = datetime.now(timezone.utc) + timedelta(seconds=5)
+        self.base.calls.clear()
+        self.jobs_row("greenhouse:9", "accepted", 0)
+        self.slot_run("evening")
+        sweep = self.last_run_log()["sweep"]
+        self.assertIn("no sweep (A1)", sweep["mode"])
+        self.assertEqual([c for c in self.base.calls if c["table"] != "tblJOBSFAKE000001"], [])
+        self.assertEqual(self.base.rows("tblCOPY0000000002"), [])
+        self.slot_run("morning")
+        self.assertEqual(len(self.base.rows("tblCOPY0000000002")), 1)
+
+    def test_an_evening_with_no_usable_view_reads_as_before(self):
+        """No view, or a private store not restored, and the evening reads.
+        Mutations: "an evening with no view sends against nothing"; "a view
+        serves when the private store was not restored"."""
+        self.real_writer()
+        self.stores()
+        self.slot_run("evening")
+        self.assertEqual(self.last_run_log()["projection"]["jobs_from"],
+                         "read: no view of Jobs is stored")
+        self.slot_run("morning")
+        self.stores(refuse_restore=True)
+        reads = len(self.jobs_reads())
+        self.slot_run("evening")
+        self.assertEqual(len(self.jobs_reads()), reads + 1)
+        self.assertEqual(self.last_run_log()["projection"]["jobs_from"],
+                         "read: the private store was not restored")
+
+    def test_a_manual_run_reads_and_sweeps_as_ever(self):
+        """Mutation: "a run started by hand uses the view"."""
+        self.real_writer()
+        self.stores()
+        self.slot_run("morning")
+        reads = len(self.jobs_reads())
+        self.slot_run("manual")
+        self.assertEqual(len(self.jobs_reads()), reads + 1)
+        self.assertTrue(self.last_run_log()["sweep"]["tables_read"])
+
     def test_a_projection_that_failed_leaves_the_sweep_to_read_jobs_itself(self):
         def broken(test_mode, used_this_month):
             raise AirtableConfigError("empty or unset: AIRTABLE_TABLE_ID")
@@ -2111,6 +2214,60 @@ class TestTheSweepInTheRun(unittest.TestCase):
         self.assertEqual(log["sweep"]["copied"], {"accepted": 1})
         self.assertIs(log["sweep"]["daily"], False)
         self.assertIn("closure test could not be built", log["sweep"]["failure"])
+
+
+class TestTheJobsView(unittest.TestCase):
+    """A1's view, read: what makes it no view."""
+
+    def setUp(self):
+        self.dir = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, self.dir, True)
+        self.paths = {"local_agreement_dir": self.dir}
+        self.now = datetime(2026, 11, 17, 20, 0, tzinfo=timezone.utc)
+
+    def write(self, at, described=False, rows=None):
+        run_module.write_jobs_view(self.paths, at, described,
+                                   [{"id": "x", "fields": {"Identity": "greenhouse:1"}}]
+                                   if rows is None else rows)
+
+    def test_a_view_from_this_morning_serves(self):
+        self.write("2026-11-17T05:00:00Z")
+        rows, why = run_module.read_jobs_view(self.paths, self.now, False)
+        self.assertEqual((rows, why), ([{"fields": {"Identity": "greenhouse:1"}}], None))
+
+    def test_a_view_older_than_its_hours_is_no_view(self):
+        """A morning that failed leaves yesterday's. Mutation: "a stale view
+        serves"."""
+        self.write("2026-11-16T21:59:00Z")
+        rows, why = run_module.read_jobs_view(self.paths, self.now, False)
+        self.assertIsNone(rows)
+        self.assertIn("hours old", why)
+
+    def test_a_view_dated_after_now_is_no_view(self):
+        """Mutation: "a view from the future serves"."""
+        self.write("2026-11-17T21:00:00Z")
+        self.assertIsNone(run_module.read_jobs_view(self.paths, self.now, False)[0])
+
+    def test_a_view_for_other_fields_is_no_view(self):
+        """The description's four shown or not changes what is compared.
+        Mutation: "a view for other fields serves"."""
+        self.write("2026-11-17T05:00:00Z", described=True)
+        rows, why = run_module.read_jobs_view(self.paths, self.now, False)
+        self.assertIsNone(rows)
+        self.assertIn("other set of fields", why)
+
+    def test_an_unreadable_or_missing_view_is_no_view(self):
+        """Mutation: "an unreadable view fails the projection"."""
+        self.assertEqual(run_module.read_jobs_view(self.paths, self.now, False)[1],
+                         "no view of Jobs is stored")
+        for text in ("not json", "[]", '{"at": "2026-11-17T05:00:00Z"}',
+                     '{"at": "2026-11-17T05:00:00Z", "rows": [1], "described": false}'):
+            with self.subTest(text=text):
+                with open(run_module.jobs_view_path(self.paths), "w", encoding="utf-8") as f:
+                    f.write(text)
+                rows, why = run_module.read_jobs_view(self.paths, self.now, False)
+                self.assertIsNone(rows)
+                self.assertIn("could not be read", why)
 
 
 class TestBudgetLine(unittest.TestCase):

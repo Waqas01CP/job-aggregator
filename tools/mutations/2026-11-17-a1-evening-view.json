@@ -1,0 +1,68 @@
+[
+ {
+  "label": "no view of Jobs is kept",
+  "path": "src/run.py",
+  "find": "                write_jobs_view(run.paths, now_iso, described, jobs)\n",
+  "replace": "                pass\n"
+ },
+ {
+  "label": "the evening reads Jobs anyway",
+  "path": "src/run.py",
+  "find": "        if view is not None:\n            reader, shown = None, view\n",
+  "replace": "        if False:\n            reader, shown = None, view\n"
+ },
+ {
+  "label": "the evening still sweeps",
+  "path": "src/run.py",
+  "find": "    if slot == \"evening\":\n        # A1: the copy step runs on mornings only",
+  "replace": "    if False:\n        # A1: the copy step runs on mornings only"
+ },
+ {
+  "label": "an evening with no view sends against nothing",
+  "path": "src/run.py",
+  "find": "        if view is not None:\n            reader, shown = None, view\n",
+  "replace": "        if slot == \"evening\":\n            reader, shown = None, view\n"
+ },
+ {
+  "label": "a view serves when the private store was not restored",
+  "path": "src/run.py",
+  "find": "(None, \"the private store was not restored\") if restore_failure",
+  "replace": "(None, \"the private store was not restored\") if False"
+ },
+ {
+  "label": "a run started by hand uses the view",
+  "path": "src/run.py",
+  "find": "        if slot == \"evening\":\n            view, why =",
+  "replace": "        if slot in (\"evening\", \"manual\"):\n            view, why ="
+ },
+ {
+  "label": "a stale view serves",
+  "path": "src/run.py",
+  "find": "if age < timedelta(0) or age > timedelta(hours=JOBS_VIEW_HOURS):",
+  "replace": "if age < timedelta(0):"
+ },
+ {
+  "label": "a view from the future serves",
+  "path": "src/run.py",
+  "find": "if age < timedelta(0) or age > timedelta(hours=JOBS_VIEW_HOURS):",
+  "replace": "if age > timedelta(hours=JOBS_VIEW_HOURS):"
+ },
+ {
+  "label": "a view for other fields serves",
+  "path": "src/run.py",
+  "find": "    if doc.get(\"described\") is not described:\n        return None, \"the view was made for another set of fields\"\n",
+  "replace": ""
+ },
+ {
+  "label": "an unreadable view fails the projection",
+  "path": "src/run.py",
+  "find": "    except (OSError, ValueError, KeyError, TypeError) as e:\n        return None, \"the view could not be read",
+  "replace": "    except ZeroDivisionError as e:\n        return None, \"the view could not be read"
+ },
+ {
+  "label": "the dispatch's slot is read before the schedule",
+  "path": ".github/workflows/fetch.yml",
+  "find": "RUN_SLOT: ${{ github.event.schedule == '0 0 * * *'",
+  "replace": "RUN_SLOT: ${{ inputs.slot || github.event.schedule == '0 0 * * *'"
+ }
+]

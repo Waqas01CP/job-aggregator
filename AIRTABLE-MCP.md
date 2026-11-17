@@ -54,7 +54,7 @@ The pipeline owns most fields and rewrites them every run. **A chat writes only 
 `docs/reference/airtable-schema.md` holds the current list; a choice added in the browser belongs there too.
 
 **What the pipeline does with them.**
-- **At the next run** (about 03:30 UTC and between about 16:30 and 19:00 UTC; 8:30 am and the evening in Pakistan) a row with a `Status` is copied to its table.
+- **At the next morning run** (about 03:30 to 07:00 UTC, about 8:30 am to noon in Pakistan) a row with a `Status` is copied to its table. The evening run copies nothing and does not read `Jobs`, since A1 (2026-11-17): it sends new postings against the morning's view.
 - **Fifteen days later** its outcome is stored on GitHub and the row leaves `Jobs`.
 - **What the pipeline never does:** write `Status`.
 - **Clearing a `Status`:** removes nothing.
@@ -102,9 +102,8 @@ Counted at ten rows a call, the deletes alone would have been about 24, and the 
    - **Turning down:** set `Status` and `Reason` in the same update.
 6. **Do not read back what was just written.** The update's answer already returns the fields it wrote.
 7. **Do not fetch the schema to write a choice.** Write the choice's name as listed in section 2, with `typecast` off. `get_table_schema` is needed only to filter on a choice by its ID, or when a choice was added.
-8. **Classify in one sitting a day, after the evening run if you can.**
-   - **Why:** the pipeline's evening run copies statuses set since the morning's run, which costs it extra calls (about 5 to 11) on top of the next morning's work. Statuses set after the evening run are copied by the morning run alone.
-   - **The window:** in Pakistan, the evening run lands between about 9:30 pm and midnight, the morning run at about 8:30 am.
+8. **Classify when it suits you.** Since A1 (2026-11-17) only the morning run copies statuses, so when in the day you set them costs the pipeline nothing extra; a status set during the day reaches its table the next morning.
+   - **One thing to know:** a row deleted by hand in `Jobs` during the day comes back at the next morning run, as before; the evening does not see it.
 9. **Leave the test tables alone, and do not create rows.** The base's 1,000-record limit counts every table.
 
 ## 5. Recipes
@@ -144,5 +143,6 @@ Counted at ten rows a call, the deletes alone would have been about 24, and the 
 
 | Date | Change | Reason |
 |---|---|---|
+| 2026-11-17 | Sections 2 and 4: the evening run copies nothing and reads nothing since A1, so the advice to classify after it goes | A1, the operator's approval of 2026-10-29 |
 | 2026-10-29 | Section 3: a connector write of up to 50 records counts as about one call, measured from his meter readings around the seat's deletes of `Jobs test`'s 232 rows; the batch rule and a recipe follow | His readings of 870 and 896 against the pipeline's run logs |
 | 2026-10-28 | File created | The operator's request of 2026-10-28: a guide to using the base through an LLM and the MCP connector, with the strategy for spending as few calls as possible, since his own chats share the workspace's allowance with the pipeline |

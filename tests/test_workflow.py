@@ -133,6 +133,18 @@ class TestWorkflow(unittest.TestCase):
         self.assertEqual(mapping, {"0 0 * * *": "morning", "0 13 * * *": "evening"})
         self.assertIn("'manual'", line)
 
+    def test_a_dispatch_may_name_a_slot_and_a_schedule_always_wins(self):
+        """A1's rehearsal runs a test-mode dispatch as the evening. The
+        dispatch's choice comes after both crons, so a scheduled run is never
+        renamed by it, and its default is a normal dispatch. Mutation: "the
+        dispatch's slot is read before the schedule"."""
+        line = next(l for l in self.text.splitlines() if l.strip().startswith("RUN_SLOT:"))
+        self.assertLess(line.rindex("github.event.schedule"), line.index("inputs.slot"))
+        self.assertLess(line.index("inputs.slot"), line.index("'manual'"))
+        block = self.text[self.text.index("      slot:"):]
+        self.assertIn("options: [manual, morning, evening]", block[:600])
+        self.assertIn("default: manual", block[:600])
+
     def test_the_other_branch_is_fetched_for_the_count_and_never_pushed(self):
         """G7: the month's Airtable calls are counted from both branches, so
         the other mode's branch must be on the runner before the run, and
