@@ -15,7 +15,7 @@ The full list, with each option's pros and cons, is in the implementing seat's r
 **What he approved, 2026-10-29 (Pakistan time):**
 - A1, the evening run using the morning's view of `Jobs`;
 - A3, a webhook reporting his edits;
-- B1, the copies' record IDs remembered;
+- B1, the copies' record IDs remembered, later not built (below);
 - C1, the unreviewed clock at 21 days;
 - D2, stopping at once when the month's calls are spent;
 - D3, the base's record count reported each morning;
@@ -25,6 +25,12 @@ The full list, with each option's pros and cons, is in the implementing seat's r
 His words on the rest: "you should note them down somewhere in case if i want to implement them later on as some of them were quite good proposals". These are they.
 
 **Figures:** savings are estimates for a month like November 2026, when the pipeline was projected at about 590 calls with no option built.
+
+## B1. Remember each copy's record ID, approved and then not built
+
+- **What it would do:** keep each copy's record ID when the copy step makes it, so deleting a copy at its fifteen days needs no read of its table.
+- **Why it was not built:** measured before building, on 2026-11-17, from the run logs, counting only the rejection-table reads it would remove at each morning's page count: 12 calls on 6 mornings from 11-01 to 11-17, **about 21 a month**, with the operator classifying little; 22 calls on 11 mornings from 10-20 to 10-31, about 55 a month, while he classified daily. Against that, a copy he deletes by hand leaves a stored ID stale. His decision, 2026-11-17 (Pakistan time): not to build it, "only conditioned that you recheck that only 20 calls are saved", which the recheck confirmed at his present pace.
+- **When to look again:** he classifies daily again and the month's calls run tight. A3, the webhook, would take most of its saving and more.
 
 ## A2. Read only the rows changed since the last full read
 
@@ -87,4 +93,5 @@ His words on the rest: "you should note them down somewhere in case if i want to
 
 | Date | Change | Reason |
 |---|---|---|
+| 2026-11-17 | B1 added: approved on 2026-10-29, then not built, his decision on the measured saving | The operator, 2026-11-17 |
 | 2026-10-28 | File created | The operator's request of 2026-10-29, Pakistan time, to keep the options he did not approve |
