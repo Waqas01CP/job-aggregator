@@ -2044,8 +2044,12 @@ class TestTheSweepInTheRun(unittest.TestCase):
         self.slot_run("morning")
         reads = len(self.jobs_reads())
         self.slot_run("manual")
+        log = self.last_run_log()
+        # The projection's own read, not the sweep's reading for it.
+        self.assertEqual(log["projection"]["jobs_from"], "read")
+        self.assertEqual(log["sweep"]["jobs_read_by"], "the projection")
         self.assertEqual(len(self.jobs_reads()), reads + 1)
-        self.assertTrue(self.last_run_log()["sweep"]["tables_read"])
+        self.assertTrue(log["sweep"]["tables_read"])
 
     def test_a_projection_that_failed_leaves_the_sweep_to_read_jobs_itself(self):
         def broken(test_mode, used_this_month):
