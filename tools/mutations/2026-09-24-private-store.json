@@ -14,8 +14,8 @@
   {
     "label": "a failed push stops the projection",
     "path": "src/run.py",
-    "find": "project_display(run, args.no_commit, test_mode, restore_failure, retired=retired)",
-    "replace": "project_display(run, args.no_commit, test_mode, private_failure, retired=retired)"
+    "find": "project_display(run, args.no_commit, test_mode, restore_failure, retired=retired,\n                        slot=slot)",
+    "replace": "project_display(run, args.no_commit, test_mode, private_failure, retired=retired,\n                        slot=slot)"
   },
   {
     "label": "a private store failure exits 0",

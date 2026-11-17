@@ -50,7 +50,7 @@
   {
     "label": "the writer is not told the read was spent",
     "path": "src/run.py",
-    "find": "        client = make_airtable_client(test_mode, sum(by_branch.values()) + reader.calls_used)",
-    "replace": "        client = make_airtable_client(test_mode, sum(by_branch.values()))"
+    "find": "client = make_airtable_client(test_mode, sum(by_branch.values())\n                                      + (reader.calls_used if reader is not None else 0))",
+    "replace": "client = make_airtable_client(test_mode, sum(by_branch.values())\n                                      + 0)"
   }
 ]

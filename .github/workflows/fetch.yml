@@ -39,6 +39,12 @@ on:
         description: "Clear them. Unticked is the dry run, which removes nothing. Ticked needs that dry run, same table, days and mode, within 48 hours; the rows leave at the next run's sweep"
         type: boolean
         default: false
+      # A1's rehearsal: a dispatch run as a scheduled slot. Leave it manual.
+      slot:
+        description: "Run as a scheduled slot, for a rehearsal. manual is a normal dispatch, reading and sweeping everything; evening sends against the last view of Jobs and runs no sweep (A1); morning is the morning run"
+        type: choice
+        options: [manual, morning, evening]
+        default: manual
 
 # Two runs must never write the data branch at once. A queued run waits rather
 # than being cancelled, because cancelling would drop the fetch entirely.
@@ -155,7 +161,7 @@ jobs:
           # ADR-0048: which scheduled slot fired this run, so a source polled
           # once a day is asked on the morning run only. A dispatch is neither
           # slot and polls every source.
-          RUN_SLOT: ${{ github.event.schedule == '0 0 * * *' && 'morning' || github.event.schedule == '0 13 * * *' && 'evening' || 'manual' }}
+          RUN_SLOT: ${{ github.event.schedule == '0 0 * * *' && 'morning' || github.event.schedule == '0 13 * * *' && 'evening' || inputs.slot || 'manual' }}
           # ADR-0055's tool, from the dispatch's inputs. Passed as values, never
           # into the script below, so a typed number cannot become a command.
           CLEAR_TABLE: ${{ inputs.clear_table || 'none' }}
