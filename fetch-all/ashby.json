@@ -29897,5 +29897,35 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "ashby:7dbd4900-e5fe-4df7-aa13-e7beda6f1595",
+  "source": "ashby",
+  "board_id": "ashby:protege",
+  "external_id": "7dbd4900-e5fe-4df7-aa13-e7beda6f1595",
+  "employer": "Protege",
+  "employer_provenance": "slug",
+  "title": "IT Systems Engineer",
+  "title_normalised": "IT Systems Engineer",
+  "location": "Remote",
+  "published_at": "2026-11-16T22:59:51.685000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-17T06:51:44.098263Z",
+  "ordering_date": "2026-11-16T22:59:51.685000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/protege/7dbd4900-e5fe-4df7-aa13-e7beda6f1595",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "United States"
+  ],
+  "workplace": "Remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]
