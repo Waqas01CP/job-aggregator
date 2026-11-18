@@ -21952,5 +21952,37 @@
   "described_workplace": null,
   "described": true,
   "who_reads": "a named person"
+ },
+ {
+  "identity": "manatal:4596374",
+  "source": "manatal",
+  "board_id": "manatal:spursol",
+  "external_id": "4596374",
+  "employer": "SpurSol",
+  "employer_provenance": "slug",
+  "title": "GTM Lead",
+  "title_normalised": "GTM Lead",
+  "location": "Karachi, Pakistan",
+  "published_at": null,
+  "published_field": null,
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-18T21:10:44.461547Z",
+  "ordering_date": "2026-11-18T21:10:44.461547Z",
+  "ordering_date_source": "first_seen",
+  "url": "https://www.careers-page.com/spursol/job/W398Y756",
+  "url_provenance": "constructed",
+  "stated_experience": [
+   3
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "Pakistan"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]

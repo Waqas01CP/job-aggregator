@@ -2603,5 +2603,37 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "workable:5BA005B82A",
+  "source": "workable",
+  "board_id": "workable:igate-technologies",
+  "external_id": "5BA005B82A",
+  "employer": "iGATE Technology",
+  "employer_provenance": "envelope",
+  "title": "Head of Operations - Blue Sapphire",
+  "title_normalised": "Head of Operations - Blue Sapphire",
+  "location": "Lahore, Punjab, Pakistan",
+  "published_at": "2026-11-18T00:00:00Z",
+  "published_field": "published_on",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-18T21:10:44.461547Z",
+  "ordering_date": "2026-11-18T00:00:00Z",
+  "ordering_date_source": "publication",
+  "url": "https://apply.workable.com/j/5BA005B82A",
+  "url_provenance": "payload",
+  "stated_experience": [
+   5
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "PK"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]
