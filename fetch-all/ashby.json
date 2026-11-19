@@ -30406,5 +30406,69 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "ashby:bb1fec39-20ad-4a0d-8cf4-a3745fccd2cd",
+  "source": "ashby",
+  "board_id": "ashby:clickhouse",
+  "external_id": "bb1fec39-20ad-4a0d-8cf4-a3745fccd2cd",
+  "employer": "ClickHouse",
+  "employer_provenance": "slug",
+  "title": "Enterprise Account Executive-ASEAN",
+  "title_normalised": "Enterprise Account Executive-ASEAN",
+  "location": "Singapore",
+  "published_at": "2026-11-19T04:41:09.135000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-19T06:11:49.852564Z",
+  "ordering_date": "2026-11-19T04:41:09.135000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/clickhouse/bb1fec39-20ad-4a0d-8cf4-a3745fccd2cd",
+  "url_provenance": "payload",
+  "stated_experience": [
+   6
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "Singapore"
+  ],
+  "workplace": "Remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "ashby:5be47330-6fe8-4bd9-968f-fccda175f9f9",
+  "source": "ashby",
+  "board_id": "ashby:clickhouse",
+  "external_id": "5be47330-6fe8-4bd9-968f-fccda175f9f9",
+  "employer": "ClickHouse",
+  "employer_provenance": "slug",
+  "title": "Senior Software Engineer - Cloud Partner Integrations",
+  "title_normalised": "Senior Software Engineer - Cloud Partner Integrations",
+  "location": "The Netherlands",
+  "published_at": "2026-11-18T21:53:26.190000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-19T06:11:49.852564Z",
+  "ordering_date": "2026-11-18T21:53:26.190000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/clickhouse/5be47330-6fe8-4bd9-968f-fccda175f9f9",
+  "url_provenance": "payload",
+  "stated_experience": [
+   8
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "Netherlands"
+  ],
+  "workplace": "Remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]
