@@ -57708,5 +57708,35 @@
   "described_workplace": null,
   "described": true,
   "who_reads": "recruiter"
+ },
+ {
+  "identity": "greenhouse:8950900002",
+  "source": "greenhouse",
+  "board_id": "greenhouse:gomotive",
+  "external_id": "8950900002",
+  "employer": "Motive",
+  "employer_provenance": "payload",
+  "title": "Software Engineer, Platform IOT",
+  "title_normalised": "Software Engineer, Platform IOT",
+  "location": "Hybrid - San Francisco, California",
+  "published_at": "2026-11-19T23:45:37Z",
+  "published_field": "first_published",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-20T05:57:39.451058Z",
+  "ordering_date": "2026-11-19T23:45:37Z",
+  "ordering_date_source": "publication",
+  "url": "https://job-boards.greenhouse.io/gomotive/jobs/8950900002",
+  "url_provenance": "payload",
+  "stated_experience": [
+   4
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": null,
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]

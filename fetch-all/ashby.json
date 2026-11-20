@@ -30760,5 +30760,106 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "ashby:f4a68601-c202-42fe-ab4d-3e7be7ec437e",
+  "source": "ashby",
+  "board_id": "ashby:clickhouse",
+  "external_id": "f4a68601-c202-42fe-ab4d-3e7be7ec437e",
+  "employer": "ClickHouse",
+  "employer_provenance": "slug",
+  "title": "Senior Instructor - AMER",
+  "title_normalised": "Senior Instructor - AMER",
+  "location": "United States; Charlotte; Denver; Seattle; Austin; New York; Boston; San Francisco",
+  "published_at": "2026-11-19T21:52:21.757000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-20T05:57:39.451058Z",
+  "ordering_date": "2026-11-19T21:52:21.757000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/clickhouse/f4a68601-c202-42fe-ab4d-3e7be7ec437e",
+  "url_provenance": "payload",
+  "stated_experience": [
+   5
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "United States"
+  ],
+  "workplace": "Remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "ashby:220080d1-c844-42e6-a762-9f3453289ac1",
+  "source": "ashby",
+  "board_id": "ashby:clickhouse",
+  "external_id": "220080d1-c844-42e6-a762-9f3453289ac1",
+  "employer": "ClickHouse",
+  "employer_provenance": "slug",
+  "title": "Senior Software Engineer - Postgres Engine",
+  "title_normalised": "Senior Software Engineer - Postgres Engine",
+  "location": "United States; Canada; United Kingdom; Australia; The Netherlands; India",
+  "published_at": "2026-11-20T05:19:25.426000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-20T05:57:39.451058Z",
+  "ordering_date": "2026-11-20T05:19:25.426000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/clickhouse/220080d1-c844-42e6-a762-9f3453289ac1",
+  "url_provenance": "payload",
+  "stated_experience": [
+   6
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "United States",
+   "Canada",
+   "United Kingdom",
+   "Australia",
+   "Netherlands",
+   "India"
+  ],
+  "workplace": "Remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "ashby:e5cca48b-1f34-48fe-9ebf-3c6ff526f9ba",
+  "source": "ashby",
+  "board_id": "ashby:elevenlabs",
+  "external_id": "e5cca48b-1f34-48fe-9ebf-3c6ff526f9ba",
+  "employer": "ElevenLabs",
+  "employer_provenance": "slug",
+  "title": "Commercial Counsel - India",
+  "title_normalised": "Commercial Counsel - India",
+  "location": "India",
+  "published_at": "2026-11-19T22:33:06.673000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-20T05:57:39.451058Z",
+  "ordering_date": "2026-11-19T22:33:06.673000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/ElevenLabs/e5cca48b-1f34-48fe-9ebf-3c6ff526f9ba",
+  "url_provenance": "payload",
+  "stated_experience": [
+   7
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "India"
+  ],
+  "workplace": "Remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]
