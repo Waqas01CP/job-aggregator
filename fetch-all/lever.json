@@ -7509,5 +7509,131 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "lever:6d9f4006-8ff8-4ae5-be20-db7b36770e5b",
+  "source": "lever",
+  "board_id": "lever:spreetail",
+  "external_id": "6d9f4006-8ff8-4ae5-be20-db7b36770e5b",
+  "employer": "Spreetail",
+  "employer_provenance": "slug",
+  "title": "Inbound Receiving & Compliance Analyst",
+  "title_normalised": "Inbound Receiving & Compliance Analyst",
+  "location": "Manila",
+  "published_at": "2026-11-19T16:27:21.151000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-11-20T20:58:03.197323Z",
+  "ordering_date": "2026-11-19T16:27:21.151000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/spreetail/6d9f4006-8ff8-4ae5-be20-db7b36770e5b",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "PH"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "lever:658ab593-1b68-4caa-8f35-81f5d0f3cdc4",
+  "source": "lever",
+  "board_id": "lever:spreetail",
+  "external_id": "658ab593-1b68-4caa-8f35-81f5d0f3cdc4",
+  "employer": "Spreetail",
+  "employer_provenance": "slug",
+  "title": "Maintenance Technician, up to $34/hr",
+  "title_normalised": "Maintenance Technician, up to $34/hr",
+  "location": "Greenwood, IN",
+  "published_at": "2026-11-20T14:39:12.558000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-11-20T20:58:03.197323Z",
+  "ordering_date": "2026-11-20T14:39:12.558000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/spreetail/658ab593-1b68-4caa-8f35-81f5d0f3cdc4",
+  "url_provenance": "payload",
+  "stated_experience": [
+   3
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "US"
+  ],
+  "workplace": "onsite",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "lever:b6c7cd17-1573-4bf3-b720-c01be7f4113f",
+  "source": "lever",
+  "board_id": "lever:spreetail",
+  "external_id": "b6c7cd17-1573-4bf3-b720-c01be7f4113f",
+  "employer": "Spreetail",
+  "employer_provenance": "slug",
+  "title": "Warehouse Area Manager",
+  "title_normalised": "Warehouse Area Manager",
+  "location": "Dallas, TX",
+  "published_at": "2026-11-20T14:40:13.755000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-11-20T20:58:03.197323Z",
+  "ordering_date": "2026-11-20T14:40:13.755000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/spreetail/b6c7cd17-1573-4bf3-b720-c01be7f4113f",
+  "url_provenance": "payload",
+  "stated_experience": [
+   2
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "US"
+  ],
+  "workplace": "onsite",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "lever:15ef2c2f-e530-4dfd-92f7-962cd7503629",
+  "source": "lever",
+  "board_id": "lever:spreetail",
+  "external_id": "15ef2c2f-e530-4dfd-92f7-962cd7503629",
+  "employer": "Spreetail",
+  "employer_provenance": "slug",
+  "title": "Warehouse Operations Manager",
+  "title_normalised": "Warehouse Operations Manager",
+  "location": "Las Vegas, NV",
+  "published_at": "2026-11-20T14:39:38.568000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-11-20T20:58:03.197323Z",
+  "ordering_date": "2026-11-20T14:39:38.568000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/spreetail/15ef2c2f-e530-4dfd-92f7-962cd7503629",
+  "url_provenance": "payload",
+  "stated_experience": [
+   5
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "US"
+  ],
+  "workplace": "onsite",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]
