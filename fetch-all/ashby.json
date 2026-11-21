@@ -31186,5 +31186,100 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "ashby:7cc69253-b0e2-4ca4-bb13-d3f0ccb7be93",
+  "source": "ashby",
+  "board_id": "ashby:clickhouse",
+  "external_id": "7cc69253-b0e2-4ca4-bb13-d3f0ccb7be93",
+  "employer": "ClickHouse",
+  "employer_provenance": "slug",
+  "title": "Public Sector Account Executive",
+  "title_normalised": "Public Sector Account Executive",
+  "location": "Washington D.C.; United States",
+  "published_at": "2026-11-21T02:23:38.007000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-21T05:52:33.646522Z",
+  "ordering_date": "2026-11-21T02:23:38.007000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/clickhouse/7cc69253-b0e2-4ca4-bb13-d3f0ccb7be93",
+  "url_provenance": "payload",
+  "stated_experience": [
+   8
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "United States"
+  ],
+  "workplace": "Remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "ashby:03767ebf-9a34-4204-8580-4d720121d5ab",
+  "source": "ashby",
+  "board_id": "ashby:clickhouse",
+  "external_id": "03767ebf-9a34-4204-8580-4d720121d5ab",
+  "employer": "ClickHouse",
+  "employer_provenance": "slug",
+  "title": "Senior Software Engineer, Infrastructure Automation",
+  "title_normalised": "Senior Software Engineer, Infrastructure Automation",
+  "location": "Canada; United States",
+  "published_at": "2026-11-20T21:36:33.903000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-21T05:52:33.646522Z",
+  "ordering_date": "2026-11-20T21:36:33.903000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/clickhouse/03767ebf-9a34-4204-8580-4d720121d5ab",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "Canada",
+   "United States"
+  ],
+  "workplace": "Remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "ashby:e897c3f7-c261-4926-b81d-4eea7d964820",
+  "source": "ashby",
+  "board_id": "ashby:cursor",
+  "external_id": "e897c3f7-c261-4926-b81d-4eea7d964820",
+  "employer": "Cursor",
+  "employer_provenance": "slug",
+  "title": "Strategic Enterprise Account Executive - India",
+  "title_normalised": "Strategic Enterprise Account Executive - India",
+  "location": "Bengaluru; New Delhi; Mumbai",
+  "published_at": "2026-11-21T00:19:20.685000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-21T05:52:33.646522Z",
+  "ordering_date": "2026-11-21T00:19:20.685000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/cursor/e897c3f7-c261-4926-b81d-4eea7d964820",
+  "url_provenance": "payload",
+  "stated_experience": [
+   5
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "India"
+  ],
+  "workplace": "OnSite",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]
