@@ -1,0 +1,14 @@
+[
+ {
+  "label": "a job story's title is never read for a place",
+  "path": "src/filters.py",
+  "find": "        text = getattr(row, \"title\", None)\n    if not text or not str(text).strip():\n        return Verdict(True)\n    parts =",
+  "replace": "        pass\n    if not text or not str(text).strip():\n        return Verdict(True)\n    parts ="
+ },
+ {
+  "label": "any source may read its title for a place",
+  "path": "src/filters.py",
+  "find": "    if not isinstance(titled, list) or not set(titled) <= set(header):",
+  "replace": "    if not isinstance(titled, list):"
+ }
+]

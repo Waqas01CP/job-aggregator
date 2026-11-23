@@ -167,6 +167,42 @@ class TestTheHeaderPlace(unittest.TestCase):
         self.assertTrue(self.hn("Acme | AI Engineer | Karachi | ONSITE")[0])
         self.assertFalse(self.hn("Acme | AI Engineer | Lahore | ONSITE")[0])
 
+    def test_a_job_storys_title_is_the_line_its_place_is_read_from(self):
+        """Brief 20, decision 6, on the fifth audit's F6: a job story states
+        no place, so its title is read as the thread's first line is. A title
+        naming only closed places drops; one naming none, or a place open to
+        him, keeps it; a thread post is read from its own line as before.
+        Mutation: "a job story's title is never read for a place"."""
+        from src.filters import ELIGIBILITY, rule_location
+        from dataclasses import replace
+
+        def story(title, source="hnjobs", location=None):
+            return replace(row(title=title, location=location), source=source)
+        self.assertFalse(rule_location(story("Dalus (YC W25) Is Hiring a Software Engineer in Germany"),
+                                       ELIGIBILITY).keep)
+        self.assertFalse(rule_location(story("Jiga (YC W21) Is Hiring Product Engineer (Remote/US)"),
+                                       ELIGIBILITY).keep)
+        self.assertTrue(rule_location(story("Coris (YC S22) Is Hiring Back End Engineer"),
+                                      ELIGIBILITY).keep)
+        self.assertTrue(rule_location(story("Acme Is Hiring Engineers, Remote Worldwide"),
+                                      ELIGIBILITY).keep)
+        self.assertTrue(rule_location(story("Acme Is Hiring in Germany", source="greenhouse"),
+                                      ELIGIBILITY).keep)
+
+    def test_title_place_sources_must_be_header_sources(self):
+        """Mutation: "any source may read its title for a place"."""
+        import json
+        import tempfile
+        from src.filters import FilterError, load_eligibility
+        from src.filters import ELIGIBILITY_PATH
+        raw = json.load(open(ELIGIBILITY_PATH, encoding="utf-8"))
+        raw["title_place_sources"] = ["greenhouse"]
+        path = os.path.join(tempfile.mkdtemp(), "e.json")
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(raw, f)
+        with self.assertRaises(FilterError):
+            load_eligibility(path)
+
     def test_the_four_places_of_the_fifth_audit_are_closed(self):
         """His decision of 2026-11-23 on F3: the agreement check's four
         disagreements named places the closed list lacked. Mutation: "the four

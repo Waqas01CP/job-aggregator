@@ -266,6 +266,9 @@ class Eligibility:
     # Sources whose place is free text in a post's first line, Hacker News'
     # (ADR-0057's row of 2026-10-18); see rule_location.
     header_place_sources: tuple = ()
+    # Of those, the sources whose posts state no place at all, so their title
+    # is the line the header rule reads (Brief 20, decision 6).
+    title_place_sources: tuple = ()
 
 
 def _words(terms):
@@ -305,7 +308,11 @@ def load_eligibility(path=None):
     header = raw.get("header_place_sources", [])
     if not isinstance(header, list) or not all(isinstance(v, str) and v.strip() for v in header):
         raise FilterError("header_place_sources must be a list of sources")
+    titled = raw.get("title_place_sources", [])
+    if not isinstance(titled, list) or not set(titled) <= set(header):
+        raise FilterError("title_place_sources must be a list of header_place_sources")
     return Eligibility(max_age_days=days, header_place_sources=tuple(header),
+                       title_place_sources=tuple(titled),
                        home_cities=tuple(p for p in lists["home"] if p.pattern not in country),
                        home_country_names=names["home_country"],
                        levels_dropped=tuple(fold(v) for v in levels),
@@ -560,6 +567,15 @@ def rule_location(row, eligibility, **kw):
     this cannot name all keep it: an unrecognised spelling can only let a
     posting through, never lose one."""
     text = getattr(row, "location", None)
+    if ((not text or not str(text).strip())
+            and getattr(row, "source", None) in eligibility.title_place_sources):
+        # A post stating no place says it in its title if anywhere: Hacker
+        # News' job stories (Brief 20, decision 6, the operator's of
+        # 2026-11-23, on the fifth audit's F6). Read as the thread's first
+        # line is, so only places the rule can name decide. Measured first
+        # over 119 saved stories: 7 change, each naming only closed places,
+        # none in the layer.
+        text = getattr(row, "title", None)
     if not text or not str(text).strip():
         return Verdict(True)
     parts = [p for p in _PARTS.split(str(text)) if p.strip()]
