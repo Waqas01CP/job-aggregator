@@ -57824,5 +57824,69 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "greenhouse:4781672101",
+  "source": "greenhouse",
+  "board_id": "greenhouse:veeamsoftware",
+  "external_id": "4781672101",
+  "employer": "Veeam Software",
+  "employer_provenance": "payload",
+  "title": "Senior Sales Engineer - Data & AI Security",
+  "title_normalised": "Senior Sales Engineer - Data & AI Security",
+  "location": "Seoul, Republic of Korea",
+  "published_at": "2026-08-05T04:47:25Z",
+  "published_field": "first_published",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-23T06:02:11.326953Z",
+  "ordering_date": "2026-08-05T04:47:25Z",
+  "ordering_date_source": "publication",
+  "url": "https://job-boards.eu.greenhouse.io/veeamsoftware/jobs/4781672101",
+  "url_provenance": "payload",
+  "stated_experience": [
+   10,
+   15
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": null,
+  "workplace": "Remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
+ },
+ {
+  "identity": "greenhouse:8916303002",
+  "source": "greenhouse",
+  "board_id": "greenhouse:careem",
+  "external_id": "8916303002",
+  "employer": "Careem",
+  "employer_provenance": "payload",
+  "title": "Supply Planning Lead",
+  "title_normalised": "Supply Planning Lead",
+  "location": "Karachi, Pakistan",
+  "published_at": "2026-11-23T05:13:22Z",
+  "published_field": "first_published",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-23T06:02:11.326953Z",
+  "ordering_date": "2026-11-23T05:13:22Z",
+  "ordering_date_source": "publication",
+  "url": "https://boards.greenhouse.io/careem/jobs/8916303002?gh_jid=8916303002",
+  "url_provenance": "payload",
+  "stated_experience": [
+   4
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "Karachi, Pakistan",
+   "Pakistan"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]

@@ -695,5 +695,39 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "smartrecruiters:744000163103489",
+  "source": "smartrecruiters",
+  "board_id": "smartrecruiters:OneScreen",
+  "external_id": "744000163103489",
+  "employer": "OneScreen",
+  "employer_provenance": "payload",
+  "title": "Product Manager, Apps & Services",
+  "title_normalised": "Product Manager, Apps & Services",
+  "location": "Islamabad, Islamabad Capital Territory, Pakistan",
+  "published_at": "2026-11-22T22:31:30.022000Z",
+  "published_field": "releasedDate",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-23T06:02:11.326953Z",
+  "ordering_date": "2026-11-22T22:31:30.022000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.smartrecruiters.com/OneScreen/744000163103489-product-manager-apps-services",
+  "url_provenance": "payload",
+  "stated_experience": [
+   1
+  ],
+  "expires_at": null,
+  "stated_levels": [
+   "Associate"
+  ],
+  "places": [
+   "PK"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null
  }
 ]
