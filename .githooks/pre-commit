@@ -3,7 +3,7 @@
 #
 #   git config core.hooksPath .githooks
 #
-# Seven checks, every one of which must be able to fail. Prove each by
+# Eight checks, every one of which must be able to fail. Prove each by
 # giving it the case built to defeat it before trusting it. A gate nobody
 # has seen fire is indistinguishable from an absent one, and worse,
 # because it is trusted.
@@ -249,6 +249,38 @@ if [ "$finds_status" -ne 0 ]; then
        The files and mutations are named above. Re-point each find at the
        line as it now reads, keeping what the mutation breaks, and stage the
        mutation file with the change."
+fi
+
+# ---------------------------------------------------------------------
+# 8. No aggregator's real response in a cassette. ADR-0020.
+#
+# ADR-0020 says no aggregator content reaches this public repository and
+# promised a guard; ADR-0017 records one real response per platform. The
+# fifth audit's F2 found ten aggregator cassettes holding real postings,
+# and the operator decided ADR-0020 wins (Brief 20, decision 2, 2026-11-23):
+# an aggregator's cassette is made-up postings of the real shape, an
+# employer board's a real response. tools/aggregator_cassettes.py parses
+# each staged cassette with its own adapter and refuses any posting whose
+# employer is not "Example Employer N" (on Hasjob, which names none, any
+# link that is not an example link).
+# ---------------------------------------------------------------------
+
+cassettes=""
+for file in $staged; do
+  case "$file" in
+    tests/cassettes/*.json) cassettes="$cassettes $file" ;;
+  esac
+done
+if [ -n "$cassettes" ]; then
+  set +e
+  "$PY" tools/aggregator_cassettes.py $cassettes
+  cassette_status=$?
+  set -e
+  if [ "$cassette_status" -ne 0 ]; then
+    fail "an aggregator's real response is staged as a cassette, named above.
+       ADR-0020: no aggregator content in this public repository. Make its
+       postings up, employers as Example Employer N, and keep its shape."
+  fi
 fi
 
 exit 0

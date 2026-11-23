@@ -785,9 +785,10 @@ class TestHnJobs(unittest.TestCase):
     def test_the_link_is_the_storys_own_page_and_no_text_is_none(self):
         """ADR-0063. Mutation: "a job story links to the employer's page"."""
         [p] = [p for p in hnjobs.parse(self.payload, HNJ_BOARD).postings
-               if p.title.startswith("Coris")]
+               if "Back End Engineer" in p.title]
         self.assertEqual(p.url, "https://news.ycombinator.com/item?id=%s" % p.external_id)
-        self.assertEqual((p.source, p.description, p.employer), ("hnjobs", (), "Coris"))
+        self.assertEqual((p.source, p.description, p.employer),
+                         ("hnjobs", (), "Example Employer 7"))
 
 
 JB_BOARD = Board(platform="jobicy", slug="jobicy-remote")

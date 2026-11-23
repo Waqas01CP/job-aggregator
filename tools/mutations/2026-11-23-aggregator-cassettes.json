@@ -1,0 +1,20 @@
+[
+ {
+  "label": "the guard passes every cassette",
+  "path": "tools/aggregator_cassettes.py",
+  "find": "    if platform not in AGGREGATOR_PLATFORMS:\n        return []",
+  "replace": "    if True:\n        return []"
+ },
+ {
+  "label": "a real employer passes the guard",
+  "path": "tools/aggregator_cassettes.py",
+  "find": "        elif not (p.employer or \"\").startswith(MADE_UP_EMPLOYER):",
+  "replace": "        elif False:"
+ },
+ {
+  "label": "a real Hasjob link passes the guard",
+  "path": "tools/aggregator_cassettes.py",
+  "find": "            if \"/example\" not in (p.url or \"\"):",
+  "replace": "            if False:"
+ }
+]

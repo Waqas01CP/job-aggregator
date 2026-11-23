@@ -3,15 +3,15 @@
   {
    "company": {
     "active_jobs_count": 0,
-    "logo_url": "https://startup.jobs/logos/71304",
-    "name": "Cowboy Colostrum",
-    "slug": "cowboy-colostrum",
-    "url": "https://startup.jobs/company/cowboy-colostrum?utm_source=PersonalJobFinder&utm_medium=api",
+    "logo_url": "STRIPPED",
+    "name": "Example Employer 58",
+    "slug": "example-employer-58",
+    "url": "https://example.test/example-employer-58",
     "website_url": null
    },
    "description_html": "STRIPPED",
    "employment_type": "full-time",
-   "id": 10516076,
+   "id": 990031,
    "location": {
     "city": null,
     "country": "U.S.",
@@ -26,22 +26,22 @@
     }
    ],
    "salary": null,
-   "title": "Events Coordinator",
-   "url": "https://startup.jobs/events-coordinator-cowboy-colostrum-10516076?utm_source=PersonalJobFinder&utm_medium=api",
+   "title": "Account Manager 100",
+   "url": "https://startup.jobs/990031",
    "workplace_type": "remote"
   },
   {
    "company": {
     "active_jobs_count": 1,
-    "logo_url": "https://startup.jobs/logos/13125",
-    "name": "Hey Jane",
-    "slug": "hey-jane",
-    "url": "https://startup.jobs/company/hey-jane?utm_source=PersonalJobFinder&utm_medium=api",
-    "website_url": "https://heyjane.co/"
+    "logo_url": "STRIPPED",
+    "name": "Example Employer 59",
+    "slug": "example-employer-59",
+    "url": "https://example.test/example-employer-59",
+    "website_url": "https://example.test/example-employer-59"
    },
    "description_html": "STRIPPED",
    "employment_type": "full-time",
-   "id": 10519164,
+   "id": 990032,
    "location": {
     "city": null,
     "country": null,
@@ -64,22 +64,22 @@
     }
    ],
    "salary": "$75,000 per year",
-   "title": "Clinical Operations Specialist",
-   "url": "https://startup.jobs/clinical-operations-specialist-hey-jane-10519164?utm_source=PersonalJobFinder&utm_medium=api",
+   "title": "Account Manager 101",
+   "url": "https://startup.jobs/990032",
    "workplace_type": "remote"
   },
   {
    "company": {
     "active_jobs_count": 256,
-    "logo_url": "https://startup.jobs/logos/117378",
-    "name": "Paylocity",
-    "slug": "paylocity",
-    "url": "https://startup.jobs/company/paylocity?utm_source=PersonalJobFinder&utm_medium=api",
-    "website_url": "https://www.paylocity.com"
+    "logo_url": "STRIPPED",
+    "name": "Example Employer 60",
+    "slug": "example-employer-60",
+    "url": "https://example.test/example-employer-60",
+    "website_url": "https://example.test/example-employer-60"
    },
    "description_html": "STRIPPED",
    "employment_type": "full-time",
-   "id": 10519346,
+   "id": 990033,
    "location": {
     "city": null,
     "country": "U.S.",
@@ -89,22 +89,22 @@
    "published_at": "2026-10-19T21:16:13Z",
    "roles": [],
    "salary": "$70,000 – $142,700 per year",
-   "title": "Launch Coordinator",
-   "url": "https://startup.jobs/launch-coordinator-paylocity-10519346?utm_source=PersonalJobFinder&utm_medium=api",
+   "title": "Account Manager 102",
+   "url": "https://startup.jobs/990033",
    "workplace_type": "remote"
   },
   {
    "company": {
     "active_jobs_count": 22,
-    "logo_url": "https://startup.jobs/logos/17440",
-    "name": "Firework",
-    "slug": "firework",
-    "url": "https://startup.jobs/company/firework?utm_source=PersonalJobFinder&utm_medium=api",
-    "website_url": "https://firework.com/careers/"
+    "logo_url": "STRIPPED",
+    "name": "Example Employer 61",
+    "slug": "example-employer-61",
+    "url": "https://example.test/example-employer-61",
+    "website_url": "https://example.test/example-employer-61"
    },
    "description_html": "STRIPPED",
    "employment_type": "full-time",
-   "id": 10520387,
+   "id": 990034,
    "location": {
     "city": null,
     "country": "India",
@@ -143,22 +143,22 @@
     }
    ],
    "salary": null,
-   "title": "Sales & Marketing Operations Manager",
-   "url": "https://startup.jobs/sales-marketing-operations-manager-firework-10520387?utm_source=PersonalJobFinder&utm_medium=api",
+   "title": "Manager Account Manager 103",
+   "url": "https://startup.jobs/990034",
    "workplace_type": "remote"
   },
   {
    "company": {
     "active_jobs_count": 34,
-    "logo_url": "https://startup.jobs/logos/4737",
-    "name": "FloQast",
-    "slug": "floqast",
-    "url": "https://startup.jobs/company/floqast?utm_source=PersonalJobFinder&utm_medium=api",
-    "website_url": "https://floqast.com/"
+    "logo_url": "STRIPPED",
+    "name": "Example Employer 62",
+    "slug": "example-employer-62",
+    "url": "https://example.test/example-employer-62",
+    "website_url": "https://example.test/example-employer-62"
    },
    "description_html": "STRIPPED",
    "employment_type": "full-time",
-   "id": 10515515,
+   "id": 990035,
    "location": {
     "city": null,
     "country": "U.S.",
@@ -189,22 +189,22 @@
     }
    ],
    "salary": "$60,000 – $70,000 per year",
-   "title": "Business Development Representative (Audit/Accounting Experience), West Coast",
-   "url": "https://startup.jobs/business-development-representative-audit-accounting-experience-west-coast-floqast-10515515?utm_source=PersonalJobFinder&utm_medium=api",
+   "title": "Account Manager 104",
+   "url": "https://startup.jobs/990035",
    "workplace_type": "remote"
   },
   {
    "company": {
     "active_jobs_count": 5,
-    "logo_url": "https://startup.jobs/logos/21699",
-    "name": "Project Healthy Minds",
-    "slug": "project-healthy-minds",
-    "url": "https://startup.jobs/company/project-healthy-minds?utm_source=PersonalJobFinder&utm_medium=api",
-    "website_url": "http://projecthealthyminds.com"
+    "logo_url": "STRIPPED",
+    "name": "Example Employer 63",
+    "slug": "example-employer-63",
+    "url": "https://example.test/example-employer-63",
+    "website_url": "https://example.test/example-employer-63"
    },
    "description_html": "STRIPPED",
    "employment_type": "contractor",
-   "id": 10514999,
+   "id": 990036,
    "location": {
     "city": "Atlanta",
     "country": "U.S.",
@@ -219,22 +219,22 @@
     }
    ],
    "salary": "$25 – $40 per hour",
-   "title": "Services Researcher (ATL)",
-   "url": "https://startup.jobs/services-researcher-atl-project-healthy-minds-10514999?utm_source=PersonalJobFinder&utm_medium=api",
+   "title": "Account Manager 105",
+   "url": "https://startup.jobs/990036",
    "workplace_type": "remote"
   },
   {
    "company": {
     "active_jobs_count": 34,
-    "logo_url": "https://startup.jobs/logos/4737",
-    "name": "FloQast",
-    "slug": "floqast",
-    "url": "https://startup.jobs/company/floqast?utm_source=PersonalJobFinder&utm_medium=api",
-    "website_url": "https://floqast.com/"
+    "logo_url": "STRIPPED",
+    "name": "Example Employer 62",
+    "slug": "example-employer-62",
+    "url": "https://example.test/example-employer-62",
+    "website_url": "https://example.test/example-employer-62"
    },
    "description_html": "STRIPPED",
    "employment_type": "full-time",
-   "id": 10515516,
+   "id": 990037,
    "location": {
     "city": null,
     "country": "U.S.",
@@ -261,22 +261,22 @@
     }
    ],
    "salary": "$60,000 – $70,000 per year",
-   "title": "Business Development Representative, West Coast",
-   "url": "https://startup.jobs/business-development-representative-west-coast-floqast-10515516?utm_source=PersonalJobFinder&utm_medium=api",
+   "title": "Account Manager 106",
+   "url": "https://startup.jobs/990037",
    "workplace_type": "remote"
   },
   {
    "company": {
     "active_jobs_count": 5,
-    "logo_url": "https://startup.jobs/logos/21699",
-    "name": "Project Healthy Minds",
-    "slug": "project-healthy-minds",
-    "url": "https://startup.jobs/company/project-healthy-minds?utm_source=PersonalJobFinder&utm_medium=api",
-    "website_url": "http://projecthealthyminds.com"
+    "logo_url": "STRIPPED",
+    "name": "Example Employer 63",
+    "slug": "example-employer-63",
+    "url": "https://example.test/example-employer-63",
+    "website_url": "https://example.test/example-employer-63"
    },
    "description_html": "STRIPPED",
    "employment_type": "contractor",
-   "id": 10515000,
+   "id": 990038,
    "location": {
     "city": "Los Angeles",
     "country": "U.S.",
@@ -291,22 +291,22 @@
     }
    ],
    "salary": "$25 – $40 per hour",
-   "title": "Services Researcher (LA)",
-   "url": "https://startup.jobs/services-researcher-la-project-healthy-minds-10515000?utm_source=PersonalJobFinder&utm_medium=api",
+   "title": "Account Manager 107",
+   "url": "https://startup.jobs/990038",
    "workplace_type": "remote"
   },
   {
    "company": {
     "active_jobs_count": 256,
-    "logo_url": "https://startup.jobs/logos/117378",
-    "name": "Paylocity",
-    "slug": "paylocity",
-    "url": "https://startup.jobs/company/paylocity?utm_source=PersonalJobFinder&utm_medium=api",
-    "website_url": "https://www.paylocity.com"
+    "logo_url": "STRIPPED",
+    "name": "Example Employer 60",
+    "slug": "example-employer-60",
+    "url": "https://example.test/example-employer-60",
+    "website_url": "https://example.test/example-employer-60"
    },
    "description_html": "STRIPPED",
    "employment_type": "contractor",
-   "id": 10519347,
+   "id": 990039,
    "location": {
     "city": null,
     "country": "U.S.",
@@ -325,22 +325,22 @@
     }
    ],
    "salary": "$92,500 – $120,000 per year",
-   "title": "Manager, Client Contract Management Ops",
-   "url": "https://startup.jobs/manager-client-contract-management-ops-paylocity-10519347?utm_source=PersonalJobFinder&utm_medium=api",
+   "title": "Manager Account Manager 108",
+   "url": "https://startup.jobs/990039",
    "workplace_type": "remote"
   },
   {
    "company": {
     "active_jobs_count": 23,
-    "logo_url": "https://startup.jobs/logos/71649",
-    "name": "Sola Wood Flowers",
-    "slug": "sola-wood-flowers",
-    "url": "https://startup.jobs/company/sola-wood-flowers?utm_source=PersonalJobFinder&utm_medium=api",
+    "logo_url": "STRIPPED",
+    "name": "Example Employer 64",
+    "slug": "example-employer-64",
+    "url": "https://example.test/example-employer-64",
     "website_url": null
    },
    "description_html": "STRIPPED",
    "employment_type": "contractor",
-   "id": 10512504,
+   "id": 990040,
    "location": {
     "city": null,
     "country": "U.S.",
@@ -350,22 +350,22 @@
    "published_at": "2026-10-19T20:43:39Z",
    "roles": [],
    "salary": "$25 per hour",
-   "title": "Wedding Flower Video Creator (Part-Time, Contract)",
-   "url": "https://startup.jobs/wedding-flower-video-creator-part-time-contract-sola-wood-flowers-10512504?utm_source=PersonalJobFinder&utm_medium=api",
+   "title": "Account Manager 109",
+   "url": "https://startup.jobs/990040",
    "workplace_type": "remote"
   },
   {
    "company": {
     "active_jobs_count": 489,
-    "logo_url": "https://startup.jobs/logos/117211",
-    "name": "Circana",
-    "slug": "circana-com",
-    "url": "https://startup.jobs/company/circana-com?utm_source=PersonalJobFinder&utm_medium=api",
-    "website_url": "https://www.circana.com"
+    "logo_url": "STRIPPED",
+    "name": "Example Employer 65",
+    "slug": "example-employer-65",
+    "url": "https://example.test/example-employer-65",
+    "website_url": "https://example.test/example-employer-65"
    },
    "description_html": "STRIPPED",
    "employment_type": "full-time",
-   "id": 10511391,
+   "id": 990041,
    "location": {
     "city": null,
     "country": "U.S.",
@@ -388,22 +388,22 @@
     }
    ],
    "salary": "$90,000 – $100,000 per year",
-   "title": "Procurement Manager",
-   "url": "https://startup.jobs/procurement-manager-circana-com-10511391?utm_source=PersonalJobFinder&utm_medium=api",
+   "title": "Manager Account Manager 110",
+   "url": "https://startup.jobs/990041",
    "workplace_type": "remote"
   },
   {
    "company": {
     "active_jobs_count": 22,
-    "logo_url": "https://startup.jobs/logos/32975",
-    "name": "H1",
-    "slug": "h1-company",
-    "url": "https://startup.jobs/company/h1-company?utm_source=PersonalJobFinder&utm_medium=api",
-    "website_url": "http://h1.co"
+    "logo_url": "STRIPPED",
+    "name": "Example Employer 66",
+    "slug": "example-employer-66",
+    "url": "https://example.test/example-employer-66",
+    "website_url": "https://example.test/example-employer-66"
    },
    "description_html": "STRIPPED",
    "employment_type": "full-time",
-   "id": 10515972,
+   "id": 990042,
    "location": {
     "city": null,
     "country": "U.S.",
@@ -430,22 +430,22 @@
     }
    ],
    "salary": "$180,000 – $205,000 per year",
-   "title": "Sr. Account Manager - Health Plans",
-   "url": "https://startup.jobs/sr-account-manager-health-plans-h1-company-10515972?utm_source=PersonalJobFinder&utm_medium=api",
+   "title": "Manager Account Manager 111",
+   "url": "https://startup.jobs/990042",
    "workplace_type": "remote"
   },
   {
    "company": {
     "active_jobs_count": 25,
-    "logo_url": "https://startup.jobs/logos/4928",
-    "name": "Outreach",
-    "slug": "outreach",
-    "url": "https://startup.jobs/company/outreach?utm_source=PersonalJobFinder&utm_medium=api",
-    "website_url": "https://www.outreach.io/"
+    "logo_url": "STRIPPED",
+    "name": "Example Employer 67",
+    "slug": "example-employer-67",
+    "url": "https://example.test/example-employer-67",
+    "website_url": "https://example.test/example-employer-67"
    },
    "description_html": "STRIPPED",
    "employment_type": "full-time",
-   "id": 10517738,
+   "id": 990043,
    "location": {
     "city": "Seattle",
     "country": "U.S.",
@@ -464,22 +464,22 @@
     }
    ],
    "salary": "$80,000 – $165,000 per year",
-   "title": "Account Executive, Commercial",
-   "url": "https://startup.jobs/account-executive-commercial-outreach-10517738?utm_source=PersonalJobFinder&utm_medium=api",
+   "title": "Account Manager 112",
+   "url": "https://startup.jobs/990043",
    "workplace_type": "remote"
   },
   {
    "company": {
     "active_jobs_count": 20,
-    "logo_url": "https://startup.jobs/logos/71733",
-    "name": "NinjaHoldings",
-    "slug": "ninjaholdings",
-    "url": "https://startup.jobs/company/ninjaholdings?utm_source=PersonalJobFinder&utm_medium=api",
-    "website_url": "https://ninjaholdings.com"
+    "logo_url": "STRIPPED",
+    "name": "Example Employer 68",
+    "slug": "example-employer-68",
+    "url": "https://example.test/example-employer-68",
+    "website_url": "https://example.test/example-employer-68"
    },
    "description_html": "STRIPPED",
    "employment_type": "full-time",
-   "id": 10512503,
+   "id": 990044,
    "location": {
     "city": "Chicago",
     "country": "U.S.",
@@ -502,22 +502,22 @@
     }
    ],
    "salary": null,
-   "title": "General Manager, Line of Credit",
-   "url": "https://startup.jobs/general-manager-line-of-credit-ninjaholdings-10512503?utm_source=PersonalJobFinder&utm_medium=api",
+   "title": "Manager Account Manager 113",
+   "url": "https://startup.jobs/990044",
    "workplace_type": "remote"
   },
   {
    "company": {
     "active_jobs_count": 3,
-    "logo_url": "https://startup.jobs/logos/71612",
-    "name": "Renalogic",
-    "slug": "renalogic",
-    "url": "https://startup.jobs/company/renalogic?utm_source=PersonalJobFinder&utm_medium=api",
+    "logo_url": "STRIPPED",
+    "name": "Example Employer 69",
+    "slug": "example-employer-69",
+    "url": "https://example.test/example-employer-69",
     "website_url": null
    },
    "description_html": "STRIPPED",
    "employment_type": "full-time",
-   "id": 10516362,
+   "id": 990045,
    "location": {
     "city": "Dallas",
     "country": "U.S.",
@@ -532,22 +532,22 @@
     }
    ],
    "salary": "$45,000 – $55,000 per year",
-   "title": "Outreach & Enrollment Specialist",
-   "url": "https://startup.jobs/outreach-enrollment-specialist-renalogic-10516362?utm_source=PersonalJobFinder&utm_medium=api",
+   "title": "Account Manager 114",
+   "url": "https://startup.jobs/990045",
    "workplace_type": "remote"
   },
   {
    "company": {
     "active_jobs_count": 10,
-    "logo_url": "https://startup.jobs/logos/32579",
-    "name": "Caixa Mágica Software",
-    "slug": "caixa-magica-software",
-    "url": "https://startup.jobs/company/caixa-magica-software?utm_source=PersonalJobFinder&utm_medium=api",
-    "website_url": "http://www.caixamagica.pt/"
+    "logo_url": "STRIPPED",
+    "name": "Example Employer 70",
+    "slug": "example-employer-70",
+    "url": "https://example.test/example-employer-70",
+    "website_url": "https://example.test/example-employer-70"
    },
    "description_html": "STRIPPED",
    "employment_type": "full-time",
-   "id": 10510759,
+   "id": 990046,
    "location": {
     "city": "Lisbon",
     "country": "Portugal",
@@ -566,22 +566,22 @@
     }
    ],
    "salary": null,
-   "title": "Solutions Architect",
-   "url": "https://startup.jobs/solutions-architect-caixa-magica-software-10510759?utm_source=PersonalJobFinder&utm_medium=api",
+   "title": "Account Manager 115",
+   "url": "https://startup.jobs/990046",
    "workplace_type": "remote"
   },
   {
    "company": {
     "active_jobs_count": 14,
-    "logo_url": "https://startup.jobs/logos/71704",
-    "name": "Pulse iD",
-    "slug": "pulse-id-company",
-    "url": "https://startup.jobs/company/pulse-id-company?utm_source=PersonalJobFinder&utm_medium=api",
+    "logo_url": "STRIPPED",
+    "name": "Example Employer 71",
+    "slug": "example-employer-71",
+    "url": "https://example.test/example-employer-71",
     "website_url": null
    },
    "description_html": "STRIPPED",
    "employment_type": "full-time",
-   "id": 10511785,
+   "id": 990047,
    "location": {
     "city": "Cairo",
     "country": "Egypt",
@@ -600,22 +600,22 @@
     }
    ],
    "salary": null,
-   "title": "Encore Regional Marketing Executive",
-   "url": "https://startup.jobs/encore-regional-marketing-executive-pulse-id-company-10511785?utm_source=PersonalJobFinder&utm_medium=api",
+   "title": "Account Manager 116",
+   "url": "https://startup.jobs/990047",
    "workplace_type": "remote"
   },
   {
    "company": {
     "active_jobs_count": 256,
-    "logo_url": "https://startup.jobs/logos/117378",
-    "name": "Paylocity",
-    "slug": "paylocity",
-    "url": "https://startup.jobs/company/paylocity?utm_source=PersonalJobFinder&utm_medium=api",
-    "website_url": "https://www.paylocity.com"
+    "logo_url": "STRIPPED",
+    "name": "Example Employer 60",
+    "slug": "example-employer-60",
+    "url": "https://example.test/example-employer-60",
+    "website_url": "https://example.test/example-employer-60"
    },
    "description_html": "STRIPPED",
    "employment_type": "full-time",
-   "id": 10519348,
+   "id": 990048,
    "location": {
     "city": "Orlando",
     "country": "U.S.",
@@ -630,22 +630,22 @@
     }
    ],
    "salary": "$85,000 – $107,500 per year",
-   "title": "HCM Account Executive",
-   "url": "https://startup.jobs/hcm-account-executive-paylocity-10519348?utm_source=PersonalJobFinder&utm_medium=api",
+   "title": "Account Manager 117",
+   "url": "https://startup.jobs/990048",
    "workplace_type": "remote"
   },
   {
    "company": {
     "active_jobs_count": 8,
-    "logo_url": "https://startup.jobs/logos/2002",
-    "name": "Cin7",
-    "slug": "cin7",
-    "url": "https://startup.jobs/company/cin7?utm_source=PersonalJobFinder&utm_medium=api",
-    "website_url": "http://cin7.com"
+    "logo_url": "STRIPPED",
+    "name": "Example Employer 72",
+    "slug": "example-employer-72",
+    "url": "https://example.test/example-employer-72",
+    "website_url": "https://example.test/example-employer-72"
    },
    "description_html": "STRIPPED",
    "employment_type": "full-time",
-   "id": 10511247,
+   "id": 990049,
    "location": {
     "city": "Pune",
     "country": "India",
@@ -672,22 +672,22 @@
     }
    ],
    "salary": null,
-   "title": "Product Manager, AI",
-   "url": "https://startup.jobs/product-manager-ai-cin7-10511247?utm_source=PersonalJobFinder&utm_medium=api",
+   "title": "Manager Account Manager 118",
+   "url": "https://startup.jobs/990049",
    "workplace_type": "remote"
   },
   {
    "company": {
     "active_jobs_count": 489,
-    "logo_url": "https://startup.jobs/logos/117211",
-    "name": "Circana",
-    "slug": "circana-com",
-    "url": "https://startup.jobs/company/circana-com?utm_source=PersonalJobFinder&utm_medium=api",
-    "website_url": "https://www.circana.com"
+    "logo_url": "STRIPPED",
+    "name": "Example Employer 65",
+    "slug": "example-employer-65",
+    "url": "https://example.test/example-employer-65",
+    "website_url": "https://example.test/example-employer-65"
    },
    "description_html": "STRIPPED",
    "employment_type": "full-time",
-   "id": 10511394,
+   "id": 990050,
    "location": {
     "city": null,
     "country": "U.S.",
@@ -706,22 +706,22 @@
     }
    ],
    "salary": "$60,000 – $70,000 per year",
-   "title": "Sr Analyst II",
-   "url": "https://startup.jobs/sr-analyst-ii-circana-com-10511394?utm_source=PersonalJobFinder&utm_medium=api",
+   "title": "Ii Account Manager 119",
+   "url": "https://startup.jobs/990050",
    "workplace_type": "remote"
   },
   {
    "company": {
     "active_jobs_count": 162,
-    "logo_url": "https://startup.jobs/logos/37757",
-    "name": "Xideral",
-    "slug": "xideral",
-    "url": "https://startup.jobs/company/xideral?utm_source=PersonalJobFinder&utm_medium=api",
+    "logo_url": "STRIPPED",
+    "name": "Example Employer 73",
+    "slug": "example-employer-73",
+    "url": "https://example.test/example-employer-73",
     "website_url": null
    },
    "description_html": "STRIPPED",
    "employment_type": "full-time",
-   "id": 10510465,
+   "id": 990051,
    "location": {
     "city": "Mexico City",
     "country": "Mexico",
@@ -740,22 +740,22 @@
     }
    ],
    "salary": "MEX$50,000 – MEX$55,000 per month",
-   "title": "Data Scientist - Remoto - 2896",
-   "url": "https://startup.jobs/data-scientist-remoto-2896-xideral-10510465?utm_source=PersonalJobFinder&utm_medium=api",
+   "title": "Data Scientist 120",
+   "url": "https://startup.jobs/990051",
    "workplace_type": "remote"
   },
   {
    "company": {
     "active_jobs_count": 1,
-    "logo_url": "https://startup.jobs/logos/33335",
-    "name": "Omeda",
-    "slug": "omeda",
-    "url": "https://startup.jobs/company/omeda?utm_source=PersonalJobFinder&utm_medium=api",
-    "website_url": "http://www.omeda.com/"
+    "logo_url": "STRIPPED",
+    "name": "Example Employer 74",
+    "slug": "example-employer-74",
+    "url": "https://example.test/example-employer-74",
+    "website_url": "https://example.test/example-employer-74"
    },
    "description_html": "STRIPPED",
    "employment_type": "full-time",
-   "id": 10510463,
+   "id": 990052,
    "location": {
     "city": null,
     "country": null,
@@ -778,22 +778,22 @@
     }
    ],
    "salary": null,
-   "title": "Contract & Billing Manager",
-   "url": "https://startup.jobs/contract-billing-manager-omeda-10510463?utm_source=PersonalJobFinder&utm_medium=api",
+   "title": "Manager Account Manager 121",
+   "url": "https://startup.jobs/990052",
    "workplace_type": "remote"
   },
   {
    "company": {
     "active_jobs_count": 6,
-    "logo_url": "https://startup.jobs/logos/33059",
-    "name": "Influ2",
-    "slug": "influ2",
-    "url": "https://startup.jobs/company/influ2?utm_source=PersonalJobFinder&utm_medium=api",
-    "website_url": "https://www.influ2.com/"
+    "logo_url": "STRIPPED",
+    "name": "Example Employer 75",
+    "slug": "example-employer-75",
+    "url": "https://example.test/example-employer-75",
+    "website_url": "https://example.test/example-employer-75"
    },
    "description_html": "STRIPPED",
    "employment_type": "full-time",
-   "id": 10516213,
+   "id": 990053,
    "location": {
     "city": null,
     "country": "U.S.",
@@ -824,22 +824,22 @@
     }
    ],
    "salary": null,
-   "title": "Content Marketing Manager",
-   "url": "https://startup.jobs/content-marketing-manager-influ2-10516213?utm_source=PersonalJobFinder&utm_medium=api",
+   "title": "Manager Account Manager 122",
+   "url": "https://startup.jobs/990053",
    "workplace_type": "remote"
   },
   {
    "company": {
     "active_jobs_count": 3,
-    "logo_url": "https://startup.jobs/logos/17410",
-    "name": "CBT Nuggets",
-    "slug": "cbt-nuggets",
-    "url": "https://startup.jobs/company/cbt-nuggets?utm_source=PersonalJobFinder&utm_medium=api",
-    "website_url": "https://www.cbtnuggets.com"
+    "logo_url": "STRIPPED",
+    "name": "Example Employer 76",
+    "slug": "example-employer-76",
+    "url": "https://example.test/example-employer-76",
+    "website_url": "https://example.test/example-employer-76"
    },
    "description_html": "STRIPPED",
    "employment_type": "full-time",
-   "id": 10511641,
+   "id": 990054,
    "location": {
     "city": "Eugene",
     "country": "U.S.",
@@ -862,22 +862,22 @@
     }
    ],
    "salary": "$100,000 per year",
-   "title": "Technical Product Owner, AI-Directed Development",
-   "url": "https://startup.jobs/technical-product-owner-ai-directed-development-cbt-nuggets-10511641?utm_source=PersonalJobFinder&utm_medium=api",
+   "title": "Account Manager 123",
+   "url": "https://startup.jobs/990054",
    "workplace_type": "remote"
   },
   {
    "company": {
     "active_jobs_count": 8,
-    "logo_url": "https://startup.jobs/logos/22927",
-    "name": "KPA",
-    "slug": "kpa",
-    "url": "https://startup.jobs/company/kpa?utm_source=PersonalJobFinder&utm_medium=api",
-    "website_url": "https://www.kpa.io"
+    "logo_url": "STRIPPED",
+    "name": "Example Employer 77",
+    "slug": "example-employer-77",
+    "url": "https://example.test/example-employer-77",
+    "website_url": "https://example.test/example-employer-77"
    },
    "description_html": "STRIPPED",
    "employment_type": "full-time",
-   "id": 10516063,
+   "id": 990055,
    "location": {
     "city": "Lafayette",
     "country": "U.S.",
@@ -892,22 +892,22 @@
     }
    ],
    "salary": "$150,000 – $180,000 per year",
-   "title": "Director, Demand Generation",
-   "url": "https://startup.jobs/director-demand-generation-kpa-10516063?utm_source=PersonalJobFinder&utm_medium=api",
+   "title": "Director Account Manager 124",
+   "url": "https://startup.jobs/990055",
    "workplace_type": "remote"
   },
   {
    "company": {
     "active_jobs_count": 14,
-    "logo_url": "https://startup.jobs/logos/71704",
-    "name": "Pulse iD",
-    "slug": "pulse-id-company",
-    "url": "https://startup.jobs/company/pulse-id-company?utm_source=PersonalJobFinder&utm_medium=api",
+    "logo_url": "STRIPPED",
+    "name": "Example Employer 71",
+    "slug": "example-employer-71",
+    "url": "https://example.test/example-employer-71",
     "website_url": null
    },
    "description_html": "STRIPPED",
    "employment_type": "full-time",
-   "id": 10511786,
+   "id": 990056,
    "location": {
     "city": "Cairo",
     "country": "Egypt",
@@ -922,22 +922,22 @@
     }
    ],
    "salary": null,
-   "title": "GCC Market Development / Sales Development Executive",
-   "url": "https://startup.jobs/gcc-market-development-sales-development-executive-pulse-id-company-10511786?utm_source=PersonalJobFinder&utm_medium=api",
+   "title": "Account Manager 125",
+   "url": "https://startup.jobs/990056",
    "workplace_type": "remote"
   },
   {
    "company": {
     "active_jobs_count": 10,
-    "logo_url": "https://startup.jobs/logos/18218",
-    "name": "-  - Hostaway",
-    "slug": "hostaway",
-    "url": "https://startup.jobs/company/hostaway?utm_source=PersonalJobFinder&utm_medium=api",
-    "website_url": "https://www.hostaway.com/"
+    "logo_url": "STRIPPED",
+    "name": "Example Employer 78",
+    "slug": "example-employer-78",
+    "url": "https://example.test/example-employer-78",
+    "website_url": "https://example.test/example-employer-78"
    },
    "description_html": "STRIPPED",
    "employment_type": "full-time",
-   "id": 10512963,
+   "id": 990057,
    "location": {
     "city": "Mexico City",
     "country": "Mexico",
@@ -960,22 +960,22 @@
     }
    ],
    "salary": null,
-   "title": "Customer Onboarding Specialist - 100% Remote - LATAM",
-   "url": "https://startup.jobs/customer-onboarding-specialist-100-remote-latam-hostaway-10512963?utm_source=PersonalJobFinder&utm_medium=api",
+   "title": "Account Manager 126",
+   "url": "https://startup.jobs/990057",
    "workplace_type": "remote"
   },
   {
    "company": {
     "active_jobs_count": 8,
-    "logo_url": "https://startup.jobs/logos/32861",
-    "name": "FireMon",
-    "slug": "firemon",
-    "url": "https://startup.jobs/company/firemon?utm_source=PersonalJobFinder&utm_medium=api",
-    "website_url": "https://www.firemon.com/"
+    "logo_url": "STRIPPED",
+    "name": "Example Employer 79",
+    "slug": "example-employer-79",
+    "url": "https://example.test/example-employer-79",
+    "website_url": "https://example.test/example-employer-79"
    },
    "description_html": "STRIPPED",
    "employment_type": "full-time",
-   "id": 10514191,
+   "id": 990058,
    "location": {
     "city": null,
     "country": "United Kingdom",
@@ -994,22 +994,22 @@
     }
    ],
    "salary": null,
-   "title": "Solutions Architect",
-   "url": "https://startup.jobs/solutions-architect-firemon-10514191?utm_source=PersonalJobFinder&utm_medium=api",
+   "title": "Account Manager 115",
+   "url": "https://startup.jobs/990058",
    "workplace_type": "remote"
   },
   {
    "company": {
     "active_jobs_count": 2,
-    "logo_url": "https://startup.jobs/logos/71670",
-    "name": "Financial Professional",
-    "slug": "financial-professional",
-    "url": "https://startup.jobs/company/financial-professional?utm_source=PersonalJobFinder&utm_medium=api",
+    "logo_url": "STRIPPED",
+    "name": "Example Employer 80",
+    "slug": "example-employer-80",
+    "url": "https://example.test/example-employer-80",
     "website_url": null
    },
    "description_html": "STRIPPED",
    "employment_type": "part-time",
-   "id": 10510513,
+   "id": 990059,
    "location": {
     "city": "Houston",
     "country": "U.S.",
@@ -1019,22 +1019,22 @@
    "published_at": "2026-10-19T18:43:15Z",
    "roles": [],
    "salary": "$24,000 – $300,000 per year",
-   "title": "PT/FT Financial Professional (Remote)",
-   "url": "https://startup.jobs/pt-ft-financial-professional-remote-financial-professional-10510513?utm_source=PersonalJobFinder&utm_medium=api",
+   "title": "Account Manager 127",
+   "url": "https://startup.jobs/990059",
    "workplace_type": "remote"
   },
   {
    "company": {
     "active_jobs_count": 256,
-    "logo_url": "https://startup.jobs/logos/117378",
-    "name": "Paylocity",
-    "slug": "paylocity",
-    "url": "https://startup.jobs/company/paylocity?utm_source=PersonalJobFinder&utm_medium=api",
-    "website_url": "https://www.paylocity.com"
+    "logo_url": "STRIPPED",
+    "name": "Example Employer 60",
+    "slug": "example-employer-60",
+    "url": "https://example.test/example-employer-60",
+    "website_url": "https://example.test/example-employer-60"
    },
    "description_html": "STRIPPED",
    "employment_type": "full-time",
-   "id": 10519349,
+   "id": 990060,
    "location": {
     "city": null,
     "country": "U.S.",
@@ -1057,8 +1057,8 @@
     }
    ],
    "salary": "$135,000 – $150,000 per year",
-   "title": "Manager Business Development",
-   "url": "https://startup.jobs/manager-business-development-paylocity-10519349?utm_source=PersonalJobFinder&utm_medium=api",
+   "title": "Manager Account Manager 128",
+   "url": "https://startup.jobs/990060",
    "workplace_type": "remote"
   }
  ],

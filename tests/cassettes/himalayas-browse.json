@@ -2,7 +2,7 @@
  "comments": "21/08/2026: Cursor pagination is now available and is the preferred way to page through the feed. Pass the nextCursor value from each response back as ?cursor=. It is faster than offset and will never return the same job twice. The offset parameter is deprecated and will be removed in a future release. 13/03/2026: The API has been updated to include the companySlug field in the response.",
  "jobs": [
   {
-   "applicationLink": "https://himalayas.app/companies/micro1/jobs/financial-systems-expert",
+   "applicationLink": "https://himalayas.app/companies/example-employer-1/jobs/account-manager-1",
    "categories": [
     "Financial-Systems-Specialist",
     "Financial-Systems-Consultant",
@@ -16,14 +16,14 @@
     "Financial-Systems-Engineer"
    ],
    "companyLogo": "STRIPPED",
-   "companyName": "micro1",
-   "companySlug": "micro1",
+   "companyName": "Example Employer 1",
+   "companySlug": "example-employer-1",
    "currency": "USD",
    "description": "STRIPPED",
    "employmentType": "Contractor",
    "excerpt": "STRIPPED",
    "expiryDate": 1794148087,
-   "guid": "https://himalayas.app/companies/micro1/jobs/financial-systems-expert",
+   "guid": "https://himalayas.app/companies/example-employer-1/jobs/account-manager-1",
    "locationRestrictions": [],
    "maxSalary": 170,
    "minSalary": 90,
@@ -73,10 +73,10 @@
     13,
     14
    ],
-   "title": "Financial Systems Expert"
+   "title": "Account Manager"
   },
   {
-   "applicationLink": "https://himalayas.app/companies/micro1/jobs/ai-engineer-7982880650",
+   "applicationLink": "https://himalayas.app/companies/example-employer-1/jobs/ai-engineer-2-2",
    "categories": [
     "AI-Engineer",
     "Artificial-Intelligence-Engineer",
@@ -88,14 +88,14 @@
     "AI-Engineering-Jobs"
    ],
    "companyLogo": "STRIPPED",
-   "companyName": "micro1",
-   "companySlug": "micro1",
+   "companyName": "Example Employer 1",
+   "companySlug": "example-employer-1",
    "currency": "USD",
    "description": "STRIPPED",
    "employmentType": "Contractor",
    "excerpt": "STRIPPED",
    "expiryDate": 1793258415,
-   "guid": "https://himalayas.app/companies/micro1/jobs/ai-engineer-7982880650",
+   "guid": "https://himalayas.app/companies/example-employer-1/jobs/ai-engineer-2-2",
    "locationRestrictions": [],
    "maxSalary": null,
    "minSalary": null,
@@ -146,10 +146,10 @@
     13,
     14
    ],
-   "title": "AI Engineer"
+   "title": "Ai Engineer 2"
   },
   {
-   "applicationLink": "https://himalayas.app/companies/micro1/jobs/mergers-acquisitions-m-a-attorney-biglaw-firms",
+   "applicationLink": "https://himalayas.app/companies/example-employer-1/jobs/account-manager-3-3",
    "categories": [
     "M&A-Attorney",
     "M&A-Lawyer",
@@ -162,14 +162,14 @@
     "M&A-Legal-Advisor"
    ],
    "companyLogo": "STRIPPED",
-   "companyName": "micro1",
-   "companySlug": "micro1",
+   "companyName": "Example Employer 1",
+   "companySlug": "example-employer-1",
    "currency": "USD",
    "description": "STRIPPED",
    "employmentType": "Contractor",
    "excerpt": "STRIPPED",
    "expiryDate": 1792553454,
-   "guid": "https://himalayas.app/companies/micro1/jobs/mergers-acquisitions-m-a-attorney-biglaw-firms",
+   "guid": "https://himalayas.app/companies/example-employer-1/jobs/account-manager-3-3",
    "locationRestrictions": [],
    "maxSalary": null,
    "minSalary": null,
@@ -218,10 +218,10 @@
     13,
     14
    ],
-   "title": "Mergers & Acquisitions (M&A) Attorney (BigLaw Firms)"
+   "title": "Account Manager 3"
   },
   {
-   "applicationLink": "https://himalayas.app/companies/micro1/jobs/corporate-attorney-biglaw-firms-9276093222",
+   "applicationLink": "https://himalayas.app/companies/example-employer-1/jobs/account-manager-4-4",
    "categories": [
     "Corporate-Lawyer",
     "Corporate-Law-Jobs",
@@ -232,14 +232,14 @@
     "Transactional-Corporate-Attorney"
    ],
    "companyLogo": "STRIPPED",
-   "companyName": "micro1",
-   "companySlug": "micro1",
+   "companyName": "Example Employer 1",
+   "companySlug": "example-employer-1",
    "currency": "USD",
    "description": "STRIPPED",
    "employmentType": "Contractor",
    "excerpt": "STRIPPED",
    "expiryDate": 1792550555,
-   "guid": "https://himalayas.app/companies/micro1/jobs/corporate-attorney-biglaw-firms-9276093222",
+   "guid": "https://himalayas.app/companies/example-employer-1/jobs/account-manager-4-4",
    "locationRestrictions": [],
    "maxSalary": null,
    "minSalary": null,
@@ -291,10 +291,10 @@
     13,
     14
    ],
-   "title": "Corporate Attorney (BigLaw Firms)"
+   "title": "Account Manager 4"
   },
   {
-   "applicationLink": "https://himalayas.app/companies/micro1/jobs/biglaw-lawyers-litigation-corporate-m-a",
+   "applicationLink": "https://himalayas.app/companies/example-employer-1/jobs/account-manager-5-5",
    "categories": [
     "Corporate-M&A-Lawyer",
     "Corporate-Law-Jobs",
@@ -307,14 +307,14 @@
     "M&A-Attorney"
    ],
    "companyLogo": "STRIPPED",
-   "companyName": "micro1",
-   "companySlug": "micro1",
+   "companyName": "Example Employer 1",
+   "companySlug": "example-employer-1",
    "currency": "USD",
    "description": "STRIPPED",
    "employmentType": "Contractor",
    "excerpt": "STRIPPED",
    "expiryDate": 1792286415,
-   "guid": "https://himalayas.app/companies/micro1/jobs/biglaw-lawyers-litigation-corporate-m-a",
+   "guid": "https://himalayas.app/companies/example-employer-1/jobs/account-manager-5-5",
    "locationRestrictions": [],
    "maxSalary": null,
    "minSalary": null,
@@ -364,10 +364,10 @@
     13,
     14
    ],
-   "title": "BigLaw lawyers (Litigation/Corporate/M&A)"
+   "title": "Account Manager 5"
   },
   {
-   "applicationLink": "https://himalayas.app/companies/micro1/jobs/bengali-bilingual-expert",
+   "applicationLink": "https://himalayas.app/companies/example-employer-1/jobs/account-manager-6-6",
    "categories": [
     "Bengali-Language-Specialist",
     "Bengali-Linguistic-Expert",
@@ -380,14 +380,14 @@
     "Language-Expert"
    ],
    "companyLogo": "STRIPPED",
-   "companyName": "micro1",
-   "companySlug": "micro1",
+   "companyName": "Example Employer 1",
+   "companySlug": "example-employer-1",
    "currency": "USD",
    "description": "STRIPPED",
    "employmentType": "Contractor",
    "excerpt": "STRIPPED",
    "expiryDate": 1791910400,
-   "guid": "https://himalayas.app/companies/micro1/jobs/bengali-bilingual-expert",
+   "guid": "https://himalayas.app/companies/example-employer-1/jobs/account-manager-6-6",
    "locationRestrictions": [
     "Bangladesh"
    ],
@@ -402,10 +402,10 @@
    "timezoneRestrictions": [
     6
    ],
-   "title": "Bengali Bilingual Expert"
+   "title": "Account Manager 6"
   },
   {
-   "applicationLink": "https://himalayas.app/companies/micro1/jobs/senior-ai-trainer",
+   "applicationLink": "https://himalayas.app/companies/example-employer-1/jobs/ai-trainer-7-7",
    "categories": [
     "Senior-AI-Training-Consultant",
     "Senior-AI-Data-Trainer",
@@ -417,14 +417,14 @@
     "AI-Trainer"
    ],
    "companyLogo": "STRIPPED",
-   "companyName": "micro1",
-   "companySlug": "micro1",
+   "companyName": "Example Employer 1",
+   "companySlug": "example-employer-1",
    "currency": "USD",
    "description": "STRIPPED",
    "employmentType": "Contractor",
    "excerpt": "STRIPPED",
    "expiryDate": 1794320033,
-   "guid": "https://himalayas.app/companies/micro1/jobs/senior-ai-trainer",
+   "guid": "https://himalayas.app/companies/example-employer-1/jobs/ai-trainer-7-7",
    "locationRestrictions": [],
    "maxSalary": 90,
    "minSalary": 50,
@@ -475,24 +475,24 @@
     13,
     14
    ],
-   "title": "Senior AI Trainer"
+   "title": "Ai Trainer 7"
   },
   {
-   "applicationLink": "https://himalayas.app/companies/lemon-io/jobs/senior-react-native-developer-5236230554",
+   "applicationLink": "https://himalayas.app/companies/example-employer-2/jobs/account-manager-8-8",
    "categories": [
     "React-Native-Developer",
     "Senior-React-Native-Mobile-Developer",
     "Senior-React-Native-Engineer"
    ],
    "companyLogo": "STRIPPED",
-   "companyName": "lemon.io",
-   "companySlug": "lemon-io",
+   "companyName": "Example Employer 2",
+   "companySlug": "example-employer-2",
    "currency": "USD",
    "description": "STRIPPED",
    "employmentType": "Contractor",
    "excerpt": "STRIPPED",
    "expiryDate": 1791719039,
-   "guid": "https://himalayas.app/companies/lemon-io/jobs/senior-react-native-developer-5236230554",
+   "guid": "https://himalayas.app/companies/example-employer-2/jobs/account-manager-8-8",
    "locationRestrictions": [
     "Albania",
     "Andorra",
@@ -617,7 +617,7 @@
     13,
     14
    ],
-   "title": "Senior React Native Developer"
+   "title": "Account Manager 8"
   }
  ],
  "limit": 20,

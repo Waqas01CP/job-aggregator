@@ -93,8 +93,8 @@ class TestAdapter(unittest.TestCase):
         self.assertEqual(len(result.postings), 8)
         self.assertEqual(result.problems, [])
         p = result.postings[0]
-        self.assertEqual(p.title, "Financial Systems Expert")
-        self.assertEqual(p.employer, "micro1")
+        self.assertEqual(p.title, "Account Manager")
+        self.assertEqual(p.employer, "Example Employer 1")
         self.assertEqual(p.employer_provenance, "payload")
         self.assertEqual(p.published_field, "pubDate")
         self.assertEqual(p.source, "himalayas")
