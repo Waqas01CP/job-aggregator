@@ -46,7 +46,8 @@ The pipeline owns most fields and rewrites them every run. **A chat writes only 
   - `applied` makes the `accepted` copy with `Stage` already `applied`.
   - `gone` is for a posting found dead: the pipeline records it and removes the row.
 - **`Reason`:** the choices of `Choice reason` and `Pipeline reason` together.
-  - `Choice reason`: employer, compensation, stack, recently applied to this employer, seniority in substance.
+  - `Choice reason`: employer, compensation, stack, recently applied to this employer, seniority in substance, language requirement (a posting asking a language he does not speak, from 2026-11-23).
+  - **A posting that closed before he reviewed it** is `Status` `gone`, not a reason: the pipeline records it and removes the row.
   - `Pipeline reason`: wrong title match, location wrong, expired at surfacing, experience level, duplicate.
 - **`Stage`:** shortlisted, applied, gone.
 - **`Delete`:** yes.

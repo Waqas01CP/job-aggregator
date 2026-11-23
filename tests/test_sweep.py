@@ -1016,6 +1016,14 @@ class TestReason(ADR0062Harness):
         [rec] = self.store("rejected_poor_filtering.json")
         self.assertEqual((rec["reason"], rec["reason_in_jobs"]), ("duplicate", "duplicate"))
 
+    def test_the_shipped_choices_carry_a_language_requirement(self):
+        """Brief 20, decision 9, 2026-11-23. Mutation: "a language requirement
+        is no choice of not a fit"."""
+        from src.config import load_sweep_config
+        choices = load_sweep_config().reason_choices
+        self.assertIn("language requirement", choices["rejected-not-a-fit"])
+        self.assertNotIn("language requirement", choices["rejected-poor-filtering"])
+
     def test_a_reason_outside_the_fields_choices_is_kept_and_named(self):
         """One value the field lacks would fail a whole batch at Airtable;
         it is kept in the store record and named in the run log instead.

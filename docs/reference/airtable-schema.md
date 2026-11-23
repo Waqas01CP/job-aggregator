@@ -154,7 +154,7 @@ by D12 for the architecture chat to record.
 
 | Table | Its operator field | Choices |
 |---|---|---|
-| `rejected-not-a-fit` | Choice reason | employer, compensation, stack, recently applied to this employer, seniority in substance |
+| `rejected-not-a-fit` | Choice reason | employer, compensation, stack, recently applied to this employer, seniority in substance, language requirement *(from 2026-11-23, once he has added it)* |
 | `rejected-poor-filtering` | Pipeline reason | wrong title match, location wrong, expired at surfacing, experience level, duplicate |
 | `accepted` | Stage | shortlisted, applied, gone |
 

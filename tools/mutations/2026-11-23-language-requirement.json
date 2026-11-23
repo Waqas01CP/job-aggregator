@@ -1,0 +1,8 @@
+[
+ {
+  "label": "a language requirement is no choice of not a fit",
+  "path": "config/sweep.json",
+  "find": ", \"seniority in substance\", \"language requirement\"],",
+  "replace": ", \"seniority in substance\"],"
+ }
+]
