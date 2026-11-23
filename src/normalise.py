@@ -42,7 +42,7 @@ FIELDS = (
     "first_seen", "ordering_date", "ordering_date_source",
     "url", "url_provenance",
     "stated_experience", "expires_at", "stated_levels", "places", "workplace",
-    "required_places", "described_workplace", "described", "who_reads",
+    "required_places", "described_workplace", "described", "who_reads", "backfilled_at",
 )
 
 
@@ -110,6 +110,14 @@ class Row:
     # derived value, 2026-10-19). None where it says nothing of it, and on
     # rows stored before then that no re-read has reached.
     who_reads: str = None
+    # When ADR-0030's backfill appended this row, the first time it could be
+    # shown, where that came after its first sight: the 21-day clock counts
+    # from it (Brief 20, decision 3, the operator's of 2026-11-23). On
+    # 2026-11-05 the Senior switch backfilled rows first seen weeks before,
+    # and the clock, counting from first sight, took 88 of them within two
+    # days. None on every row a run wrote itself, and on rows backfilled
+    # before 2026-11-23.
+    backfilled_at: str = None
 
     def as_record(self):
         """The canonical dict. Key order is fixed by FIELDS so two runs that

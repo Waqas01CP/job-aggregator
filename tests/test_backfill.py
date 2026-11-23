@@ -121,6 +121,18 @@ class TestTheAppend(BackfillCase):
         self.assertEqual(len(self.read("filtered")), 5)
         self.assertEqual(self.run_gap(), [])
 
+    def test_each_row_it_appends_carries_when_it_can_first_be_shown(self):
+        """Brief 20, decision 3: the clock counts from it. A row a run wrote
+        itself carries none. Mutation: "the backfill marks no row"."""
+        rows = [row("greenhouse:%d" % i) for i in range(1, 4)]
+        self.write_raw(rows)
+        self.write_filtered(rows[:1])
+        backfill(self.paths, NOW, MATCHER)
+        by_id = {r["identity"]: r for r in self.read("filtered")}
+        self.assertIsNone(by_id["greenhouse:1"].get("backfilled_at"))
+        self.assertEqual({by_id[i]["backfilled_at"] for i in ("greenhouse:2", "greenhouse:3")},
+                         {NOW})
+
     def test_a_second_pass_writes_nothing_and_changes_no_byte(self):
         rows = [row("greenhouse:%d" % i) for i in range(1, 4)]
         self.write_raw(rows)

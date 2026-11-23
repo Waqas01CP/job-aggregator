@@ -1161,6 +1161,24 @@ class TestTheClock(Harness):
         self.assertEqual((report["aged_out"], self.store("removed_unreviewed.json")), (0, []))
         self.assertEqual(report.get("removals", []), [])
 
+    def test_a_backfilled_row_is_clocked_from_when_it_was_first_shown(self):
+        """Brief 20, decision 3, 2026-11-23: on 11-05 the clock took 88 rows
+        the Senior switch had backfilled, first seen weeks before, within two
+        days. A row first seen 40 days ago and backfilled 5 days ago stays; one
+        backfilled 22 days ago goes. Mutation: "the clock ignores when a
+        backfilled row was first shown"."""
+        old = (NOW - timedelta(days=40)).isoformat().replace("+00:00", "Z")
+        for backfilled, aged in ((5, 0), (22, 1)):
+            with self.subTest(backfilled=backfilled):
+                self.setUp()
+                self.addCleanup(self.tearDown)
+                r = replace(make_row(1, published=old), backfilled_at=(
+                    NOW - timedelta(days=backfilled)).isoformat().replace("+00:00", "Z"))
+                self.store_rows([r])
+                self.in_jobs(r)
+                report = self.sweep(config=replace(CONFIG, unreviewed_after_days=21))
+                self.assertEqual(report["aged_out"], aged)
+
     def test_a_classified_row_is_never_aged_out(self):
         first = (NOW - timedelta(days=40)).isoformat().replace("+00:00", "Z")
         r = make_row(1, published=first)

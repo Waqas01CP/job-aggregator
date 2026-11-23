@@ -23,7 +23,7 @@ with no classification there is nothing else to measure from.
 | `rejected-not-a-fit` | `Classified`, a `createdTime` field | **15 days** | The sweep deletes the row. Its outcome is already in the store |
 | `rejected-poor-filtering` | `Classified`, a `createdTime` field | **15 days** | The sweep deletes the row. Its outcome is already in the store |
 | `accepted` | none | never | Nothing, unless the operator sets `Delete`. See below |
-| `Jobs`, unreviewed | `First seen` | **21 days** *(30 until 2026-10-28)* | ADR-0055's clock, added 2026-09-30: the sweep writes the row to `outcomes/removed_unreviewed.json` with the reason `unreviewed-aged-out`, verifies the write on a later run, then deletes it. It never comes back. `unreviewed_after_days` in `config/sweep.json` |
+| `Jobs`, unreviewed | `First seen`, or for a backfilled row when it was backfilled if later *(since 2026-11-23)* | **21 days** *(30 until 2026-10-28)* | ADR-0055's clock, added 2026-09-30: the sweep writes the row to `outcomes/removed_unreviewed.json` with the reason `unreviewed-aged-out`, verifies the write on a later run, then deletes it. It never comes back. `unreviewed_after_days` in `config/sweep.json` |
 | `Jobs`, marked `gone` | none | **the next morning** | ADR-0062, 2026-10-16: the morning sweep writes the posting to `gone.json` with `Classified at`, his `Reason` and whether he had accepted it, and deletes the row at the first morning sweep after origin holds the record. It never comes back. A posting he had accepted is marked `gone` by `Stage` on its `accepted` copy instead; it is recorded the same way and the copy stays |
 
 **`accepted` is deleted by no clock.** Its rows are written to the accepted

@@ -1,0 +1,14 @@
+[
+ {
+  "label": "the backfill marks no row",
+  "path": "src/backfill.py",
+  "find": "    local = [replace(r, backfilled_at=now_iso) for r in local]\n    public = [replace(r, backfilled_at=now_iso) for r in public]\n",
+  "replace": ""
+ },
+ {
+  "label": "the clock ignores when a backfilled row was first shown",
+  "path": "src/sweep.py",
+  "find": "        if shown and (not start or parse_time(shown) > parse_time(start)):\n            start = shown\n",
+  "replace": ""
+ }
+]

@@ -22,6 +22,7 @@ the local filtered file and publishable rows to the committed one, split by
 """
 import glob
 import os
+from dataclasses import replace
 
 from . import facts
 from .config import is_publishable
@@ -101,6 +102,10 @@ def backfill(paths, now_iso, matcher=None, withhold=(), dry_run=False):
               "written_public": 0, "written_local": 0}
     if dry_run:
         return result
+    # Stamped with the time it can first be shown, so ADR-0055's clock gives
+    # it its days in `Jobs` from now, not from a first sight weeks before.
+    local = [replace(r, backfilled_at=now_iso) for r in local]
+    public = [replace(r, backfilled_at=now_iso) for r in public]
     result["written_local"] = storage.append_delta(
         paths["local_filtered"], [r.as_record() for r in local])
     result["written_public"] = storage.append_delta(

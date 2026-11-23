@@ -26,8 +26,8 @@
   {
     "label": "the clock fires at the retention window",
     "path": "src/sweep.py",
-    "find": "        return older_than(first_seen, self.config.unreviewed_after_days, self.now)",
-    "replace": "        return older_than(first_seen, self.config.retire_after_days, self.now)"
+    "find": "        return older_than(start, self.config.unreviewed_after_days, self.now)",
+    "replace": "        return older_than(start, self.config.retire_after_days, self.now)"
   },
   {
     "label": "the clock never fires",

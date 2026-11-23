@@ -824,11 +824,18 @@ class Sweep:
 
     def aged_out(self, identity, fields):
         """ADR-0055: first seen more than `unreviewed_after_days` ago. The
-        display row's own `First seen`, or the stored row's."""
+        display row's own `First seen`, or the stored row's. For a row a
+        backfill appended after its first sight, from the backfill: when it
+        was first shown (Brief 20, decision 3)."""
         first_seen = fields.get("First seen")
-        if not first_seen and identity in self.rows:
-            first_seen = self.rows[identity].first_seen
-        return older_than(first_seen, self.config.unreviewed_after_days, self.now)
+        row = self.rows.get(identity)
+        if not first_seen and row is not None:
+            first_seen = row.first_seen
+        start = first_seen
+        shown = row.backfilled_at if row is not None else None
+        if shown and (not start or parse_time(shown) > parse_time(start)):
+            start = shown
+        return older_than(start, self.config.unreviewed_after_days, self.now)
 
     def judge(self, identity):
         """(closed ISO date or None, removal reason or None) for a row
