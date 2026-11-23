@@ -1,0 +1,62 @@
+[
+ {
+  "label": "a 404 is not recorded",
+  "path": "src/run.py",
+  "find": "                found[identity] = day\n            else:",
+  "replace": "                pass\n            else:"
+ },
+ {
+  "label": "any error reads as gone",
+  "path": "src/run.py",
+  "find": "            except HttpError:\n                block[\"unanswered\"] += 1\n                continue",
+  "replace": "            except HttpError:\n                found[identity] = day\n                continue"
+ },
+ {
+  "label": "an answer counts as a failure",
+  "path": "src/resilience.py",
+  "find": "            if 200 <= status < 300 or status in answers:",
+  "replace": "            if 200 <= status < 300:"
+ },
+ {
+  "label": "the evening asks too",
+  "path": "src/run.py",
+  "find": "        if self.slot == \"evening\":\n            block[\"skipped\"] = \"mornings only",
+  "replace": "        if False:\n            block[\"skipped\"] = \"mornings only"
+ },
+ {
+  "label": "a recorded posting is asked every morning",
+  "path": "src/run.py",
+  "find": "\n                      and r[\"Identity\"] not in gone)",
+  "replace": ")"
+ },
+ {
+  "label": "the cap asks every row",
+  "path": "src/run.py",
+  "find": "asks[:GONE_CHECK_CAP]:",
+  "replace": "asks:"
+ },
+ {
+  "label": "a board not polled is asked about",
+  "path": "src/run.py",
+  "find": "                      and r.get(\"Board\") in askable and r.get(\"Identity\")",
+  "replace": "                      and r.get(\"Identity\")"
+ },
+ {
+  "label": "the closure test ignores the source's answer",
+  "path": "src/closure.py",
+  "find": "        if self._gone.get(row.identity):",
+  "replace": "        if False:"
+ },
+ {
+  "label": "the run never reads the record",
+  "path": "src/run.py",
+  "find": "iso(run.now), gone=read_gone(run.paths))",
+  "replace": "iso(run.now))"
+ },
+ {
+  "label": "the private store down still asks",
+  "path": "src/run.py",
+  "find": "        if self.private_unavailable:\n            block[\"skipped\"] = (\"the private store could not be restored, so the record of \"",
+  "replace": "        if False:\n            block[\"skipped\"] = (\"the private store could not be restored, so the record of \""
+ }
+]

@@ -39,6 +39,13 @@ is not evidence, and the test does not pretend it is. Since then the morning
 walk reads the search to its end, which does count, so twelve mornings' absence
 closes a posting too.
 
+**Or the source said so itself** (Brief 21, item 3): Startup.jobs answers 404
+for a posting it no longer lists, which the morning run asks of each of its
+rows `Jobs` shows and records, once, with the day, in the private
+`agreement/gone_at_source.json`. Its walk reads newest first and never whole,
+so absence could never close one; the resume chat found ten dead on 11-22
+that nothing had marked.
+
 **A display group has closed when every member has**, on the day the last of
 them closed. One city copy still listed keeps the role open.
 
@@ -86,20 +93,26 @@ def history(run_logs):
 
 
 class Closure:
-    def __init__(self, last_seen, run_logs, paginated, runs_needed, now_iso):
+    def __init__(self, last_seen, run_logs, paginated, runs_needed, now_iso, gone=None):
         """`last_seen` maps identity to the last run that fetched it.
-        `paginated(board_id)` says whether a board is read only to its stop."""
+        `paginated(board_id)` says whether a board is read only to its stop.
+        `gone` maps identity to the day its source answered that it no
+        longer lists it."""
         self._last_seen = last_seen
         self._history = history(run_logs)
         self._paginated = paginated
         self._runs_needed = runs_needed
         self._now = now_iso
+        self._gone = gone or {}
 
     def closed_on(self, row):
-        """(ISO date, "expired" or "absent"), or (None, None) while open or
-        unknowable. A posting never seen by any run is unknowable."""
+        """(ISO date, "expired", "gone at source" or "absent"), or (None,
+        None) while open or unknowable. A posting never seen by any run is
+        unknowable."""
         if row.expires_at and row.expires_at <= self._now:
             return row.expires_at[:10], "expired"
+        if self._gone.get(row.identity):
+            return self._gone[row.identity], "gone at source"
         seen = self._last_seen.get(row.identity)
         if not seen:
             return None, None

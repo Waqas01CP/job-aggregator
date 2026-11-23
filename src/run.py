@@ -355,17 +355,37 @@ def month_so_far(now_iso, test_mode):
         for mode in (test_mode, not test_mode)}
 
 
+def gone_path(paths):
+    return "%s/%s" % (paths["local_agreement_dir"], GONE_FILE)
+
+
+def read_gone(paths):
+    """{identity: day} of the postings their source said are gone, or {}
+    when none is stored. One that cannot be read raises: it is the closure
+    test's evidence, and a closure test that fails is recorded and skipped,
+    never run on half its evidence."""
+    path = gone_path(paths)
+    if not os.path.exists(path):
+        return {}
+    with open(path, encoding="utf-8") as f:
+        gone = loads(f.read())
+    if not isinstance(gone, dict):
+        raise ValueError("%s is not a map of identity to day" % GONE_FILE)
+    return gone
+
+
 def closure_for(run, boards, test_mode, no_commit, run_log, config):
     """ADR-0050's closure test over this run's state: last seen from both
-    seen stores, and the recent run logs with this run's own appended. A
-    no-commit run reads no branch and judges from this run alone."""
+    seen stores, the recent run logs with this run's own appended, and the
+    postings their source said are gone (Brief 21, item 3). A no-commit run
+    reads no branch and judges from this run alone."""
     seen = storage.SeenStore.load_many([run.paths["seen"], run.paths["local_seen"]])
     last_seen = {k: v.get("last_seen") for k, v in seen.entries.items()}
     logs = [] if no_commit else storage.read_recent_run_logs(config.run_log_window, test_mode)
     paginated = {b.board_id: bool(getattr(ADAPTERS[b.platform], "PAGINATED", False))
                  for b in boards}
     return Closure(last_seen, logs + [run_log], lambda board_id: paginated.get(board_id, False),
-                   config.closed_after_polled_runs, iso(run.now))
+                   config.closed_after_polled_runs, iso(run.now), gone=read_gone(run.paths))
 
 
 def retired_by(closure, config, now):
@@ -712,6 +732,16 @@ WALK_RESUME_FILE = "walk_resume.json"
 # reading again, about 100 calls a month at 225 rows. Private, beside the
 # agreement check's files: it names aggregator rows. Fields only, no record IDs.
 JOBS_VIEW_FILE = "jobs_view.json"
+# Brief 21, item 3, the operator's approval of 2026-11-23: each posting whose
+# source answered, when asked about it alone, that it no longer lists it,
+# with the day, by identity. Private, beside the agreement check's files: it
+# names aggregator postings. The closure test reads it (src/closure.py).
+GONE_FILE = "gone_at_source.json"
+# The most postings one morning asks about. Startup.jobs paces itself at one
+# request every 3.5 seconds, so 120 is about seven minutes and 120 of the
+# run's 400 requests; `Jobs` held 55 of its rows on 2026-11-23. The oldest
+# first seen are asked first, so a longer list waits a morning, never forever.
+GONE_CHECK_CAP = 120
 # How old the view may be. A morning run lands about 03:30 to 07:00Z and an
 # evening one 17:30 to 23:00Z, so a view from that morning is 10 to 19
 # hours old; an older one means the morning failed, and the evening reads.
@@ -1222,6 +1252,87 @@ class Run:
         storage.write_atomic(self._resume_path(),
                              dumps(others + ([resume] if resume else [])))
 
+    def _check_gone(self):
+        """Brief 21, item 3, the operator's approval of 2026-11-23: ask a
+        source that can say so whether each of its rows `Jobs` shows is still
+        listed, and record the ones it says are gone, with the day.
+
+        Startup.jobs is walked newest first and never whole, so its absence
+        can never close a posting, and the resume chat found ten of its rows
+        dead on 11-22 that nothing had marked. Its API answers 404 for a
+        posting it no longer lists and 200 for a live one of any age, tested
+        on the 55 rows `Jobs` held that day.
+
+        **Which rows:** the last view of `Jobs` (A1's file), each row of a
+        board whose adapter names a per-posting URL and that was polled
+        cleanly this run, not already recorded; oldest first seen first, at
+        most GONE_CHECK_CAP. **Mornings only,** when the sweep that marks
+        `Closed` runs (A1). **Never with the private store down:** the record
+        it adds to could not be restored, nor reach origin.
+
+        Only the source's own answer counts: any other status, or no answer,
+        proves nothing and is counted, never recorded. The public run log
+        carries counts alone; the identities stay in the private file.
+        Returns the run log's block, or None when no board here can be asked."""
+        boards = {b.board_id: b for b in self.boards
+                  if hasattr(ADAPTERS[b.platform], "posting_url")}
+        if not boards:
+            return None
+        block = {"checked": 0, "gone": 0, "open": 0, "unanswered": 0}
+        if self.slot == "evening":
+            block["skipped"] = "mornings only, when the sweep that marks Closed runs (A1)"
+            return block
+        if self.private_unavailable:
+            block["skipped"] = ("the private store could not be restored, so the record of "
+                                "gone postings is unknown (ADR-0047)")
+            return block
+        askable = {l["board"] for l in self.board_logs if l.get("status") == "ok"}
+        view_path = "%s/%s" % (self.paths["local_agreement_dir"], JOBS_VIEW_FILE)
+        try:
+            gone = read_gone(self.paths)
+            with open(view_path, encoding="utf-8") as f:
+                rows = loads(f.read())["rows"]
+        except FileNotFoundError:
+            block["skipped"] = "no view of Jobs is stored, so no row to ask about"
+            return block
+        except (OSError, ValueError, KeyError, TypeError) as e:
+            block["skipped"] = ("the view of Jobs or the record of gone postings could not "
+                                "be read (%s)" % type(e).__name__)
+            return block
+        asks = sorted((str(r.get("First seen") or ""), r["Identity"], r["Board"])
+                      for r in rows if isinstance(r, dict) and r.get("Board") in boards
+                      and r.get("Board") in askable and r.get("Identity")
+                      and r["Identity"] not in gone)
+        block["waiting"] = max(0, len(asks) - GONE_CHECK_CAP)
+        day = iso(self.now)[:10]
+        found = {}
+        for _, identity, board_id in asks[:GONE_CHECK_CAP]:
+            board = boards[board_id]
+            adapter = ADAPTERS[board.platform]
+            try:
+                status = self.client.status_of(
+                    adapter.posting_url(identity.split(":", 1)[1]), board.source,
+                    answers=(adapter.GONE_STATUS,), **source_options(adapter))
+            except (BudgetExhausted, CircuitOpen) as e:
+                block["stopped"] = str(e)
+                break
+            except HttpError:
+                block["unanswered"] += 1
+                continue
+            block["checked"] += 1
+            if status == adapter.GONE_STATUS:
+                found[identity] = day
+            else:
+                block["open"] += 1
+        block["gone"] = len(found)
+        if found:
+            try:
+                storage.write_atomic(gone_path(self.paths), dumps(dict(gone, **found)))
+            except OSError as e:
+                block["failure"] = ("the record of gone postings could not be written: %s"
+                                    % type(e).__name__)
+        return block
+
     # ---------------------------------------------------------------- main
     def execute(self):
         seen = storage.SeenStore.load_many([self.paths["seen"], self.paths["local_seen"]])
@@ -1293,6 +1404,7 @@ class Run:
                                         "parse_problems": 0, "new": 0, "kept": 0,
                                         "drops": {}, "status": "not reached",
                                         "detail": self.stopped})
+        gone_check = self._check_gone()
 
         new_rows, _ = split_new(all_rows, seen.identities)
 
@@ -1391,6 +1503,8 @@ class Run:
             "stopped": self.stopped,
             "source_class": dict(self.source_class),
         }
+        if gone_check is not None:
+            run_log["gone_check"] = gone_check
         return run_log
 
     def exit_code(self):

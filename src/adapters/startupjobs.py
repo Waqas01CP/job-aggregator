@@ -42,6 +42,15 @@ Fields, measured over the 8,225 of 2026-10-20:
                of 8,225 (the United States 4,528)
   workplace    `workplace_type`: remote, hybrid or on-site
   description  `description_html`
+
+**A posting it no longer lists answers 404** at `v1/jobs/<id>`, a live one
+200, whatever its age (Brief 21, item 3, tested 2026-11-23 on the 55 rows
+`Jobs` held: the 9 the resume chat had found dead on their pages answered
+404, "Not found"; 41 answered 200, up to 25 days old; 14 answered 404,
+from 5 days old). The walk reads this source newest first and never whole,
+so its absence can never close a posting (ADR-0050); this answer does. The
+run asks it of each Startup.jobs row `Jobs` shows (`src/run.py`,
+`Run._check_gone`); this module only names the URL and the answer.
 """
 
 import html
@@ -68,6 +77,15 @@ CONSUMED = ("id", "title", "url", PUBLISHED_FIELD, "company", "company.name", "l
             "workplace_type", "description_html")
 
 PAGINATED = True
+
+# The per-posting read and the status meaning the posting is gone (Brief 21,
+# item 3). The run asks; a 404 is an answer here, never a failure.
+POSTING_URL = "https://api.startup.jobs/v1/jobs/%s"
+GONE_STATUS = 404
+
+
+def posting_url(external_id):
+    return POSTING_URL % external_id
 
 
 def url_for(board, cursor=None):

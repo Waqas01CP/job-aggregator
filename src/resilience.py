@@ -217,14 +217,16 @@ class ResilientClient:
                                   retry_after=retry_after_seconds(response),
                                   floor=self.wait_floors.get(status, 0.0)))
 
-    def _send(self, send, target, label, repeatable=True):
+    def _send(self, send, target, label, repeatable=True, answers=frozenset()):
         """Call `send()` until it returns a 2xx response, and return it.
 
         `send` takes no arguments and returns a response or raises a
         transport error. `target` names the request in error messages.
         `label` is the budget bucket. `repeatable=False` marks a request
         that must not be sent twice after an unknown outcome: it is retried
-        only on a status in NOT_ACTED_ON."""
+        only on a status in NOT_ACTED_ON. `answers`: statuses the caller
+        asked about, returned as a 2xx is and counted as no failure, so a
+        check that expects some of them cannot open its own breaker."""
         breaker = self._breaker_for(label)
         if breaker.is_open:
             self.refused += 1
@@ -248,7 +250,7 @@ class ResilientClient:
                     continue
                 raise TransientError(target, last_detail, attempt)
 
-            if 200 <= status < 300:
+            if 200 <= status < 300 or status in answers:
                 self._record_success(label)
                 return response
 

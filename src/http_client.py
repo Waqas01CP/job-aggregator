@@ -162,7 +162,7 @@ class HttpClient(ResilientClient):
             raise PermanentError(url, "200 but body is not JSON: %s" % e)
 
     def get(self, url, source, params=None, accept="application/json", bearer=None,
-            min_interval=None):
+            min_interval=None, answers=()):
         """A GET is safe to repeat, so every retryable failure is retried.
 
         **A keyed source's key travels in its header and nowhere else**
@@ -183,7 +183,16 @@ class HttpClient(ResilientClient):
             if pacer is not None:
                 pacer.wait()
             return self._session.get(url, params=params, timeout=self.timeout, headers=headers)
-        return self._send(send, url, source)
+        return self._send(send, url, source, answers=frozenset(answers))
+
+    def status_of(self, url, source, answers, bearer=None, min_interval=None):
+        """GET, and return the status when it is 2xx or one of `answers`;
+        raise as `get` does for any other. For a question whose answer is a
+        status, Startup.jobs' 404 for a posting it no longer lists (Brief 21,
+        item 3): an answer is no failure, so a morning of closed postings never
+        opens the breaker; anything else is still an error, never an answer."""
+        return self.get(url, source, bearer=bearer, min_interval=min_interval,
+                        answers=answers).status_code
 
     def get_text(self, url, source, params=None):
         """GET a body that is not JSON, We Work Remotely's RSS, whole: the same

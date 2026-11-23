@@ -269,6 +269,20 @@ class TestRequestShape(unittest.TestCase):
         self.assertEqual(len(c.slept), 1)
         self.assertGreater(c.slept[0], 3.0)
 
+    def test_a_status_asked_about_is_an_answer_and_no_failure(self):
+        """Startup.jobs' 404 for a posting it no longer lists (Brief 21, item
+        3): returned, not raised, and no failure, so six in a row leave the
+        breaker shut; a status not asked about still raises. Mutation: "an
+        answer counts as a failure"."""
+        c = client([FakeResponse(404)] * 6 + [FakeResponse(404)])
+        for _ in range(6):
+            self.assertEqual(c.status_of("https://api.example.test/v1/jobs/1", "startupjobs",
+                                         answers=(404,)), 404)
+        self.assertEqual(c.failures, 0)
+        self.assertFalse(c.circuit_is_open)
+        with self.assertRaises(PermanentError):
+            c.status_of("https://api.example.test/v1/jobs/1", "startupjobs", answers=())
+
     def test_source_options_name_the_key_and_the_pace_an_adapter_declares(self):
         from src.adapters import greenhouse, startupjobs
         from src.http_client import source_options
