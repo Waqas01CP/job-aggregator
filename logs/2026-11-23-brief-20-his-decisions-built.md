@@ -1,6 +1,6 @@
 ---
 type: log
-description: The session of 2026-11-23. Brief 20's decisions built in nine commits, each pushed after both suites and its mutations; the resume chat's eleven observations confirmed or refuted from the stores; F3 counted; the Mayfield discovery pass, no board keeping a posting; item 175 measured and researched, nothing decided; Brief 20's Addendum 1, Himalayas' terms against what the pipeline keeps and links, and Gulf postings stating relocation or a visa.
+description: The session of 2026-11-23. Brief 20's decisions built in nine commits, each pushed after both suites and its mutations; the resume chat's eleven observations confirmed or refuted from the stores; F3 counted; the Mayfield discovery pass, no board keeping a posting; item 175 measured and researched, nothing decided; Brief 20's Addendum 1, Himalayas' terms against what the pipeline keeps and links, and Gulf postings stating relocation or a visa; then Brief 21: Aruba closed, Startup.jobs' rows closed by its API's own 404, and decimal years, a body-text place phrase, Hacker News' job seekers and other-language years measured, nothing more built.
 status: current
 ---
 
@@ -88,6 +88,34 @@ Decisions 1, 10 and 13 are the report of 11-29 and the clock left at 21 days; 8 
 **Himalayas.** Research 0005 recorded Himalayas' API reference of 2026-10-03 (link back and naming required, building apps permitted, passing to Jooble, Google Jobs or LinkedIn forbidden), not its terms page; nothing in the repository records clauses 30A, 113(c) or 113(d), or the API page's `applicationLink` clause [VERIFIED by search]. What is kept past expiry: the private full store, 5,798 postings, 743 past expiry; the private raw layer, 7,329 rows, 744 past; the seen store, 7,260 identities; the filtered layer, 562 rows, 54 past; `Jobs` at 06:02Z, 111 rows, 13 past, each leaving by the sweep's fifteen-day steps, after `Closed` or after his classification. Links: all 111 `Jobs` rows carry their own `applicationLink` unchanged, all on `himalayas.app`, `Board` naming the source; in the filtered layer 495 equal it, 64 predate the full store, and 3 lack the `?utm_source=api` Himalayas has added to every link since 2026-10-19, none of them in `Jobs`; no kept group shows a Himalayas posting under another source's row.
 
 **Gulf postings.** 525 of 46,656 saved postings name a Gulf place, by Brief 19's pattern over location and places (121 first seen by 10-21, against Brief 19's 124). Of the 511 with a description, 17 state relocation or a visa, 12 only deny it, 482 state neither. Of the 17: 2 match the title pool, 1 passes every rule but location (Hacker News, first seen 11-02), the other stopped by age. 15 Gulf-naming postings are kept today, all Himalayas postings open to Pakistan as well. 3 more postings name a Gulf place only beside such a statement in the description, none passing the title pool.
+
+## Brief 21, the same session, from about 19:55Z
+
+Brief 21, relayed by him with no words of his own: his eight answers on the report on Brief 20. Nothing in that report was found wrong.
+
+### Errors this seat made
+
+- **An edit script sent through a bash heredoc with backslashes** failed to parse, the trap the handoff names. Nothing was written; rewritten with the Write tool.
+- **The record commit's suite was first logged by its warning lines,** not its result; rerun and read by its result line before the push.
+
+### Built
+
+| Commit | Item | What changed | Measured first | Mutations |
+|---|---|---|---|---|
+| `5f8b94e` | 6 | Aruba on the closed list | No verdict changes of 46,808 stored postings | 1, and the four places' re-pointed, caught by the seventh gate |
+| `c89aaf2` | 3 | Startup.jobs' rows closed by its own answer: each morning the run asks its API about each of its rows the last view of `Jobs` holds, at most 120, records a 404 with its day in the private `agreement/gone_at_source.json`, and the closure test reads it. In the shared HTTP module a status the caller asks about is an answer, not a failure | Tested read-only on the 55 rows `Jobs` held: 404 "Not found" for 14, all 9 the resume chat found dead among them, from 5 days old; 200 for 41, up to 25 days old. 62 requests | 10 |
+
+### Measured, nothing built [VERIFIED from the stores at the run of 06:02Z]
+
+- **Decimal years (item 1):** 50 of 44,926 saved descriptions state one (0.11%); the reader would read a new figure in 39; 1 kept posting's verdict would change, 0.8 a thousand of 1,177 in the layer. Below his bar.
+- **The body-text place phrase (item 2):** as proposed it drops 0 of 669 admitted postings. The 51 that state a restriction in other words: 15 closed in substance, 32 ambiguous (31 of them one employer's batch of 2026-09-28), 4 wrongly matched. In every one the source's place field names nothing closed. 2 are work-authorisation wordings the requirement reader does not read; a proposal to him.
+- **Hacker News (item 4):** 5 of 521 saved thread posts open by introducing a person: 4 seekers, 1 a founder hiring. No rule separates them.
+- **Other-language years (item 8):** 14 rows, Portuguese 7, German 4, Spanish 2, French 1; Himalayas 7, Startup.jobs 7; none states a place; each written wholly in its language.
+
+### Next
+
+- **2026-11-24, the morning run:** the Startup.jobs check's first, about 55 requests and about 14 rows marked `Closed`; and the re-read the adapter change sets off. Read its `gone_check` block.
+- **2026-11-29:** Measure A's report, as above; it names the check's first morning.
 
 ## What is next
 
