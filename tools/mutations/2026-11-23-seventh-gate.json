@@ -1,0 +1,8 @@
+[
+ {
+  "label": "the hook's find check finds nothing",
+  "path": "tools/mutate.py",
+  "find": "        found += [\"%s %s\" % (path.name, p) for p in problems_in(mutations, root)]",
+  "replace": "        found += []"
+ }
+]

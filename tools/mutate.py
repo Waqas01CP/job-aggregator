@@ -165,6 +165,24 @@ def problems_in(mutations, root=REPO_ROOT, exempt=()):
     return problems
 
 
+def check_finds(root=REPO_ROOT):
+    """Every problem in every mutation file on record, as `problems_in`
+    states them, each prefixed with its file's name. The pre-commit hook's
+    seventh gate runs it (`--check-finds`), so a change that leaves a find
+    matching nothing, or twice, is refused at the commit rather than found by
+    the next suite: it happened twice in November 2026, the second time
+    reaching `main` and failing the run's own tests."""
+    found = []
+    for path in sorted((Path(root) / "tools" / "mutations").glob("*.json")):
+        try:
+            mutations = json.loads(path.read_text(encoding="utf-8"))
+        except ValueError as e:
+            found.append("%s: not JSON (%s)" % (path.name, e))
+            continue
+        found += ["%s %s" % (path.name, p) for p in problems_in(mutations, root)]
+    return found
+
+
 def load(path, only=None):
     """Read and validate every mutation before any file is touched."""
     with open(path, encoding="utf-8") as f:
@@ -289,7 +307,10 @@ def apply_one(m, targeted=False, note=None):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("file", help="a JSON list of mutations")
+    parser.add_argument("file", nargs="?", help="a JSON list of mutations")
+    parser.add_argument("--check-finds", action="store_true",
+                        help="only check that every mutation on record still finds its line "
+                             "once, and exit 1 if any does not; runs no test")
     parser.add_argument("--only", help="apply only the mutation with this label")
     parser.add_argument("--why", action="store_true",
                         help="name the tests that caught each mutation")
@@ -297,6 +318,13 @@ def main(argv=None):
                         help="run first the test modules that name each mutation or import "
                              "its file; the whole suite only when they all pass")
     args = parser.parse_args(argv)
+    if args.check_finds:
+        found = check_finds()
+        for line in found:
+            print(line)
+        return 1 if found else 0
+    if not args.file:
+        parser.error("a mutation file is needed unless --check-finds is given")
 
     mutations = load(args.file, args.only)
     originals = {m["path"]: (REPO_ROOT / m["path"]).read_bytes() for m in mutations}

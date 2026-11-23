@@ -36,7 +36,7 @@ wins and this file is stale.** Report it and correct it.
 | The audit seat runs at `ultracode` | `/effort` in Claude Code offers it. It needs a model supporting `xhigh` and workflows enabled | Operator only |
 | `CLAUDE.md` ranks nine authorities and puts a brief at rank 4 | Read "When documents disagree" in `CLAUDE.md` | Any seat |
 | Records live in `docs/decisions/` and `ADR-RULES.md` governs amending them | `ls docs/decisions/` | Any seat |
-| The pre-commit hook runs six gates | `grep -n "Six checks" .githooks/pre-commit` | Any seat |
+| The pre-commit hook runs seven gates | `grep -n "Seven checks" .githooks/pre-commit` | Any seat |
 | The hook is enabled in this clone | `git config core.hooksPath` returns `.githooks` | Any seat |
 | `MAP.md` is generated, never hand-edited | `python tools/generate_map.py --check` | Any seat |
 | `CHAT_STATE.md` carries a shorter seat list | Read its "The seats" section | Any seat |
@@ -178,7 +178,7 @@ pasted token has to be rotated.
 **Never fetch the `data` branch into this repository's refs.** Clone into the
 scratchpad.
 
-**Never bypass the pre-commit hook.** Six gates, and the reason each exists is
+**Never bypass the pre-commit hook.** Seven gates, and the reason each exists is
 written above it in `.githooks/pre-commit`. Read the refusal instead.
 
 **A chat ends when the operator says "close this chat", and at no other
@@ -212,6 +212,7 @@ this file. This one holds only who does what.
 
 | Date | Change | Reason |
 |---|---|---|
+| 2026-11-23 | Seven gates, not six, in the row of checks and in "Never bypass the pre-commit hook" | The hook's seventh gate, every mutation's find checked at the commit: Brief 20, decision 7, the operator's yes of 2026-11-23 |
 | 2026-10-15 | The recheck row reads `CHAT_STATE.md`'s "The seats" section, and that section is no longer said to lack the fourth seat. `verified:` unchanged: only these two lines were checked | The chat renamed its "Three seats" section on 2026-10-09 when it added the audit seat, so the row pointed at a heading that no longer exists. Brief 11, item 7. A partial check updates no date, by this file's own rule |
 | 2026-09-30 | The audit seat writes its own report to `logs/audit/` and its index row there, and the implementing seat commits them | The operator's decision: until now each report was discarded once relayed, leaving only the implementing seat's summary. His reasons: a trail, chained like the session logs; credibility, since an audit is not exempt from being checked; and later audits reading earlier ones. The file's `verified:` date is unchanged: only these lines were re-checked |
 | 2026-09-25 | The push rule replaced with the operator's D10 | The file said the implementing seat pushes only when a brief says push. The seat had pushed its own commits since the operator's "you can push it if you would like" of 2026-09-23, and read that as standing; a compaction summary then called it so, and the seat pushed against Brief 7's "The operator pushes". Asked, he answered: "D10: yes, you are allowed to push." The conditions, the full suite first and never a forced push, are those the seat proposed with the question. The file's `verified:` date is unchanged: only these two lines were re-checked. The operator's own "and pushes" line was missed and made to agree on 2026-09-26, found by the audit of 2026-09-25 |

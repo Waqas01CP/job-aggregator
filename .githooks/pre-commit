@@ -3,7 +3,7 @@
 #
 #   git config core.hooksPath .githooks
 #
-# Six checks, every one of which must be able to fail. Prove each by
+# Seven checks, every one of which must be able to fail. Prove each by
 # giving it the case built to defeat it before trusting it. A gate nobody
 # has seen fire is indistinguishable from an absent one, and worse,
 # because it is trusted.
@@ -227,5 +227,28 @@ for file in $staged; do
       ;;
   esac
 done
+
+# ---------------------------------------------------------------------
+# 7. Every mutation on record must still find its line, once.
+#
+# A change to a line a mutation names leaves that mutation finding
+# nothing, and the guarantee it held untested. The suite's own check
+# catches it, but only when the suite runs: in November 2026 it reached
+# main once, where the fetch workflow's tests refused to run the pipeline,
+# and a branch a second time. Brief 20, decision 7, the operator's yes of
+# 2026-11-23. Fast: it reads the files and runs no test.
+# ---------------------------------------------------------------------
+
+set +e
+"$PY" tools/mutate.py --check-finds
+finds_status=$?
+set -e
+
+if [ "$finds_status" -ne 0 ]; then
+  fail "a mutation on record no longer finds its line, or finds it twice.
+       The files and mutations are named above. Re-point each find at the
+       line as it now reads, keeping what the mutation breaks, and stage the
+       mutation file with the change."
+fi
 
 exit 0

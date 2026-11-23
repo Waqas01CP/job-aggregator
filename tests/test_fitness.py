@@ -565,6 +565,26 @@ class TestTheMutationsOnFile(unittest.TestCase):
         (caught, _, _), calls, _ = self.targeted([(False, "", ["t (x.T)"], False)], targeted=False)
         self.assertEqual((caught, calls), (True, [None]))
 
+    def test_the_hooks_find_check_names_a_stale_find_and_passes_a_clean_tree(self):
+        """Brief 20, decision 7: the hook's seventh gate. Mutation: "the
+        hook's find check finds nothing"."""
+        import shutil
+        import tempfile
+        root = tempfile.mkdtemp()
+        self.addCleanup(shutil.rmtree, root, True)
+        os.makedirs(os.path.join(root, "tools", "mutations"))
+        os.makedirs(os.path.join(root, "src"))
+        with open(os.path.join(root, "src", "a.py"), "w", encoding="utf-8") as f:
+            f.write("A = 1\n")
+        path = os.path.join(root, "tools", "mutations", "x.json")
+        for find, problems in (("A = 1", 0), ("A = 2", 1)):
+            with self.subTest(find=find):
+                with open(path, "w", encoding="utf-8") as f:
+                    json.dump([{"label": "x", "path": "src/a.py", "find": find,
+                                "replace": "A = 3"}], f)
+                self.assertEqual(len(mutate.check_finds(root)), problems)
+        self.assertEqual(mutate.check_finds(ROOT), [])
+
     def test_the_check_can_fail(self):
         """The cases built to defeat it: a find matching nothing, a find
         matching twice, and the same stale find exempt. Mutation: "a find
