@@ -62,8 +62,8 @@
   {
     "label": "a recruiter outranks a founder",
     "path": "src/description.py",
-    "find": "WHO_READS = (\"founder\", \"engineer\", \"agency\", \"recruiter\", \"a named person\")",
-    "replace": "WHO_READS = (\"recruiter\", \"founder\", \"engineer\", \"agency\", \"a named person\")"
+    "find": "WHO_READS = (\"agency\", \"founder\", \"engineer\", \"recruiter\", \"a named person\")",
+    "replace": "WHO_READS = (\"agency\", \"recruiter\", \"founder\", \"engineer\", \"a named person\")"
   },
   {
     "label": "the founder roles are not read from configuration",

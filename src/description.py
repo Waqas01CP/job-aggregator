@@ -277,14 +277,17 @@ def says_on_site(lines):
 # ADR-0058's fourth derived value, the operator's decision of 2026-10-19:
 # "i should know the founder ones separate as targeting those might yield
 # much better results". The closed list of labels, in the order one wins
-# over another when a posting says more than one: the person writing in
-# the first person reads the application, a founder above all, so a founder
-# writing that a recruiter screens first is still a founder's posting; an
-# agency writing for a client stands between him and the employer, whoever
-# else it names; the employer's recruiter, named in its process, reads it
-# next; and a person to write to, whose role it does not say, last. Never a
-# name, an address or any word of the posting (ADR-0011).
-WHO_READS = ("founder", "engineer", "agency", "recruiter", "a named person")
+# over another when a posting says more than one: an agency writing for a
+# client stands between him and the employer, whoever else it names, its own
+# founder or engineer writing in the first person included (first since
+# 2026-11-23, his decision on the fifth audit's F7; none of 27,510 saved
+# descriptions changed label when the audit counted); then the person writing
+# in the first person reads the application, a founder above all, so a
+# founder writing that a recruiter screens first is still a founder's
+# posting; the employer's recruiter, named in its process, reads it next;
+# and a person to write to, whose role it does not say, last. Never a name,
+# an address or any word of the posting (ADR-0011).
+WHO_READS = ("agency", "founder", "engineer", "recruiter", "a named person")
 
 # The roles a writer in the first person names, from configuration: ADR-0031's
 # audit reads several of them, "chief", "head", "lead", as seniority words,

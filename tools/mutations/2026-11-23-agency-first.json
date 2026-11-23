@@ -1,0 +1,8 @@
+[
+ {
+  "label": "an agency's founder reads as a founder",
+  "path": "src/description.py",
+  "find": "WHO_READS = (\"agency\", \"founder\", \"engineer\", \"recruiter\", \"a named person\")",
+  "replace": "WHO_READS = (\"founder\", \"engineer\", \"agency\", \"recruiter\", \"a named person\")"
+ }
+]

@@ -363,7 +363,21 @@ class TestWhoReads(unittest.TestCase):
     def test_the_labels_are_the_closed_list_in_their_order(self):
         """By hand, never from the constant under test."""
         self.assertEqual(description.WHO_READS,
-                         ("founder", "engineer", "agency", "recruiter", "a named person"))
+                         ("agency", "founder", "engineer", "recruiter", "a named person"))
+
+    def test_an_agencys_own_founder_or_engineer_reads_as_the_agency(self):
+        """His decision of 2026-11-23 on the fifth audit's F7: an agency stands
+        between him and the employer whoever writes for it. The audit's own
+        constructed lines, none a posting's. And a founder writing that a
+        recruiter screens first stays a founder's posting. Mutation: "an
+        agency's founder reads as a founder"."""
+        for line in ("I'm the founder of Brightpath Talent, a recruitment agency. On behalf of "
+                     "our client, a Series A startup, we are hiring.",
+                     "I am the CEO of a staffing firm. Our client is a Series A startup."):
+            with self.subTest(line=line[:30]):
+                self.assertEqual(description.who_reads([line]), "agency")
+        self.assertEqual(description.who_reads(["I'm the CTO. Our recruiter will review "
+                                                "applications first."]), "founder")
 
     def test_each_label_on_the_line_that_gives_it(self):
         """Mutation: "a founder writing is not read". Mutation: "an engineer
@@ -417,8 +431,9 @@ class TestWhoReads(unittest.TestCase):
                 self.assertIsNone(who(line))
 
     def test_a_posting_saying_several_things_is_labelled_by_the_first_in_order(self):
-        """The writer reads it, a founder above all; an agency stands between
-        him and the employer; the employer's recruiter next; a person whose
+        """An agency stands between him and the employer, whoever writes for
+        it (first since 2026-11-23, his decision on F7); then the writer reads
+        it, a founder above all; the employer's recruiter next; a person whose
         role is not said last. Mutation: "a recruiter outranks a founder"."""
         founder = "I'm the CTO and I read every application."
         recruiter = "First, a call with our recruiter."
@@ -427,7 +442,7 @@ class TestWhoReads(unittest.TestCase):
         self.assertEqual(who(recruiter, founder), "founder")
         self.assertEqual(who(agency, recruiter), "agency")
         self.assertEqual(who(named, recruiter), "recruiter")
-        self.assertEqual(who("I'm the hiring manager.", agency), "engineer")
+        self.assertEqual(who("I'm the hiring manager.", agency), "agency")
         self.assertEqual(who(founder, named), "founder")
 
     def test_a_description_with_no_text_says_nothing_of_it(self):
