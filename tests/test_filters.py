@@ -213,6 +213,13 @@ class TestTheHeaderPlace(unittest.TestCase):
             with self.subTest(location=location):
                 self.assertFalse(rule_location(row(location=location), ELIGIBILITY).keep)
 
+    def test_aruba_is_closed(self):
+        """His yes of 2026-11-23, Brief 21 item 6: F3's count found Aruba
+        missing as the four were. Mutation: "aruba is not closed"."""
+        from src.filters import ELIGIBILITY, rule_location
+        self.assertFalse(rule_location(row(location="Aruba"), ELIGIBILITY).keep)
+        self.assertTrue(rule_location(row(location="Aruba; Pakistan"), ELIGIBILITY).keep)
+
     def test_a_named_place_closed_to_him_drops_whatever_the_line_also_says(self):
         """A region-limited remote is a named place, closed, which the
         company, role and pay beside it can no longer keep."""

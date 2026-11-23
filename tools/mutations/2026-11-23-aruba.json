@@ -1,0 +1,8 @@
+[
+ {
+  "label": "aruba is not closed",
+  "path": "config/eligibility.json",
+  "find": "\"jersey\", \"cayman islands\", \"aruba\"\n",
+  "replace": "\"jersey\", \"cayman islands\"\n"
+ }
+]
