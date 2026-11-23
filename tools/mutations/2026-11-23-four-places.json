@@ -1,0 +1,8 @@
+[
+ {
+  "label": "the four places are not closed",
+  "path": "config/eligibility.json",
+  "find": "\"zimbabwe\",\n    \"syrian arab republic\", \"lao people's democratic republic\", \"jersey\", \"cayman islands\"\n",
+  "replace": "\"zimbabwe\"\n"
+ }
+]

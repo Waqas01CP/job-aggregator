@@ -167,6 +167,16 @@ class TestTheHeaderPlace(unittest.TestCase):
         self.assertTrue(self.hn("Acme | AI Engineer | Karachi | ONSITE")[0])
         self.assertFalse(self.hn("Acme | AI Engineer | Lahore | ONSITE")[0])
 
+    def test_the_four_places_of_the_fifth_audit_are_closed(self):
+        """His decision of 2026-11-23 on F3: the agreement check's four
+        disagreements named places the closed list lacked. Mutation: "the four
+        places are not closed"."""
+        from src.filters import ELIGIBILITY, rule_location
+        for location in ("Syrian Arab Republic", "Lao People's Democratic Republic", "Jersey",
+                         "Cayman Islands"):
+            with self.subTest(location=location):
+                self.assertFalse(rule_location(row(location=location), ELIGIBILITY).keep)
+
     def test_a_named_place_closed_to_him_drops_whatever_the_line_also_says(self):
         """A region-limited remote is a named place, closed, which the
         company, role and pay beside it can no longer keep."""
