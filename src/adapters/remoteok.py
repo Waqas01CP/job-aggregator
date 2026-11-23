@@ -27,6 +27,7 @@ Today's rules, read fresh, keep 6 of the 99.
 """
 
 import html
+import re
 from datetime import datetime
 
 from .base import AdapterError, ParseResult, Posting, require_absolute
@@ -58,8 +59,28 @@ def _parse_time(value):
     return parsed if parsed.tzinfo is not None else None
 
 
+# A character Remote OK encoded twice: its UTF-8 bytes read as Latin-1 and
+# encoded again, so "é" arrives as "Ã©" and "ü" as "Ã¼". Measured 2026-11-23
+# in its own feed, escaped as \u00c3\u00a9 and \u00c3\u00bc with no
+# correctly encoded é or ü beside them, so the feed sends it so; the resume
+# chat saw "MÃ¼nchen" in `Jobs`. Six stored postings of its 2026-10-19 read.
+_TWICE = re.compile("[\u00c2-\u00f4][\u0080-\u00bf]")
+
+
+def _once(text):
+    """The text as it was meant, when it is wholly the twice-encoded kind:
+    its characters' Latin-1 bytes then read as UTF-8. Text that does not
+    round-trip so, which is all correctly encoded text, comes back as it is."""
+    if not _TWICE.search(text):
+        return text
+    try:
+        return text.encode("latin-1").decode("utf-8")
+    except (UnicodeEncodeError, UnicodeDecodeError):
+        return text
+
+
 def _text(value):
-    return " ".join(html.unescape(str(value or "")).split())
+    return " ".join(_once(html.unescape(str(value or ""))).split())
 
 
 def parse(payload, board):

@@ -1,0 +1,8 @@
+[
+ {
+  "label": "RemoteOK's twice-encoded text is kept",
+  "path": "src/adapters/remoteok.py",
+  "find": "    return \" \".join(_once(html.unescape(str(value or \"\"))).split())",
+  "replace": "    return \" \".join(html.unescape(str(value or \"\")).split())"
+ }
+]

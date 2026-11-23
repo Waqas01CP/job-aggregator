@@ -871,6 +871,17 @@ class TestRemoteOK(unittest.TestCase):
         with self.assertRaises(AdapterError):
             remoteok.parse({"jobs": []}, RO_BOARD)
 
+    def test_text_it_encoded_twice_is_read_once(self):
+        """Observation 9 of 2026-11-23: its feed carries "MÃ¼nchen" for
+        "München", encoded twice at the source. Correct text is left alone,
+        and text that does not round-trip is kept as it came. Mutation:
+        "RemoteOK's twice-encoded text is kept"."""
+        posting = self.one(location="M\u00c3\u00bcnchen", position="Telefondienst f\u00c3\u00bcr Praxis")
+        self.assertEqual((posting.location, posting.title), ("München", "Telefondienst für Praxis"))
+        for kept in ("Ciudad de México", "São Paulo", "Ã alone"):
+            with self.subTest(kept=kept):
+                self.assertEqual(self.one(location=kept).location, kept)
+
     def test_an_empty_place_says_nothing_and_every_posting_is_remote(self):
         """Mutation: "an empty RemoteOK location is read as a place"."""
         self.assertEqual((self.one(location="").location, self.one(location="").workplace),
