@@ -7701,5 +7701,104 @@
   "described": true,
   "who_reads": null,
   "backfilled_at": null
+ },
+ {
+  "identity": "lever:63be007a-0b97-4078-acea-21429d23cf20",
+  "source": "lever",
+  "board_id": "lever:pingwind",
+  "external_id": "63be007a-0b97-4078-acea-21429d23cf20",
+  "employer": "PingWind",
+  "employer_provenance": "slug",
+  "title": "Intermediate Network Engineer",
+  "title_normalised": "Intermediate Network Engineer",
+  "location": "Quantico VA",
+  "published_at": "2026-11-24T17:28:21.304000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-11-24T22:57:02.035077Z",
+  "ordering_date": "2026-11-24T17:28:21.304000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/pingwind/63be007a-0b97-4078-acea-21429d23cf20",
+  "url_provenance": "payload",
+  "stated_experience": [
+   3
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "US"
+  ],
+  "workplace": "onsite",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null,
+  "backfilled_at": null
+ },
+ {
+  "identity": "lever:8a78b26c-1c75-4f22-9642-b16876171d00",
+  "source": "lever",
+  "board_id": "lever:pingwind",
+  "external_id": "8a78b26c-1c75-4f22-9642-b16876171d00",
+  "employer": "PingWind",
+  "employer_provenance": "slug",
+  "title": "Intermediate Power BI Developer",
+  "title_normalised": "Intermediate Power BI Developer",
+  "location": "Quantico VA",
+  "published_at": "2026-11-24T17:17:58.331000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-11-24T22:57:02.035077Z",
+  "ordering_date": "2026-11-24T17:17:58.331000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/pingwind/8a78b26c-1c75-4f22-9642-b16876171d00",
+  "url_provenance": "payload",
+  "stated_experience": [
+   3
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "US"
+  ],
+  "workplace": "onsite",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null,
+  "backfilled_at": null
+ },
+ {
+  "identity": "lever:5c479818-3615-4b09-9a16-2620457f9a11",
+  "source": "lever",
+  "board_id": "lever:pingwind",
+  "external_id": "5c479818-3615-4b09-9a16-2620457f9a11",
+  "employer": "PingWind",
+  "employer_provenance": "slug",
+  "title": "Senior Network Engineer",
+  "title_normalised": "Senior Network Engineer",
+  "location": "Quantico VA",
+  "published_at": "2026-11-24T17:36:06.436000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-11-24T22:57:02.035077Z",
+  "ordering_date": "2026-11-24T17:36:06.436000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/pingwind/5c479818-3615-4b09-9a16-2620457f9a11",
+  "url_provenance": "payload",
+  "stated_experience": [
+   5
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "US"
+  ],
+  "workplace": "onsite",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null,
+  "backfilled_at": null
  }
 ]

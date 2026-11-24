@@ -7985,5 +7985,36 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "ashby:8f8b2e96-290e-49ea-859b-68436b7dc662",
+  "source": "ashby",
+  "board_id": "ashby:protege",
+  "external_id": "8f8b2e96-290e-49ea-859b-68436b7dc662",
+  "employer": "Protege",
+  "employer_provenance": "slug",
+  "title": "Founding Evaluation Engineer",
+  "title_normalised": "Founding Evaluation Engineer",
+  "location": "Remote",
+  "published_at": "2026-11-24T14:49:58.365000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-24T22:57:02.035077Z",
+  "ordering_date": "2026-11-24T14:49:58.365000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/protege/8f8b2e96-290e-49ea-859b-68436b7dc662",
+  "url_provenance": "payload",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "United States"
+  ],
+  "workplace": "Remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null,
+  "backfilled_at": null
  }
 ]

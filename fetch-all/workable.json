@@ -2775,5 +2775,71 @@
   "described": true,
   "who_reads": null,
   "backfilled_at": null
+ },
+ {
+  "identity": "workable:6318CDC810",
+  "source": "workable",
+  "board_id": "workable:igate-technologies",
+  "external_id": "6318CDC810",
+  "employer": "iGATE Technology",
+  "employer_provenance": "envelope",
+  "title": "Head of Growth & Performance Marketing",
+  "title_normalised": "Head of Growth & Performance Marketing",
+  "location": "Islamabad, Islamabad Capital Territory, Pakistan",
+  "published_at": "2026-11-24T00:00:00Z",
+  "published_field": "published_on",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-24T22:57:02.035077Z",
+  "ordering_date": "2026-11-24T00:00:00Z",
+  "ordering_date_source": "publication",
+  "url": "https://apply.workable.com/j/6318CDC810",
+  "url_provenance": "payload",
+  "stated_experience": [
+   7
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "PK"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null,
+  "backfilled_at": null
+ },
+ {
+  "identity": "workable:0EC2F4D32C",
+  "source": "workable",
+  "board_id": "workable:igate-technologies",
+  "external_id": "0EC2F4D32C",
+  "employer": "iGATE Technology",
+  "employer_provenance": "envelope",
+  "title": "Head of Performance & Organic Marketing",
+  "title_normalised": "Head of Performance & Organic Marketing",
+  "location": "Islamabad, Islamabad Capital Territory, Pakistan",
+  "published_at": "2026-11-24T00:00:00Z",
+  "published_field": "published_on",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-24T22:57:02.035077Z",
+  "ordering_date": "2026-11-24T00:00:00Z",
+  "ordering_date_source": "publication",
+  "url": "https://apply.workable.com/j/0EC2F4D32C",
+  "url_provenance": "payload",
+  "stated_experience": [
+   7
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "PK"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null,
+  "backfilled_at": null
  }
 ]
