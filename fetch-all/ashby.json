@@ -31537,5 +31537,103 @@
   "described": true,
   "who_reads": null,
   "backfilled_at": null
+ },
+ {
+  "identity": "ashby:4e92b53c-85bf-40a7-ab3f-5dd6e4cf3362",
+  "source": "ashby",
+  "board_id": "ashby:livekit",
+  "external_id": "4e92b53c-85bf-40a7-ab3f-5dd6e4cf3362",
+  "employer": "LiveKit",
+  "employer_provenance": "slug",
+  "title": "Staff Compliance Engineer",
+  "title_normalised": "Staff Compliance Engineer",
+  "location": "United States (Remote); Canada (Remote)",
+  "published_at": "2026-11-24T01:09:01.443000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-24T08:42:07.150966Z",
+  "ordering_date": "2026-11-24T01:09:01.443000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/livekit/4e92b53c-85bf-40a7-ab3f-5dd6e4cf3362",
+  "url_provenance": "payload",
+  "stated_experience": [
+   5
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "United States",
+   "Canada"
+  ],
+  "workplace": "Remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null,
+  "backfilled_at": null
+ },
+ {
+  "identity": "ashby:d2d57fe8-0fe1-4436-b646-d361493e3b9b",
+  "source": "ashby",
+  "board_id": "ashby:clickhouse",
+  "external_id": "d2d57fe8-0fe1-4436-b646-d361493e3b9b",
+  "employer": "ClickHouse",
+  "employer_provenance": "slug",
+  "title": "Account Executive, AI Native",
+  "title_normalised": "Account Executive, AI Native",
+  "location": "Austin",
+  "published_at": "2026-11-24T02:08:58.238000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-24T08:42:07.150966Z",
+  "ordering_date": "2026-11-24T02:08:58.238000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/clickhouse/d2d57fe8-0fe1-4436-b646-d361493e3b9b",
+  "url_provenance": "payload",
+  "stated_experience": [
+   1
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "United States"
+  ],
+  "workplace": "Hybrid",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null,
+  "backfilled_at": null
+ },
+ {
+  "identity": "ashby:25ce9435-8823-470c-85fc-1d4ed69e5ee8",
+  "source": "ashby",
+  "board_id": "ashby:fal-ai",
+  "external_id": "25ce9435-8823-470c-85fc-1d4ed69e5ee8",
+  "employer": "Fal",
+  "employer_provenance": "slug",
+  "title": "Accounting Operations Manager",
+  "title_normalised": "Accounting Operations Manager",
+  "location": "Remote",
+  "published_at": "2026-11-24T01:18:16.853000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-24T08:42:07.150966Z",
+  "ordering_date": "2026-11-24T01:18:16.853000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/fal-ai/25ce9435-8823-470c-85fc-1d4ed69e5ee8",
+  "url_provenance": "payload",
+  "stated_experience": [
+   5
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": null,
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null,
+  "backfilled_at": null
  }
 ]
