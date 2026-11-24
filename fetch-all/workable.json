@@ -2635,5 +2635,145 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "workable:C688BE3F30",
+  "source": "workable",
+  "board_id": "workable:petra-brands",
+  "external_id": "C688BE3F30",
+  "employer": "Petra Brands",
+  "employer_provenance": "envelope",
+  "title": "Account Manager & Creative Director",
+  "title_normalised": "Account Manager & Creative Director",
+  "location": "Buenos Aires, Argentina",
+  "published_at": "2026-11-23T00:00:00Z",
+  "published_field": "published_on",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-24T00:42:43.190133Z",
+  "ordering_date": "2026-11-23T00:00:00Z",
+  "ordering_date_source": "publication",
+  "url": "https://apply.workable.com/j/C688BE3F30",
+  "url_provenance": "payload",
+  "stated_experience": [
+   3
+  ],
+  "expires_at": null,
+  "stated_levels": [
+   "Associate"
+  ],
+  "places": [
+   "AR"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null,
+  "backfilled_at": null
+ },
+ {
+  "identity": "workable:C688BE3F30",
+  "source": "workable",
+  "board_id": "workable:petra-brands",
+  "external_id": "C688BE3F30",
+  "employer": "Petra Brands",
+  "employer_provenance": "envelope",
+  "title": "Account Manager & Creative Director",
+  "title_normalised": "Account Manager & Creative Director",
+  "location": "Bogotá, Colombia",
+  "published_at": "2026-11-23T00:00:00Z",
+  "published_field": "published_on",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-24T00:42:43.190133Z",
+  "ordering_date": "2026-11-23T00:00:00Z",
+  "ordering_date_source": "publication",
+  "url": "https://apply.workable.com/j/C688BE3F30",
+  "url_provenance": "payload",
+  "stated_experience": [
+   3
+  ],
+  "expires_at": null,
+  "stated_levels": [
+   "Associate"
+  ],
+  "places": [
+   "CO"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null,
+  "backfilled_at": null
+ },
+ {
+  "identity": "workable:C688BE3F30",
+  "source": "workable",
+  "board_id": "workable:petra-brands",
+  "external_id": "C688BE3F30",
+  "employer": "Petra Brands",
+  "employer_provenance": "envelope",
+  "title": "Account Manager & Creative Director",
+  "title_normalised": "Account Manager & Creative Director",
+  "location": "São Paulo, Brazil",
+  "published_at": "2026-11-23T00:00:00Z",
+  "published_field": "published_on",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-24T00:42:43.190133Z",
+  "ordering_date": "2026-11-23T00:00:00Z",
+  "ordering_date_source": "publication",
+  "url": "https://apply.workable.com/j/C688BE3F30",
+  "url_provenance": "payload",
+  "stated_experience": [
+   3
+  ],
+  "expires_at": null,
+  "stated_levels": [
+   "Associate"
+  ],
+  "places": [
+   "BR"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null,
+  "backfilled_at": null
+ },
+ {
+  "identity": "workable:C688BE3F30",
+  "source": "workable",
+  "board_id": "workable:petra-brands",
+  "external_id": "C688BE3F30",
+  "employer": "Petra Brands",
+  "employer_provenance": "envelope",
+  "title": "Account Manager & Creative Director",
+  "title_normalised": "Account Manager & Creative Director",
+  "location": "Mexico, Mexico",
+  "published_at": "2026-11-23T00:00:00Z",
+  "published_field": "published_on",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-24T00:42:43.190133Z",
+  "ordering_date": "2026-11-23T00:00:00Z",
+  "ordering_date_source": "publication",
+  "url": "https://apply.workable.com/j/C688BE3F30",
+  "url_provenance": "payload",
+  "stated_experience": [
+   3
+  ],
+  "expires_at": null,
+  "stated_levels": [
+   "Associate"
+  ],
+  "places": [
+   "MX"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null,
+  "backfilled_at": null
  }
 ]
