@@ -21984,5 +21984,73 @@
   "described_workplace": null,
   "described": true,
   "who_reads": null
+ },
+ {
+  "identity": "manatal:4613751",
+  "source": "manatal",
+  "board_id": "manatal:premiernx",
+  "external_id": "4613751",
+  "employer": "Premier NX",
+  "employer_provenance": "slug",
+  "title": "AI Product Manager",
+  "title_normalised": "AI Product Manager",
+  "location": "Lahore, Pakistan",
+  "published_at": null,
+  "published_field": null,
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-25T22:12:45.218115Z",
+  "ordering_date": "2026-11-25T22:12:45.218115Z",
+  "ordering_date_source": "first_seen",
+  "url": "https://www.careers-page.com/premiernx/job/X9778RRY",
+  "url_provenance": "constructed",
+  "stated_experience": [
+   3,
+   1
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "Pakistan"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": "on site",
+  "described": true,
+  "who_reads": null,
+  "backfilled_at": null
+ },
+ {
+  "identity": "manatal:4613681",
+  "source": "manatal",
+  "board_id": "manatal:premiernx",
+  "external_id": "4613681",
+  "employer": "Premier NX",
+  "employer_provenance": "slug",
+  "title": "Manager of Human Resources, North America",
+  "title_normalised": "Manager of Human Resources, North America",
+  "location": "New Jersey, New Jersey, United States",
+  "published_at": null,
+  "published_field": null,
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-25T22:12:45.218115Z",
+  "ordering_date": "2026-11-25T22:12:45.218115Z",
+  "ordering_date_source": "first_seen",
+  "url": "https://www.careers-page.com/premiernx/job/7X775R55",
+  "url_provenance": "constructed",
+  "stated_experience": [
+   5,
+   3
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "United States"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null,
+  "backfilled_at": null
  }
 ]

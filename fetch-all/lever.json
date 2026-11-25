@@ -7800,5 +7800,170 @@
   "described": true,
   "who_reads": null,
   "backfilled_at": null
+ },
+ {
+  "identity": "lever:2a2fe81f-620d-40df-ac5d-216ef04fa09c",
+  "source": "lever",
+  "board_id": "lever:spreetail",
+  "external_id": "2a2fe81f-620d-40df-ac5d-216ef04fa09c",
+  "employer": "Spreetail",
+  "employer_provenance": "slug",
+  "title": "Accountant",
+  "title_normalised": "Accountant",
+  "location": "Manila",
+  "published_at": "2026-11-25T18:33:40.231000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-11-25T22:12:45.218115Z",
+  "ordering_date": "2026-11-25T18:33:40.231000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/spreetail/2a2fe81f-620d-40df-ac5d-216ef04fa09c",
+  "url_provenance": "payload",
+  "stated_experience": [
+   1
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "PH"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null,
+  "backfilled_at": null
+ },
+ {
+  "identity": "lever:61486b55-3db4-4ed5-b8af-eecae2a4e19c",
+  "source": "lever",
+  "board_id": "lever:spreetail",
+  "external_id": "61486b55-3db4-4ed5-b8af-eecae2a4e19c",
+  "employer": "Spreetail",
+  "employer_provenance": "slug",
+  "title": "Senior Software Engineer (India)",
+  "title_normalised": "Senior Software Engineer (India)",
+  "location": "India",
+  "published_at": "2026-11-25T16:21:18.598000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-11-25T22:12:45.218115Z",
+  "ordering_date": "2026-11-25T16:21:18.598000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/spreetail/61486b55-3db4-4ed5-b8af-eecae2a4e19c",
+  "url_provenance": "payload",
+  "stated_experience": [
+   7
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "IN"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null,
+  "backfilled_at": null
+ },
+ {
+  "identity": "lever:2619f170-0cf6-4d68-8e82-bd43a1d69f02",
+  "source": "lever",
+  "board_id": "lever:spreetail",
+  "external_id": "2619f170-0cf6-4d68-8e82-bd43a1d69f02",
+  "employer": "Spreetail",
+  "employer_provenance": "slug",
+  "title": "Software Engineer III (India)",
+  "title_normalised": "Software Engineer III (India)",
+  "location": "India",
+  "published_at": "2026-11-25T16:29:42.075000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-11-25T22:12:45.218115Z",
+  "ordering_date": "2026-11-25T16:29:42.075000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/spreetail/2619f170-0cf6-4d68-8e82-bd43a1d69f02",
+  "url_provenance": "payload",
+  "stated_experience": [
+   5
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "IN"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null,
+  "backfilled_at": null
+ },
+ {
+  "identity": "lever:aedf0359-b34a-485c-a83d-1eb182609bfc",
+  "source": "lever",
+  "board_id": "lever:spreetail",
+  "external_id": "aedf0359-b34a-485c-a83d-1eb182609bfc",
+  "employer": "Spreetail",
+  "employer_provenance": "slug",
+  "title": "Trade Compliance Specialist",
+  "title_normalised": "Trade Compliance Specialist",
+  "location": "Remote",
+  "published_at": "2026-11-25T18:23:40.528000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-11-25T22:12:45.218115Z",
+  "ordering_date": "2026-11-25T18:23:40.528000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/spreetail/aedf0359-b34a-485c-a83d-1eb182609bfc",
+  "url_provenance": "payload",
+  "stated_experience": [
+   2
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "US"
+  ],
+  "workplace": "remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null,
+  "backfilled_at": null
+ },
+ {
+  "identity": "lever:77430ea5-f6e8-4268-9723-04d08dd5fe7c",
+  "source": "lever",
+  "board_id": "lever:spreetail",
+  "external_id": "77430ea5-f6e8-4268-9723-04d08dd5fe7c",
+  "employer": "Spreetail",
+  "employer_provenance": "slug",
+  "title": "Warehouse Operations Manager",
+  "title_normalised": "Warehouse Operations Manager",
+  "location": "Nanticoke, PA",
+  "published_at": "2026-11-25T17:35:24.387000Z",
+  "published_field": "createdAt",
+  "published_meaning_unconfirmed": true,
+  "first_seen": "2026-11-25T22:12:45.218115Z",
+  "ordering_date": "2026-11-25T17:35:24.387000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.lever.co/spreetail/77430ea5-f6e8-4268-9723-04d08dd5fe7c",
+  "url_provenance": "payload",
+  "stated_experience": [
+   5
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "US"
+  ],
+  "workplace": "onsite",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null,
+  "backfilled_at": null
  }
 ]

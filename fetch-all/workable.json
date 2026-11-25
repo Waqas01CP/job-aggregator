@@ -2841,5 +2841,73 @@
   "described": true,
   "who_reads": null,
   "backfilled_at": null
+ },
+ {
+  "identity": "workable:928E6768C7",
+  "source": "workable",
+  "board_id": "workable:igate-technologies",
+  "external_id": "928E6768C7",
+  "employer": "iGATE Technology",
+  "employer_provenance": "envelope",
+  "title": "Business Development Manager -Morning Shift",
+  "title_normalised": "Business Development Manager -Morning Shift",
+  "location": "Islamabad, Islamabad Capital Territory, Pakistan",
+  "published_at": "2026-11-25T00:00:00Z",
+  "published_field": "published_on",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-25T22:12:45.218115Z",
+  "ordering_date": "2026-11-25T00:00:00Z",
+  "ordering_date_source": "publication",
+  "url": "https://apply.workable.com/j/928E6768C7",
+  "url_provenance": "payload",
+  "stated_experience": [
+   3
+  ],
+  "expires_at": null,
+  "stated_levels": [
+   "Mid-Senior level"
+  ],
+  "places": [
+   "PK"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null,
+  "backfilled_at": null
+ },
+ {
+  "identity": "workable:188C378845",
+  "source": "workable",
+  "board_id": "workable:igate-technologies",
+  "external_id": "188C378845",
+  "employer": "iGATE Technology",
+  "employer_provenance": "envelope",
+  "title": "Director Ecommerce",
+  "title_normalised": "Director Ecommerce",
+  "location": "Islamabad, Islamabad Capital Territory, Pakistan",
+  "published_at": "2026-11-25T00:00:00Z",
+  "published_field": "published_on",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-25T22:12:45.218115Z",
+  "ordering_date": "2026-11-25T00:00:00Z",
+  "ordering_date_source": "publication",
+  "url": "https://apply.workable.com/j/188C378845",
+  "url_provenance": "payload",
+  "stated_experience": [
+   8
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "PK"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null,
+  "backfilled_at": null
  }
 ]
