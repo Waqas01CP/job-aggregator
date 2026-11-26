@@ -1,0 +1,1128 @@
+{
+ "run_at": "2026-11-26T22:10:49.648039Z",
+ "commit": "6def3a91c39d5a049a3cb3407954e7b381e88ceb",
+ "test_mode": false,
+ "boards": [
+  {
+   "board": "ashby:Overjet",
+   "fetched": 32,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 26,
+    "location": 1,
+    "seniority": 5
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-04-08T19:16:53.271000Z"
+  },
+  {
+   "board": "ashby:clickhouse",
+   "fetched": 211,
+   "parse_problems": 0,
+   "new": 1,
+   "kept": 0,
+   "drops": {
+    "title": 149,
+    "experience": 50,
+    "location": 9,
+    "seniority": 3
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2025-07-08T16:32:36.602000Z"
+  },
+  {
+   "board": "ashby:cursor",
+   "fetched": 87,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 73,
+    "experience": 8,
+    "age": 1,
+    "seniority": 4,
+    "location": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-06-18T18:22:17.445000Z"
+  },
+  {
+   "board": "ashby:deeter-analytics",
+   "fetched": 4,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 4
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-02-18T20:20:18.483000Z"
+  },
+  {
+   "board": "ashby:elevenlabs",
+   "fetched": 114,
+   "parse_problems": 0,
+   "new": 2,
+   "kept": 7,
+   "drops": {
+    "location": 9,
+    "title": 97,
+    "age": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2024-09-06T13:39:52.200000Z"
+  },
+  {
+   "board": "ashby:espa",
+   "fetched": 2,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "age": 1,
+    "experience": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2025-11-10T17:53:02.836000Z"
+  },
+  {
+   "board": "ashby:fal-ai",
+   "fetched": 51,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "location": 4,
+    "experience": 5,
+    "title": 39,
+    "age": 1,
+    "seniority": 2
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2025-07-21T19:46:28.425000Z"
+  },
+  {
+   "board": "ashby:intangible.ai",
+   "fetched": 3,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 3
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2025-07-30T01:19:59.711000Z"
+  },
+  {
+   "board": "ashby:livekit",
+   "fetched": 30,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "age": 2,
+    "title": 23,
+    "experience": 4,
+    "seniority": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-03-17T21:11:49.157000Z"
+  },
+  {
+   "board": "ashby:mastra",
+   "fetched": 3,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 2,
+    "age": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-10-07T16:24:59.247000Z"
+  },
+  {
+   "board": "ashby:protege",
+   "fetched": 24,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 2,
+   "drops": {
+    "title": 21,
+    "seniority": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-07-31T23:41:20.685000Z"
+  },
+  {
+   "board": "ashby:quora",
+   "fetched": 8,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 3,
+   "drops": {
+    "title": 1,
+    "experience": 2,
+    "age": 1,
+    "seniority": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-05-18T21:03:00.213000Z"
+  },
+  {
+   "board": "ashby:realmalliance",
+   "fetched": 7,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "age": 2,
+    "authorisation": 1,
+    "title": 1,
+    "location": 3
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2025-11-21T16:54:22.690000Z"
+  },
+  {
+   "board": "ashby:socket",
+   "fetched": 22,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 21,
+    "experience": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2025-11-25T21:13:46.617000Z"
+  },
+  {
+   "board": "ashby:sola",
+   "fetched": 7,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 3,
+    "location": 3,
+    "age": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-02-19T16:31:04.675000Z"
+  },
+  {
+   "board": "ashby:vesta",
+   "fetched": 12,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 8,
+    "age": 4
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-03-07T00:42:57.858000Z"
+  },
+  {
+   "board": "greenhouse:banyancanopygroup",
+   "fetched": 4,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 4
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-05-14T09:16:38Z"
+  },
+  {
+   "board": "greenhouse:brkz",
+   "fetched": 16,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 14,
+    "experience": 2
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2025-04-20T12:44:09Z"
+  },
+  {
+   "board": "greenhouse:careem",
+   "fetched": 9,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 7,
+    "age": 1,
+    "seniority": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2023-11-02T16:13:14Z"
+  },
+  {
+   "board": "greenhouse:coderoad",
+   "fetched": 25,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "location": 2,
+    "title": 17,
+    "seniority": 1,
+    "experience": 5
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-01-26T00:58:51Z"
+  },
+  {
+   "board": "greenhouse:cresta",
+   "fetched": 79,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 45,
+    "age": 1,
+    "location": 12,
+    "seniority": 9,
+    "experience": 12
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2024-09-10T23:10:58Z"
+  },
+  {
+   "board": "greenhouse:globalli",
+   "fetched": 9,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 9
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-06-11T21:04:29Z"
+  },
+  {
+   "board": "greenhouse:gomotive",
+   "fetched": 191,
+   "parse_problems": 0,
+   "new": 1,
+   "kept": 0,
+   "drops": {
+    "title": 177,
+    "experience": 9,
+    "seniority": 5
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2021-08-12T21:46:45Z"
+  },
+  {
+   "board": "greenhouse:joblogic",
+   "fetched": 16,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "location": 1,
+    "title": 14,
+    "experience": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-06-23T10:06:36Z"
+  },
+  {
+   "board": "greenhouse:sourcegraph91",
+   "fetched": 7,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 5,
+    "age": 2
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2022-08-09T17:10:02Z"
+  },
+  {
+   "board": "greenhouse:speechify",
+   "fetched": 738,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "experience": 246,
+    "title": 492
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2021-03-12T21:28:31Z"
+  },
+  {
+   "board": "greenhouse:veeamsoftware",
+   "fetched": 210,
+   "parse_problems": 0,
+   "new": 3,
+   "kept": 1,
+   "drops": {
+    "title": 188,
+    "location": 1,
+    "experience": 14,
+    "seniority": 6
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2025-01-15T17:33:52Z"
+  },
+  {
+   "board": "hackernews:whoishiring",
+   "fetched": 238,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 16,
+   "drops": {
+    "title": 155,
+    "location": 42,
+    "seniority": 13,
+    "experience": 6,
+    "authorisation": 6
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-11-02T16:01:43Z"
+  },
+  {
+   "board": "himalayas:pakistan",
+   "fetched": 80,
+   "parse_problems": 0,
+   "new": 31,
+   "kept": 1,
+   "drops": {
+    "title": 75,
+    "experience": 3,
+    "seniority": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "pages": 4,
+   "walk": {
+    "stopped_by": "mark",
+    "mark": "2026-11-26T06:37:38Z"
+   },
+   "capped": false,
+   "agreement": {
+    "browse_read": 20,
+    "returned_by_search": 0,
+    "rule_excludes": 19,
+    "newly_waiting": 1,
+    "returned_since": 0,
+    "disagreements": 0,
+    "still_waiting": 1,
+    "gave_up": 0
+   },
+   "oldest_published": "2026-10-29T01:49:10Z"
+  },
+  {
+   "board": "hnjobs:jobstories",
+   "fetched": 100,
+   "parse_problems": 0,
+   "new": 1,
+   "kept": 5,
+   "drops": {
+    "title": 86,
+    "age": 7,
+    "seniority": 2
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-07-10T12:00:36Z"
+  },
+  {
+   "board": "jobicy:jobicy-remote",
+   "fetched": 400,
+   "parse_problems": 0,
+   "new": 110,
+   "kept": 2,
+   "drops": {
+    "title": 347,
+    "location": 14,
+    "experience": 14,
+    "authorisation": 3,
+    "seniority": 11,
+    "level": 2,
+    "annotation_vendor": 7
+   },
+   "status": "ok",
+   "detail": null,
+   "pages": 4,
+   "walk": {
+    "stopped_by": "mark",
+    "mark": "2026-11-25T20:21:30Z"
+   },
+   "capped": false,
+   "oldest_published": "2026-11-25T03:15:45Z"
+  },
+  {
+   "board": "lever:pingwind",
+   "fetched": 87,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 2,
+   "drops": {
+    "title": 75,
+    "experience": 7,
+    "seniority": 2,
+    "location": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2025-10-08T13:07:55.561000Z"
+  },
+  {
+   "board": "lever:postera",
+   "fetched": 2,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 1,
+   "drops": {
+    "title": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2023-11-03T15:21:46.876000Z"
+  },
+  {
+   "board": "lever:smart-working-solutions",
+   "fetched": 15,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 8,
+    "experience": 5,
+    "authorisation": 1,
+    "location": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-09-29T13:35:23.297000Z"
+  },
+  {
+   "board": "lever:spreetail",
+   "fetched": 39,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 35,
+    "experience": 1,
+    "seniority": 3
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-02-19T17:21:38.125000Z"
+  },
+  {
+   "board": "manatal:abacus-consulting-3",
+   "fetched": 169,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 6,
+   "drops": {
+    "title": 157,
+    "experience": 6
+   },
+   "status": "ok",
+   "detail": null,
+   "pages": 9,
+   "walk": {
+    "stopped_by": "end",
+    "mark": "2026-11-19T22:10:48.648039Z"
+   },
+   "capped": false,
+   "oldest_published": null
+  },
+  {
+   "board": "manatal:ahdus-technology-2",
+   "fetched": 2,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 2
+   },
+   "status": "ok",
+   "detail": null,
+   "pages": 1,
+   "walk": {
+    "stopped_by": "end",
+    "mark": "2026-11-19T22:10:48.648039Z"
+   },
+   "capped": false,
+   "oldest_published": null
+  },
+  {
+   "board": "manatal:codedistrict",
+   "fetched": 1,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "pages": 1,
+   "walk": {
+    "stopped_by": "end",
+    "mark": "2026-11-19T22:10:48.648039Z"
+   },
+   "capped": false,
+   "oldest_published": null
+  },
+  {
+   "board": "manatal:gigalabs-private-ltd",
+   "fetched": 1,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "experience": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "pages": 1,
+   "walk": {
+    "stopped_by": "end",
+    "mark": "2026-11-19T22:10:48.648039Z"
+   },
+   "capped": false,
+   "oldest_published": null
+  },
+  {
+   "board": "manatal:hazen-technologies",
+   "fetched": 0,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {},
+   "status": "ok",
+   "detail": null,
+   "pages": 1,
+   "walk": {
+    "stopped_by": "end",
+    "mark": "2026-11-19T22:10:48.648039Z"
+   },
+   "capped": false,
+   "oldest_published": null
+  },
+  {
+   "board": "manatal:itc-worldwide-info",
+   "fetched": 478,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 1,
+   "drops": {
+    "title": 473,
+    "experience": 4
+   },
+   "status": "ok",
+   "detail": null,
+   "pages": 24,
+   "walk": {
+    "stopped_by": "end",
+    "mark": "2026-11-19T22:10:48.648039Z"
+   },
+   "capped": false,
+   "oldest_published": null
+  },
+  {
+   "board": "manatal:premiernx",
+   "fetched": 14,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "location": 1,
+    "title": 13
+   },
+   "status": "ok",
+   "detail": null,
+   "pages": 1,
+   "walk": {
+    "stopped_by": "end",
+    "mark": "2026-11-19T22:10:48.648039Z"
+   },
+   "capped": false,
+   "oldest_published": null
+  },
+  {
+   "board": "manatal:spursol",
+   "fetched": 8,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 7,
+    "experience": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "pages": 1,
+   "walk": {
+    "stopped_by": "end",
+    "mark": "2026-11-19T22:10:48.648039Z"
+   },
+   "capped": false,
+   "oldest_published": null
+  },
+  {
+   "board": "manatal:wadic-2",
+   "fetched": 8,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 8
+   },
+   "status": "ok",
+   "detail": null,
+   "pages": 1,
+   "walk": {
+    "stopped_by": "end",
+    "mark": "2026-11-19T22:10:48.648039Z"
+   },
+   "capped": false,
+   "oldest_published": null
+  },
+  {
+   "board": "pythonorg:pythonorg-feed",
+   "fetched": 20,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 7,
+   "drops": {
+    "experience": 4,
+    "title": 6,
+    "authorisation": 2,
+    "location": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": null
+  },
+  {
+   "board": "remoteok:remoteok-feed",
+   "fetched": 100,
+   "parse_problems": 0,
+   "new": 42,
+   "kept": 0,
+   "drops": {
+    "title": 87,
+    "annotation_vendor": 1,
+    "seniority": 6,
+    "location": 3,
+    "experience": 3
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-11-21T04:40:04Z"
+  },
+  {
+   "board": "smartrecruiters:OneScreen",
+   "fetched": 9,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 8,
+    "level": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "pages": 1,
+   "walk": {
+    "stopped_by": "end",
+    "mark": "2026-11-22T22:31:30.022000Z"
+   },
+   "capped": false,
+   "details": 0,
+   "details_failed": 0,
+   "oldest_published": "2023-08-16T09:16:41.896000Z"
+  },
+  {
+   "board": "smartrecruiters:SeekaTechnology",
+   "fetched": 10,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 7,
+    "age": 1,
+    "location": 2
+   },
+   "status": "ok",
+   "detail": null,
+   "pages": 1,
+   "walk": {
+    "stopped_by": "end",
+    "mark": "2026-11-19T22:10:48.648039Z"
+   },
+   "capped": false,
+   "details": 0,
+   "details_failed": 0,
+   "oldest_published": "2025-05-27T07:34:47.230000Z"
+  },
+  {
+   "board": "startupjobs:sj-country-pk",
+   "fetched": 51,
+   "parse_problems": 0,
+   "new": 3,
+   "kept": 2,
+   "drops": {
+    "title": 42,
+    "experience": 3,
+    "seniority": 4
+   },
+   "status": "ok",
+   "detail": null,
+   "pages": 2,
+   "walk": {
+    "stopped_by": "mark",
+    "mark": "2026-11-25T00:00:00Z"
+   },
+   "capped": false,
+   "oldest_published": "2026-11-13T00:00:00Z"
+  },
+  {
+   "board": "startupjobs:sj-workplace-remote",
+   "fetched": 450,
+   "parse_problems": 0,
+   "new": 391,
+   "kept": 0,
+   "drops": {
+    "title": 404,
+    "seniority": 15,
+    "experience": 15,
+    "authorisation": 3,
+    "location": 13
+   },
+   "status": "ok",
+   "detail": null,
+   "pages": 9,
+   "walk": {
+    "stopped_by": "mark",
+    "mark": "2026-11-25T07:11:05Z"
+   },
+   "capped": false,
+   "oldest_published": "2026-11-25T00:00:00Z"
+  },
+  {
+   "board": "weworkremotely:wwr-feed",
+   "fetched": 100,
+   "parse_problems": 0,
+   "new": 58,
+   "kept": 1,
+   "drops": {
+    "title": 82,
+    "seniority": 11,
+    "location": 2,
+    "annotation_vendor": 1,
+    "experience": 2,
+    "authorisation": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-10-28T21:42:43Z"
+  },
+  {
+   "board": "workable:creative-chaos",
+   "fetched": 0,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {},
+   "status": "ok",
+   "detail": null,
+   "oldest_published": null
+  },
+  {
+   "board": "workable:igate-technologies",
+   "fetched": 29,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 28,
+    "age": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2025-03-19T00:00:00Z"
+  },
+  {
+   "board": "workable:inbox-business-technologies",
+   "fetched": 10,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 10
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-09-28T00:00:00Z"
+  },
+  {
+   "board": "workable:petra-brands",
+   "fetched": 10,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 10
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-09-17T00:00:00Z"
+  },
+  {
+   "board": "workable:staunch",
+   "fetched": 3,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 1,
+   "drops": {
+    "title": 1,
+    "seniority": 1
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-09-21T00:00:00Z"
+  },
+  {
+   "board": "workable:thingtrax",
+   "fetched": 4,
+   "parse_problems": 0,
+   "new": 0,
+   "kept": 0,
+   "drops": {
+    "title": 4
+   },
+   "status": "ok",
+   "detail": null,
+   "oldest_published": "2026-01-20T00:00:00Z"
+  }
+ ],
+ "totals": {
+  "fetched": 4359,
+  "new": 643,
+  "kept": 58,
+  "kept_without_description": 6,
+  "written_raw": {
+   "ashby": 3,
+   "greenhouse": 4,
+   "himalayas": 31,
+   "hnjobs": 1,
+   "jobicy": 110,
+   "remoteok": 42,
+   "startupjobs": 394,
+   "weworkremotely": 58
+  },
+  "written_filtered": 0,
+  "backfilled": 0,
+  "backfilled_public": 0,
+  "backfilled_local": 0,
+  "written_filtered_local": 0,
+  "drops": {
+   "expiry": 0,
+   "annotation_vendor": 9,
+   "title": 3575,
+   "seniority": 108,
+   "level": 3,
+   "experience": 435,
+   "authorisation": 17,
+   "location": 126,
+   "age": 28
+  },
+  "dedupe": {
+   "postings": 4359,
+   "groups": 3516,
+   "collapsed": 843,
+   "largest_group": 318
+  }
+ },
+ "requests": {
+  "requests_used": 105,
+  "budget": 400,
+  "budget_remaining": 295,
+  "by_source": {
+   "greenhouse": 11,
+   "lever": 4,
+   "himalayas": 5,
+   "manatal": 40,
+   "workable": 6,
+   "smartrecruiters": 2,
+   "ashby": 16,
+   "hackernews": 2,
+   "hnjobs": 1,
+   "jobicy": 4,
+   "remoteok": 1,
+   "weworkremotely": 1,
+   "pythonorg": 1,
+   "startupjobs": 11
+  },
+  "retries": 0,
+  "failures": 0,
+  "refused": 0,
+  "circuit_open": false,
+  "circuits_open": []
+ },
+ "stopped": null,
+ "source_class": {
+  "greenhouse": "ats",
+  "lever": "ats",
+  "himalayas": "aggregator",
+  "manatal": "ats",
+  "workable": "ats",
+  "smartrecruiters": "ats",
+  "ashby": "ats",
+  "hackernews": "aggregator",
+  "hnjobs": "aggregator",
+  "jobicy": "aggregator",
+  "remoteok": "aggregator",
+  "weworkremotely": "aggregator",
+  "pythonorg": "aggregator",
+  "startupjobs": "aggregator"
+ },
+ "gone_check": {
+  "checked": 0,
+  "gone": 0,
+  "open": 0,
+  "unanswered": 0,
+  "skipped": "mornings only, when the sweep that marks Closed runs (A1)"
+ },
+ "facts": {
+  "fingerprint": "280841b6baf87c25",
+  "reread": false,
+  "failure": null
+ },
+ "private_store": {
+  "branch": "data",
+  "restored": 22,
+  "pushed": true,
+  "failure": null,
+  "full": {
+   "pending": 639,
+   "saved": 639,
+   "file": "full/20261126T221049.648039Z.json",
+   "verified": true,
+   "failure": null,
+   "bytes": 6401145
+  },
+  "files": 22,
+  "outcomes_pushed": false
+ },
+ "projection": {
+  "jobs_from": "the last view (A1)",
+  "stored_identities": 484,
+  "rows_read": 1206,
+  "rows_admitted": 593,
+  "groups": 575,
+  "groups_skipped_by_store": 361,
+  "groups_retired_closed": 1,
+  "rows_to_send": 213,
+  "rows_in_base": 233,
+  "rows_unchanged": 213,
+  "rows_new": 0,
+  "rows_changed": 0,
+  "rows_sent": 0
+ },
+ "airtable": {
+  "calls_used": 0,
+  "rows_sent": 0,
+  "monthly_ceiling": 900,
+  "month_to_date_before_run": 422,
+  "month_remaining": 478,
+  "retries": 0,
+  "failures": 0,
+  "refused": 0,
+  "circuit_open": false,
+  "failure": null,
+  "month_to_date_by_branch": {
+   "data": 422,
+   "data-test": 0
+  }
+ },
+ "sweep": {
+  "mode": "the evening runs no sweep (A1); the next morning copies the day's statuses",
+  "daily": false,
+  "calls_used": 0,
+  "failure": null
+ },
+ "records": {
+  "tables": {
+   "jobs": 233,
+   "rejected-not-a-fit": 142,
+   "rejected-poor-filtering": 45,
+   "accepted": 56
+  },
+  "health": 44,
+  "own": 520,
+  "other_mode": null,
+  "other_mode_counted_at": null,
+  "estimate": 520,
+  "unknown": [
+   "the other mode's tables"
+  ],
+  "limit": 1000,
+  "warning": null
+ },
+ "health": {
+  "calls_used": 0,
+  "sent": [],
+  "failure": null,
+  "pending": 0,
+  "rows_sent": 0
+ },
+ "budget": {
+  "month_to_date": 422,
+  "allowance": 900,
+  "share": 0.469,
+  "warning": null
+ },
+ "attention": {
+  "failed_in_a_row": 0,
+  "escalate": false
+ }
+}
