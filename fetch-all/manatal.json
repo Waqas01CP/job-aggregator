@@ -22052,5 +22052,36 @@
   "described": true,
   "who_reads": null,
   "backfilled_at": null
+ },
+ {
+  "identity": "manatal:4614890",
+  "source": "manatal",
+  "board_id": "manatal:itc-worldwide-info",
+  "external_id": "4614890",
+  "employer": "Technical Support",
+  "employer_provenance": "payload",
+  "title": "Capitán de Yates",
+  "title_normalised": "Capitán de Yates",
+  "location": "Cartagena, Bolivar, Colombia",
+  "published_at": null,
+  "published_field": null,
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-26T07:05:04.990582Z",
+  "ordering_date": "2026-11-26T07:05:04.990582Z",
+  "ordering_date_source": "first_seen",
+  "url": "https://www.careers-page.com/itc-worldwide-info/job/4R777Y5V",
+  "url_provenance": "constructed",
+  "stated_experience": null,
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "Colombia"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null,
+  "backfilled_at": null
  }
 ]

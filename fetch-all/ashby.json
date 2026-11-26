@@ -32052,5 +32052,38 @@
   "described": true,
   "who_reads": null,
   "backfilled_at": null
+ },
+ {
+  "identity": "ashby:6ac48ac0-de03-4897-b956-b6567493d44b",
+  "source": "ashby",
+  "board_id": "ashby:clickhouse",
+  "external_id": "6ac48ac0-de03-4897-b956-b6567493d44b",
+  "employer": "ClickHouse",
+  "employer_provenance": "slug",
+  "title": "Sr. Software Engineer - Control Plane Platform",
+  "title_normalised": "Sr. Software Engineer - Control Plane Platform",
+  "location": "United States",
+  "published_at": "2026-11-25T23:09:00.781000Z",
+  "published_field": "publishedAt",
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-26T07:05:04.990582Z",
+  "ordering_date": "2026-11-25T23:09:00.781000Z",
+  "ordering_date_source": "publication",
+  "url": "https://jobs.ashbyhq.com/clickhouse/6ac48ac0-de03-4897-b956-b6567493d44b",
+  "url_provenance": "payload",
+  "stated_experience": [
+   8
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "United States"
+  ],
+  "workplace": "Remote",
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null,
+  "backfilled_at": null
  }
 ]
