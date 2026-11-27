@@ -22083,5 +22083,38 @@
   "described": true,
   "who_reads": null,
   "backfilled_at": null
+ },
+ {
+  "identity": "manatal:4617678",
+  "source": "manatal",
+  "board_id": "manatal:spursol",
+  "external_id": "4617678",
+  "employer": "SpurSol",
+  "employer_provenance": "slug",
+  "title": "Customer Success Lead",
+  "title_normalised": "Customer Success Lead",
+  "location": "Karachi, Pakistan",
+  "published_at": null,
+  "published_field": null,
+  "published_meaning_unconfirmed": false,
+  "first_seen": "2026-11-27T21:51:55.884070Z",
+  "ordering_date": "2026-11-27T21:51:55.884070Z",
+  "ordering_date_source": "first_seen",
+  "url": "https://www.careers-page.com/spursol/job/4R7798V7",
+  "url_provenance": "constructed",
+  "stated_experience": [
+   4
+  ],
+  "expires_at": null,
+  "stated_levels": null,
+  "places": [
+   "Pakistan"
+  ],
+  "workplace": null,
+  "required_places": null,
+  "described_workplace": null,
+  "described": true,
+  "who_reads": null,
+  "backfilled_at": null
  }
 ]
